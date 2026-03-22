@@ -1,0 +1,30 @@
+{
+  "name": "real-estate-crm",
+  "version": "1.0.0",
+  "description": "Real Estate CRM with modern design",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "server": "cd server && nodemon index.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [
+    "real-estate",
+    "crm",
+    "react",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "mongodb": "^7.1.0",
+    "mongoose": "^9.3.1"
+  }
+}
