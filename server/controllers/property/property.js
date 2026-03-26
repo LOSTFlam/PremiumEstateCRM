@@ -228,6 +228,13 @@ const verifyListing = async (req, res) => {
 const add = async (req, res) => {
   try {
     req.body.createdDate = new Date();
+    
+    // Generate publicSlug if not provided
+    if (!req.body.publicSlug) {
+      const name = req.body.name || req.body.propertyAddress || 'property';
+      req.body.publicSlug = slugify(name);
+    }
+    
     const property = new Property(req.body);
     await property.save();
     res.status(200).json(property);
@@ -635,6 +642,17 @@ const addMany = async (req, res) => {
 const edit = async (req, res) => {
   try {
     let property = await Property.findById(req.params.id).lean();
+
+    // Update publicSlug if name or address changed
+    if ((req.body.name || req.body.propertyAddress) && !req.body.publicSlug) {
+      const name = req.body.name || req.body.propertyAddress;
+      req.body.publicSlug = slugify(name);
+    }
+
+    // Auto-update updatedDate if not provided
+    if (!req.body.updatedDate) {
+      req.body.updatedDate = new Date();
+    }
 
     let result = await Property.updateOne(
       { _id: req.params.id },

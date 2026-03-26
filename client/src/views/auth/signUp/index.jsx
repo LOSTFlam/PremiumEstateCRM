@@ -135,7 +135,7 @@ function SignUp() {
         console.log("✅ User saved to Redux");
 
         resetForm();
-        toast.success(t("auth.signUp.registrationSuccessful") || "Registration successful!");
+        toast.success(t?.("auth.signUp.registrationSuccessful") || "Registration successful!");
 
         // Force reload to ensure App component re-renders with new auth state
         setTimeout(() => {
@@ -177,7 +177,7 @@ function SignUp() {
           <Flex justify="space-between" align="center" w="100%">
             <Box>
               <Heading color={textColor} fontSize="36px" mb="10px">
-                {t("auth.signUp.title")}
+                {t?.("auth.signUp.title")}
               </Heading>
               <Text
                 mb="36px"
@@ -186,7 +186,7 @@ function SignUp() {
                 fontWeight="400"
                 fontSize="md"
               >
-                {t("auth.signUp.subtitle")}
+                {t?.("auth.signUp.subtitle")}
               </Text>
             </Box>
             <HStack spacing={2}>
@@ -229,7 +229,7 @@ function SignUp() {
                   color={textColor}
                   mb="8px"
                 >
-                  {t("auth.signUp.firstName")}<Text color={brandStars}>*</Text>
+                  {t?.("auth.signUp.firstName")}<Text color={brandStars}>*</Text>
                 </FormLabel>
                 <Input
                   fontSize="sm"
@@ -238,7 +238,7 @@ function SignUp() {
                   value={values?.firstName}
                   name="firstName"
                   type="text"
-                  placeholder={t("auth.signUp.firstName")}
+                  placeholder={t?.("auth.signUp.firstName")}
                   fontWeight="500"
                   size="lg"
                   borderColor={
@@ -259,7 +259,7 @@ function SignUp() {
                   color={textColor}
                   mb="8px"
                 >
-                  {t("auth.signUp.lastName")}<Text color={brandStars}>*</Text>
+                  {t?.("auth.signUp.lastName")}<Text color={brandStars}>*</Text>
                 </FormLabel>
                 <Input
                   fontSize="sm"
@@ -268,7 +268,7 @@ function SignUp() {
                   value={values?.lastName}
                   name="lastName"
                   type="text"
-                  placeholder={t("auth.signUp.lastName")}
+                  placeholder={t?.("auth.signUp.lastName")}
                   fontWeight="500"
                   size="lg"
                   borderColor={
@@ -290,7 +290,7 @@ function SignUp() {
                 color={textColor}
                 mb="8px"
               >
-                {t("auth.signUp.email")}<Text color={brandStars}>*</Text>
+                {t?.("auth.signUp.email")}<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -322,13 +322,13 @@ function SignUp() {
                 color={textColor}
                 display="flex"
               >
-                {t("auth.signUp.password")}<Text color={brandStars}>*</Text>
+                {t?.("auth.signUp.password")}<Text color={brandStars}>*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
                   isRequired={true}
                   fontSize="sm"
-                  placeholder={t("auth.signUp.password")}
+                  placeholder={t?.("auth.signUp.password")}
                   name="password"
                   value={values?.password}
                   onChange={handleChange}
@@ -365,13 +365,13 @@ function SignUp() {
                 color={textColor}
                 display="flex"
               >
-                {t("auth.signUp.confirmPassword")}<Text color={brandStars}>*</Text>
+                {t?.("auth.signUp.confirmPassword")}<Text color={brandStars}>*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
                   isRequired={true}
                   fontSize="sm"
-                  placeholder={t("auth.signUp.confirmPassword")}
+                  placeholder={t?.("auth.signUp.confirmPassword")}
                   name="confirmPassword"
                   value={values?.confirmPassword}
                   onChange={handleChange}
@@ -414,7 +414,7 @@ function SignUp() {
                 color={textColor}
                 fontSize="sm"
               >
-                {t("auth.signUp.agreeToTerms")}
+                {t?.("auth.signUp.agreeToTerms")}
               </FormLabel>
             </FormControl>
 
@@ -428,20 +428,20 @@ function SignUp() {
               mb="24px"
               disabled={isLoading}
             >
-              {isLoading ? <Spinner /> : t("auth.signUp.createAccountButton")}
+              {isLoading ? <Spinner /> : t?.("auth.signUp.createAccountButton")}
             </Button>
           </form>
 
           <Flex justifyContent="center" alignItems="center" mt="10px">
             <Text color={textColorSecondary} fontWeight="normal" fontSize="sm">
-              {t("auth.signUp.alreadyHave")}{" "}
+              {t?.("auth.signUp.alreadyHave")}{" "}
               <Link
                 as={RouterLink}
                 to="/auth/sign-in"
                 color="brand.500"
                 fontWeight="600"
               >
-                {t("auth.signUp.signIn")}
+                {t?.("auth.signUp.signIn")}
               </Link>
             </Text>
           </Flex>

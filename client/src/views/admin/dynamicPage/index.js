@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HasAccess } from "../../../redux/accessUtils";
@@ -23,6 +24,7 @@ import CommonDeleteModel from "components/commonDeleteModel";
 import { deleteManyApi } from "services/api";
 
 const Index = () => {
+  const { t } = useTranslation();
   const pathName = window.location.pathname.split("/");
   const title = pathName[1];
   const size = "lg";

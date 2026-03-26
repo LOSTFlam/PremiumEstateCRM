@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
@@ -23,6 +24,7 @@ import CommonDeleteModel from "components/commonDeleteModel";
 import AddEditUser from "./AddEditUser";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const [editData, setEditData] = useState({});
   const [isOpen, setIsOpen] = useState(false);

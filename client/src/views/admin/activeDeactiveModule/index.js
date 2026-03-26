@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -20,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchModules } from "../../../redux/slices/moduleSlice";
 
 const Index = () => {
+  const { t } = useTranslation();
   const textColor = useColorModeValue("gray.500", "white");
 
   const navigate = useNavigate();

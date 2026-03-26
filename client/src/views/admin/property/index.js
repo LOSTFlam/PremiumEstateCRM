@@ -28,17 +28,24 @@ import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { t } = useTranslation();
-  const title = t("modules.property.title");
+  
+  // Safe translation function
+  const safeT = (key, fallback) => {
+    try {
+      return t(key) || fallback;
+    } catch (e) {
+      return fallback;
+    }
+  };
+  
+  const title = t?.("modules.property.title");
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [permission] = HasAccess(["Properties"]);
   const [isLoding, setIsLoding] = useState(false);
-  // const [data, setData] = useState([]);
   const [tableColumns, setTableColumns] = useState([]);
   const [columns, setColumns] = useState([]);
-  // const [dataColumn, setDataColumn] = useState([]);
-  // const [selectedColumns, setSelectedColumns] = useState([]);
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [propertyData, setPropertyData] = useState([]);
@@ -47,88 +54,95 @@ const Index = () => {
   const [selectedId, setSelectedId] = useState();
   const [selectedValues, setSelectedValues] = useState([]);
   const [isImportProperty, setIsImportProperty] = useState(false);
+  
+  // Action header for table
+  const actionHeader = {
+    Header: "Action",
+    accessor: "action",
+    isSortable: false,
+    center: true,
+    cell: ({ row }) => (
+      <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+        <Menu isLazy>
+          <MenuButton>
+            <CiMenuKebab />
+          </MenuButton>
+          <MenuList minW={"fit-content"}>
+            {permission?.update && (
+              <MenuItem
+                py={2.5}
+                icon={<EditIcon fontSize={15} mb={1} />}
+                onClick={() => {
+                  setEdit(true);
+                  setSelectedId(row?.values?._id);
+                }}
+              >
+                {safeT("modules.property.actions.edit", "Edit")}
+              </MenuItem>
+            )}
+            {permission?.view && (
+              <MenuItem
+                py={2.5}
+                color={"green"}
+                icon={<ViewIcon mb={1} fontSize={15} />}
+                onClick={() => {
+                  const slug = row?.values?.publicSlug || row?.values?._id;
+                  navigate(`/propertyView/${slug}`);
+                }}
+              >
+                {safeT("modules.property.actions.view", "View")}
+              </MenuItem>
+            )}
+            {permission?.delete && (
+              <MenuItem
+                py={2.5}
+                color={"red"}
+                icon={<DeleteIcon fontSize={15} mb={1} />}
+                onClick={() => {
+                  setDelete(true);
+                  setSelectedValues([row?.values?._id]);
+                  setSelectedId(row?.values?._id);
+                }}
+              >
+                {safeT("modules.property.actions.delete", "Delete")}
+              </MenuItem>
+            )}
+          </MenuList>
+        </Menu>
+      </Text>
+    ),
+  };
 
   const data = useSelector((state) => state?.propertyData?.data);
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchPropertyCustomFiled());
-    if (result?.payload?.status === 200) {
-      setPropertyData(result?.payload?.data);
-    } else {
-      toast.error("Failed to fetch data", "error");
-    }
-    const actionHeader = {
-      Header: "Action",
-      accessor: "action",
-      isSortable: false,
-      center: true,
-      cell: ({ row }) => (
-        <Text fontSize="md" fontWeight="900" textAlign={"center"}>
-          <Menu isLazy>
-            <MenuButton>
-              <CiMenuKebab />
-            </MenuButton>
-            <MenuList
-              minW={"fit-content"}
-              transform={"translate(1520px, 173px);"}
-            >
-              {permission?.update && (
-                <MenuItem
-                  py={2.5}
-                  icon={<EditIcon fontSize={15} mb={1} />}
-                  onClick={() => {
-                    setEdit(true);
-                    setSelectedId(row?.values?._id);
-                  }}
-                >
-                  {t("modules.property.actions.edit")}
-                </MenuItem>
-              )}
-              {permission?.view && (
-                <MenuItem
-                  py={2.5}
-                  color={"green"}
-                  icon={<ViewIcon mb={1} fontSize={15} />}
-                  onClick={() => {
-                    navigate(`/propertyView/${row?.values?._id}`);
-                  }}
-                >
-                  {t("modules.property.actions.view")}
-                </MenuItem>
-              )}
-              {permission?.delete && (
-                <MenuItem
-                  py={2.5}
-                  color={"red"}
-                  icon={<DeleteIcon fontSize={15} mb={1} />}
-                  onClick={() => {
-                    setDelete(true);
-                    setSelectedValues([row?.values?._id]);
-                    setSelectedId(row?.values?._id);
-                  }}
-                >
-                  {t("modules.property.actions.delete")}
-                </MenuItem>
-              )}
-            </MenuList>
-          </Menu>
-        </Text>
-      ),
-    };
-    const tempTableColumns = [
-      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      ...(result?.payload?.data && result.payload.data.length > 0
-        ? result?.payload?.data[0]?.fields
+    try {
+      const result = await dispatch(fetchPropertyCustomFiled());
+      // fetchPropertyCustomFiled returns array directly
+      const customFieldsData = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
+      
+      if (customFieldsData.length > 0) {
+        setPropertyData(customFieldsData);
+        
+        // Build table columns from custom fields
+        const tempTableColumns = [
+          { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+          ...(customFieldsData[0]?.fields
             ?.filter((field) => field?.isTableField === true && field?.isView)
             ?.map((field) => ({
-              Header: t(`fields.${field?.name}`) || field?.label,
+              Header: safeT(`fields.${field?.name}`, field?.label),
               accessor: field?.name,
               cell: (cell) => (
                 <div className="selectOpt">
                   <Text
                     onClick={() => {
-                      navigate(`/propertyView/${cell?.row?.original?._id}`);
+                      const slug = cell?.row?.original?.publicSlug || cell?.row?.original?._id;
+                      navigate(`/propertyView/${slug}`);
                     }}
                     me="10px"
                     sx={{
@@ -146,18 +160,27 @@ const Index = () => {
                   </Text>
                 </div>
               ),
-            })) || []
-        : []),
-      ...(result?.payload?.data?.[0]?.fields || []) // Ensure result.payload[0].fields is an array
-        .filter((field) => field?.isTableField === true && !field?.isView) // Filter out fields where isTableField is true
-        .map((field) => ({ Header: t(`fields.${field?.name}`) || field?.label, accessor: field?.name })),
-      ...(permission?.update || permission?.view || permission?.delete
-        ? [actionHeader]
-        : []),
-    ];
-
-    setColumns(tempTableColumns);
-    setIsLoding(false);
+            })) || []),
+          ...(customFieldsData[0]?.fields || [])
+            .filter((field) => field?.isTableField === true && !field?.isView)
+            .map((field) => ({ 
+              Header: safeT(`fields.${field?.name}`, field?.label), 
+              accessor: field?.name 
+            })),
+          ...(permission?.update || permission?.view || permission?.delete
+            ? [actionHeader]
+            : []),
+        ];
+        setColumns(tempTableColumns);
+      } else {
+        toast.error("Failed to fetch custom fields", "error");
+      }
+    } catch (error) {
+      console.error('Error fetching custom fields:', error);
+      toast.error("Failed to fetch data", "error");
+    } finally {
+      setIsLoding(false);
+    }
   };
 
   const handleDeleteProperties = async (ids) => {

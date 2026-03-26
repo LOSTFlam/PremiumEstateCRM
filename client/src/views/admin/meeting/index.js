@@ -22,8 +22,10 @@ import { deleteManyApi } from "services/api";
 import { toast } from "react-toastify";
 import { fetchMeetingData } from "../../../redux/slices/meetingSlice";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const title = "Meeting";
   const navigate = useNavigate();
   const [action, setAction] = useState(false);
@@ -91,7 +93,7 @@ const Index = () => {
       width: 10,
     },
     {
-      Header: t("fields.agenda"),
+      Header: t?.("fields.agenda") || "Agenda",
       accessor: "agenda",
       cell: (cell) => (
         <Link to={`/metting/${cell?.row?.values?._id}`}>
@@ -110,9 +112,9 @@ const Index = () => {
         </Link>
       ),
     },
-    { Header: t("fields.dateTime"), accessor: "dateTime" },
-    { Header: t("fields.timeStamp"), accessor: "timestamp" },
-    { Header: t("fields.createBy"), accessor: "createdByName" },
+    { Header: t?.("fields.dateTime") || "Date & Time", accessor: "dateTime" },
+    { Header: t?.("fields.timeStamp") || "Time Stamp", accessor: "timestamp" },
+    { Header: t?.("fields.createBy") || "Create By", accessor: "createdByName" },
     ...(permission?.update || permission?.view || permission?.delete
       ? [actionHeader]
       : []),
@@ -121,8 +123,9 @@ const Index = () => {
   const fetchData = async () => {
     setIsLoding(true);
     const result = await dispatch(fetchMeetingData());
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
+    const data = Array.isArray(result?.payload) ? result.payload : Array.isArray(result?.payload?.data) ? result.payload.data : [];
+      if (data.length > 0) {
+      setData(data);
     } else {
       toast.error("Failed to fetch data", "error");
     }

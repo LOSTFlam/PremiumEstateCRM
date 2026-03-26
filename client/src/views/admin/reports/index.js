@@ -18,8 +18,8 @@ const Report = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const tableColumns = [
-    { Header: t("fields.emailSent"), accessor: "emailsent" },
-    { Header: t("fields.outboundCalls"), accessor: "outboundcall" },
+    { Header: t?.("fields.emailSent"), accessor: "emailsent" },
+    { Header: t?.("fields.outboundCalls"), accessor: "outboundcall" },
   ];
 
   // const fetchCustomDataFields = async () => {
@@ -40,7 +40,7 @@ const Report = () => {
         isSortable: false,
         width: 10,
       },
-      { Header: t("fields.name"), accessor: "firstName" },
+      { Header: t?.("fields.name"), accessor: "firstName" },
     );
   }
 

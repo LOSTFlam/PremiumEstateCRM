@@ -63,13 +63,17 @@ import { fetchPropertyData } from "../../../redux/slices/propertySlice";
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import moment from "moment";
+import { toast } from "react-toastify";
 import AddEmailHistory from "../emailHistory/components/AddEmail";
 import AddPhoneCall from "../phoneCall/components/AddPhoneCall";
 import EmailModel from "components/commonTableModel/EmailModel";
 import PhoneModel from "components/commonTableModel/PhoneModel";
 import ListingVerificationPanel from "./components/ListingVerificationPanel";
+import PropertyPhotoManager from "components/property/PropertyPhotoManager";
+import { useTranslation } from "react-i18next";
 
 const View = () => {
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user"));
   const param = useParams();
   const buttonbg = useColorModeValue("gray.200", "white");
@@ -179,14 +183,17 @@ const View = () => {
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchContactCustomFiled());
-    setContactData(result?.payload?.data);
+    const result = await dispatch(fetchPropertyCustomFiled());
+    const propertyData = result?.payload?.data || [];
+    setContactData(propertyData);
 
     const tempTableColumns = [
       { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      ...result?.payload?.data?.[0]?.fields
-        ?.filter((field) => field?.isTableField === true)
-        ?.map((field) => ({ Header: field?.label, accessor: field?.name })),
+      ...(Array.isArray(propertyData) && propertyData[0]?.fields
+        ? propertyData[0]?.fields
+            ?.filter((field) => field?.isTableField === true)
+            ?.map((field) => ({ Header: field?.label, accessor: field?.name }))
+        : []),
     ];
     setColumns(tempTableColumns);
     setIsLoding(false);
@@ -245,12 +252,30 @@ const View = () => {
 
   const fetchData = async (i) => {
     setIsLoding(true);
-    let response = await getApi("api/property/view/", param?.id);
-    setData(response?.data?.property);
-    setPhoneCall(response?.data?.phoneCall);
-    setEmailData(response?.data?.Emails);
-    setFilteredContacts(response?.data?.filteredContacts);
-    setIsLoding(false);
+    try {
+      // Try to fetch by ID first
+      let response = await getApi("api/property/view/", param?.id);
+      
+      // If not found and param.id looks like a slug, try to find by slug
+      if (!response?.data?.property && param?.id && !param.id.match(/^[0-9a-fA-F]{24}$/)) {
+        const listResponse = await getApi("api/property/public");
+        const properties = Array.isArray(listResponse) ? listResponse : Array.isArray(listResponse?.data) ? listResponse.data : [];
+        const propertyBySlug = properties.find(p => p?.publicSlug === param?.id || p?.seo?.slug === param?.id);
+        
+        if (propertyBySlug) {
+          response = await getApi("api/property/view/", propertyBySlug._id);
+        }
+      }
+      
+      setData(response?.data?.property);
+      setPhoneCall(response?.data?.phoneCall);
+      setEmailData(response?.data?.Emails);
+      setFilteredContacts(response?.data?.filteredContacts);
+    } catch (error) {
+      console.error('Error fetching property:', error);
+    } finally {
+      setIsLoding(false);
+    }
     setSelectedTab(i);
   };
   const generatePDF = () => {
@@ -279,14 +304,18 @@ const View = () => {
   const handleDeleteProperties = async (id) => {
     try {
       setIsLoding(true);
-      let response = await deleteApi("api/property/delete/", id);
-      if (response?.status === 200) {
-        setDelete(false);
-        setAction((pre) => !pre);
-        navigate("/properties");
-      }
+      await deleteApi("api/property/delete/", id);
+      setDelete(false);
+      setAction((pre) => !pre);
+      navigate("/properties");
+      toast({
+        title: "Property deleted successfully",
+        status: "success",
+        duration: 3000,
+      });
     } catch (error) {
-      console.log(error);
+      // Error already shown by interceptor
+      console.error("Delete error:", error);
     } finally {
       setIsLoding(false);
     }
@@ -491,18 +520,20 @@ const View = () => {
                               AdvanceSearch={false}
                               ManageGrid={false}
                               access={false}
-                              columnData={columns ?? []}
-                              // dataColumn={columns ?? []}
+                              columnData={Array.isArray(columns) ? columns : []}
+                              // dataColumn={Array.isArray(columns) ? columns : []}
                               title={"Interested Contact"}
-                              allData={filteredContacts ?? []}
-                              tableData={filteredContacts}
+                              allData={Array.isArray(filteredContacts) ? filteredContacts : []}
+                              tableData={Array.isArray(filteredContacts) ? filteredContacts : []}
                               // selectedColumns={selectedColumns}
                               // setSelectedColumns={setSelectedColumns}
                               size={"md"}
                               tableCustomFields={
-                                contactData?.[0]?.fields?.filter(
-                                  (field) => field?.isTableField === true,
-                                ) || []
+                                Array.isArray(contactData) && contactData?.[0]?.fields
+                                  ? contactData?.[0]?.fields?.filter(
+                                      (field) => field?.isTableField === true,
+                                    )
+                                  : []
                               }
                               customSearch={true}
                               checkBox={false}
@@ -529,9 +560,9 @@ const View = () => {
                             <CommonCheckTable
                               title={"Email"}
                               isLoding={isLoding}
-                              columnData={emailColumn ?? []}
-                              allData={setEmail}
-                              tableData={setEmail}
+                              columnData={Array.isArray(emailColumn) ? emailColumn : []}
+                              allData={Array.isArray(setEmail) ? setEmail : []}
+                              tableData={Array.isArray(setEmail) ? setEmail : []}
                               AdvanceSearch={false}
                               dataLength={allData?.Email?.length}
                               tableCustomFields={[]}
@@ -551,9 +582,9 @@ const View = () => {
                             <CommonCheckTable
                               title={"Call"}
                               isLoding={isLoding}
-                              columnData={callColumns ?? []}
-                              allData={phoneCall}
-                              tableData={phoneCall}
+                              columnData={Array.isArray(callColumns) ? callColumns : []}
+                              allData={Array.isArray(phoneCall) ? phoneCall : []}
+                              tableData={Array.isArray(phoneCall) ? phoneCall : []}
                               AdvanceSearch={false}
                               dataLength={allData?.phoneCall?.length}
                               tableCustomFields={[]}
@@ -604,51 +635,15 @@ const View = () => {
                           </Box>
                         </GridItem>
                         <GridItem colSpan={{ base: 12 }}>
-                          <Flex
-                            overflowY={"scroll"}
-                            height={"150px"}
-                            alingItem={"center"}
-                          >
-                            {data?.propertyPhotos?.length > 0 ? (
-                              data &&
-                              data?.propertyPhotos?.length > 0 &&
-                              data?.propertyPhotos?.map((item) => (
-                                <Image
-                                  width={"150px"}
-                                  m={1}
-                                  src={item?.img}
-                                  alt="Your Image"
-                                />
-                              ))
-                            ) : (
-                              <Text
-                                textAlign={"center"}
-                                width="100%"
-                                color={textColor}
-                                fontSize="sm"
-                                fontWeight="700"
-                              >
-                                <DataNotFound />
-                              </Text>
-                            )}
-                          </Flex>
-                          {data?.propertyPhotos?.length > 0 ? (
-                            <Flex justifyContent={"end"} mt={1}>
-                              <Button
-                                size="sm"
-                                colorScheme="brand"
-                                variant="outline"
-                                onClick={() => {
-                                  setDisplayPropertyPhoto(true);
-                                  setType("photo");
-                                }}
-                              >
-                                Show more
-                              </Button>
-                            </Flex>
-                          ) : (
-                            ""
-                          )}
+                          <PropertyPhotoManager
+                            propertyId={param?.id}
+                            photos={data?.propertyPhotos || []}
+                            onChange={(newPhotos) => {
+                              setData({ ...data, propertyPhotos: newPhotos });
+                            }}
+                            isOpen={propertyPhoto}
+                            onClose={() => setPropertyPhoto(false)}
+                          />
                         </GridItem>
                       </Grid>
                     </Card>

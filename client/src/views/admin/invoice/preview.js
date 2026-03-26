@@ -27,6 +27,7 @@ const Preview = (props) => {
   const largeLogo = useSelector((state) =>
     state?.images?.images?.filter((item) => item?.isActive === true),
   );
+  const activeLogo = largeLogo?.[0];
 
   const fetchInvoiceDetails = async () => {
     try {
@@ -68,7 +69,7 @@ const Preview = (props) => {
                   <div>
                     <Image
                       style={{ width: "100%", height: "52px" }}
-                      src={largeLogo[0]?.logoLgImg}
+                      src={largeLogo?.[0]?.logoLgImg}
                       alt="Logo"
                       cursor="pointer"
                       userSelect="none"

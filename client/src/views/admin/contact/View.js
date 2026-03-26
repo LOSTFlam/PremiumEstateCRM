@@ -822,8 +822,8 @@ const View = () => {
                                   }
                                 >
                                   {showEmail
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -881,8 +881,8 @@ const View = () => {
                                   }
                                 >
                                   {showCall
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -940,8 +940,8 @@ const View = () => {
                                   }
                                 >
                                   {showTasks
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -999,8 +999,8 @@ const View = () => {
                                   }
                                 >
                                   {showMeetings
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -1058,8 +1058,8 @@ const View = () => {
                                   }
                                 >
                                   {showQuotes
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -1117,8 +1117,8 @@ const View = () => {
                                   }
                                 >
                                   {showInvoices
-                                    ? t("modules.contact.view.showLess")
-                                    : t("modules.contact.view.showMore")}
+                                    ? t?.("modules.contact.view.showLess")
+                                    : t?.("modules.contact.view.showMore")}
                                 </Button>
                               </div>
                             )}

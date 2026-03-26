@@ -12,22 +12,40 @@ import {
 import React, { useEffect, useState } from "react";
 import Spinner from "components/spinner/Spinner";
 import { GiClick } from "react-icons/gi";
-import CommonCheckTable from "components/reactTable/checktable.js";
-import { useDispatch } from "react-redux";
-import { fetchPropertyCustomFiled } from "../../redux/slices/propertyCustomFiledSlice.js";
+import CommonCheckTable from "components/reactTable/checktable";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchPropertyData } from "../../redux/slices/propertySlice.js";
-import PropertyTable from "./Property.js";
-import MultiPropertyModel from "./MultiPropertyModel.js";
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const PropertyModel = (props) => {
-  const { t } = useTranslation();
-  const { onClose, isOpen, fieldName, setFieldValue, data } = props;
-  const [selectedValues, setSelectedValues] = useState();
-  const [propertyData, setPropertyData] = useState([]);
-  const [isLoding, setIsLoding] = useState(false);
-  const [columns, setColumns] = useState([]);
+  const { t: i18nT } = useTranslation();
+
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+
+  const {
+    onClose,
+    isOpen,
+    fieldName,
+    setFieldValue,
+    data,
+  } = props;
+  const title = "Properties";
   const dispatch = useDispatch();
+  
+  // Get properties from Redux store
+  const propertiesData = useSelector((state) => state?.propertyData?.data || []);
+
+  const [isLoding, setIsLoding] = useState(false);
+  const [selectedValues, setSelectedValues] = useState([]);
 
   const handleSubmit = async () => {
     try {
@@ -40,86 +58,82 @@ const PropertyModel = (props) => {
       setIsLoding(false);
     }
   };
-  const fetchCustomDataFields = async () => {
+
+  const fetchData = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchPropertyCustomFiled());
-    setPropertyData(result?.payload?.data);
-    const tempTableColumns = [
-      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      ...(result?.payload?.data?.[0]?.fields || [])
-        .filter((field) => field?.isTableField === true)
-        .map((field) => ({ Header: t(`fields.${field?.name}`) || field?.label, accessor: field?.name })),
-    ];
-    setColumns(tempTableColumns);
-    setIsLoding(false);
+    try {
+      const result = await dispatch(fetchPropertyData());
+      // Data is loaded via Redux
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setIsLoding(false);
+    }
   };
-  useEffect(async () => {
-    await dispatch(fetchPropertyData());
-    fetchCustomDataFields();
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  const tableColumns = [
+    { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+    { Header: safeT("fields.name", "Name"), accessor: "name" },
+    { Header: safeT("fields.propertyAddress", "Address"), accessor: "propertyAddress" },
+    { Header: safeT("fields.propertyType", "Type"), accessor: "propertyType" },
+    { Header: safeT("fields.listingPrice", "Price"), accessor: "listingPrice" },
+  ];
+
   return (
-    <>
-      <Modal onClose={onClose} size="full" isOpen={isOpen}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Select Property</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {isLoding ? (
-              <Flex
-                justifyContent={"center"}
-                alignItems={"center"}
-                width="100%"
-              >
-                <Spinner />
-              </Flex>
-            ) : (
-              <CommonCheckTable
-                title={"Property"}
-                isLoding={isLoding}
-                columnData={columns ?? []}
-                allData={data ?? []}
-                tableData={propertyData ?? data}
-                tableCustomFields={
-                  propertyData?.[0]?.fields?.filter(
-                    (field) => field?.isTableField === true,
-                  ) || []
-                }
-                AdvanceSearch={() => ""}
-                ManageGrid={false}
-                deleteMany={false}
-                selectedValues={selectedValues}
-                setSelectedValues={setSelectedValues}
-                selectType="single"
-                customSearch={false}
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="brand"
-              size="sm"
-              me={2}
-              onClick={handleSubmit}
-              disabled={isLoding ? true : false}
-              leftIcon={<GiClick />}
-            >
-              {" "}
-              {isLoding ? <Spinner /> : "Select"}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              colorScheme="red"
-              onClick={() => onClose()}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <MultiPropertyModel />
-    </>
+    <Modal onClose={onClose} size="full" isOpen={isOpen}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Select Property</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {isLoding ? (
+            <Flex justifyContent={"center"} alignItems={"center"} width="100%">
+              <Spinner />
+            </Flex>
+          ) : (
+            <CommonCheckTable
+              title={title}
+              isLoding={isLoding}
+              columnData={tableColumns ?? []}
+              allData={propertiesData ?? []}
+              tableData={propertiesData}
+              AdvanceSearch={() => ""}
+              ManageGrid={false}
+              deleteMany={false}
+              selectedValues={selectedValues}
+              setSelectedValues={setSelectedValues}
+              selectType="single"
+              customSearch={false}
+            />
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            variant="brand"
+            size="sm"
+            me={2}
+            disabled={isLoding ? true : false}
+            leftIcon={<GiClick />}
+            onClick={handleSubmit}
+          >
+            {" "}
+            {isLoding ? <Spinner /> : "Select"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            colorScheme="red"
+            onClick={() => onClose()}
+          >
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 

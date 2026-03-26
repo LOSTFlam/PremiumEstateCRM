@@ -86,7 +86,7 @@ export default function PaymentForm() {
           fontWeight="500"
           mb="8px"
         >
-          {t("fields.name")}
+          {t?.("fields.name")}
         </FormLabel>
         <Input
           type="text"
@@ -95,7 +95,7 @@ export default function PaymentForm() {
           onBlur={handleBlur}
           value={values?.name}
           name="name"
-          placeholder={t("fields.enterName")}
+          placeholder={t?.("fields.enterName")}
           fontWeight="500"
           borderColor={errors?.name && touched?.name ? "red.300" : null}
         />
@@ -111,7 +111,7 @@ export default function PaymentForm() {
           fontWeight="500"
           mb="8px"
         >
-          {t("fields.email")}
+          {t?.("fields.email")}
         </FormLabel>
         <Input
           type="text"
@@ -120,7 +120,7 @@ export default function PaymentForm() {
           onBlur={handleBlur}
           value={values?.email}
           name="email"
-          placeholder={t("fields.enterEmail")}
+          placeholder={t?.("fields.enterEmail")}
           fontWeight="500"
           borderColor={errors?.email && touched?.email ? "red.300" : null}
         />
@@ -136,7 +136,7 @@ export default function PaymentForm() {
           fontWeight="500"
           mb="8px"
         >
-          {t("fields.amount")}
+          {t?.("fields.amount")}
         </FormLabel>
         <Input
           type="number"
@@ -144,7 +144,7 @@ export default function PaymentForm() {
           onChange={handleChange}
           onBlur={handleBlur}
           value={values?.amount}
-          placeholder={t("fields.enterAmount")}
+          placeholder={t?.("fields.enterAmount")}
           name="amount"
           fontWeight="500"
           borderColor={errors?.amount && touched?.amount ? "red.300" : null}
@@ -154,7 +154,7 @@ export default function PaymentForm() {
         </Text>
       </GridItem>
       <Button onClick={handleSubmit} variant="brand" size="sm">
-        {t("common.pay")}
+        {t?.("common.pay")}
       </Button>
     </>
   );

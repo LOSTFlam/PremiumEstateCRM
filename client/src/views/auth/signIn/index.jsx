@@ -130,7 +130,7 @@ function SignIn() {
         dispatch(setUser(currentUser));
         console.log("✅ User saved to Redux");
         resetForm();
-        toast.success(t("auth.signIn.loginSuccessfully"));
+        toast.success(t?.("auth.signIn.loginSuccessfully"));
 
         setTimeout(() => {
           console.log("🔍 Checking user role:", currentUser?.role);
@@ -181,7 +181,7 @@ function SignIn() {
           <Flex justify="space-between" align="center" w="100%">
             <Box>
               <Heading color={textColor} fontSize="36px" mb="10px">
-                {t("auth.signIn.title")}
+                {t?.("auth.signIn.title")}
               </Heading>
               <Text
                 mb="36px"
@@ -190,7 +190,7 @@ function SignIn() {
                 fontWeight="400"
                 fontSize="md"
               >
-                {t("auth.signIn.subtitle")}
+                {t?.("auth.signIn.subtitle")}
               </Text>
             </Box>
             <HStack spacing={2}>
@@ -232,7 +232,7 @@ function SignIn() {
                 color={textColor}
                 mb="8px"
               >
-                {t("auth.signIn.email")}<Text color={brandStars}>*</Text>
+                {t?.("auth.signIn.email")}<Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -266,7 +266,7 @@ function SignIn() {
                 color={textColor}
                 display="flex"
               >
-                {t("auth.signIn.password")}<Text color={brandStars}>*</Text>
+                {t?.("auth.signIn.password")}<Text color={brandStars}>*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
@@ -315,7 +315,7 @@ function SignIn() {
                     color={textColor}
                     fontSize="sm"
                   >
-                    {t("auth.signIn.keepLoggedIn")}
+                    {t?.("auth.signIn.keepLoggedIn")}
                   </FormLabel>
                 </FormControl>
               </Flex>
@@ -330,21 +330,21 @@ function SignIn() {
                 mb="24px"
                 disabled={isLoding}
               >
-                {isLoding ? <Spinner /> : t("auth.signIn.signInButton")}
+                {isLoding ? <Spinner /> : t?.("auth.signIn.signInButton")}
               </Button>
             </FormControl>
           </form>
 
           <Flex justifyContent="center" alignItems="center" mt="10px">
             <Text color={textColorSecondary} fontWeight="normal" fontSize="sm">
-              {t("auth.signIn.noAccount")}{" "}
+              {t?.("auth.signIn.noAccount")}{" "}
               <Link
                 as={RouterLink}
                 to="/auth/sign-up"
                 color="brand.500"
                 fontWeight="600"
               >
-                {t("auth.signIn.createAccount")}
+                {t?.("auth.signIn.createAccount")}
               </Link>
             </Text>
           </Flex>

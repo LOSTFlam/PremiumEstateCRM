@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
 import {
   Grid,
@@ -22,6 +23,7 @@ import Editopportunityproject from "./Editopportunityproject";
 import ImportModal from "./components/ImportModal";
 
 const Index = () => {
+  const { t } = useTranslation();
   const title = "Opportunity Project";
   const navigate = useNavigate();
   const dispatch = useDispatch();

@@ -476,8 +476,8 @@ const Editopportunityproject = (props) => {
                     Property<Text color={"red"}>*</Text>
                   </FormLabel>
                   <CUIAutoComplete
-                    items={setValueProperty}
-                    selectedItems={setValueProperty?.filter((item) =>
+                    items={setValueProperty || []}
+                    selectedItems={(setValueProperty || [])?.filter((item) =>
                       values?.property?.includes(item?._id),
                     )}
                     onSelectedItemsChange={(changes) => {

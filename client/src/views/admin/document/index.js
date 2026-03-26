@@ -177,7 +177,7 @@ const Index = () => {
                 fontWeight="500"
                 mb="8px"
               >
-                {t("fields.folderName")}<Text color={"red"}>*</Text>
+                {t?.("fields.folderName")}<Text color={"red"}>*</Text>
               </FormLabel>
               <Input
                 onFocus={onOpen}
@@ -186,7 +186,7 @@ const Index = () => {
                 onBlur={() => setTimeout(onClose, 200)}
                 value={values?.folderName}
                 name="folderName"
-                placeholder={t("fields.enterFolderName")}
+                placeholder={t?.("fields.enterFolderName")}
                 fontWeight="500"
                 borderColor={
                   errors?.folderName && touched?.folderName ? "red.300" : null
@@ -244,7 +244,7 @@ const Index = () => {
                 fontWeight="500"
                 mb="8px"
               >
-                {t("fields.fileName")}
+                {t?.("fields.fileName")}
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -252,7 +252,7 @@ const Index = () => {
                 onBlur={() => setTimeout(onClose, 200)}
                 value={values?.filename}
                 name="filename"
-                placeholder={t("fields.enterFileName")}
+                placeholder={t?.("fields.enterFileName")}
                 fontWeight="500"
                 borderColor={
                   errors?.filename && touched?.filename ? "red.300" : null

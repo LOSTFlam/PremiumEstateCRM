@@ -15,17 +15,32 @@ import { GiClick } from "react-icons/gi";
 import CommonCheckTable from "components/reactTable/checktable";
 import { useDispatch } from "react-redux";
 import { getApi } from "services/api";
-import { fetchAccountData } from "../../redux/slices/accountSlice";
 import { toast } from "react-toastify";
-import moment from "moment";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 
 const OpprtunityModel = (props) => {
-  const { t } = useTranslation();
-  const { onClose, isOpen, fieldName, setFieldValue, data } = props;
-  const title = "Opprtunities";
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
+  const {
+    onClose,
+    isOpen,
+    fieldName,
+    setFieldValue,
+    data,
+  } = props;
+  const title = "Opportunities";
   const dispatch = useDispatch();
-  // const [data, setData] = useState([]);
 
   const [isLoding, setIsLoding] = useState(false);
   const [selectedValues, setSelectedValues] = useState([]);
@@ -41,52 +56,31 @@ const OpprtunityModel = (props) => {
       setIsLoding(false);
     }
   };
+  
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.opportunityName"),
+      Header: safeT("fields.opportunityName", "Opportunity Name"),
       accessor: "opportunityName",
     },
     {
-      Header: t("fields.accountName"),
+      Header: safeT("fields.accountName", "Account Name"),
       accessor: "accountName",
     },
     {
-      Header: t("fields.opportunityAmount"),
+      Header: safeT("fields.opportunityAmount", "Opportunity Amount"),
       accessor: "opportunityAmount",
     },
     {
-      Header: t("fields.expectedCloseDate"),
+      Header: safeT("fields.expectedCloseDate", "Expected Close Date"),
       accessor: "expectedCloseDate",
       cell: (cell) => <div>{moment(cell?.value).format("YYYY-MM-DD")}</div>,
     },
     {
-      Header: t("fields.salesStage"),
+      Header: safeT("fields.salesStage", "Sales Stage"),
       accessor: "salesStage",
     },
   ];
-
-  const [columns, setColumns] = useState([...tableColumns]);
-  const [selectedColumns, setSelectedColumns] = useState([...tableColumns]);
-  const dataColumn = tableColumns?.filter((item) =>
-    selectedColumns?.find((colum) => colum?.Header === item.Header),
-  );
-
-  // const fetchData = async () => {
-  //     setIsLoding(true)
-  //     const result = await dispatch(fetchAccountData())
-
-  //     if (result.payload.status === 200) {
-  //         setData(result?.payload?.data);
-  //     } else {
-  //         toast.error("Failed to fetch data", "error");
-  //     }
-  //     setIsLoding(false)
-  // }
-
-  // useEffect(() => {
-  //     fetchData()
-  // }, [])
 
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
@@ -103,8 +97,7 @@ const OpprtunityModel = (props) => {
             <CommonCheckTable
               title={title}
               isLoding={isLoding}
-              columnData={columns ?? []}
-              // dataColumn={columns ?? []}
+              columnData={tableColumns ?? []}
               allData={data ?? []}
               tableData={data}
               AdvanceSearch={() => ""}

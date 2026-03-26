@@ -19,6 +19,9 @@ i18next
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage']
+    },
+    react: {
+      useSuspense: false
     }
   });
 

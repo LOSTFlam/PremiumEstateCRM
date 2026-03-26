@@ -20,7 +20,18 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const AccountModel = (props) => {
-  const { t } = useTranslation();
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
   const {
     onClose,
     isOpen,
@@ -43,17 +54,11 @@ const AccountModel = (props) => {
   const [selectedValues, setSelectedValues] = useState([]);
   const accountData =
     data?.length > 0 && data?.find((item) => item?._id === selectedValues);
+
   const handleSubmit = async () => {
     try {
       setIsLoding(true);
       setFieldValue(fieldName, selectedValues);
-      // if (type === "quotes") {
-      //     setFieldValue(billingStreet, accountData?.billingStreet)
-      //     setFieldValue(billingState, accountData?.billingState)
-      //     setFieldValue(billingCity, selectedValues?.billingCity)
-      //     setFieldValue(billingPostalCode, selectedValues?.billingPostalcode)
-      //     setFieldValue(billingCountry, selectedValues?.billingCountry)
-      // }
       onClose();
     } catch (e) {
       console.log(e);
@@ -63,10 +68,10 @@ const AccountModel = (props) => {
   };
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-    { Header: t("fields.accountName"), accessor: "name" },
-    { Header: t("fields.officePhone"), accessor: "officePhone" },
-    { Header: t("fields.fax"), accessor: "fax" },
-    { Header: t("fields.emailAddress"), accessor: "emailAddress" },
+    { Header: safeT("fields.accountName", "Account Name"), accessor: "name" },
+    { Header: safeT("fields.officePhone", "Office Phone"), accessor: "officePhone" },
+    { Header: safeT("fields.fax", "Fax"), accessor: "fax" },
+    { Header: safeT("fields.emailAddress", "Email Address"), accessor: "emailAddress" },
   ];
 
   // const fetchData = async () => {

@@ -180,9 +180,10 @@ export default function HeaderLinks(props) {
           p="0px"
           minW="unset"
           height="auto"
-          color={textColorBrand}
+          color={textColor}
           fontSize="sm"
           fontWeight="700"
+          _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
         >
           {currentLanguage.toUpperCase()}
         </MenuButton>
@@ -190,8 +191,8 @@ export default function HeaderLinks(props) {
           boxShadow={shadow}
           p="6px"
           borderRadius="12px"
-          bg={menuBg}
-          border="none"
+          bg={useColorModeValue("white", "navy.900")}
+          border={`1px solid ${useColorModeValue("gray.200", "whiteAlpha.200")}`}
           mt="10px"
           minW="90px"
         >
@@ -202,7 +203,7 @@ export default function HeaderLinks(props) {
             borderRadius="8px"
             onClick={() => handleChangeLanguage("en")}
           >
-            <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.700", "white")}>
+            <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.800", "white")}>
               EN
             </Text>
           </MenuItem>
@@ -213,7 +214,7 @@ export default function HeaderLinks(props) {
             borderRadius="8px"
             onClick={() => handleChangeLanguage("ru")}
           >
-            <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.700", "white")}>
+            <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.800", "white")}>
               RU
             </Text>
           </MenuItem>
@@ -244,7 +245,7 @@ export default function HeaderLinks(props) {
         >
           <Flex jusitfy="space-between" w="100%" mb="20px">
             <Text fontSize="md" fontWeight="600" color={textColor}>
-              {t("navigation.notifications")}
+              {t?.("navigation.notifications")}
             </Text>
             <Text
               fontSize="sm"
@@ -253,7 +254,7 @@ export default function HeaderLinks(props) {
               ms="auto"
               cursor="pointer"
             >
-              {t("navigation.markAllRead")}
+              {t?.("navigation.markAllRead")}
             </Text>
           </Flex>
           <Flex flexDirection="column">
@@ -329,7 +330,7 @@ export default function HeaderLinks(props) {
               px="14px"
             >
               <Text fontSize="sm" onClick={() => navigate(`/admin/`)} color={textColor}>
-                {t("navigation.dashboard")}
+                {t?.("navigation.dashboard")}
               </Text>
             </MenuItem>
 
@@ -341,7 +342,7 @@ export default function HeaderLinks(props) {
                 px="14px"
               >
                 <Text fontSize="sm" onClick={() => navigate("/admin-setting")} color={textColor}>
-                  {t("navigation.adminSettings")}
+                  {t?.("navigation.adminSettings")}
                 </Text>
               </MenuItem>
             )}
@@ -360,7 +361,7 @@ export default function HeaderLinks(props) {
                 }
                 color={textColor}
               >
-                {t("navigation.profileSettings")}
+                {t?.("navigation.profileSettings")}
               </Text>
             </MenuItem>
             {/*<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} borderRadius="8px" px="14px">
@@ -374,7 +375,7 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
             >
-              <Text fontSize="sm" color={textColor}>{t("navigation.logout")}</Text>
+              <Text fontSize="sm" color={textColor}>{t?.("navigation.logout")}</Text>
             </MenuItem>
           </Flex>
         </MenuList>

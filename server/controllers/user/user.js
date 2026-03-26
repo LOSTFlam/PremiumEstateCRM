@@ -278,6 +278,14 @@ const login = async (req, res) => {
 
     console.log("✅ Login successful for user:", user.username);
 
+    // Set httpOnly cookie for better security
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+
     res
       .status(200)
       .setHeader("Authorization", `Bearer ${token}`)

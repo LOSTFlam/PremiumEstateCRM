@@ -11,7 +11,8 @@ export const fetchPropertyData = createAsyncThunk(
           ? "api/property/"
           : `api/property/?createBy=${user._id}`,
       );
-      return response.data;
+      // response is already result.data from getApi
+      return Array.isArray(response) ? response : response?.data || [];
     } catch (error) {
       throw error;
     }

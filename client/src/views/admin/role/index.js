@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button, Text, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { getApi } from "services/api";
@@ -8,6 +9,7 @@ import RoleModal from "./components/roleModal";
 import AddRole from "./Add";
 
 const Index = () => {
+  const { t } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [roleModal, setRoleModal] = useState(false);
   const [access, setAccess] = useState([]);

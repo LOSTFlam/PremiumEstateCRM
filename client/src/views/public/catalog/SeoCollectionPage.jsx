@@ -66,8 +66,8 @@ export default function SeoCollectionPage() {
       <Box minH="100vh" bg={pageBg} py={10}>
         <Container maxW="6xl">
           <Stack spacing={4}>
-            <Heading>{t("publicListing.propertyNotFound")}</Heading>
-            <Button as={RouterLink} to="/offers">{t("publicListing.backToCatalog")}</Button>
+            <Heading>{t?.("publicListing.propertyNotFound")}</Heading>
+            <Button as={RouterLink} to="/offers">{t?.("publicListing.backToCatalog")}</Button>
           </Stack>
         </Container>
       </Box>
@@ -106,7 +106,7 @@ export default function SeoCollectionPage() {
                     ))}
                   </SimpleGrid>
                   <Button as={RouterLink} to="/offers" w="fit-content" variant="outline" borderColor="whiteAlpha.500">
-                    {t("publicListing.backToCatalog")}
+                    {t?.("publicListing.backToCatalog")}
                   </Button>
                 </Stack>
               </GridItem>
@@ -116,12 +116,12 @@ export default function SeoCollectionPage() {
                     <Image src={getPrimaryImage(featuredProperty)} alt={featuredProperty?.name || featuredProperty?.propertyAddress} h={{ base: "260px", md: "420px" }} w="100%" objectFit="cover" />
                     <Stack p={5} spacing={3}>
                       <Heading size="md">{featuredProperty?.name || featuredProperty?.propertyAddress}</Heading>
-                      <Text color="whiteAlpha.800">{featuredProperty?.propertyAddress || t("publicListing.notSpecified")}</Text>
+                      <Text color="whiteAlpha.800">{featuredProperty?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
                       <Heading size="md">{formatPrice(featuredProperty?.listingPrice, t)}</Heading>
                     </Stack>
                   </Box>
                 ) : (
-                  <Box bg="whiteAlpha.120" borderRadius="32px" p={8}><Text>{t("publicListing.noResults")}</Text></Box>
+                  <Box bg="whiteAlpha.120" borderRadius="32px" p={8}><Text>{t?.("publicListing.noResults")}</Text></Box>
                 )}
               </GridItem>
             </Grid>
@@ -135,10 +135,10 @@ export default function SeoCollectionPage() {
                     <Image src={getPrimaryImage(property)} alt={property?.name || property?.propertyAddress} h="230px" w="100%" objectFit="cover" />
                     <Stack p={5} spacing={3}>
                       <Heading size="md" noOfLines={2}>{property?.name || property?.propertyAddress}</Heading>
-                      <Text color={mutedColor} noOfLines={2}>{property?.marketingDescription || property?.propertyDescription || t("publicListing.notSpecified")}</Text>
+                      <Text color={mutedColor} noOfLines={2}>{property?.marketingDescription || property?.propertyDescription || t?.("publicListing.notSpecified")}</Text>
                       <Heading size="md" color="green.600">{formatPrice(property?.listingPrice, t)}</Heading>
                       <Button as={RouterLink} to={`/offers/${property?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>
-                        {t("publicListing.viewOffer")}
+                        {t?.("publicListing.viewOffer")}
                       </Button>
                     </Stack>
                   </Box>
@@ -152,8 +152,8 @@ export default function SeoCollectionPage() {
                     property={featuredProperty}
                     agent={featuredProperty?.agent}
                     collectionSlug={slug}
-                    title={t("publicListing.collectionLeadTitle")}
-                    subtitle={t("publicListing.collectionLeadText")}
+                    title={t?.("publicListing.collectionLeadTitle")}
+                    subtitle={t?.("publicListing.collectionLeadText")}
                   />
                 )}
                 <Box bg={cardBg} borderRadius="32px" p={6} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>

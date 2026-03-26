@@ -59,7 +59,7 @@ import { useTranslation } from "react-i18next";
 const View = () => {
   const param = useParams();
   const user = JSON.parse(localStorage.getItem("user"));
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const textColor = useColorModeValue("gray.500", "white");
 
@@ -121,11 +121,11 @@ const View = () => {
 
   const columnsDataColumns = [
     {
-      Header: t("modules.lead.view.columns.sender"),
+      Header: t?.("modules.lead.view.columns.sender"),
       accessor: "senderName",
     },
     {
-      Header: t("modules.lead.view.columns.recipient"),
+      Header: t?.("modules.lead.view.columns.recipient"),
       accessor: "createByName",
       cell: (cell) => (
         <Link to={`/Email/${cell?.row?.original?._id}`}>
@@ -144,7 +144,7 @@ const View = () => {
       ),
     },
     {
-      Header: t("modules.lead.view.columns.timeStamp"),
+      Header: t?.("modules.lead.view.columns.timeStamp"),
       accessor: "timestamp",
       cell: (cell) => (
         <div className="selectOpt">
@@ -155,7 +155,7 @@ const View = () => {
       ),
     },
     {
-      Header: t("modules.lead.view.columns.created"),
+      Header: t?.("modules.lead.view.columns.created"),
       accessor: "createBy",
       cell: (cell) => (
         <div className="selectOpt">
@@ -168,11 +168,11 @@ const View = () => {
   ];
   const callColumns = [
     {
-      Header: t("modules.lead.view.columns.sender"),
+      Header: t?.("modules.lead.view.columns.sender"),
       accessor: "senderName",
     },
     {
-      Header: t("modules.lead.view.columns.recipient"),
+      Header: t?.("modules.lead.view.columns.recipient"),
       accessor: "createByName",
       cell: (cell) => (
         <Link to={`/phone-call/${cell?.row?.original?._id}`}>
@@ -191,7 +191,7 @@ const View = () => {
       ),
     },
     {
-      Header: t("modules.lead.view.columns.timeStamp"),
+      Header: t?.("modules.lead.view.columns.timeStamp"),
       accessor: "timestamp",
       cell: (cell) => (
         <div className="selectOpt">
@@ -202,7 +202,7 @@ const View = () => {
       ),
     },
     {
-      Header: t("modules.lead.view.columns.created"),
+      Header: t?.("modules.lead.view.columns.created"),
       accessor: "createBy",
       cell: (cell) => (
         <div className="selectOpt">
@@ -215,7 +215,7 @@ const View = () => {
   ];
   const MeetingColumns = [
     {
-      Header: t("modules.lead.view.columns.agenda"),
+      Header: t?.("modules.lead.view.columns.agenda"),
       accessor: "agenda",
       cell: (cell) => (
         <Link to={`/metting/${cell?.row?.original?._id}`}>
@@ -233,9 +233,9 @@ const View = () => {
         </Link>
       ),
     },
-    { Header: t("modules.lead.view.columns.dateTime"), accessor: "dateTime" },
+    { Header: t?.("modules.lead.view.columns.dateTime"), accessor: "dateTime" },
     {
-      Header: t("modules.lead.view.columns.timesTamp"),
+      Header: t?.("modules.lead.view.columns.timesTamp"),
       accessor: "timestamp",
       cell: (cell) => (
         <div className="selectOpt">
@@ -245,11 +245,11 @@ const View = () => {
         </div>
       ),
     },
-    { Header: t("modules.lead.view.columns.createdBy"), accessor: "createdByName" },
+    { Header: t?.("modules.lead.view.columns.createdBy"), accessor: "createdByName" },
   ];
   const taskColumns = [
     {
-      Header: t("modules.lead.view.columns.title"),
+      Header: t?.("modules.lead.view.columns.title"),
       accessor: "title",
       type: "text",
       formikType: "",
@@ -271,13 +271,13 @@ const View = () => {
         </div>
       ),
     },
-    { Header: t("modules.lead.view.columns.category"), accessor: "category" },
-    { Header: t("modules.lead.view.columns.assignTo"), accessor: "assignToName" },
-    { Header: t("modules.lead.view.columns.startDate"), accessor: "start" },
-    { Header: t("modules.lead.view.columns.endDate"), accessor: "end" },
+    { Header: t?.("modules.lead.view.columns.category"), accessor: "category" },
+    { Header: t?.("modules.lead.view.columns.assignTo"), accessor: "assignToName" },
+    { Header: t?.("modules.lead.view.columns.startDate"), accessor: "start" },
+    { Header: t?.("modules.lead.view.columns.endDate"), accessor: "end" },
   ];
   const tableColumns = [
-    { Header: t("modules.lead.view.columns.type"), accessor: "type" },
+    { Header: t?.("modules.lead.view.columns.type"), accessor: "type" },
     {
       Header: t(
         "modules.lead.view.columns.lastCommunication"
@@ -351,7 +351,7 @@ const View = () => {
       let result = await getApi(`api/document/download/`, data);
       if (result && result?.status === 200) {
         window.open(`${constant?.baseUrl}api/document/download/${data}`);
-        toast.success(t("messages.fileDownloadSuccessful"));
+        toast.success(t?.("messages.fileDownloadSuccessful"));
       } else if (result && result?.response?.status === 404) {
         toast.error("file Not Found");
       }
@@ -474,14 +474,14 @@ const View = () => {
                     },
                   }}
                 >
-                  <Tab>{t("modules.lead.view.tabs.information")}</Tab>
+                  <Tab>{t?.("modules.lead.view.tabs.information")}</Tab>
                   {(emailAccess?.view ||
                     callAccess?.view ||
                     taskAccess?.view ||
                     meetingAccess?.view) && (
-                      <Tab>{t("modules.lead.view.tabs.communication")}</Tab>
+                      <Tab>{t?.("modules.lead.view.tabs.communication")}</Tab>
                     )}
-                  <Tab>{t("modules.lead.view.tabs.document")}</Tab>
+                  <Tab>{t?.("modules.lead.view.tabs.document")}</Tab>
                 </TabList>
               </GridItem>
               <GridItem
@@ -502,7 +502,7 @@ const View = () => {
                           as={Button}
                           rightIcon={<ChevronDownIcon />}
                         >
-                          {t("common.actions")}
+                          {t?.("common.actions")}
                         </MenuButton>
                       )}
                     <MenuDivider />
@@ -514,7 +514,7 @@ const View = () => {
                           alignItems={"start"}
                           icon={<AddIcon />}
                         >
-                          {t("common.add")}
+                          {t?.("common.add")}
                         </MenuItem>
                       )}
 
@@ -527,7 +527,7 @@ const View = () => {
                           alignItems={"start"}
                           icon={<EditIcon />}
                         >
-                          {t("common.edit")}
+                          {t?.("common.edit")}
                         </MenuItem>
                       )}
                       <MenuItem
@@ -537,7 +537,7 @@ const View = () => {
                         display={"flex"}
                         style={{ alignItems: "center" }}
                       >
-                        {t("modules.lead.view.printAsPdf")}
+                        {t?.("modules.lead.view.printAsPdf")}
                       </MenuItem>
                       {(user?.role === "superAdmin" || permission?.delete) && (
                         <>
@@ -548,7 +548,7 @@ const View = () => {
                             onClick={() => setDelete(true)}
                             icon={<DeleteIcon />}
                           >
-                            {t("common.delete")}
+                            {t?.("common.delete")}
                           </MenuItem>
                         </>
                       )}
@@ -560,7 +560,7 @@ const View = () => {
                       size="sm"
                       variant="brand"
                     >
-                      {t("common.back")}
+                      {t?.("common.back")}
                     </Button>
                   </Link>
                 </Flex>
@@ -585,7 +585,7 @@ const View = () => {
                         fontWeight="bold"
                         color={"blackAlpha.900"}
                       >
-                        {t("modules.lead.associatedListing")}
+                        {t?.("modules.lead.associatedListing")}
                       </Text>
                       <Text>
                         {data?.associatedListing?.name
@@ -599,7 +599,7 @@ const View = () => {
                         fontWeight="bold"
                         color={"blackAlpha.900"}
                       >
-                        {t("modules.lead.assignToUser")}
+                        {t?.("modules.lead.assignToUser")}
                       </Text>
                       <Text>
                         {findUser?.firstName} {findUser?.lastName}
@@ -609,7 +609,7 @@ const View = () => {
                 </Card>
                 <Card mt={3}>
                   <CommonCheckTable
-                    title={t("modules.lead.view.history")}
+                    title={t?.("modules.lead.view.history")}
                     isLoding={isLoding}
                     columnData={tableColumns ?? []}
                     allData={consolidatedData || []}
@@ -680,8 +680,8 @@ const View = () => {
                                   }
                                 >
                                   {showEmail
-                                    ? t("modules.lead.view.showLess")
-                                    : t("modules.lead.view.showMore")}
+                                    ? t?.("modules.lead.view.showLess")
+                                    : t?.("modules.lead.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -739,8 +739,8 @@ const View = () => {
                                   }
                                 >
                                   {showCall
-                                    ? t("modules.lead.view.showLess")
-                                    : t("modules.lead.view.showMore")}
+                                    ? t?.("modules.lead.view.showLess")
+                                    : t?.("modules.lead.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -798,8 +798,8 @@ const View = () => {
                                   }
                                 >
                                   {showTasks
-                                    ? t("modules.lead.view.showLess")
-                                    : t("modules.lead.view.showMore")}
+                                    ? t?.("modules.lead.view.showLess")
+                                    : t?.("modules.lead.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -859,8 +859,8 @@ const View = () => {
                                   }
                                 >
                                   {showMeetings
-                                    ? t("modules.lead.view.showLess")
-                                    : t("modules.lead.view.showMore")}
+                                    ? t?.("modules.lead.view.showLess")
+                                    : t?.("modules.lead.view.showMore")}
                                 </Button>
                               </div>
                             )}
@@ -880,7 +880,7 @@ const View = () => {
                       mb="2"
                     >
                       <Heading size="md" mb={3}>
-                        {t("modules.lead.view.documents")}
+                        {t?.("modules.lead.view.documents")}
                       </Heading>
                       <Button
                         leftIcon={<AddIcon />}
@@ -888,7 +888,7 @@ const View = () => {
                         variant="brand"
                         onClick={() => setAddDocument(true)}
                       >
-                        {t("modules.lead.view.addDocument")}
+                        {t?.("modules.lead.view.addDocument")}
                       </Button>
                     </Flex>
                     <HSeparator />
@@ -940,7 +940,7 @@ const View = () => {
                           variant="outline"
                           colorScheme="green"
                         >
-                          {t("common.edit")}
+                          {t?.("common.edit")}
                         </Button>
                       ) : (
                         ""
@@ -953,7 +953,7 @@ const View = () => {
                           leftIcon={<DeleteIcon />}
                           colorScheme="red"
                         >
-                          {t("common.delete")}
+                          {t?.("common.delete")}
                         </Button>
                       ) : (
                         ""

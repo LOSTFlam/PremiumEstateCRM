@@ -259,9 +259,9 @@ const AddMeeting = (props) => {
                         label={`Choose Preferred Attendes ${values?.related === "Contact" ? "Contact" : values?.related === "Lead" && "Lead"}`}
                         placeholder="Type a Name"
                         name="attendes"
-                        items={countriesWithEmailAsLabel}
+                        items={countriesWithEmailAsLabel || []}
                         className="custom-autoComplete"
-                        selectedItems={countriesWithEmailAsLabel?.filter(
+                        selectedItems={(countriesWithEmailAsLabel || [])?.filter(
                           (item) =>
                             values?.related === "Contact"
                               ? values?.attendes?.includes(item?._id)

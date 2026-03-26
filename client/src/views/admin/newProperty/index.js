@@ -28,6 +28,7 @@ import { FaHome } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { deleteManyApi } from "services/api";
 import Spinner from "../../../components/spinner/Spinner";
 import { HasAccess } from "../../../redux/accessUtils";
@@ -42,6 +43,7 @@ import { BsColumnsGap } from "react-icons/bs";
 import CustomSearchInput from "components/search/search";
 
 const Index = () => {
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const dispatch = useDispatch();

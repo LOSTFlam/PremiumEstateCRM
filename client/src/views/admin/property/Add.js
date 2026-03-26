@@ -11,11 +11,23 @@ import {
 } from "@chakra-ui/react";
 import Spinner from "components/spinner/Spinner";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { postApi } from "services/api";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
+import PropertyPhotoManager from "components/property/PropertyPhotoManager";
+import { Flex, Box, Input } from "@chakra-ui/react";
+import { toast } from "react-toastify";
+
+// Функция для генерации slug из названия
+const generateSlug = (text) => {
+  return text
+    ?.toLowerCase()
+    .replace(/[^a-z0-9а-яё]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120) || '';
+};
 
 const Add = (props) => {
   const [isLoding, setIsLoding] = useState(false);
@@ -27,6 +39,7 @@ const Add = (props) => {
   const initialValues = {
     ...initialFieldValues,
     createBy: JSON.parse(localStorage.getItem("user"))._id,
+    publicSlug: '', // Автоматическая генерация slug
   };
 
   const formik = useFormik({
@@ -51,6 +64,15 @@ const Add = (props) => {
     setFieldValue,
   } = formik;
 
+  // Авто-генерация slug при изменении name или propertyAddress
+  useEffect(() => {
+    const name = values?.name || values?.propertyAddress;
+    if (name && !values?.publicSlug) {
+      const slug = generateSlug(name);
+      setFieldValue('publicSlug', slug);
+    }
+  }, [values?.name, values?.propertyAddress]);
+
   const AddData = async () => {
     try {
       setIsLoding(true);
@@ -59,12 +81,28 @@ const Add = (props) => {
         moduleId: props?.propertyData?._id,
       });
       if (response?.status === 200) {
-        props.onClose();
-        formik.resetForm();
+        // Property created successfully, now user can add photos
+        // Keep the drawer open and show photo upload section
         props.setAction((pre) => !pre);
+        // Update values with the new property ID
+        if (response?.data?._id) {
+          formik.setFieldValue('_id', response.data._id);
+        }
+        toast({
+          title: 'Property created',
+          description: 'You can now upload photos',
+          status: 'success',
+          duration: 3000,
+        });
       }
     } catch (e) {
       console.log(e);
+      toast({
+        title: 'Error',
+        description: e?.response?.data?.error || 'Failed to create property',
+        status: 'error',
+        duration: 3000,
+      });
     } finally {
       setIsLoding(false);
     }
@@ -93,6 +131,18 @@ const Add = (props) => {
               errors={errors}
               touched={touched}
             />
+            {/* Photo Upload Section */}
+            <Box mt={6} mb={4}>
+              <PropertyPhotoManager
+                propertyId={values?._id}
+                photos={values?.propertyPhotos || []}
+                onChange={(newPhotos) => {
+                  setFieldValue('propertyPhotos', newPhotos);
+                }}
+                isOpen={true}
+                onClose={() => {}}
+              />
+            </Box>
           </DrawerBody>
 
           <DrawerFooter>

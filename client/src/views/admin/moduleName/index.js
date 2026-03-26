@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -28,6 +29,7 @@ import { deleteApi } from "services/api";
 import { fetchModules } from "../../../redux/slices/moduleSlice";
 
 const Index = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [editModal, setEdit] = useState(false);
   const [viewModal, setViewModal] = useState(false);

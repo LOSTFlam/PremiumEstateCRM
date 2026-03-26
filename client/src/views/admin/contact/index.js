@@ -36,7 +36,7 @@ import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { t } = useTranslation();
-  const title = t("modules.contact.title");
+  const title = t?.("modules.contact.title");
   const navigate = useNavigate();
   const [permission, emailAccess, callAccess] = HasAccess([
     "Contacts",
@@ -72,12 +72,22 @@ const Index = () => {
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchContactCustomFiled());
-    if (result?.payload?.status === 200) {
-      setContactData(result?.payload?.data);
-    } else {
-      toast.error("Failed to fetch data", "error");
+    let contactData = [];
+    try {
+      const result = await dispatch(fetchContactCustomFiled());
+      // API returns array directly, not {status, data}
+      contactData = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
+    } catch (error) {
+      console.error('Error fetching custom fields:', error);
+      toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
+    } finally {
+      setIsLoding(false);
     }
+
     const actionHeader = {
       Header: "Action",
       accessor: "action",
@@ -102,7 +112,7 @@ const Index = () => {
                     setSelectedId(row?.values?._id);
                   }}
                 >
-                  {t("modules.contact.actions.edit")}
+                  {t?.("modules.contact.actions.edit")}
                 </MenuItem>
               )}
               {callAccess?.create && (
@@ -116,7 +126,7 @@ const Index = () => {
                   }}
                   icon={<PhoneIcon fontSize={15} mb={1} />}
                 >
-                  {t("modules.contact.actions.createCall")}
+                  {t?.("modules.contact.actions.createCall")}
                 </MenuItem>
               )}
               {emailAccess?.create && (
@@ -129,7 +139,7 @@ const Index = () => {
                   }}
                   icon={<EmailIcon fontSize={15} mb={1} />}
                 >
-                  {t("modules.contact.actions.emailSend")}
+                  {t?.("modules.contact.actions.emailSend")}
                 </MenuItem>
               )}
               {permission?.view && (
@@ -141,7 +151,7 @@ const Index = () => {
                     navigate(`/contactView/${row?.values?._id}`);
                   }}
                 >
-                  {t("modules.contact.actions.view")}
+                  {t?.("modules.contact.actions.view")}
                 </MenuItem>
               )}
               {permission?.delete && (
@@ -154,7 +164,7 @@ const Index = () => {
                     setSelectedValues([row?.values?._id]);
                   }}
                 >
-                  {t("modules.contact.actions.delete")}
+                  {t?.("modules.contact.actions.delete")}
                 </MenuItem>
               )}
             </MenuList>
@@ -165,8 +175,8 @@ const Index = () => {
 
     const tempTableColumns = [
       { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      ...(result?.payload?.data && result?.payload?.data?.length > 0
-        ? result?.payload?.data[0]?.fields
+      ...(contactData && contactData?.length > 0
+        ? contactData[0]?.fields
             ?.filter((field) => field?.isTableField === true && field?.isView)
             ?.map((field) => ({
               Header: t(`fields.${field?.name}`) || field?.label,
@@ -195,7 +205,7 @@ const Index = () => {
               ),
             })) || []
         : []),
-      ...(result?.payload?.data?.[0]?.fields || []) // Check if fields is defined, if not, use empty array
+      ...(contactData?.[0]?.fields || []) // Check if fields is defined, if not, use empty array
         ?.filter((field) => field?.isTableField === true && !field?.isView) // Filter out fields where isTableField is true
         ?.map((field) => ({ Header: t(`fields.${field?.name}`) || field?.label, accessor: field?.name })),
       ...(permission?.update || permission?.view || permission?.delete
@@ -204,7 +214,9 @@ const Index = () => {
     ];
 
     setColumns(tempTableColumns);
-    setIsLoding(false);
+    if (contactData.length > 0) {
+      setContactData(contactData);
+    }
   };
 
   const handleDeleteContact = async (ids) => {

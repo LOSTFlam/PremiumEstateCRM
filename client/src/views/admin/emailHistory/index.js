@@ -23,8 +23,10 @@ import AddEmailHistory from "./add";
 import { useDispatch } from "react-redux";
 import { fetchEmailsData } from "../../../redux/slices/emailsSlice";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const Index = (props) => {
+  const { t } = useTranslation();
   const title = "Email";
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -126,7 +128,7 @@ const Index = (props) => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.recipient"),
+      Header: t?.("fields.recipient") || "Recipient",
       accessor: "createByName",
       cell: (cell) => (
         <Link to={`/Email/${cell?.row?.values?._id}`}>
@@ -144,9 +146,9 @@ const Index = (props) => {
         </Link>
       ),
     },
-    { Header: t("fields.senderName"), accessor: "senderName" },
+    { Header: t?.("fields.senderName") || "Sender Name", accessor: "senderName" },
     {
-      Header: t("fields.realtedTo"),
+      Header: t?.("fields.realtedTo") || "Related To",
       accessor: "realeted",
       cell: ({ row }) => (
         <Text>
@@ -192,9 +194,9 @@ const Index = (props) => {
         </Text>
       ),
     },
-    { Header: t("fields.timestamp"), accessor: "timestamp" },
+    { Header: t?.("fields.timestamp") || "Timestamp", accessor: "timestamp" },
     {
-      Header: t("fields.created"),
+      Header: t?.("fields.created") || "Created",
       accessor: "created",
       cell: ({ row }) => (
         <Text fontSize="sm" fontWeight="700">
@@ -209,11 +211,14 @@ const Index = (props) => {
 
   const fetchData = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchEmailsData());
-    let response = [...result?.payload?.data];
+    try {
+      const result = await dispatch(fetchEmailsData());
+      let response = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
 
-    response &&
-      response?.length > 0 &&
       response?.forEach((element) => {
         if (Object.isExtensible(element)) {
           if (element.createByLead) {
@@ -233,12 +238,16 @@ const Index = (props) => {
           element = modifiedElement;
         }
       });
-    if (result?.payload?.status === 200) {
-      setData(response);
-    } else {
-      toast.error("Failed to fetch data", "error");
+      
+      if (response.length > 0) {
+        setData(response);
+      }
+    } catch (error) {
+      console.error('Error fetching emails:', error);
+      toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
+    } finally {
+      setIsLoding(false);
     }
-    setIsLoding(false);
   };
 
   // const [columns, setColumns] = useState([...tableColumns]);

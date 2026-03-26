@@ -13,9 +13,9 @@ const Index = () => {
     <div>
       <Tabs>
         <TabList sx={{ "& button:focus": { boxShadow: "none" } }}>
-          <Tab>{t("modules.communication.email")}</Tab>
-          <Tab>{t("modules.communication.call")}</Tab>
-          <Tab>{t("modules.communication.textMsg")}</Tab>
+          <Tab>{t?.("modules.communication.email")}</Tab>
+          <Tab>{t?.("modules.communication.call")}</Tab>
+          <Tab>{t?.("modules.communication.textMsg")}</Tab>
         </TabList>
 
         <TabPanels>

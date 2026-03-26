@@ -1,6 +1,7 @@
 const express = require("express");
 const property = require("./property");
 const auth = require("../../middelwares/auth");
+const { propertyValidation } = require("../../middelwares/validation");
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ router.get("/public", property.publicIndex);
 router.get("/public/:id", property.publicView);
 
 router.get("/", auth, property.index);
-router.post("/add", auth, property.add);
+router.post("/add", auth, propertyValidation.create, property.add);
 router.post("/add-units/:id", auth, property.addUnits);
 router.put("/edit-unit/:id", auth, property.editUnit);
 router.post("/delete-unit-type/:id", auth, property.deleteUnitType);
@@ -26,8 +27,8 @@ router.post(
 
 router.put("/verify/:id", auth, property.verifyListing);
 router.get("/view/:id", auth, property.view);
-router.put("/edit/:id", auth, property.edit);
-router.delete("/delete/:id", auth, property.deleteData);
+router.put("/edit/:id", auth, propertyValidation.update, property.edit);
+router.delete("/delete/:id", auth, propertyValidation.delete, property.deleteData);
 router.post("/deleteMany", auth, property.deleteMany);
 router.post(
   "/update-unit-type/:id/:unitid/:newUnitType",

@@ -27,8 +27,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchTaskData } from "../../../redux/slices/taskSlice";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const Task = () => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [edit, setEdit] = useState(false);
@@ -124,7 +126,7 @@ const Task = () => {
       width: 5,
     },
     {
-      Header: t("fields.title"),
+      Header: t?.("fields.title") || "Title",
       accessor: "title",
       type: "text",
       formikType: "",
@@ -146,9 +148,9 @@ const Task = () => {
         </div>
       ),
     },
-    { Header: t("fields.related"), accessor: "category", type: "text", formikType: "" },
+    { Header: t?.("fields.related") || "Related", accessor: "category", type: "text", formikType: "" },
     {
-      Header: t("fields.status"),
+      Header: t?.("fields.status") || "Status",
       accessor: "status",
       type: "select",
       formikType: "",
@@ -172,13 +174,13 @@ const Task = () => {
       ),
     },
     {
-      Header: t("fields.assignTo"),
+      Header: t?.("fields.assignTo") || "Assign To",
       accessor: "assignToName",
       type: "text",
       formikType: "",
     },
-    { Header: t("fields.startDate"), accessor: "start", type: "date", formikType: "" },
-    { Header: t("fields.endDate"), accessor: "end", type: "date", formikType: "" },
+    { Header: t?.("fields.startDate") || "Start Date", accessor: "start", type: "date", formikType: "" },
+    { Header: t?.("fields.endDate") || "End Date", accessor: "end", type: "date", formikType: "" },
     ...(permission?.update || permission?.view || permission?.delete
       ? [actionHeader]
       : []),
@@ -187,8 +189,9 @@ const Task = () => {
   const fetchData = async () => {
     setIsLoding(true);
     const result = await dispatch(fetchTaskData());
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
+    const data = Array.isArray(result?.payload) ? result.payload : Array.isArray(result?.payload?.data) ? result.payload.data : [];
+      if (data.length > 0) {
+      setData(data);
     } else {
       toast.error("Failed to fetch data", "error");
     }

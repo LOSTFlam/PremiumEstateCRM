@@ -18,6 +18,16 @@ import { getApi, putApi } from "services/api";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
+import PropertyPhotoManager from "components/property/PropertyPhotoManager";
+
+// Функция для генерации slug из названия
+const generateSlug = (text) => {
+  return text
+    ?.toLowerCase()
+    .replace(/[^a-z0-9а-яё]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 120) || '';
+};
 
 const Edit = (props) => {
   const { data } = props;
@@ -99,6 +109,15 @@ const Edit = (props) => {
     fetchData();
   }, [props?.selectedId, data]);
 
+  // Авто-генерация slug при изменении name или propertyAddress
+  useEffect(() => {
+    const name = values?.name || values?.propertyAddress;
+    if (name && !values?.publicSlug) {
+      const slug = generateSlug(name);
+      setFieldValue('publicSlug', slug);
+    }
+  }, [values?.name, values?.propertyAddress]);
+
   return (
     <div>
       <Drawer isOpen={props?.isOpen} size={props?.size}>
@@ -122,15 +141,27 @@ const Edit = (props) => {
                 <Spinner />
               </Flex>
             ) : (
-              <CustomForm
-                moduleData={props?.propertyData}
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                errors={errors}
-                touched={touched}
-              />
+              <Flex direction="column" gap={4}>
+                <CustomForm
+                  moduleData={props?.propertyData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  errors={errors}
+                  touched={touched}
+                />
+                {/* Property Photo Manager */}
+                <PropertyPhotoManager
+                  propertyId={props?.selectedId || param?.id}
+                  photos={values?.propertyPhotos || data?.propertyPhotos || []}
+                  onChange={(photos) => {
+                    setFieldValue('propertyPhotos', photos);
+                  }}
+                  isOpen={true}
+                  onClose={() => {}}
+                />
+              </Flex>
             )}
           </DrawerBody>
           <DrawerFooter>

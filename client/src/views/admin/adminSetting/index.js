@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Icon, SimpleGrid } from "@chakra-ui/react";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
@@ -11,6 +12,7 @@ import { VscFileSubmodule } from "react-icons/vsc";
 import { IoIosSwitch } from "react-icons/io";
 
 const Index = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   return (
     <div>

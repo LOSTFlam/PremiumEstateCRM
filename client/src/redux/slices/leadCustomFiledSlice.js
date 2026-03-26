@@ -7,7 +7,8 @@ export const fetchLeadCustomFiled = createAsyncThunk(
     const user = JSON.parse(localStorage.getItem("user"));
     try {
       const response = await getApi(`api/custom-field/?moduleName=Leads`);
-      return response;
+      // response is already result.data from getApi
+      return Array.isArray(response) ? response : response?.data || [];
     } catch (error) {
       throw error;
     }

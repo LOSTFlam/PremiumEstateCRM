@@ -43,7 +43,7 @@ import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { t } = useTranslation();
-  const title = t("modules.lead.title");
+  const title = t?.("modules.lead.title");
   const size = "lg";
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -138,14 +138,18 @@ const Index = () => {
 
     try {
       const result = await dispatch(fetchLeadCustomFiled());
-      if (result?.payload?.status === 200) {
-        setLeadData(result?.payload?.data);
-      } else {
-        toast.error(t("messages.errorOccurred"), "error");
+      const data = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
+      
+      if (data.length > 0) {
+        setLeadData(data);
       }
 
       const actionHeader = {
-        Header: t("modules.lead.actions.action"),
+        Header: t?.("modules.lead.actions.action") || "Actions",
         accessor: "action",
         isSortable: false,
         center: true,
@@ -168,7 +172,7 @@ const Index = () => {
                       setSelectedId(row?.values?._id);
                     }}
                   >
-                    {t("modules.lead.actions.edit")}
+                    {t?.("modules.lead.actions.edit")}
                   </MenuItem>
                 )}
                 {callAccess?.create && (
@@ -182,7 +186,7 @@ const Index = () => {
                     }}
                     icon={<PhoneIcon fontSize={15} mb={1} />}
                   >
-                    {t("modules.lead.actions.createCall")}
+                    {t?.("modules.lead.actions.createCall")}
                   </MenuItem>
                 )}
                 {emailAccess?.create && (
@@ -195,7 +199,7 @@ const Index = () => {
                     }}
                     icon={<EmailIcon fontSize={15} mb={1} />}
                   >
-                    {t("modules.lead.actions.emailSend")}{" "}
+                    {t?.("modules.lead.actions.emailSend")}{" "}
                   </MenuItem>
                 )}
                 {permission?.view && (
@@ -209,7 +213,7 @@ const Index = () => {
                       });
                     }}
                   >
-                    {t("modules.lead.actions.view")}
+                    {t?.("modules.lead.actions.view")}
                   </MenuItem>
                 )}
                 {permission?.delete && (
@@ -222,7 +226,7 @@ const Index = () => {
                       setSelectedValues([row?.values?._id]);
                     }}
                   >
-                    {t("modules.lead.actions.delete")}
+                    {t?.("modules.lead.actions.delete")}
                   </MenuItem>
                 )}
               </MenuList>
@@ -249,25 +253,25 @@ const Index = () => {
                 style={{ fontSize: "14px" }}
               >
                 <option value="active">
-                  {t("modules.lead.statusOptions.active")}
+                  {t?.("modules.lead.statusOptions.active")}
                 </option>
                 <option value="sold">
-                  {t("modules.lead.statusOptions.sold")}
+                  {t?.("modules.lead.statusOptions.sold")}
                 </option>
                 <option value="pending">
-                  {t("modules.lead.statusOptions.pending")}
+                  {t?.("modules.lead.statusOptions.pending")}
                 </option>
               </Select>
             </div>
           ),
         },
-        ...(result?.payload?.data && result?.payload?.data?.length > 0
-          ? result?.payload?.data[0]?.fields
+        ...(leadData && leadData?.length > 0
+          ? leadData[0]?.fields
               ?.filter((field) => field?.isTableField === true && field?.isView)
               ?.map(
                 (field) =>
                   field?.name !== "leadStatus" && {
-                    Header: t(`fields.${field?.name}`) || field?.label,
+                    Header: t?.(`fields.${field?.name}`) || field?.label,
                     accessor: field?.name,
                     cell: (cell) => (
                       <div className="selectOpt">
@@ -294,8 +298,8 @@ const Index = () => {
                   }
               ) || []
           : []),
-        ...(result?.payload?.data && result?.payload?.data?.length > 0
-          ? result?.payload?.data[0]?.fields
+        ...(leadData && leadData?.length > 0
+          ? leadData[0]?.fields
               ?.filter(
                 (field) =>
                   field?.isTableField === true &&
@@ -303,7 +307,7 @@ const Index = () => {
                   field?.name !== "leadStatus"
               )
               ?.map((field) => ({
-                Header: t(`fields.${field?.name}`) || field?.label,
+                Header: t?.(`fields.${field?.name}`) || field?.label,
                 accessor: field?.name,
               })) || []
           : []),
@@ -316,7 +320,7 @@ const Index = () => {
       setIsLoding(false);
     } catch (error) {
       console?.error("Error fetching custom data fields:", error);
-      toast.error(t("messages.errorOccurred"), "error");
+      toast.error(t?.("messages.errorOccurred"), "error");
     }
   };
 
@@ -428,7 +432,7 @@ const Index = () => {
         <CommonDeleteModel
           isOpen={deleteModel}
           onClose={() => setDelete(false)}
-          type={t("modules.lead.title")}
+          type={t?.("modules.lead.title")}
           handleDeleteData={handleDeleteLead}
           ids={selectedValues}
         />
@@ -455,7 +459,7 @@ const Index = () => {
       )}
       {isImport && (
         <ImportModal
-          text={t("modules.lead.import.leadFile")}
+          text={t?.("modules.lead.import.leadFile")}
           isOpen={isImport}
           onClose={setIsImport}
           customFields={leadData?.[0]?.fields || []}

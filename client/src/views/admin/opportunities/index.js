@@ -26,8 +26,10 @@ import OpprtunityAdvanceSearch from "./components/OpprtunityAdvanceSearch";
 import { fetchOpportunityData } from "../../../redux/slices/opportunitySlice";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import ImportModal from "./components/ImportModel";
+import { useTranslation } from "react-i18next";
 
 const Index = (props) => {
+  const { t } = useTranslation();
   const title = "Opprtunities";
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -111,7 +113,7 @@ const Index = (props) => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.opportunityName"),
+      Header: t?.("fields.opportunityName"),
       accessor: "opportunityName",
       cell: (cell) => (
         <div className="selectOpt">
@@ -132,7 +134,7 @@ const Index = (props) => {
       ),
     },
     {
-      Header: t("fields.accountName"),
+      Header: t?.("fields.accountName"),
       accessor: "accountName",
       cell: (cell) =>
         user?.role === "superAdmin" || accountAccess?.view ? (
@@ -167,16 +169,16 @@ const Index = (props) => {
         ),
     },
     {
-      Header: t("fields.opportunityAmount"),
+      Header: t?.("fields.opportunityAmount"),
       accessor: "opportunityAmount",
     },
     {
-      Header: t("fields.expectedCloseDate"),
+      Header: t?.("fields.expectedCloseDate"),
       accessor: "expectedCloseDate",
       cell: (cell) => <div>{moment(cell?.value).format("YYYY-MM-DD")}</div>,
     },
     {
-      Header: t("fields.salesStage"),
+      Header: t?.("fields.salesStage"),
       accessor: "salesStage",
     },
     ...(permission?.update || permission?.view || permission?.delete
@@ -531,8 +533,9 @@ const Index = (props) => {
     setIsLoding(true);
     const result = await dispatch(fetchOpportunityData());
 
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
+    const data = Array.isArray(result?.payload) ? result.payload : Array.isArray(result?.payload?.data) ? result.payload.data : [];
+      if (data.length > 0) {
+      setData(data);
     } else {
       toast.error("Failed to fetch data", "error");
     }

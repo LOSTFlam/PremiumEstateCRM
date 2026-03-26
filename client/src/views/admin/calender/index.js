@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { getApi } from "services/api";
 import Calender from "./components/calender";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [data, setData] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
 

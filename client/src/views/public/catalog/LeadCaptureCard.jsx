@@ -45,7 +45,7 @@ export default function LeadCaptureCard({
 
   const submitLead = async () => {
     if (!values.fullName || !values.email || !values.phoneNumber) {
-      toast({ title: t("publicListing.leadRequiredError"), status: "error" });
+      toast({ title: t?.("publicListing.leadRequiredError"), status: "error" });
       return;
     }
 
@@ -70,13 +70,13 @@ export default function LeadCaptureCard({
           message: "",
           preferredContact: "phone",
         });
-        toast({ title: t("publicListing.leadSuccess"), status: "success" });
+        toast({ title: t?.("publicListing.leadSuccess"), status: "success" });
         return;
       }
 
-      toast({ title: t("publicListing.leadError"), status: "error" });
+      toast({ title: t?.("publicListing.leadError"), status: "error" });
     } catch (error) {
-      toast({ title: t("publicListing.leadError"), status: "error" });
+      toast({ title: t?.("publicListing.leadError"), status: "error" });
     } finally {
       setSubmitting(false);
     }
@@ -85,8 +85,8 @@ export default function LeadCaptureCard({
   return (
     <Box bg={cardBg} borderRadius="32px" p={6} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
       <Stack spacing={4}>
-        <Heading size="md">{title || t("publicListing.agentLeadTitle")}</Heading>
-        <Text color={mutedColor}>{subtitle || t("publicListing.agentLeadText")}</Text>
+        <Heading size="md">{title || t?.("publicListing.agentLeadTitle")}</Heading>
+        <Text color={mutedColor}>{subtitle || t?.("publicListing.agentLeadText")}</Text>
 
         {resolvedAgent && (
           <Box bg={subtleBg} borderRadius="24px" p={4}>
@@ -97,37 +97,37 @@ export default function LeadCaptureCard({
               )}
               {resolvedAgent?.email && <Text color={mutedColor}>{resolvedAgent.email}</Text>}
               {resolvedAgent?.phoneNumber && <Text color={mutedColor}>{resolvedAgent.phoneNumber}</Text>}
-              <Text fontSize="sm" color={mutedColor}>{resolvedAgent?.responseTimeText || t("publicListing.agentResponseTime")}</Text>
+              <Text fontSize="sm" color={mutedColor}>{resolvedAgent?.responseTimeText || t?.("publicListing.agentResponseTime")}</Text>
             </Stack>
           </Box>
         )}
 
         <FormControl>
-          <FormLabel>{t("publicListing.leadName")}</FormLabel>
+          <FormLabel>{t?.("publicListing.leadName")}</FormLabel>
           <Input value={values.fullName} onChange={(event) => setValues((current) => ({ ...current, fullName: event.target.value }))} />
         </FormControl>
         <FormControl>
-          <FormLabel>{t("publicListing.leadEmail")}</FormLabel>
+          <FormLabel>{t?.("publicListing.leadEmail")}</FormLabel>
           <Input type="email" value={values.email} onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))} />
         </FormControl>
         <FormControl>
-          <FormLabel>{t("publicListing.leadPhone")}</FormLabel>
+          <FormLabel>{t?.("publicListing.leadPhone")}</FormLabel>
           <Input value={values.phoneNumber} onChange={(event) => setValues((current) => ({ ...current, phoneNumber: event.target.value }))} />
         </FormControl>
         <FormControl>
-          <FormLabel>{t("publicListing.preferredContact")}</FormLabel>
+          <FormLabel>{t?.("publicListing.preferredContact")}</FormLabel>
           <Select value={values.preferredContact} onChange={(event) => setValues((current) => ({ ...current, preferredContact: event.target.value }))}>
-            <option value="phone">{t("publicListing.contactByPhone")}</option>
-            <option value="email">{t("publicListing.contactByEmail")}</option>
+            <option value="phone">{t?.("publicListing.contactByPhone")}</option>
+            <option value="email">{t?.("publicListing.contactByEmail")}</option>
           </Select>
         </FormControl>
         <FormControl>
-          <FormLabel>{t("publicListing.leadMessage")}</FormLabel>
+          <FormLabel>{t?.("publicListing.leadMessage")}</FormLabel>
           <Textarea value={values.message} onChange={(event) => setValues((current) => ({ ...current, message: event.target.value }))} rows={4} />
         </FormControl>
 
         <Button colorScheme="green" onClick={submitLead} isLoading={submitting}>
-          {t("publicListing.sendLead")}
+          {t?.("publicListing.sendLead")}
         </Button>
       </Stack>
     </Box>

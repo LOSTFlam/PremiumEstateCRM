@@ -68,7 +68,7 @@ const ImportModal = (props) => {
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("modules.lead.import.title")}</ModalHeader>
+        <ModalHeader>{t?.("modules.lead.import.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Grid templateColumns="repeat(12, 1fr)" gap={3}>
@@ -80,7 +80,7 @@ const ImportModal = (props) => {
               />
               <Text mb="10px" color={"red"}>
                 {" "}
-                {errors?.lead && touched?.lead && t("messages.pleaseSelectFile", { file: text })}
+                {errors?.lead && touched?.lead && t?.("messages.pleaseSelectFile", { file: text })}
               </Text>
             </GridItem>
           </Grid>
@@ -92,7 +92,7 @@ const ImportModal = (props) => {
             onClick={handleSubmit}
             disabled={isLoding ? true : false}
           >
-            {isLoding ? <Spinner /> : t("common.save")}
+            {isLoding ? <Spinner /> : t?.("common.save")}
           </Button>
           <Button
             variant="outline"
@@ -107,7 +107,7 @@ const ImportModal = (props) => {
               formik.resetForm();
             }}
           >
-            {t("common.close")}
+            {t?.("common.close")}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -128,7 +128,7 @@ const Add = (props) => {
             justifyContent="space-between"
             display="flex"
           >
-            {t("modules.lead.addNew")}
+            {t?.("modules.lead.addNew")}
             <IconButton onClick={props?.onClose} icon={<CloseIcon />} />
           </DrawerHeader>
           <DrawerBody>
@@ -150,7 +150,7 @@ const Add = (props) => {
                   fontWeight="500"
                   mb="8px"
                 >
-                  {t("modules.lead.associatedListing")}
+                  {t?.("modules.lead.associatedListing")}
                 </FormLabel>
                 <Flex justifyContent="space-between">
                   <Select
@@ -163,7 +163,7 @@ const Add = (props) => {
                         : "10px"
                     }
                     fontWeight="500"
-                    placeholder={t("modules.lead.placeholders.associatedListing")}
+                    placeholder={t?.("modules.lead.placeholders.associatedListing")}
                     borderColor={
                       errors?.associatedListing && touched?.associatedListing
                         ? "red.300"
@@ -201,7 +201,7 @@ const Add = (props) => {
                   fontWeight="500"
                   mb="8px"
                 >
-                  {t("modules.lead.assignToUser")}
+                  {t?.("modules.lead.assignToUser")}
                 </FormLabel>
                 <Flex justifyContent="space-between">
                   <Select
@@ -214,7 +214,7 @@ const Add = (props) => {
                         : "10px"
                     }
                     fontWeight="500"
-                    placeholder={t("modules.lead.placeholders.user")}
+                    placeholder={t?.("modules.lead.placeholders.user")}
                     borderColor={
                       errors?.assignUser && touched?.assignUser
                         ? "red.300"
@@ -253,7 +253,7 @@ const Add = (props) => {
               type="submit"
               onClick={handleSubmit}
             >
-              {isLoding ? <Spinner /> : t("common.save")}
+              {isLoding ? <Spinner /> : t?.("common.save")}
             </Button>
             <Button
               variant="outline"
@@ -265,7 +265,7 @@ const Add = (props) => {
               }}
               onClick={handleCancel}
             >
-              {t("common.close")}
+              {t?.("common.close")}
             </Button>
           </DrawerFooter>
         </DrawerContent>

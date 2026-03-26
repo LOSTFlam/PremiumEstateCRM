@@ -160,7 +160,7 @@ const Edit = (props) => {
             justifyContent="space-between"
             display="flex"
           >
-            {t("common.edit")} {values?.leadName || t("modules.lead.single")}
+            {t?.("common.edit")} {values?.leadName || t?.("modules.lead.single")}
             <IconButton onClick={handleClose} icon={<CloseIcon />} />
           </DrawerHeader>
           <DrawerBody>
@@ -192,7 +192,7 @@ const Edit = (props) => {
                   fontWeight="500"
                   mb="8px"
                 >
-                  {t("modules.lead.associatedListing")}
+                  {t?.("modules.lead.associatedListing")}
                 </FormLabel>
                 <Flex justifyContent="space-between">
                   <Select
@@ -200,7 +200,7 @@ const Edit = (props) => {
                     name="associatedListing"
                     onChange={handleChange}
                     fontWeight="500"
-                    placeholder={t("modules.lead.placeholders.associatedListing")}
+                    placeholder={t?.("modules.lead.placeholders.associatedListing")}
                   >
                     {propertyList?.map((item) => {
                       return (
@@ -229,7 +229,7 @@ const Edit = (props) => {
                   fontWeight="500"
                   mb="8px"
                 >
-                  {t("modules.lead.assignToUser")}
+                  {t?.("modules.lead.assignToUser")}
                 </FormLabel>
                 <Flex justifyContent="space-between">
                   <Select
@@ -237,7 +237,7 @@ const Edit = (props) => {
                     name="assignUser"
                     onChange={handleChange}
                     fontWeight="500"
-                    placeholder={t("modules.lead.placeholders.user")}
+                    placeholder={t?.("modules.lead.placeholders.user")}
                   >
                     {userData?.map((item) => {
                       return (
@@ -284,7 +284,7 @@ const Edit = (props) => {
               disabled={isLoding ? true : false}
               onClick={handleSubmit}
             >
-              {isLoding ? <Spinner /> : t("buttons.update")}
+              {isLoding ? <Spinner /> : t?.("buttons.update")}
             </Button>
             <Button
               variant="outline"
@@ -296,7 +296,7 @@ const Edit = (props) => {
               }}
               onClick={handleClose}
             >
-              {t("common.close")}
+              {t?.("common.close")}
             </Button>
           </DrawerFooter>
         </DrawerContent>

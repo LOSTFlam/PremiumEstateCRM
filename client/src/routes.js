@@ -65,6 +65,7 @@ const UserView = React.lazy(() => import("views/admin/users/View"));
 const Property = React.lazy(() => import("views/admin/property"));
 const PropertyView = React.lazy(() => import("views/admin/property/View"));
 const PropertyImport = React.lazy(() => import("views/admin/property/components/PropertyImport"))
+const PropertyPhotos = React.lazy(() => import("views/admin/property/PropertyPhotos"));
 // const Property = React.lazy(() => import("views/admin/newProperty"));
 // const PropertyView = React.lazy(() => import("views/admin/newProperty/View"));
 // const PropertyImport = React.lazy(
@@ -224,6 +225,16 @@ const routes = [
     parentName: "Properties",
     path: "/propertyImport",
     component: PropertyImport,
+  },
+  {
+    name: "Property Photos",
+    layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
+    both: true,
+    under: "properties",
+    parentName: "Properties",
+    path: "/propertyPhotos",
+    icon: <Icon as={HiTemplate} width="20px" height="20px" color="inherit" />,
+    component: PropertyPhotos,
   },
 
   // -----------------------------Opportunities-------------------------------------

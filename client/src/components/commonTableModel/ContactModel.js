@@ -10,23 +10,40 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import ContactTable from "./Contact.js";
 import Spinner from "components/spinner/Spinner";
 import { GiClick } from "react-icons/gi";
-import CommonCheckTable from "components/reactTable/checktable.js";
-import { fetchContactCustomFiled } from "../../redux/slices/contactCustomFiledSlice.js";
-import { fetchContactData } from "../../redux/slices/contactSlice.js";
+import CommonCheckTable from "components/reactTable/checktable";
 import { useDispatch } from "react-redux";
+import { getApi } from "services/api";
+import { fetchContactData } from "../../redux/slices/contactSlice";
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const ContactModel = (props) => {
-  const { t } = useTranslation();
-  const { onClose, isOpen, fieldName, setFieldValue, data } = props;
-  const [selectedValues, setSelectedValues] = useState();
-  const [contactData, setContactData] = useState([]);
-  const [isLoding, setIsLoding] = useState(false);
-  const [columns, setColumns] = useState([]);
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
+  const {
+    onClose,
+    isOpen,
+    fieldName,
+    setFieldValue,
+    data,
+  } = props;
+  const title = "Contacts";
   const dispatch = useDispatch();
+
+  const [isLoding, setIsLoding] = useState(false);
+  const [selectedValues, setSelectedValues] = useState([]);
 
   const handleSubmit = async () => {
     try {
@@ -39,25 +56,14 @@ const ContactModel = (props) => {
       setIsLoding(false);
     }
   };
-  const fetchCustomDataFields = async () => {
-    setIsLoding(true);
-    const result = await dispatch(fetchContactCustomFiled());
-    setContactData(result?.payload?.data);
+  
+  const tableColumns = [
+    { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+    { Header: safeT("fields.fullName", "Full Name"), accessor: "fullName" },
+    { Header: safeT("fields.email", "Email"), accessor: "email" },
+    { Header: safeT("fields.phoneNumber", "Phone Number"), accessor: "phoneNumber" },
+  ];
 
-    const tempTableColumns = [
-      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      ...(result?.payload?.data?.[0]?.fields || [])
-        .filter((field) => field?.isTableField === true)
-        .map((field) => ({ Header: t(`fields.${field?.name}`) || field?.label, accessor: field?.name })),
-    ];
-
-    setColumns(tempTableColumns);
-    setIsLoding(false);
-  };
-  useEffect(async () => {
-    await dispatch(fetchContactData());
-    fetchCustomDataFields();
-  }, []);
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
@@ -71,17 +77,11 @@ const ContactModel = (props) => {
             </Flex>
           ) : (
             <CommonCheckTable
-              title={"Contacts"}
+              title={title}
               isLoding={isLoding}
-              columnData={columns ?? []}
-              // dataColumn={columns ?? []}
+              columnData={tableColumns ?? []}
               allData={data ?? []}
               tableData={data}
-              tableCustomFields={
-                contactData?.[0]?.fields?.filter(
-                  (field) => field?.isTableField === true,
-                ) || []
-              }
               AdvanceSearch={() => ""}
               ManageGrid={false}
               deleteMany={false}
@@ -97,9 +97,9 @@ const ContactModel = (props) => {
             variant="brand"
             size="sm"
             me={2}
-            onClick={handleSubmit}
             disabled={isLoding ? true : false}
             leftIcon={<GiClick />}
+            onClick={handleSubmit}
           >
             {" "}
             {isLoding ? <Spinner /> : "Select"}

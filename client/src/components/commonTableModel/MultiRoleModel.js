@@ -9,26 +9,58 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import Spinner from "components/spinner/Spinner";
-import { useState } from "react";
 import { GiClick } from "react-icons/gi";
-import RoleTable from "./Role.js";
+import CommonCheckTable from "components/reactTable/checktable";
+import { useDispatch } from "react-redux";
+import { getApi } from "services/api";
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const MultiRoleModel = (props) => {
-  const { t } = useTranslation();
-  const { onClose, isOpen, fieldName, setFieldValue, data, role } = props;
-  const [selectedValues, setSelectedValues] = useState([]);
-  const [roleData, setRoleData] = useState([]);
-  const [isLoding, setIsLoding] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
+  const {
+    onClose,
+    isOpen,
+    fieldName,
+    setFieldValue,
+    data,
+    role,
+  } = props;
+  const title = "Roles";
+  const dispatch = useDispatch();
 
-  const uniqueValues = [...new Set(selectedValues)];
+  const [isLoding, setIsLoding] = useState(false);
+  const [roleData, setRoleData] = useState([]);
+  const [selectedValues, setSelectedValues] = useState([]);
+
+  const fetchCustomDataFields = async () => {
+    setIsLoding(true);
+    const result = await dispatch(getApi("api/role/"));
+    setRoleData(result?.payload?.data || []);
+    setIsLoding(false);
+  };
+
+  useEffect(() => {
+    fetchCustomDataFields();
+  }, []);
 
   const handleSubmit = async () => {
     try {
       setIsLoding(true);
-      setFieldValue(fieldName, uniqueValues);
+      setFieldValue(fieldName, selectedValues);
       onClose();
     } catch (e) {
       console.log(e);
@@ -36,6 +68,7 @@ const MultiRoleModel = (props) => {
       setIsLoding(false);
     }
   };
+  
   const columns = [
     {
       Header: "#",
@@ -45,11 +78,12 @@ const MultiRoleModel = (props) => {
       display: false,
     },
     {
-      Header: t("fields.roleName"),
+      Header: safeT("fields.roleName", "Role Name"),
       accessor: "roleName",
     },
-    { Header: t("fields.description"), accessor: "description" },
+    { Header: safeT("fields.description", "Description"), accessor: "description" },
   ];
+  
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
@@ -62,34 +96,42 @@ const MultiRoleModel = (props) => {
               <Spinner />
             </Flex>
           ) : (
-            <RoleTable
-              title={"Role"}
+            <CommonCheckTable
+              title={title}
               isLoding={isLoding}
-              allData={role}
-              tableData={role}
-              type="multi"
-              tableCustomFields={
-                roleData?.[0]?.fields?.filter(
-                  (field) => field?.isTableField === true,
-                ) || []
-              }
+              columnData={columns ?? []}
+              allData={roleData ?? []}
+              tableData={roleData}
+              AdvanceSearch={() => ""}
+              ManageGrid={false}
+              deleteMany={false}
               selectedValues={selectedValues}
               setSelectedValues={setSelectedValues}
-              columnsData={columns ?? []}
+              selectType="single"
+              customSearch={false}
             />
           )}
         </ModalBody>
         <ModalFooter>
           <Button
             variant="brand"
-            onClick={handleSubmit}
+            size="sm"
+            me={2}
             disabled={isLoding ? true : false}
             leftIcon={<GiClick />}
+            onClick={handleSubmit}
           >
             {" "}
             {isLoding ? <Spinner /> : "Select"}
           </Button>
-          <Button onClick={() => onClose()}>Close</Button>
+          <Button
+            variant="outline"
+            size="sm"
+            colorScheme="red"
+            onClick={() => onClose()}
+          >
+            Close
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

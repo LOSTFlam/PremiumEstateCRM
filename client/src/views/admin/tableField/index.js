@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,6 +23,7 @@ import Spinner from "components/spinner/Spinner";
 import { BsThreeDots } from "react-icons/bs";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [allModulesData, setAllModulesData] = useState([]);
   const navigate = useNavigate();

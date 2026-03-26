@@ -410,8 +410,8 @@ const AddEmailHistory = (props) => {
                 <Text w={"100%"}>
                   <CUIAutoComplete
                     label={`Property`}
-                    items={getPropertyOptions}
-                    selectedItems={getPropertyOptions?.filter((item) =>
+                    items={getPropertyOptions || []}
+                    selectedItems={(getPropertyOptions || [])?.filter((item) =>
                       values?.property?.includes(item?._id)
                     )}
                     onSelectedItemsChange={(changes) => {

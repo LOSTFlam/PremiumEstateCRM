@@ -57,7 +57,7 @@ const Email = () => {
   } = formik;
 
   if (touched?.recipient && errors?.createBy) {
-    toast.error(t("modules.communication.pleaseSelectRecipient") || "Please select an authorized recipient");
+    toast.error(t?.("modules.communication.pleaseSelectRecipient") || "Please select an authorized recipient");
     formik.resetForm();
   }
 
@@ -66,7 +66,7 @@ const Email = () => {
       setIsLoding(true);
       let response = await postApi("api/email/add", values);
       if (response?.status === 200) {
-        toast.success(t("modules.communication.emailSent") || "Email Send successfully");
+        toast.success(t?.("modules.communication.emailSent") || "Email Send successfully");
         formik.resetForm();
       }
     } catch (e) {
@@ -104,7 +104,7 @@ const Email = () => {
     <Grid templateColumns="repeat(12, 1fr)" gap={3}>
       <GridItem colSpan={{ base: 12 }}>
         <Heading as="h2" size="xl" noOfLines={1}>
-          {t("modules.communication.sendEmail")}
+          {t?.("modules.communication.sendEmail")}
         </Heading>
       </GridItem>
       <GridItem colSpan={{ base: 12 }}>
@@ -115,7 +115,7 @@ const Email = () => {
           fontWeight="500"
           mb="8px"
         >
-          {t("modules.communication.to")}<Text color={"red"}>*</Text>
+          {t?.("modules.communication.to")}<Text color={"red"}>*</Text>
         </FormLabel>
         <Input
           onFocus={onOpen}
@@ -124,7 +124,7 @@ const Email = () => {
           onBlur={() => setTimeout(onClose, 200)}
           value={values?.recipient}
           name="recipient"
-          placeholder={t("modules.communication.recipient")}
+          placeholder={t?.("modules.communication.recipient")}
           fontWeight="500"
           borderColor={
             errors?.recipient && touched?.recipient ? "red.300" : null
@@ -173,14 +173,14 @@ const Email = () => {
           fontWeight="500"
           mb="8px"
         >
-          {t("modules.communication.cc")}
+          {t?.("modules.communication.cc")}
         </FormLabel>
         <Input
           fontSize="sm"
           onChange={handleChange}
           value={values?.cc}
           name="cc"
-          placeholder={t("modules.communication.cc")}
+          placeholder={t?.("modules.communication.cc")}
           fontWeight="500"
           borderColor={errors?.cc && touched?.cc ? "red.300" : null}
         />
@@ -198,7 +198,7 @@ const Email = () => {
           fontWeight="500"
           mb="8px"
         >
-          {t("modules.communication.bcc")}
+          {t?.("modules.communication.bcc")}
         </FormLabel>
         <Input
           fontSize="sm"

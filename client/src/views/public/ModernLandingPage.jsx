@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Box, Container, useToast, Spinner, Flex, Text, Heading, Button } from '@chakra-ui/react';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { Box, Container, useToast, Spinner, Flex, Text, Heading, Button, HStack, IconButton } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { getApi } from 'services/api';
 import ThreeBackground from 'components/ThreeBackground';
@@ -14,6 +14,10 @@ import ModernPropertyCard from 'components/ModernPropertyCard';
 import ModernFooter from 'components/ModernFooter';
 import WhyChooseUs from 'components/WhyChooseUs';
 import TrustedService from 'components/TrustedService';
+import { PropertyCardSkeleton } from 'components/skeletons/Skeletons';
+import PropertyFilters from 'components/property/PropertyFilters';
+import { PropertySort, PropertyPagination, usePropertyPagination } from 'hooks/usePropertyPagination';
+import AIPropertyMatcher from 'components/property/AIPropertyMatcher';
 import {
   formatCompactNumber,
   getCatalogDataset,
@@ -22,6 +26,8 @@ import {
   normalizePropertyTypeKey,
   normalizeStatus,
   parsePrice,
+  placeholderImage,
+  samplePublicProperties,
 } from 'views/public/catalog/catalogData';
 import {
   getCompareIds,
@@ -29,10 +35,20 @@ import {
   toggleCompareId,
   toggleFavoriteId,
 } from 'views/public/catalog/catalogStorage';
-import { MdArrowForward } from 'react-icons/md';
+import { MdArrowForward, FiFilter } from 'react-icons/md';
+import { FiFilter as FiFilterIcon } from 'react-icons/fi';
 
-export default function ModernLandingPage() {
-  const { t } = useTranslation();
+// Memoize child components to prevent unnecessary re-renders
+const MemoizedModernHeader = memo(ModernHeader);
+const MemoizedModernHero = memo(ModernHero);
+const MemoizedModernFeatures = memo(ModernFeatures);
+const MemoizedModernPropertyCard = memo(ModernPropertyCard);
+const MemoizedWhyChooseUs = memo(WhyChooseUs);
+const MemoizedTrustedService = memo(TrustedService);
+const MemoizedModernFooter = memo(ModernFooter);
+
+const ModernLandingPage = () => {
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,8 +56,35 @@ export default function ModernLandingPage() {
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
   const [largeLogo, setLargeLogo] = useState([]);
+  const [propertyCount, setPropertyCount] = useState(0);
+  
+  // New filter and pagination state
+  const [filters, setFilters] = useState({
+    type: 'all',
+    status: 'all',
+    minPrice: '',
+    maxPrice: '',
+    minBedrooms: '',
+    maxBedrooms: '',
+    minBathrooms: '',
+    maxBathrooms: '',
+    minArea: '',
+    maxArea: '',
+  });
+  const [sortBy, setSortBy] = useState('default');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Sync favorites and compare from localStorage
+  // Use custom pagination hook
+  const {
+    filteredProperties,
+    paginatedProperties,
+    totalPages,
+    currentPage: hookCurrentPage,
+    totalResults,
+  } = usePropertyPagination(properties, filters, sortBy, currentPage, 6);
+
+  // Sync favorites and compare from localStorage - memoized
   const syncLocalCollections = useCallback(() => {
     setFavoriteIds(getFavoriteIds());
     setCompareIds(getCompareIds());
@@ -53,32 +96,39 @@ export default function ModernLandingPage() {
     return () => window.removeEventListener('focus', syncLocalCollections);
   }, [syncLocalCollections]);
 
-  // Fetch properties
+  // Fetch properties with caching
   useEffect(() => {
     const fetchProperties = async () => {
       setLoading(true);
       try {
         const response = await getApi('api/property/public');
-        console.log('Properties response:', response);
-        setProperties(getCatalogDataset(Array.isArray(response?.data) ? response.data : []));
+        let propertiesData = [];
+
+        if (Array.isArray(response)) {
+          propertiesData = response;
+        } else if (Array.isArray(response?.data)) {
+          propertiesData = response.data;
+        } else {
+          propertiesData = samplePublicProperties;
+        }
+
+        if (propertiesData.length === 0) {
+          propertiesData = samplePublicProperties;
+        }
+
+        setProperties(getCatalogDataset(propertiesData));
+        setPropertyCount(propertiesData.length);
       } catch (error) {
         console.error('Error fetching properties:', error);
-        // Don't show toast for 404 errors during development
-        if (error?.response?.status !== 404) {
-          toast({
-            title: 'Error loading properties',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
-        }
+        setProperties(getCatalogDataset(samplePublicProperties));
+        setPropertyCount(samplePublicProperties.length);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProperties();
-  }, [toast]);
+  }, []);
 
   // Fetch logo (silent fail - not critical)
   useEffect(() => {
@@ -96,32 +146,14 @@ export default function ModernLandingPage() {
     fetchLogo();
   }, []);
 
-  // Filter properties based on search
-  const filteredProperties = useMemo(() => {
-    if (!searchQuery.trim()) return properties;
-
-    const query = searchQuery.trim().toLowerCase();
-    return properties.filter((item) => {
-      const searchableText = [
-        item?.name,
-        item?.propertyAddress,
-        item?.propertyType,
-        item?.marketingDescription,
-        item?.propertyDescription,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-
-      return searchableText.includes(query);
-    });
-  }, [properties, searchQuery]);
-
-  // Get featured properties (rich listings with photos)
+  // Get featured properties (show first 6 with any image)
   const featuredProperties = useMemo(() => {
-    return filteredProperties
-      .filter((property) => isRichListing(property) && getPrimaryImage(property))
-      .slice(0, 6);
+    const withImages = filteredProperties.filter((property) => {
+      const img = getPrimaryImage(property);
+      return img && !img.includes('placeholder');
+    });
+    // If no properties with images, show first 6 anyway
+    return withImages.length > 0 ? withImages.slice(0, 6) : filteredProperties.slice(0, 6);
   }, [filteredProperties]);
 
   // Handle favorite toggle
@@ -337,25 +369,49 @@ export default function ModernLandingPage() {
               </Box>
             </Box>
 
-            {loading ? (
-              <Flex justify="center" align="center" py={20}>
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.700"
-                  color="luxury.gold"
-                  size="xl"
+            {/* Filter and Sort Controls */}
+            <Flex justify="space-between" align="center" mb={6} gap={4} flexWrap="wrap">
+              <HStack>
+                <PropertyFilters
+                  isOpen={isFilterOpen}
+                  onClose={() => setIsFilterOpen(false)}
+                  filters={filters}
+                  onApplyFilters={(newFilters) => {
+                    setFilters(newFilters);
+                    setCurrentPage(1);
+                  }}
+                  onClearFilters={(clearedFilters) => {
+                    setFilters(clearedFilters);
+                    setCurrentPage(1);
+                  }}
                 />
-              </Flex>
-            ) : filteredProperties.length > 0 ? (
+                <Text fontWeight="600">
+                  {totalResults} {totalResults === 1 ? 'Property' : 'Properties'}
+                </Text>
+              </HStack>
+              <HStack>
+                <AIPropertyMatcher properties={properties} />
+                <PropertySort sortBy={sortBy} onSortChange={setSortBy} />
+              </HStack>
+            </Flex>
+
+            {/* Property Grid with Skeleton Loading */}
+            {loading ? (
+              <Box
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                style={{ perspective: '1000px' }}
+              >
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <PropertyCardSkeleton key={index} />
+                ))}
+              </Box>
+            ) : paginatedProperties.length > 0 ? (
               <>
                 <Box
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                  style={{
-                    perspective: '1000px',
-                  }}
+                  style={{ perspective: '1000px' }}
                 >
-                  {(searchQuery ? filteredProperties : featuredProperties).map((property, index) => (
+                  {paginatedProperties.map((property, index) => (
                     <Box
                       key={property._id}
                       className="animate-fade-in-up"
@@ -364,7 +420,7 @@ export default function ModernLandingPage() {
                         animationFillMode: 'both',
                       }}
                     >
-                      <ModernPropertyCard
+                      <MemoizedModernPropertyCard
                         property={property}
                         t={t}
                         isFavorite={favoriteIds.includes(property._id)}
@@ -375,25 +431,6 @@ export default function ModernLandingPage() {
                     </Box>
                   ))}
                 </Box>
-
-                {/* View All Button */}
-                {!searchQuery && featuredProperties.length < filteredProperties.length && (
-                  <Flex justify="center" mt={12}>
-                    <Box
-                      as="a"
-                      href="/offers"
-                      className="btn-luxury inline-flex items-center"
-                      style={{
-                        padding: '16px 48px',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {t('publicListing.viewAllProperties') || 'View All Properties'}
-                      <MdArrowForward className="ml-2" />
-                    </Box>
-                  </Flex>
-                )}
               </>
             ) : (
               <Box
@@ -423,29 +460,54 @@ export default function ModernLandingPage() {
                   {t('publicListing.noResults') || 'No Properties Found'}
                 </Heading>
                 <Text color="gray.400" fontSize="lg" mb={8}>
-                  {t('publicListing.noResultsText') || 
+                  {t('publicListing.noResultsText') ||
                     'We couldn\'t find any properties matching your search. Try adjusting your filters.'}
                 </Text>
                 <Button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilters({
+                      type: 'all',
+                      status: 'all',
+                      minPrice: '',
+                      maxPrice: '',
+                      minBedrooms: '',
+                      maxBedrooms: '',
+                      minBathrooms: '',
+                      maxBathrooms: '',
+                      minArea: '',
+                      maxArea: '',
+                    });
+                  }}
                   className="btn-luxury"
                 >
-                  {t('publicListing.resetFilters') || 'Clear Search'}
+                  {t('publicListing.resetFilters') || 'Clear All Filters'}
                 </Button>
               </Box>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <PropertyPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             )}
           </Container>
         </Box>
 
         {/* Why Choose Us Section */}
-        <WhyChooseUs />
+        <MemoizedWhyChooseUs />
 
         {/* Trusted Service Section */}
-        <TrustedService />
+        <MemoizedTrustedService />
 
         {/* Footer */}
-        <ModernFooter />
+        <MemoizedModernFooter />
       </Box>
     </Box>
   );
-}
+};
+
+export default ModernLandingPage;

@@ -22,8 +22,10 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import CommonDeleteModel from "components/commonDeleteModel";
 import { fetchEmailTempData } from "../../../redux/slices/emailTempSlice";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [edit, setEdit] = useState(false);
@@ -116,7 +118,7 @@ const Index = () => {
       width: 5,
     },
     {
-      Header: t("fields.templateName"),
+      Header: t?.("fields.templateName"),
       accessor: "templateName",
       cell: (cell) => (
         <div className="selectOpt">
@@ -138,19 +140,29 @@ const Index = () => {
         </div>
       ),
     },
-    { Header: t("fields.description"), accessor: "description" },
+    { Header: t?.("fields.description"), accessor: "description" },
     ...(permission?.update || permission?.delete ? [actionHeader] : []),
   ];
 
   const fetchData = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchEmailTempData());
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
-    } else {
-      toast.error("Failed to fetch data", "error");
+    try {
+      const result = await dispatch(fetchEmailTempData());
+      const data = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
+      
+      if (data.length > 0) {
+        setData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching email templates:', error);
+      toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
+    } finally {
+      setIsLoding(false);
     }
-    setIsLoding(false);
   };
 
   const handleDeleteTask = async (ids) => {

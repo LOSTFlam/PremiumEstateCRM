@@ -1,5 +1,36 @@
 import axios from "axios";
 import { constant } from "constant";
+import { toast } from "react-toastify";
+
+// Axios interceptor for global error handling
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 Unauthorized - redirect to login
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+      window.location.href = "/auth/sign-in";
+      toast.error("Session expired. Please login again.");
+    }
+
+    // Handle other errors
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "An unexpected error occurred";
+
+    // Don't show toast for cancelled requests
+    if (!axios.isCancel(error)) {
+      console.error("API Error:", errorMessage);
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 const getStoredToken = () => {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -20,13 +51,17 @@ const persistAuth = (result, rememberMe) => {
   fallbackStorage.removeItem("user");
 };
 
-export const postApi = async (path, data, login) => {
+export const postApi = async (path, data, login, isFormData = false) => {
   try {
     const token = getStoredToken();
 
-    const headers = {
-      "Content-Type": "application/json",
-    };
+    const headers = {};
+
+    if (isFormData) {
+      headers["Content-Type"] = "multipart/form-data";
+    } else {
+      headers["Content-Type"] = "application/json";
+    }
 
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
@@ -39,7 +74,8 @@ export const postApi = async (path, data, login) => {
     persistAuth(result, login);
     return result;
   } catch (e) {
-    return e;
+    // Error is already handled by interceptor
+    throw e;
   }
 };
 
@@ -52,8 +88,7 @@ export const postApiBlob = async (path, data = {}) => {
       responseType: "blob",
     });
   } catch (e) {
-    console.error(e);
-    return e;
+    throw e;
   }
 };
 
@@ -65,8 +100,7 @@ export const putApi = async (path, data, id) => {
       },
     });
   } catch (e) {
-    console.error(e);
-    return e;
+    throw e;
   }
 };
 
@@ -84,8 +118,7 @@ export const deleteApi = async (path, param) => {
 
     return result;
   } catch (e) {
-    console.error(e);
-    return e;
+    throw e;
   }
 };
 
@@ -103,8 +136,7 @@ export const deleteManyApi = async (path, data) => {
 
     return result;
   } catch (e) {
-    console.error(e);
-    return e;
+    throw e;
   }
 };
 
@@ -116,8 +148,8 @@ export const getApi = async (path, id) => {
       },
     });
 
-    return result;
+    return result?.data || result;
   } catch (e) {
-    return e;
+    throw e;
   }
 };

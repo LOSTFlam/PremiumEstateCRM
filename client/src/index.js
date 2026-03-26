@@ -1,5 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Helmet } from "react-helmet";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import ErrorBoundary from "components/ErrorBoundary";
+import SEO from "components/SEO";
 import "assets/css/App.css";
 import "assets/css/tailwind.css";
 import {
@@ -14,7 +19,11 @@ import UserLayout from "layouts/user";
 import PublicCatalog from "views/public/catalog";
 import ModernLandingPage from "views/public/ModernLandingPage";
 import PublicOfferView from "views/public/catalog/View";
+import PublicOfferViewBySlug from "views/public/catalog/ViewBySlug";
 import PublicCompareView from "views/public/catalog/Compare";
+import FavoritesPage from "views/public/FavoritesPage";
+import ComparePage from "views/public/ComparePage";
+import PropertyViewBySlug from "views/admin/property/ViewBySlug";
 import SeoCollectionPage from "views/public/catalog/SeoCollectionPage";
 import SignUp from "views/auth/signUp";
 import SignIn from "views/auth/signIn";
@@ -68,7 +77,11 @@ function App() {
         <Route path="/offers/commercial" element={<PublicCatalog forcedType="commercial" />} />
         <Route path="/collections/:slug" element={<SeoCollectionPage />} />
         <Route path="/offers/compare" element={<PublicCompareView />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/compare" element={<ComparePage />} />
         <Route path="/offers/:id" element={<PublicOfferView />} />
+        <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
+        <Route path="/propertyView/:slug" element={<PropertyViewBySlug />} />
         <Route path="/auth/sign-up" element={<SignUp />} />
         <Route path="/auth/sign-in" element={<SignIn />} />
         <Route path="/auth/*" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthLayout />} />
@@ -89,17 +102,36 @@ function App() {
   );
 }
 
+// Create React Query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
+
 ReactDOM.render(
-  <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <Router>
-        <ChakraProvider theme={theme}>
-          <ToastContainer />
-          <App />
-        </ChakraProvider>
-      </Router>
-    </PersistGate>
-  </Provider>,
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <SEO />
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <Router>
+              <ChakraProvider theme={theme}>
+                <ToastContainer />
+                <App />
+                <ReactQueryDevtools initialIsOpen={false} />
+              </ChakraProvider>
+            </Router>
+          </PersistGate>
+        </Provider>
+      </ErrorBoundary>
+    </QueryClientProvider>
+  </React.StrictMode>,
   document.getElementById("root"),
 );
 

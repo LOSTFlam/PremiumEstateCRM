@@ -19,7 +19,18 @@ import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 
 const UserModel = (props) => {
-  const { t } = useTranslation();
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
   const {
     onClose,
     isOpen,
@@ -36,7 +47,7 @@ const UserModel = (props) => {
   // const [isLoding, setIsLoding] = useState(false);
   const [leadData, setLeadData] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
-  const roleHeader = { Header: t("fields.role"), accessor: "role" };
+  const roleHeader = { Header: safeT("fields.role", "Role"), accessor: "role" };
 
   const handleSubmit = async () => {
     try {
@@ -49,14 +60,31 @@ const UserModel = (props) => {
       setIsLoding(false);
     }
   };
+
+  const fetchData = async () => {
+    setIsLoding(true);
+    try {
+      const result = await getApi('api/user/');
+      setLeadData(result?.data?.user || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setIsLoding(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [isOpen]);
+
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.email"),
+      Header: safeT("fields.email", "Email"),
       accessor: "username",
     },
-    { Header: t("fields.firstName"), accessor: "firstName" },
-    { Header: t("fields.lastName"), accessor: "lastName" },
+    { Header: safeT("fields.firstName", "First Name"), accessor: "firstName" },
+    { Header: safeT("fields.lastName", "Last Name"), accessor: "lastName" },
     ...(fieldName !== "salesAgent" ? [roleHeader] : []),
   ];
 
@@ -70,6 +98,7 @@ const UserModel = (props) => {
   //     setData(result?.data?.user);
   //     setIsLoding(false)
   // }
+
   // useEffect(() => {
   //     fetchData()
   // }, [])

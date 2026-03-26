@@ -22,6 +22,7 @@ import AddEdit from "./AddEdit";
 import { useDispatch } from "react-redux";
 import { fetchEmailsData } from "../../../redux/slices/emailsSlice";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import QuotesAdvanceSearch from "./components/QuotesAdvanceSearch";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import ImportModal from "./components/ImportModel";
@@ -30,6 +31,7 @@ import { TbFileInvoice } from "react-icons/tb";
 import { postApi } from "services/api";
 
 const Index = (props) => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);

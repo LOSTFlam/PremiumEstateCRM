@@ -13,20 +13,35 @@ import React, { useEffect, useState } from "react";
 import Spinner from "components/spinner/Spinner";
 import { GiClick } from "react-icons/gi";
 import CommonCheckTable from "components/reactTable/checktable";
-import { fetchLeadCustomFiled } from "../../redux/slices/leadCustomFiledSlice";
 import { useDispatch } from "react-redux";
-import { fetchLeadData } from "../../redux/slices/leadSlice";
+import { fetchLeadData } from "../../redux/slices/leadSlice.js";
+import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
-const ContactModel = (props) => {
-  const { t } = useTranslation();
-  const { onClose, isOpen, fieldName, setFieldValue, data } = props;
+const LeadModel = (props) => {
+  const { t: i18nT } = useTranslation();
+  
+  // Safe translation with fallback - always returns a string
+  const safeT = (key, fallback) => {
+    try {
+      const result = i18nT(key);
+      return result || fallback || key;
+    } catch (e) {
+      return fallback || key;
+    }
+  };
+  
+  const {
+    onClose,
+    isOpen,
+    fieldName,
+    setFieldValue,
+    data,
+  } = props;
   const title = "Leads";
   const dispatch = useDispatch();
 
   const [isLoding, setIsLoding] = useState(false);
-  const [columns, setColumns] = useState([]);
-  const [leadData, setLeadData] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
 
   const handleSubmit = async () => {
@@ -40,41 +55,13 @@ const ContactModel = (props) => {
       setIsLoding(false);
     }
   };
-
-  const fetchCustomDataFields = async () => {
-    setIsLoding(true);
-
-    const result = await dispatch(fetchLeadCustomFiled());
-    setLeadData(result?.payload?.data);
-
-    const tempTableColumns = [
-      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-      {
-        Header: t("fields.leadStatus"),
-        accessor: "leadStatus",
-        isSortable: true,
-        center: true,
-        cell: ({ row }) => row.original.leadStatus,
-      },
-      ...(result?.payload?.data?.[0]?.fields
-        ?.filter(
-          (field) =>
-            field?.isTableField === true && field?.name !== "leadStatus"
-        )
-        ?.map((field) => ({
-          Header: t(`fields.${field?.name}`) || field?.label,
-          accessor: field?.name,
-        })) || []),
-    ];
-
-    setColumns(tempTableColumns);
-    setIsLoding(false);
-  };
-
-  useEffect(() => {
-    dispatch(fetchLeadData());
-    fetchCustomDataFields();
-  }, []);
+  
+  const tableColumns = [
+    { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+    { Header: safeT("fields.leadName", "Lead Name"), accessor: "leadName" },
+    { Header: safeT("fields.leadEmail", "Lead Email"), accessor: "leadEmail" },
+    { Header: safeT("fields.leadMobile", "Lead Mobile"), accessor: "leadMobile" },
+  ];
 
   return (
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
@@ -91,15 +78,9 @@ const ContactModel = (props) => {
             <CommonCheckTable
               title={title}
               isLoding={isLoding}
-              columnData={columns ?? []}
-              // dataColumn={columns ?? []}
+              columnData={tableColumns ?? []}
               allData={data ?? []}
               tableData={data}
-              tableCustomFields={
-                leadData?.[0]?.fields?.filter(
-                  (field) => field?.isTableField === true
-                ) || []
-              }
               AdvanceSearch={() => ""}
               ManageGrid={false}
               deleteMany={false}
@@ -136,4 +117,4 @@ const ContactModel = (props) => {
   );
 };
 
-export default ContactModel;
+export default LeadModel;

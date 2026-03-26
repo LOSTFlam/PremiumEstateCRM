@@ -18,13 +18,11 @@ export function SidebarLinks(props) {
   //   Chakra color mode
   let location = useLocation();
   const { t } = useTranslation();
+  const { textColor } = props;
   let activeColor = useColorModeValue("brand.600", "white");
-  let inactiveColor = useColorModeValue(
-    "secondaryGray.600",
-    "secondaryGray.600",
-  );
+  let inactiveColor = useColorModeValue("secondaryGray.600", "secondaryGray.600");
   let activeIcon = useColorModeValue("brand.600", "white");
-  let textColor = useColorModeValue("secondaryGray.500", "white");
+  let textColorDefault = useColorModeValue("gray.700", "white");
   let brandColor = useColorModeValue("brand.500", "brand.400");
   let sidebarBgColor = useColorModeValue("gray.200", "brand.200");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -152,7 +150,7 @@ export function SidebarLinks(props) {
                         color={
                           activeRoute(route?.path?.toLowerCase())
                             ? activeIcon
-                            : textColor
+                            : textColor || textColorDefault
                         }
                         me="18px"
                       >
@@ -169,7 +167,7 @@ export function SidebarLinks(props) {
                         color={
                           activeRoute(route?.path?.toLowerCase())
                             ? activeColor
-                            : textColor
+                            : textColor || textColorDefault
                         }
                         fontWeight={
                           activeRoute(route?.path?.toLowerCase())
@@ -193,7 +191,7 @@ export function SidebarLinks(props) {
                         color={
                           activeRoute(route?.path?.toLowerCase())
                             ? activeIcon
-                            : textColor
+                            : textColor || textColorDefault
                         }
                         me="18px"
                       >

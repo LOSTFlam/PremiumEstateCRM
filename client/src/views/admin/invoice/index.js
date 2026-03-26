@@ -15,6 +15,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { deleteManyApi } from "services/api";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import CommonCheckTable from "../../../components/reactTable/checktable";
@@ -27,6 +28,7 @@ import Preview from "./preview";
 import { TbFileInvoice } from "react-icons/tb";
 
 const Index = (props) => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);
@@ -127,13 +129,13 @@ const Index = (props) => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.invoiceNumber"),
+      Header: t?.("fields.invoiceNumber"),
       accessor: "invoiceNumber",
       isSortable: false,
       width: 10,
     },
     {
-      Header: t("fields.title"),
+      Header: t?.("fields.title"),
       accessor: "title",
       cell: (cell) => (
         <div className="selectOpt">
@@ -597,8 +599,9 @@ const Index = (props) => {
     setIsLoding(true);
     const result = await dispatch(fetchInvoicesData());
 
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
+    const data = Array.isArray(result?.payload) ? result.payload : Array.isArray(result?.payload?.data) ? result.payload.data : [];
+      if (data.length > 0) {
+      setData(data);
     } else {
       toast.error("Failed to fetch data", "error");
     }

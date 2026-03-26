@@ -9,6 +9,8 @@ import {
   Icon,
   IconButton,
   useColorModeValue,
+  useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
@@ -18,20 +20,31 @@ import {
   FiMapPin,
   FiHome,
   FiMaximize,
+  FiPercent,
+  FiPrinter,
 } from 'react-icons/fi';
 import { MdCompareArrows, MdArrowForward, MdMeetingRoom, MdBathtub, MdSquareFoot } from 'react-icons/md';
 import { LuMapPin } from 'react-icons/lu';
-import { 
-  formatPrice, 
+import {
+  formatPrice,
   getPrimaryImage,
   normalizeStatus,
   normalizePropertyTypeKey
 } from 'views/public/catalog/catalogData';
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
+import MortgageCalculator from './property/MortgageCalculator';
+import { VirtualTourViewer } from './property/VirtualTourViewer';
+import { ShareProperty, PrintProperty } from './property/PropertyExtras';
 
-export default function ModernPropertyCard({ property, t, isFavorite, isInCompare, onFavoriteToggle, onCompareToggle }) {
+const ModernPropertyCard = memo(function ModernPropertyCard({ property, t, isFavorite, isInCompare, onFavoriteToggle, onCompareToggle }) {
   const [isHovered, setIsHovered] = useState(false);
   
+  // Modal states
+  const { isOpen: isMortgageOpen, onOpen: onMortgageOpen, onClose: onMortgageClose } = useDisclosure();
+  const { isOpen: isTourOpen, onOpen: onTourOpen, onClose: onTourClose } = useDisclosure();
+  const { isOpen: isShareOpen, onOpen: onShareOpen, onClose: onShareClose } = useDisclosure();
+  const { isOpen: isPrintOpen, onOpen: onPrintOpen, onClose: onPrintClose } = useDisclosure();
+
   const cardBg = useColorModeValue('white', 'gray.800');
   const mutedColor = useColorModeValue('gray.600', 'gray.400');
 
@@ -39,6 +52,19 @@ export default function ModernPropertyCard({ property, t, isFavorite, isInCompar
   const status = normalizeStatus(property?.listingStatus, t);
   const price = formatPrice(property?.listingPrice, t);
   const primaryImage = getPrimaryImage(property);
+
+  // Memoize handlers to prevent re-creation on every render
+  const handleFavoriteClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onFavoriteToggle?.(property?._id);
+  }, [property?._id, onFavoriteToggle]);
+
+  const handleCompareClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onCompareToggle?.(property?._id);
+  }, [property?._id, onCompareToggle]);
 
   return (
     <Box
@@ -131,10 +157,7 @@ export default function ModernPropertyCard({ property, t, isFavorite, isInCompar
                 width: '40px',
                 height: '40px',
               }}
-              onClick={(e) => {
-                e.preventDefault();
-                onFavoriteToggle(property?._id);
-              }}
+              onClick={handleFavoriteClick}
             />
             <IconButton
               aria-label={isInCompare ? 'Remove from compare' : 'Add to compare'}
@@ -251,22 +274,82 @@ export default function ModernPropertyCard({ property, t, isFavorite, isInCompar
               <Text fontSize="sm" fontWeight="600">
                 {property?.numberofBedrooms || '-'}
               </Text>
-              <Text fontSize="xs">Beds</Text>
+              <Text fontSize="xs">{t('publicListing.beds')}</Text>
             </HStack>
             <HStack spacing={2} className="text-gray-400">
               <Icon as={MdBathtub} className="text-luxury-gold" />
               <Text fontSize="sm" fontWeight="600">
                 {property?.numberofBathrooms || '-'}
               </Text>
-              <Text fontSize="xs">Baths</Text>
+              <Text fontSize="xs">{t('publicListing.baths')}</Text>
             </HStack>
             <HStack spacing={2} className="text-gray-400">
               <Icon as={MdSquareFoot} className="text-luxury-gold" />
               <Text fontSize="sm" fontWeight="600">
                 {property?.squareFootage || '-'}
               </Text>
-              <Text fontSize="xs">Sq Ft</Text>
+              <Text fontSize="xs">{t('publicListing.sqFt')}</Text>
             </HStack>
+          </HStack>
+
+          {/* Quick Actions */}
+          <HStack spacing={2} mt={3}>
+            <Tooltip label="Mortgage Calculator">
+              <IconButton
+                size="sm"
+                icon={<FiPercent />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onMortgageOpen();
+                }}
+                aria-label="Mortgage Calculator"
+                variant="ghost"
+                colorScheme="green"
+              />
+            </Tooltip>
+            <Tooltip label="Virtual Tour">
+              <IconButton
+                size="sm"
+                icon={<FiVideo />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onTourOpen();
+                }}
+                aria-label="Virtual Tour"
+                variant="ghost"
+                colorScheme="blue"
+              />
+            </Tooltip>
+            <Tooltip label="Share">
+              <IconButton
+                size="sm"
+                icon={<FiShare2 />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onShareOpen();
+                }}
+                aria-label="Share"
+                variant="ghost"
+                colorScheme="purple"
+              />
+            </Tooltip>
+            <Tooltip label="Print">
+              <IconButton
+                size="sm"
+                icon={<FiPrinter />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onPrintOpen();
+                }}
+                aria-label="Print"
+                variant="ghost"
+                colorScheme="orange"
+              />
+            </Tooltip>
           </HStack>
 
           {/* View Button */}
@@ -293,6 +376,30 @@ export default function ModernPropertyCard({ property, t, isFavorite, isInCompar
           </Button>
         </Stack>
       </Box>
+
+      {/* Modals */}
+      <MortgageCalculator
+        propertyPrice={property?.listingPrice}
+        isOpen={isMortgageOpen}
+        onClose={onMortgageClose}
+      />
+      <VirtualTourViewer
+        property={property}
+        isOpen={isTourOpen}
+        onClose={onTourClose}
+      />
+      <ShareProperty
+        property={property}
+        isOpen={isShareOpen}
+        onClose={onShareClose}
+      />
+      <PrintProperty
+        property={property}
+        isOpen={isPrintOpen}
+        onClose={onPrintClose}
+      />
     </Box>
   );
-}
+});
+
+export default ModernPropertyCard;

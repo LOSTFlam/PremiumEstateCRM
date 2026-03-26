@@ -34,7 +34,7 @@ export default function Upload(props) {
               <Icon as={MdUpload} w="70px" h="70px" color={brandColor} />
               <Flex justify="center" mx="auto" mb="12px">
                 <Text fontSize="xl" fontWeight="700" color={brandColor}>
-                  {t("fields.uploadFiles")}
+                  {t?.("fields.uploadFiles")}
                 </Text>
               </Flex>
               <Text fontSize="sm" fontWeight="500" color="secondaryGray.500">
@@ -61,7 +61,7 @@ export default function Upload(props) {
             fontSize="2xl"
             mt={{ base: "20px", "2xl": "50px" }}
           >
-            {t("fields.uploadFiles")}
+            {t?.("fields.uploadFiles")}
           </Text>
           <Text
             color={textColorSecondary}
@@ -70,7 +70,7 @@ export default function Upload(props) {
             mx="auto"
             textAlign="start"
           >
-            {t("fields.acceptedFileTypes")}
+            {t?.("fields.acceptedFileTypes")}
           </Text>
         </Flex>
       </GridItem>

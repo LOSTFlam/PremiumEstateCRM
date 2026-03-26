@@ -399,8 +399,8 @@ const AddPhoneCall = (props) => {
                 <Text w={"100%"}>
                   <CUIAutoComplete
                     label={`Property`}
-                    items={setValueProperty}
-                    selectedItems={setValueProperty?.filter((item) =>
+                    items={setValueProperty || []}
+                    selectedItems={(setValueProperty || [])?.filter((item) =>
                       values?.property?.includes(item?._id),
                     )}
                     onSelectedItemsChange={(changes) => {

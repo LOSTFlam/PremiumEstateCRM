@@ -1,61 +1,22 @@
-const createScene = ({ title, subtitle, primary, secondary, accent }) => {
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
-      <defs>
-        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="${primary}"/>
-          <stop offset="100%" stop-color="${secondary}"/>
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="1000" fill="url(#bg)"/>
-      <circle cx="1320" cy="180" r="120" fill="rgba(255,255,255,0.18)"/>
-      <path d="M80 760L350 520l160 130 220-260 300 310 160-150 330 210v160H80Z" fill="rgba(255,255,255,0.18)"/>
-      <rect x="110" y="120" width="520" height="200" rx="34" fill="rgba(7,18,24,0.28)"/>
-      <text x="150" y="205" fill="#ffffff" font-family="Georgia, serif" font-size="72" font-weight="700">${title}</text>
-      <text x="150" y="265" fill="rgba(255,255,255,0.82)" font-family="Arial, sans-serif" font-size="34">${subtitle}</text>
-      <rect x="1180" y="700" width="250" height="120" rx="24" fill="${accent}" opacity="0.88"/>
-      <text x="1235" y="775" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">Premium</text>
-    </svg>`;
+import { t } from 'i18next';
 
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+// Helper to create photo sets
+export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
+  { img: `https://placehold.co/800x600/${primary.replace('#', '')}/${secondary.replace('#', '')}?text=${encodeURIComponent(title)}`, title, subtitle },
+  { img: `https://placehold.co/800x600/${secondary.replace('#', '')}/${accent.replace('#', '')}?text=${encodeURIComponent(subtitle)}`, title, subtitle },
+  { img: `https://placehold.co/800x600/${accent.replace('#', '')}/${primary.replace('#', '')}?text=${encodeURIComponent(title + ' ' + subtitle)}`, title, subtitle },
+];
+
+export const placeholderImage = "https://placehold.co/800x600/1a202c/ffffff?text=Property";
+
+const docLink = (name) => ({ name, url: '#' });
+
+export const getPropertyById = (properties, id) => properties?.find((p) => p?._id === id);
+
+export const formatCompactNumber = (num) => {
+  if (!num) return "0";
+  return new Intl.NumberFormat("en-US", { notation: "compact", compactDisplay: "short" }).format(num);
 };
-
-export const placeholderImage = createScene({
-  title: "Estate",
-  subtitle: "Property showcase",
-  primary: "#163b31",
-  secondary: "#88a97b",
-  accent: "#c98541",
-});
-
-const docLink = (label) => ({
-  filename: label,
-  img: "#",
-});
-
-const makePhotoSet = (config) => ([
-  { img: createScene(config) },
-  {
-    img: createScene({
-      ...config,
-      title: `${config.title} View`,
-      subtitle: "Interior and terrace",
-      primary: config.secondary,
-      secondary: config.primary,
-      accent: config.accent,
-    }),
-  },
-  {
-    img: createScene({
-      ...config,
-      title: `${config.title} Plan`,
-      subtitle: "Layout and approach",
-      primary: config.accent,
-      secondary: config.secondary,
-      accent: config.primary,
-    }),
-  },
-]);
 
 export const samplePublicProperties = [
   {
@@ -387,32 +348,27 @@ export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/
 
 export const formatPrice = (value, t) => {
   const amount = parsePrice(value);
-  if (!amount) return t("publicListing.priceOnRequest");
-
-  return new Intl.NumberFormat("ru-RU", {
+  if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "RUB",
+    currency: "USD",
     maximumFractionDigits: 0,
   }).format(amount);
 };
 
-export const formatCompactNumber = (value) => new Intl.NumberFormat("ru-RU").format(Number(value || 0));
-
 export const formatDate = (value) => {
   if (!value) return "-";
-
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return String(value);
-
-  return new Intl.DateTimeFormat("ru-RU", {
+  if (Number.isNaN(parsed.getTime())) return "-";
+  return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
-    month: "long",
+    month: "short",
     year: "numeric",
   }).format(parsed);
 };
 
 export const normalizeStatus = (status, t) => {
-  if (!status) return t("modules.dashboardHome.statusAvailable");
+  if (!status) return t?.("modules.dashboardHome.statusAvailable") || "Available";
   return String(status)
     .replace(/[-_]+/g, " ")
     .replace(/\s+/g, " ")
@@ -421,7 +377,7 @@ export const normalizeStatus = (status, t) => {
 };
 
 export const getPrimaryImage = (property) =>
-  property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage;
+  property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || "https://placehold.co/800x600";
 
 export const getPhotoCount = (property) => Array.isArray(property?.propertyPhotos) ? property.propertyPhotos.length : 0;
 export const getFloorPlanCount = (property) => Array.isArray(property?.floorPlans) ? property.floorPlans.length : 0;
@@ -501,81 +457,23 @@ export const normalizePropertyTypeKey = (value = "") => {
   return "other";
 };
 
-export const getVerificationState = (property = {}) => {
-  const fallbackChecklist = [
-    property?.propertyAddress && "address",
-    property?.listingPrice && "price",
-    (property?.marketingDescription || property?.propertyDescription) && "description",
-    getPhotoCount(property) > 0 && "photos",
-    getDocumentCount(property) > 0 && "documents",
-    (property?.agent || property?.listingAgentOrTeam) && "agent",
-  ].filter(Boolean);
+export const getCatalogDataset = (properties) =>
+  properties.map((p) => ({
+    ...p,
+    propertyType: normalizePropertyTypeKey(p?.propertyType),
+  }));
 
-  const checklist =
-    property?.verification?.checklist ||
-    property?.verificationChecklist ||
-    fallbackChecklist;
+export const splitFeatures = (...lists) =>
+  lists
+    .flat()
+    .filter(Boolean)
+    .map((item) => String(item).trim())
+    .filter((item, idx, arr) => arr.indexOf(item) === idx);
 
-  const status =
-    property?.verification?.status ||
-    property?.verificationStatus ||
-    (checklist.length >= 5 ? "verified" : checklist.length >= 3 ? "review" : "pending");
-
-  return {
-    status,
-    score: Number(property?.verification?.score ?? property?.verificationScore ?? Math.min(checklist.length * 20, 100)),
-    checklist,
-    notes: property?.verification?.notes || property?.verificationNotes || "",
-    updatedAt:
-      property?.verification?.updatedAt ||
-      property?.verificationUpdatedAt ||
-      property?.updatedDate ||
-      property?.createdDate ||
-      null,
-  };
-};
-
-export const getAgentInfo = (property = {}) => {
-  const currentAgent = property?.agent || {};
-  const fullName =
-    currentAgent?.fullName ||
-    [currentAgent?.firstName, currentAgent?.lastName].filter(Boolean).join(" ").trim() ||
-    property?.listingAgentOrTeam ||
-    "Property consultant";
-
-  return {
-    _id: currentAgent?._id || null,
-    fullName,
-    firstName: currentAgent?.firstName || "",
-    lastName: currentAgent?.lastName || "",
-    label: currentAgent?.label || property?.listingAgentOrTeam || fullName,
-    email: currentAgent?.email || "",
-    phoneNumber: currentAgent?.phoneNumber ? String(currentAgent.phoneNumber) : "",
-    responseTimeText: currentAgent?.responseTimeText || "Usually responds within 15 minutes",
-  };
-};
-
-export const normalizeCatalogProperty = (property = {}) => ({
-  ...property,
-  agent: getAgentInfo(property),
-  verification: getVerificationState(property),
-});
-
-export const getCatalogDataset = (properties = []) => {
-  const actualProperties = (Array.isArray(properties) ? properties : []).map(normalizeCatalogProperty);
-
-  if (actualProperties.length >= 6) return actualProperties;
-
-  const existingIds = new Set(actualProperties.map((item) => item?._id));
-  const fallbackItems = samplePublicProperties
-    .filter((item) => !existingIds.has(item._id))
-    .map(normalizeCatalogProperty);
-  return [...actualProperties, ...fallbackItems];
-};
-
-export const getPropertyById = (properties = [], id) => {
-  const actualMatch = (Array.isArray(properties) ? properties : []).find((item) => item?._id === id);
-  if (actualMatch) return normalizeCatalogProperty(actualMatch);
-  const fallback = samplePublicProperties.find((item) => item._id === id) || null;
-  return fallback ? normalizeCatalogProperty(fallback) : null;
+export const buildHighlights = (property, t) => {
+  const highlights = [];
+  if (property?.yearBuilt && property.yearBuilt !== "-") highlights.push({ key: "yearBuilt", value: property.yearBuilt });
+  if (property?.lotSize) highlights.push({ key: "lotSize", value: property.lotSize });
+  if (property?.parkingAvailability) highlights.push({ key: "parking", value: property.parkingAvailability });
+  return highlights;
 };

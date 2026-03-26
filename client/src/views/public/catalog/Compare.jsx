@@ -40,18 +40,18 @@ export default function PublicCompareView() {
 
   const rows = useMemo(
     () => [
-      { label: t("publicListing.priceLabel"), render: (property) => formatPrice(property?.listingPrice, t) },
-      { label: t("publicListing.status"), render: (property) => normalizeStatus(property?.listingStatus, t) },
-      { label: t("publicListing.type"), render: (property) => property?.propertyType || t("publicListing.notSpecified") },
-      { label: t("publicListing.area"), render: (property) => property?.squareFootage || t("publicListing.notSpecified") },
-      { label: t("publicListing.bedrooms"), render: (property) => property?.numberofBedrooms || t("publicListing.notSpecified") },
-      { label: t("publicListing.bathrooms"), render: (property) => property?.numberofBathrooms || t("publicListing.notSpecified") },
-      { label: t("publicListing.lotSize"), render: (property) => property?.lotSize || t("publicListing.notSpecified") },
-      { label: t("publicListing.parking"), render: (property) => property?.parkingAvailability || t("publicListing.notSpecified") },
-      { label: t("publicListing.photosCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getPhotoCount(property)) },
-      { label: t("publicListing.docsCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getDocumentCount(property)) },
-      { label: t("publicListing.plansCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getFloorPlanCount(property)) },
-      { label: t("publicListing.aboutTitle"), render: (property) => property?.marketingDescription || property?.propertyDescription || t("publicListing.notSpecified") },
+      { label: t?.("publicListing.priceLabel"), render: (property) => formatPrice(property?.listingPrice, t) },
+      { label: t?.("publicListing.status"), render: (property) => normalizeStatus(property?.listingStatus, t) },
+      { label: t?.("publicListing.type"), render: (property) => property?.propertyType || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.area"), render: (property) => property?.squareFootage || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.bedrooms"), render: (property) => property?.numberofBedrooms || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.bathrooms"), render: (property) => property?.numberofBathrooms || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.lotSize"), render: (property) => property?.lotSize || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.parking"), render: (property) => property?.parkingAvailability || t?.("publicListing.notSpecified") },
+      { label: t?.("publicListing.photosCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getPhotoCount(property)) },
+      { label: t?.("publicListing.docsCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getDocumentCount(property)) },
+      { label: t?.("publicListing.plansCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getFloorPlanCount(property)) },
+      { label: t?.("publicListing.aboutTitle"), render: (property) => property?.marketingDescription || property?.propertyDescription || t?.("publicListing.notSpecified") },
     ],
     [t],
   );
@@ -77,10 +77,10 @@ export default function PublicCompareView() {
       <Container maxW="8xl">
         <Stack spacing={8}>
           <HStack justify="space-between" align="center" flexWrap="wrap">
-            <Button as={RouterLink} to="/offers" variant="outline">{t("publicListing.backToCatalog")}</Button>
+            <Button as={RouterLink} to="/offers" variant="outline">{t?.("publicListing.backToCatalog")}</Button>
             <HStack spacing={3}>
-              <Button onClick={clearCompare} variant="ghost" isDisabled={!compareIds.length}>{t("publicListing.clearCompare")}</Button>
-              <Button as={RouterLink} to="/auth/sign-in" colorScheme="green">{t("publicListing.signIn")}</Button>
+              <Button onClick={clearCompare} variant="ghost" isDisabled={!compareIds.length}>{t?.("publicListing.clearCompare")}</Button>
+              <Button as={RouterLink} to="/auth/sign-in" colorScheme="green">{t?.("publicListing.signIn")}</Button>
             </HStack>
           </HStack>
 
@@ -88,9 +88,9 @@ export default function PublicCompareView() {
             <Stack spacing={3}>
               <HStack>
                 <MdCompareArrows />
-                <Heading size="lg">{t("publicListing.comparePageTitle")}</Heading>
+                <Heading size="lg">{t?.("publicListing.comparePageTitle")}</Heading>
               </HStack>
-              <Text color={mutedColor}>{t("publicListing.comparePageText")}</Text>
+              <Text color={mutedColor}>{t?.("publicListing.comparePageText")}</Text>
             </Stack>
           </Box>
 
@@ -101,13 +101,13 @@ export default function PublicCompareView() {
                   <Box key={property?._id} bg={cardBg} borderRadius="28px" overflow="hidden" boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
                     <Box position="relative">
                       <Image src={getPrimaryImage(property)} alt={property?.name || property?.propertyAddress} h="220px" w="100%" objectFit="cover" />
-                      <IconButton aria-label={t("publicListing.removeFromCompare")} icon={<MdClose />} position="absolute" top={4} right={4} size="sm" colorScheme="blackAlpha" onClick={() => removeFromCompare(property?._id)} />
+                      <IconButton aria-label={t?.("publicListing.removeFromCompare")} icon={<MdClose />} position="absolute" top={4} right={4} size="sm" colorScheme="blackAlpha" onClick={() => removeFromCompare(property?._id)} />
                     </Box>
                     <Stack p={5} spacing={3}>
                       <Heading size="md">{property?.name || property?.propertyAddress}</Heading>
-                      <Text color={mutedColor}>{property?.propertyAddress || t("publicListing.notSpecified")}</Text>
+                      <Text color={mutedColor}>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
                       <Heading size="md" color="green.600">{formatPrice(property?.listingPrice, t)}</Heading>
-                      <Button as={RouterLink} to={`/offers/${property?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>{t("publicListing.viewOffer")}</Button>
+                      <Button as={RouterLink} to={`/offers/${property?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>{t?.("publicListing.viewOffer")}</Button>
                     </Stack>
                   </Box>
                 ))}
@@ -127,7 +127,7 @@ export default function PublicCompareView() {
                     </Box>
                     {compareProperties.map((property) => (
                       <Box key={`${row.label}-${property?._id}`} minW="240px" bg={cardBg} borderRadius="20px" p={4} borderWidth="1px" borderColor={borderColor}>
-                        <Text color={mutedColor} noOfLines={row.label === t("publicListing.aboutTitle") ? 4 : undefined}>{row.render(property)}</Text>
+                        <Text color={mutedColor} noOfLines={row.label === t?.("publicListing.aboutTitle") ? 4 : undefined}>{row.render(property)}</Text>
                       </Box>
                     ))}
                   </>
@@ -137,9 +137,9 @@ export default function PublicCompareView() {
           ) : (
             <Box bg={cardBg} borderRadius="32px" p={10} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
               <Stack spacing={4} align="start">
-                <Heading>{t("publicListing.emptyCompareTitle")}</Heading>
-                <Text color={mutedColor}>{t("publicListing.emptyCompareText")}</Text>
-                <Button as={RouterLink} to="/offers" colorScheme="green">{t("publicListing.allOffers")}</Button>
+                <Heading>{t?.("publicListing.emptyCompareTitle")}</Heading>
+                <Text color={mutedColor}>{t?.("publicListing.emptyCompareText")}</Text>
+                <Button as={RouterLink} to="/offers" colorScheme="green">{t?.("publicListing.allOffers")}</Button>
               </Stack>
             </Box>
           )}

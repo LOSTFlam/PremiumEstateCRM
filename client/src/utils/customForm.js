@@ -18,9 +18,16 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Box,
+  Button,
+  Stack,
+  Image,
+  IconButton,
+  Flex,
+  Textarea,
 } from "@chakra-ui/react"; // Assuming you are using Chakra UI
 import { HSeparator } from "components/separator/Separator";
-import { EmailIcon, PhoneIcon, StarIcon } from "@chakra-ui/icons";
+import { EmailIcon, PhoneIcon, StarIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import PropertyPhotoUpload from "components/property/PropertyPhotoUpload";
 
 const CustomForm = ({
   moduleData,
@@ -124,6 +131,23 @@ const CustomForm = ({
                           </option>
                         ))}
                       </Select>
+                    ) : field?.type === "textarea" ? (
+                      <Textarea
+                        fontSize="sm"
+                        id={field?.name}
+                        name={field?.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values[field?.name]}
+                        fontWeight="500"
+                        placeholder={`Enter ${field?.label}`}
+                        borderColor={
+                          errors?.[field?.name] && touched?.[field?.name]
+                            ? "red.300"
+                            : null
+                        }
+                        rows={4}
+                      />
                     ) : field?.type === "check" ? (
                       <Checkbox
                         isChecked={values[field?.name]}
@@ -273,6 +297,23 @@ const CustomForm = ({
                         </option>
                       ))}
                     </Select>
+                  ) : field?.type === "textarea" ? (
+                    <Textarea
+                      fontSize="sm"
+                      id={field?.name}
+                      name={field?.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values[field?.name]}
+                      fontWeight="500"
+                      placeholder={`Enter ${field?.label}`}
+                      borderColor={
+                        errors?.[field?.name] && touched?.[field?.name]
+                          ? "red.300"
+                          : null
+                      }
+                      rows={4}
+                    />
                   ) : field?.type === "check" ? (
                     <Checkbox
                       isChecked={values[field?.name]}
@@ -403,6 +444,29 @@ const CustomForm = ({
                       </option>
                     ))}
                   </Select>
+                ) : field?.type === "textarea" ? (
+                  <Textarea
+                    fontSize="sm"
+                    id={field?.name}
+                    name={field?.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values[field?.name]}
+                    fontWeight="500"
+                    placeholder={`Enter ${field?.label}`}
+                    borderColor={
+                      errors?.[field?.name] && touched?.[field?.name]
+                        ? "red.300"
+                        : null
+                    }
+                    rows={4}
+                  />
+                ) : field?.type === "photo" || field?.name === "propertyPhotos" ? (
+                  <PropertyPhotoUpload
+                    propertyId={values?._id}
+                    photos={values?.propertyPhotos || []}
+                    onChange={(photos) => setFieldValue("propertyPhotos", photos)}
+                  />
                 ) : field?.type === "check" ? (
                   <Checkbox
                     isChecked={values[field?.name]}

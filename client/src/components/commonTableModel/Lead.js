@@ -11,7 +11,6 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useMemo } from "react";
 import {
   useGlobalFilter,
   usePagination,

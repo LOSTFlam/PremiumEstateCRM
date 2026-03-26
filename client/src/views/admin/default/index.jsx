@@ -65,7 +65,7 @@ const formatPrice = (value, t) => {
   const amount = Number(String(value ?? "").replace(/[^\d.]/g, ""));
 
   if (!Number.isFinite(amount) || amount <= 0) {
-    return t("modules.dashboardHome.priceOnRequest");
+    return t?.("modules.dashboardHome.priceOnRequest");
   }
 
   return new Intl.NumberFormat("en-US", {
@@ -77,7 +77,7 @@ const formatPrice = (value, t) => {
 
 const normalizeStatus = (value, t) => {
   if (!value) {
-    return t("modules.dashboardHome.statusAvailable");
+    return t?.("modules.dashboardHome.statusAvailable");
   }
 
   return String(value)
@@ -88,7 +88,7 @@ const normalizeStatus = (value, t) => {
 };
 
 const getPropertyType = (property, t) =>
-  property?.propertyType || t("modules.dashboardHome.propertyFallback");
+  property?.propertyType || t?.("modules.dashboardHome.propertyFallback");
 
 const getPropertyName = (property, t) => {
   if (property?.name) {
@@ -99,14 +99,14 @@ const getPropertyName = (property, t) => {
     return `${property.propertyType} in ${property.propertyAddress}`;
   }
 
-  return property?.propertyAddress || t("modules.dashboardHome.untitledProperty");
+  return property?.propertyAddress || t?.("modules.dashboardHome.untitledProperty");
 };
 
 const getShortDescription = (property, t) => {
   const text = property?.marketingDescription || property?.propertyDescription;
 
   if (!text) {
-    return t("modules.dashboardHome.spotlightFallbackDescription");
+    return t?.("modules.dashboardHome.spotlightFallbackDescription");
   }
 
   return text.length > 150 ? `${text.slice(0, 147)}...` : text;
@@ -126,7 +126,7 @@ const getPrimaryImage = (property) => {
 
 const getArea = (property, t) => {
   if (!property?.squareFootage) {
-    return t("modules.dashboardHome.notSet");
+    return t?.("modules.dashboardHome.notSet");
   }
 
   return `${property.squareFootage} sq ft`;
@@ -205,8 +205,16 @@ export default function PropertyLandingPage() {
             ? "api/property/"
             : `api/property/?createBy=${user?._id}`;
         const response = await getApi(endpoint);
-        setProperties(Array.isArray(response?.data?.data) ? response.data.data : []);
+        console.log('Dashboard properties response:', response);
+        // API returns array directly, handle different structures
+        const propertiesData = Array.isArray(response?.data) 
+          ? response.data 
+          : Array.isArray(response) 
+            ? response 
+            : [];
+        setProperties(propertiesData);
       } catch (error) {
+        console.error('Error fetching properties:', error);
         setProperties([]);
       } finally {
         setIsLoading(false);
@@ -257,7 +265,7 @@ export default function PropertyLandingPage() {
   const availableInventory = properties.filter((property) => {
     const status = normalizeStatus(property?.listingStatus, t).toLowerCase();
     return [
-      t("modules.dashboardHome.statusAvailable").toLowerCase(),
+      t?.("modules.dashboardHome.statusAvailable").toLowerCase(),
       "active",
       "new",
       "активный",
@@ -269,7 +277,7 @@ export default function PropertyLandingPage() {
     const values = properties.map((property) => parsePrice(property?.listingPrice)).filter(Boolean);
 
     if (!values.length) {
-      return t("modules.dashboardHome.priceOnRequest");
+      return t?.("modules.dashboardHome.priceOnRequest");
     }
 
     return formatPrice(values.reduce((sum, current) => sum + current, 0) / values.length, t);
@@ -310,43 +318,43 @@ export default function PropertyLandingPage() {
                 <Wrap spacing={3}>
                   <WrapItem>
                     <Badge px={4} py={1.5} borderRadius="full" bg="whiteAlpha.230" color="white">
-                      {t("modules.dashboardHome.badgePrimary")}
+                      {t?.("modules.dashboardHome.badgePrimary")}
                     </Badge>
                   </WrapItem>
                   <WrapItem>
                     <Badge px={4} py={1.5} borderRadius="full" bg="rgba(255,255,255,0.14)" color="whiteAlpha.900">
-                      {t("modules.dashboardHome.badgeSecondary")}
+                      {t?.("modules.dashboardHome.badgeSecondary")}
                     </Badge>
                   </WrapItem>
                 </Wrap>
 
                 <Heading size="2xl" lineHeight="1.02" maxW="820px">
-                  {t("modules.dashboardHome.heroTitle")}
+                  {t?.("modules.dashboardHome.heroTitle")}
                 </Heading>
                 <Text color="whiteAlpha.900" fontSize={{ base: "md", md: "lg" }} maxW="2xl">
-                  {t("modules.dashboardHome.heroDescription")}
+                  {t?.("modules.dashboardHome.heroDescription")}
                 </Text>
 
                 <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
                   <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t("modules.dashboardHome.totalInventory")}</StatLabel>
+                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.totalInventory")}</StatLabel>
                       <StatNumber>{properties.length}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t("modules.dashboardHome.totalInventoryHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.totalInventoryHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                   <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t("modules.dashboardHome.openInventory")}</StatLabel>
+                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.openInventory")}</StatLabel>
                       <StatNumber>{availableInventory}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t("modules.dashboardHome.openInventoryHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.openInventoryHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                   <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t("modules.dashboardHome.averagePrice")}</StatLabel>
+                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.averagePrice")}</StatLabel>
                       <StatNumber fontSize="2xl">{averagePrice}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t("modules.dashboardHome.averagePriceHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.averagePriceHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                 </SimpleGrid>
@@ -362,7 +370,7 @@ export default function PropertyLandingPage() {
               >
                 <Stack spacing={4}>
                   <Flex justify="space-between" align="center">
-                    <Heading size="md">{t("modules.dashboardHome.findInventory")}</Heading>
+                    <Heading size="md">{t?.("modules.dashboardHome.findInventory")}</Heading>
                     <Circle size="42px" bg="green.50" color="green.700">
                       <Icon as={MdOutlineTune} boxSize={5} />
                     </Circle>
@@ -375,7 +383,7 @@ export default function PropertyLandingPage() {
                     <Input
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
-                      placeholder={t("modules.dashboardHome.searchPlaceholder")}
+                      placeholder={t?.("modules.dashboardHome.searchPlaceholder")}
                       bg="white"
                       borderRadius="18px"
                     />
@@ -383,7 +391,7 @@ export default function PropertyLandingPage() {
 
                   <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
                     <Select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} borderRadius="18px">
-                      <option value="all">{t("modules.dashboardHome.allStatuses")}</option>
+                      <option value="all">{t?.("modules.dashboardHome.allStatuses")}</option>
                       {uniqueStatuses.map((status) => (
                         <option key={status} value={status}>
                           {status}
@@ -391,7 +399,7 @@ export default function PropertyLandingPage() {
                       ))}
                     </Select>
                     <Select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} borderRadius="18px">
-                      <option value="all">{t("modules.dashboardHome.allTypes")}</option>
+                      <option value="all">{t?.("modules.dashboardHome.allTypes")}</option>
                       {uniqueTypes.map((type) => (
                         <option key={type} value={type}>
                           {type}
@@ -401,17 +409,17 @@ export default function PropertyLandingPage() {
                   </SimpleGrid>
 
                   <Select value={sortBy} onChange={(event) => setSortBy(event.target.value)} borderRadius="18px">
-                    <option value="latest">{t("modules.dashboardHome.newestFirst")}</option>
-                    <option value="price-high">{t("modules.dashboardHome.highestPrice")}</option>
-                    <option value="price-low">{t("modules.dashboardHome.lowestPrice")}</option>
+                    <option value="latest">{t?.("modules.dashboardHome.newestFirst")}</option>
+                    <option value="price-high">{t?.("modules.dashboardHome.highestPrice")}</option>
+                    <option value="price-low">{t?.("modules.dashboardHome.lowestPrice")}</option>
                   </Select>
 
                   <SimpleGrid columns={2} gap={3}>
                     <Button colorScheme="green" borderRadius="18px" onClick={() => navigate("/properties")}>
-                      {t("modules.dashboardHome.fullTable")}
+                      {t?.("modules.dashboardHome.fullTable")}
                     </Button>
                     <Button variant="outline" borderRadius="18px" onClick={resetFilters}>
-                      {t("common.reset")}
+                      {t?.("common.reset")}
                     </Button>
                   </SimpleGrid>
                 </Stack>
@@ -421,17 +429,17 @@ export default function PropertyLandingPage() {
         </Card>
 
         <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={4}>
-          <PropertyMetric icon={LuBuilding2} label={t("modules.dashboardHome.filteredResults")} value={filteredProperties.length} iconColor="green.500" />
-          <PropertyMetric icon={MdOutlineLocationOn} label={t("modules.dashboardHome.propertyTypes")} value={uniqueTypes.length || 0} iconColor="teal.500" />
-          <PropertyMetric icon={LuSparkles} label={t("modules.dashboardHome.statusesUsed")} value={uniqueStatuses.length || 0} iconColor="orange.400" />
-          <PropertyMetric icon={LuCalendarClock} label={t("modules.dashboardHome.sortMode")} value={sortBy.replace("-", " ")} iconColor="gray.700" valueSize="sm" />
+          <PropertyMetric icon={LuBuilding2} label={t?.("modules.dashboardHome.filteredResults")} value={filteredProperties.length} iconColor="green.500" />
+          <PropertyMetric icon={MdOutlineLocationOn} label={t?.("modules.dashboardHome.propertyTypes")} value={uniqueTypes.length || 0} iconColor="teal.500" />
+          <PropertyMetric icon={LuSparkles} label={t?.("modules.dashboardHome.statusesUsed")} value={uniqueStatuses.length || 0} iconColor="orange.400" />
+          <PropertyMetric icon={LuCalendarClock} label={t?.("modules.dashboardHome.sortMode")} value={sortBy.replace("-", " ")} iconColor="gray.700" valueSize="sm" />
         </SimpleGrid>
 
         <Flex justify="space-between" align={{ base: "start", md: "end" }} direction={{ base: "column", md: "row" }} gap={3}>
           <Box>
-            <Heading size="lg">{t("modules.dashboardHome.curatedTitle")}</Heading>
+            <Heading size="lg">{t?.("modules.dashboardHome.curatedTitle")}</Heading>
             <Text color={mutedText} mt={1}>
-              {t("modules.dashboardHome.curatedDescription")}
+              {t?.("modules.dashboardHome.curatedDescription")}
             </Text>
           </Box>
           <Wrap spacing={2}>
@@ -491,13 +499,13 @@ export default function PropertyLandingPage() {
                     </Wrap>
                     <Box position="absolute" left={5} right={5} bottom={5} color="white">
                       <Text fontSize="xs" letterSpacing="0.16em" textTransform="uppercase" mb={2}>
-                        {t("modules.dashboardHome.spotlight")}
+                        {t?.("modules.dashboardHome.spotlight")}
                       </Text>
                       <Heading size="lg" mb={2}>
                         {getPropertyName(featuredProperty, t)}
                       </Heading>
                       <Text color="whiteAlpha.880" noOfLines={2}>
-                        {featuredProperty?.propertyAddress || t("modules.dashboardHome.addressNotSpecified")}
+                        {featuredProperty?.propertyAddress || t?.("modules.dashboardHome.addressNotSpecified")}
                       </Text>
                     </Box>
                   </GridItem>
@@ -507,7 +515,7 @@ export default function PropertyLandingPage() {
                       <Flex justify="space-between" align="start" gap={4}>
                         <Box>
                           <Text fontSize="sm" textTransform="uppercase" letterSpacing="0.16em" color="gray.500" mb={2}>
-                            {t("modules.dashboardHome.flagship")}
+                            {t?.("modules.dashboardHome.flagship")}
                           </Text>
                           <Heading size="xl" color="gray.800">
                             {formatPrice(featuredProperty?.listingPrice, t)}
@@ -523,9 +531,9 @@ export default function PropertyLandingPage() {
                       </Text>
 
                       <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
-                        <PropertyMetric icon={LuBedDouble} label={t("modules.dashboardHome.bedrooms")} value={featuredProperty?.numberofBedrooms || "-"} iconColor="green.500" />
-                        <PropertyMetric icon={LuBath} label={t("modules.dashboardHome.bathrooms")} value={featuredProperty?.numberofBathrooms || "-"} iconColor="teal.500" />
-                        <PropertyMetric icon={MdOutlineSquareFoot} label={t("modules.dashboardHome.area")} value={getArea(featuredProperty, t)} iconColor="orange.400" />
+                        <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.bedrooms")} value={featuredProperty?.numberofBedrooms || "-"} iconColor="green.500" />
+                        <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.bathrooms")} value={featuredProperty?.numberofBathrooms || "-"} iconColor="teal.500" />
+                        <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(featuredProperty, t)} iconColor="orange.400" />
                       </SimpleGrid>
 
                       <Divider />
@@ -533,7 +541,7 @@ export default function PropertyLandingPage() {
                       <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
                         <Box>
                           <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" color="gray.500">
-                            {t("modules.dashboardHome.propertyType")}
+                            {t?.("modules.dashboardHome.propertyType")}
                           </Text>
                           <Text fontWeight="700" color="gray.800">
                             {getPropertyType(featuredProperty, t)}
@@ -541,7 +549,7 @@ export default function PropertyLandingPage() {
                         </Box>
                         <Box>
                           <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" color="gray.500">
-                            {t("modules.dashboardHome.currentStatus")}
+                            {t?.("modules.dashboardHome.currentStatus")}
                           </Text>
                           <Text fontWeight="700" color="gray.800">
                             {normalizeStatus(featuredProperty?.listingStatus, t)}
@@ -551,7 +559,7 @@ export default function PropertyLandingPage() {
 
                       <Flex justify="space-between" align={{ base: "start", md: "center" }} direction={{ base: "column", md: "row" }} gap={3}>
                         <Text color={mutedText}>
-                          {t("modules.dashboardHome.crmDescription")}
+                          {t?.("modules.dashboardHome.crmDescription")}
                         </Text>
                         <Button
                           colorScheme="green"
@@ -559,7 +567,7 @@ export default function PropertyLandingPage() {
                           borderRadius="18px"
                           onClick={() => navigate(`/propertyView/${featuredProperty?._id}`)}
                         >
-                          {t("common.viewDetails")}
+                          {t?.("common.viewDetails")}
                         </Button>
                       </Flex>
                     </Stack>
@@ -611,7 +619,7 @@ export default function PropertyLandingPage() {
                             {getPropertyName(property, t)}
                           </Heading>
                           <Text color={mutedText} mt={2} noOfLines={1}>
-                            {property?.propertyAddress || t("modules.dashboardHome.addressNotSpecified")}
+                            {property?.propertyAddress || t?.("modules.dashboardHome.addressNotSpecified")}
                           </Text>
                         </Box>
 
@@ -620,9 +628,9 @@ export default function PropertyLandingPage() {
                         </Text>
 
                         <SimpleGrid columns={3} spacing={3}>
-                          <PropertyMetric icon={LuBedDouble} label={t("modules.dashboardHome.beds")} value={property?.numberofBedrooms || "-"} iconColor="green.500" valueSize="sm" />
-                          <PropertyMetric icon={LuBath} label={t("modules.dashboardHome.baths")} value={property?.numberofBathrooms || "-"} iconColor="teal.500" valueSize="sm" />
-                          <PropertyMetric icon={MdOutlineSquareFoot} label={t("modules.dashboardHome.area")} value={getArea(property, t)} iconColor="orange.400" valueSize="sm" />
+                          <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.beds")} value={property?.numberofBedrooms || "-"} iconColor="green.500" valueSize="sm" />
+                          <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.baths")} value={property?.numberofBathrooms || "-"} iconColor="teal.500" valueSize="sm" />
+                          <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(property, t)} iconColor="orange.400" valueSize="sm" />
                         </SimpleGrid>
 
                         <Button
@@ -632,7 +640,7 @@ export default function PropertyLandingPage() {
                           rightIcon={<MdArrowForward />}
                           onClick={() => navigate(`/propertyView/${property?._id}`)}
                         >
-                          {t("modules.dashboardHome.openProperty")}
+                          {t?.("modules.dashboardHome.openProperty")}
                         </Button>
                       </Stack>
                     </Card>
@@ -644,16 +652,16 @@ export default function PropertyLandingPage() {
         ) : (
           <Card bg={surfaceBg} border={`1px solid ${borderColor}`}>
             <Stack spacing={3} align="start">
-              <Heading size="md">{t("modules.dashboardHome.noPropertiesTitle")}</Heading>
+              <Heading size="md">{t?.("modules.dashboardHome.noPropertiesTitle")}</Heading>
               <Text color={mutedText}>
-                {t("modules.dashboardHome.noPropertiesDescription")}
+                {t?.("modules.dashboardHome.noPropertiesDescription")}
               </Text>
               <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
                 <Button colorScheme="green" onClick={() => navigate("/properties")}>
-                  {t("modules.dashboardHome.fullTable")}
+                  {t?.("modules.dashboardHome.fullTable")}
                 </Button>
                 <Button variant="outline" onClick={resetFilters}>
-                  {t("common.reset")}
+                  {t?.("common.reset")}
                 </Button>
               </SimpleGrid>
             </Stack>

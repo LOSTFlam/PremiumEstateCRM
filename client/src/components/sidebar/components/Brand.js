@@ -12,6 +12,7 @@ export function SidebarBrand(props) {
 
   //   Chakra color mode
   let logoColor = useColorModeValue("navy.700", "white");
+  let sidebarBg = useColorModeValue("white", "navy.900");
 
   return (
     <Flex
@@ -21,7 +22,7 @@ export function SidebarBrand(props) {
         position: "sticky",
         top: "0",
         left: "0",
-        background: "#fff",
+        background: sidebarBg,
       }}
     >
       <Flex>
@@ -32,8 +33,8 @@ export function SidebarBrand(props) {
               openSidebar === true
                 ? largeLogo[0]?.logoLgImg
                 : largeLogo[0]?.logoSmImg
-            } // Set the source path of your image
-            alt="Logo" // Set the alt text for accessibility
+            }
+            alt="Logo"
             cursor="pointer"
             onClick={() => !from && setOpenSidebar(!openSidebar)}
             userSelect="none"
@@ -45,6 +46,7 @@ export function SidebarBrand(props) {
             cursor={"pointer"}
             onClick={() => !from && setOpenSidebar(!openSidebar)}
             userSelect={"none"}
+            color={logoColor}
           >
             {openSidebar === true ? "PremiumEstate" : "PE"}
           </Heading>

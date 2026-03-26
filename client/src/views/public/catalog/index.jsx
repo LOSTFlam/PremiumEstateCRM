@@ -145,7 +145,27 @@ export default function PublicCatalog({ forcedType = null }) {
       setLoading(true);
       try {
         const response = await getApi("api/property/public");
-        setProperties(getCatalogDataset(Array.isArray(response?.data) ? response.data : []));
+        let propertiesData = [];
+        
+        if (Array.isArray(response)) {
+          propertiesData = response;
+        } else if (Array.isArray(response?.data)) {
+          propertiesData = response.data;
+        }
+        
+        // If API returned empty array, import sample data
+        if (propertiesData.length === 0) {
+          console.log('No properties from API, loading sample data');
+          const { samplePublicProperties } = await import('./catalogData');
+          propertiesData = samplePublicProperties;
+        }
+        
+        setProperties(getCatalogDataset(propertiesData));
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+        // Load sample data on error
+        const { samplePublicProperties } = await import('./catalogData');
+        setProperties(getCatalogDataset(samplePublicProperties));
       } finally {
         setLoading(false);
       }
@@ -258,7 +278,7 @@ export default function PublicCatalog({ forcedType = null }) {
 
   const avgPrice = useMemo(() => {
     const prices = properties.map((item) => parsePrice(item?.listingPrice)).filter(Boolean);
-    if (!prices.length) return t("publicListing.priceOnRequest");
+    if (!prices.length) return t?.("publicListing.priceOnRequest");
     return formatPrice(prices.reduce((sum, item) => sum + item, 0) / prices.length, t);
   }, [properties, t]);
 
@@ -278,8 +298,8 @@ export default function PublicCatalog({ forcedType = null }) {
     }))
     .filter((section) => section.items.length > 0);
 
-  const headingTitle = forcedType ? t(categoryConfig[forcedType]?.titleKey || "publicListing.catalogTitle") : t("publicListing.catalogTitle");
-  const headingText = forcedType ? t(categoryConfig[forcedType]?.descriptionKey || "publicListing.heroDescription") : t("publicListing.heroDescription");
+  const headingTitle = forcedType ? t(categoryConfig[forcedType]?.titleKey || "publicListing.catalogTitle") : t?.("publicListing.catalogTitle");
+  const headingText = forcedType ? t(categoryConfig[forcedType]?.descriptionKey || "publicListing.heroDescription") : t?.("publicListing.heroDescription");
 
   const resetFilters = () => {
     setSearch("");
@@ -301,7 +321,7 @@ export default function PublicCatalog({ forcedType = null }) {
 
   const handleCompareToggle = (id) => {
     if (!compareIds.includes(id) && compareIds.length >= 3) {
-      toast({ title: t("publicListing.compareLimit"), status: "info" });
+      toast({ title: t?.("publicListing.compareLimit"), status: "info" });
       return;
     }
 
@@ -313,10 +333,10 @@ export default function PublicCatalog({ forcedType = null }) {
       <Image src={getPrimaryImage(property)} alt={property?.name || property?.propertyAddress} h="160px" w="100%" objectFit="cover" />
       <Stack p={4} spacing={3}>
         <Heading size="sm" noOfLines={2}>{property?.name || property?.propertyAddress}</Heading>
-        <Text color={mutedColor} fontSize="sm" noOfLines={1}>{property?.propertyAddress || t("publicListing.notSpecified")}</Text>
+        <Text color={mutedColor} fontSize="sm" noOfLines={1}>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
         <Heading size="sm" color="green.600">{formatPrice(property?.listingPrice, t)}</Heading>
-        <Button as={RouterLink} to={`/offers/${property?._id}`} size="sm" colorScheme="green" variant="outline">
-          {t("publicListing.viewOffer")}
+        <Button as={RouterLink} to={`/offers/${property?.publicSlug || property?._id}`} size="sm" colorScheme="green" variant="outline">
+          {t?.("publicListing.viewOffer")}
         </Button>
       </Stack>
     </Box>
@@ -332,7 +352,7 @@ export default function PublicCatalog({ forcedType = null }) {
                 <Stack spacing={5}>
                   <Flex justifyContent="space-between" alignItems="center">
                     <Badge w="fit-content" px={4} py={1.5} borderRadius="full" bg="whiteAlpha.250">
-                      {t("publicListing.heroBadge")}
+                      {t?.("publicListing.heroBadge")}
                     </Badge>
                     <HStack spacing={2}>
                       <Button
@@ -377,16 +397,16 @@ export default function PublicCatalog({ forcedType = null }) {
                   </SimpleGrid>
                   <HStack spacing={3} flexWrap="wrap">
                     <Button as={RouterLink} to="/offers" colorScheme="blackAlpha" variant="solid">
-                      {t("publicListing.allOffers")}
+                      {t?.("publicListing.allOffers")}
                     </Button>
                     <Button as={RouterLink} to="/offers/compare" variant="outline" borderColor="whiteAlpha.500">
-                      {t("publicListing.compareAction")}
+                      {t?.("publicListing.compareAction")}
                     </Button>
                     <Button as={RouterLink} to="/auth/sign-in" variant="outline" borderColor="whiteAlpha.500">
-                      {t("auth.signIn.signInButton")}
+                      {t?.("auth.signIn.signInButton")}
                     </Button>
                     <Button as={RouterLink} to="/auth/sign-up" variant="solid" colorScheme="green">
-                      {t("auth.signUp.createAccountButton")}
+                      {t?.("auth.signUp.createAccountButton")}
                     </Button>
                   </HStack>
                 </Stack>
@@ -395,30 +415,30 @@ export default function PublicCatalog({ forcedType = null }) {
                 <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
                   <Box bg="whiteAlpha.200" borderRadius="28px" p={5}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.800">{t("publicListing.totalOffers")}</StatLabel>
+                      <StatLabel color="whiteAlpha.800">{t?.("publicListing.totalOffers")}</StatLabel>
                       <StatNumber>{formatCompactNumber(properties.length)}</StatNumber>
-                      <StatHelpText color="whiteAlpha.800">{t("publicListing.totalOffersHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.800">{t?.("publicListing.totalOffersHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                   <Box bg="whiteAlpha.200" borderRadius="28px" p={5}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.800">{t("publicListing.availableNow")}</StatLabel>
+                      <StatLabel color="whiteAlpha.800">{t?.("publicListing.availableNow")}</StatLabel>
                       <StatNumber>{formatCompactNumber(availableNow)}</StatNumber>
-                      <StatHelpText color="whiteAlpha.800">{t("publicListing.availableHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.800">{t?.("publicListing.availableHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                   <Box bg="whiteAlpha.200" borderRadius="28px" p={5}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.800">{t("publicListing.avgPrice")}</StatLabel>
+                      <StatLabel color="whiteAlpha.800">{t?.("publicListing.avgPrice")}</StatLabel>
                       <StatNumber fontSize="xl">{avgPrice}</StatNumber>
-                      <StatHelpText color="whiteAlpha.800">{t("publicListing.avgPriceHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.800">{t?.("publicListing.avgPriceHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                   <Box bg="whiteAlpha.200" borderRadius="28px" p={5}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.800">{t("publicListing.richCardBadge")}</StatLabel>
+                      <StatLabel color="whiteAlpha.800">{t?.("publicListing.richCardBadge")}</StatLabel>
                       <StatNumber>{formatCompactNumber(richListingsCount)}</StatNumber>
-                      <StatHelpText color="whiteAlpha.800">{t("publicListing.savedOffersHelp")}</StatHelpText>
+                      <StatHelpText color="whiteAlpha.800">{t?.("publicListing.savedOffersHelp")}</StatHelpText>
                     </Stat>
                   </Box>
                 </Grid>
@@ -430,23 +450,23 @@ export default function PublicCatalog({ forcedType = null }) {
             <Grid templateColumns={{ base: "1fr", xl: "1.1fr 0.9fr" }} gap={6} alignItems="start">
               <GridItem>
                 <Stack spacing={3}>
-                  <Badge w="fit-content" colorScheme="green">{t("publicListing.savedOffers")}</Badge>
-                  <Heading size="md">{t("publicListing.savedOffersHelp")}</Heading>
-                  <Text color={mutedColor}>{forcedType ? headingText : t("publicListing.catalogSupportText")}</Text>
+                  <Badge w="fit-content" colorScheme="green">{t?.("publicListing.savedOffers")}</Badge>
+                  <Heading size="md">{t?.("publicListing.savedOffersHelp")}</Heading>
+                  <Text color={mutedColor}>{forcedType ? headingText : t?.("publicListing.catalogSupportText")}</Text>
                 </Stack>
               </GridItem>
               <GridItem>
                 <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
                   <Box bg={subtleBg} borderRadius="24px" p={4}>
-                    <Text fontSize="sm" color={mutedColor}>{t("publicListing.favoritesCount")}</Text>
+                    <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.favoritesCount")}</Text>
                     <Heading size="md">{favoriteIds.length}</Heading>
                   </Box>
                   <Box bg={subtleBg} borderRadius="24px" p={4}>
-                    <Text fontSize="sm" color={mutedColor}>{t("publicListing.compareCount")}</Text>
+                    <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.compareCount")}</Text>
                     <Heading size="md">{compareIds.length}</Heading>
                   </Box>
                   <Box bg={subtleBg} borderRadius="24px" p={4}>
-                    <Text fontSize="sm" color={mutedColor}>{t("publicListing.recentCount")}</Text>
+                    <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.recentCount")}</Text>
                     <Heading size="md">{recentIds.length}</Heading>
                   </Box>
                 </SimpleGrid>
@@ -458,8 +478,8 @@ export default function PublicCatalog({ forcedType = null }) {
             <Box bg={cardBg} borderRadius="32px" p={{ base: 5, md: 6 }} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
               <Stack spacing={5}>
                 <Box>
-                  <Heading size="lg">{t("publicListing.seoCollectionsTitle")}</Heading>
-                  <Text color={mutedColor}>{t("publicListing.seoCollectionsText")}</Text>
+                  <Heading size="lg">{t?.("publicListing.seoCollectionsTitle")}</Heading>
+                  <Text color={mutedColor}>{t?.("publicListing.seoCollectionsText")}</Text>
                 </Box>
                 <SimpleGrid columns={{ base: 1, md: 2, xl: 5 }} gap={4}>
                   {seoCollections.map((item) => (
@@ -478,10 +498,10 @@ export default function PublicCatalog({ forcedType = null }) {
             <Stack spacing={5}>
               <Flex justify="space-between" align={{ base: "start", md: "center" }} direction={{ base: "column", md: "row" }} gap={3}>
                 <Box>
-                  <Heading size="lg">{t("publicListing.collectionsTitle")}</Heading>
-                  <Text color={mutedColor}>{t("publicListing.collectionsText")}</Text>
+                  <Heading size="lg">{t?.("publicListing.collectionsTitle")}</Heading>
+                  <Text color={mutedColor}>{t?.("publicListing.collectionsText")}</Text>
                 </Box>
-                <Button as={RouterLink} to="/offers" variant="outline">{t("publicListing.allOffers")}</Button>
+                <Button as={RouterLink} to="/offers" variant="outline">{t?.("publicListing.allOffers")}</Button>
               </Flex>
               {categorySections.map((section) => (
                 <Box key={section.key} bg={cardBg} borderRadius="32px" p={{ base: 5, md: 6 }} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
@@ -491,7 +511,7 @@ export default function PublicCatalog({ forcedType = null }) {
                       <Text color={mutedColor}>{t(section.config.descriptionKey)}</Text>
                     </Box>
                     <Button as={RouterLink} to={section.config.route} variant="ghost" colorScheme="green">
-                      {t("publicListing.openCategory")}
+                      {t?.("publicListing.openCategory")}
                     </Button>
                   </Flex>
                   <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
@@ -507,18 +527,18 @@ export default function PublicCatalog({ forcedType = null }) {
               <GridItem>
                 <Box bg={cardBg} borderRadius="32px" p={{ base: 5, md: 6 }} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
                   <Stack spacing={4}>
-                    <Heading size="md">{t("publicListing.favoritesTitle")}</Heading>
-                    <Text color={mutedColor}>{t("publicListing.favoritesText")}</Text>
-                    {favoriteProperties.length ? <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>{favoriteProperties.map((property) => renderMiniCard(property))}</SimpleGrid> : <Text color={mutedColor}>{t("publicListing.notSpecified")}</Text>}
+                    <Heading size="md">{t?.("publicListing.favoritesTitle")}</Heading>
+                    <Text color={mutedColor}>{t?.("publicListing.favoritesText")}</Text>
+                    {favoriteProperties.length ? <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>{favoriteProperties.map((property) => renderMiniCard(property))}</SimpleGrid> : <Text color={mutedColor}>{t?.("publicListing.notSpecified")}</Text>}
                   </Stack>
                 </Box>
               </GridItem>
               <GridItem>
                 <Box bg={cardBg} borderRadius="32px" p={{ base: 5, md: 6 }} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
                   <Stack spacing={4}>
-                    <Heading size="md">{t("publicListing.recentlyViewedTitle")}</Heading>
-                    <Text color={mutedColor}>{t("publicListing.recentlyViewedText")}</Text>
-                    {recentProperties.length ? <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>{recentProperties.map((property) => renderMiniCard(property))}</SimpleGrid> : <Text color={mutedColor}>{t("publicListing.notSpecified")}</Text>}
+                    <Heading size="md">{t?.("publicListing.recentlyViewedTitle")}</Heading>
+                    <Text color={mutedColor}>{t?.("publicListing.recentlyViewedText")}</Text>
+                    {recentProperties.length ? <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>{recentProperties.map((property) => renderMiniCard(property))}</SimpleGrid> : <Text color={mutedColor}>{t?.("publicListing.notSpecified")}</Text>}
                   </Stack>
                 </Box>
               </GridItem>
@@ -532,44 +552,44 @@ export default function PublicCatalog({ forcedType = null }) {
                   <InputLeftElement pointerEvents="none">
                     <Icon as={LuSearch} color="gray.400" />
                   </InputLeftElement>
-                  <Input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder={t("publicListing.searchPlaceholder")} />
+                  <Input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder={t?.("publicListing.searchPlaceholder")} />
                 </InputGroup>
                 <Select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }}>
-                  <option value="all">{t("publicListing.allStatuses")}</option>
+                  <option value="all">{t?.("publicListing.allStatuses")}</option>
                   {statuses.map((status) => <option key={status} value={status}>{status}</option>)}
                 </Select>
                 <Select value={typeFilter} onChange={(event) => { setTypeFilter(event.target.value); setPage(1); }} isDisabled={Boolean(forcedType)}>
-                  <option value="all">{t("publicListing.allTypes")}</option>
+                  <option value="all">{t?.("publicListing.allTypes")}</option>
                   {typeOptions.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
                 </Select>
                 <Select value={sortBy} onChange={(event) => { setSortBy(event.target.value); setPage(1); }}>
-                  <option value="latest">{t("publicListing.latest")}</option>
-                  <option value="priceHigh">{t("publicListing.priceHigh")}</option>
-                  <option value="priceLow">{t("publicListing.priceLow")}</option>
-                  <option value="bestFilled">{t("publicListing.bestFilled")}</option>
+                  <option value="latest">{t?.("publicListing.latest")}</option>
+                  <option value="priceHigh">{t?.("publicListing.priceHigh")}</option>
+                  <option value="priceLow">{t?.("publicListing.priceLow")}</option>
+                  <option value="bestFilled">{t?.("publicListing.bestFilled")}</option>
                 </Select>
               </Grid>
 
               <Box bg={subtleBg} borderRadius="28px" p={5}>
                 <Stack spacing={4}>
-                  <Heading size="sm">{t("publicListing.advancedFiltersTitle")}</Heading>
+                  <Heading size="sm">{t?.("publicListing.advancedFiltersTitle")}</Heading>
                   <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)", xl: "repeat(6, 1fr)" }} gap={4}>
-                    <Input value={minPrice} onChange={(event) => { setMinPrice(event.target.value); setPage(1); }} placeholder={t("publicListing.minPrice")} />
-                    <Input value={maxPrice} onChange={(event) => { setMaxPrice(event.target.value); setPage(1); }} placeholder={t("publicListing.maxPrice")} />
+                    <Input value={minPrice} onChange={(event) => { setMinPrice(event.target.value); setPage(1); }} placeholder={t?.("publicListing.minPrice")} />
+                    <Input value={maxPrice} onChange={(event) => { setMaxPrice(event.target.value); setPage(1); }} placeholder={t?.("publicListing.maxPrice")} />
                     <Select value={bedroomFilter} onChange={(event) => { setBedroomFilter(event.target.value); setPage(1); }}>
-                      <option value="all">{t("publicListing.bedroomsAny")}</option>
+                      <option value="all">{t?.("publicListing.bedroomsAny")}</option>
                       {FILTER_OPTIONS.map((value) => <option key={value} value={value}>{value}+</option>)}
                     </Select>
                     <Select value={bathroomFilter} onChange={(event) => { setBathroomFilter(event.target.value); setPage(1); }}>
-                      <option value="all">{t("publicListing.bathroomsAny")}</option>
+                      <option value="all">{t?.("publicListing.bathroomsAny")}</option>
                       {FILTER_OPTIONS.map((value) => <option key={value} value={value}>{value}+</option>)}
                     </Select>
                     <HStack justify="space-between" bg={cardBg} borderRadius="18px" px={4}>
-                      <Text fontSize="sm">{t("publicListing.onlyWithPhotos")}</Text>
+                      <Text fontSize="sm">{t?.("publicListing.onlyWithPhotos")}</Text>
                       <Switch isChecked={onlyWithPhotos} onChange={(event) => { setOnlyWithPhotos(event.target.checked); setPage(1); }} />
                     </HStack>
                     <HStack justify="space-between" bg={cardBg} borderRadius="18px" px={4}>
-                      <Text fontSize="sm">{t("publicListing.onlyRichListings")}</Text>
+                      <Text fontSize="sm">{t?.("publicListing.onlyRichListings")}</Text>
                       <Switch isChecked={onlyRich} onChange={(event) => { setOnlyRich(event.target.checked); setPage(1); }} />
                     </HStack>
                   </Grid>
@@ -590,39 +610,39 @@ export default function PublicCatalog({ forcedType = null }) {
                   <Stack spacing={4} h="100%" justify="space-between">
                     <Stack spacing={4}>
                       <HStack spacing={3} flexWrap="wrap">
-                        <Badge w="fit-content" colorScheme="green">{t("publicListing.featuredOffer")}</Badge>
-                        {isRichListing(featuredProperty) && <Badge w="fit-content" colorScheme="purple">{t("publicListing.richCardBadge")}</Badge>}
+                        <Badge w="fit-content" colorScheme="green">{t?.("publicListing.featuredOffer")}</Badge>
+                        {isRichListing(featuredProperty) && <Badge w="fit-content" colorScheme="purple">{t?.("publicListing.richCardBadge")}</Badge>}
                       </HStack>
                       <Heading size="xl">{featuredProperty?.name || featuredProperty?.propertyAddress}</Heading>
-                      <Text color={mutedColor}>{featuredProperty?.propertyAddress || t("publicListing.notSpecified")}</Text>
-                      <Text color={mutedColor} noOfLines={4}>{featuredProperty?.marketingDescription || featuredProperty?.propertyDescription || t("publicListing.notSpecified")}</Text>
+                      <Text color={mutedColor}>{featuredProperty?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
+                      <Text color={mutedColor} noOfLines={4}>{featuredProperty?.marketingDescription || featuredProperty?.propertyDescription || t?.("publicListing.notSpecified")}</Text>
                       <SimpleGrid columns={{ base: 2, md: 4 }} gap={4}>
                         <Box bg={subtleBg} borderRadius="22px" p={4}>
-                          <Text fontSize="sm" color={mutedColor}>{t("publicListing.type")}</Text>
-                          <Text fontWeight="700">{featuredProperty?.propertyType || t("publicListing.notSpecified")}</Text>
+                          <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.type")}</Text>
+                          <Text fontWeight="700">{featuredProperty?.propertyType || t?.("publicListing.notSpecified")}</Text>
                         </Box>
                         <Box bg={subtleBg} borderRadius="22px" p={4}>
-                          <Text fontSize="sm" color={mutedColor}>{t("publicListing.status")}</Text>
+                          <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.status")}</Text>
                           <Text fontWeight="700">{normalizeStatus(featuredProperty?.listingStatus, t)}</Text>
                         </Box>
                         <Box bg={subtleBg} borderRadius="22px" p={4}>
-                          <Text fontSize="sm" color={mutedColor}>{t("publicListing.area")}</Text>
-                          <Text fontWeight="700">{featuredProperty?.squareFootage || t("publicListing.notSpecified")}</Text>
+                          <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.area")}</Text>
+                          <Text fontWeight="700">{featuredProperty?.squareFootage || t?.("publicListing.notSpecified")}</Text>
                         </Box>
                         <Box bg={subtleBg} borderRadius="22px" p={4}>
-                          <Text fontSize="sm" color={mutedColor}>{t("publicListing.priceLabel")}</Text>
+                          <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.priceLabel")}</Text>
                           <Text fontWeight="700">{formatPrice(featuredProperty?.listingPrice, t)}</Text>
                         </Box>
                       </SimpleGrid>
                     </Stack>
                     <HStack justify="space-between" align="end" flexWrap="wrap" spacing={4}>
                       <HStack spacing={4} color={mutedColor} flexWrap="wrap">
-                        <Text>{t("publicListing.photosCount", { count: getPhotoCount(featuredProperty) })}</Text>
-                        <Text>{t("publicListing.docsCount", { count: getDocumentCount(featuredProperty) })}</Text>
-                        <Text>{t("publicListing.plansCount", { count: getFloorPlanCount(featuredProperty) })}</Text>
+                        <Text>{t?.("publicListing.photosCount", { count: getPhotoCount(featuredProperty) })}</Text>
+                        <Text>{t?.("publicListing.docsCount", { count: getDocumentCount(featuredProperty) })}</Text>
+                        <Text>{t?.("publicListing.plansCount", { count: getFloorPlanCount(featuredProperty) })}</Text>
                       </HStack>
-                      <Button as={RouterLink} to={`/offers/${featuredProperty?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>
-                        {t("publicListing.viewOffer")}
+                      <Button as={RouterLink} to={`/offers/${featuredProperty?.publicSlug || featuredProperty?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>
+                        {t?.("publicListing.viewOffer")}
                       </Button>
                     </HStack>
                   </Stack>
@@ -635,11 +655,11 @@ export default function PublicCatalog({ forcedType = null }) {
             <Flex justify="space-between" align={{ base: "start", md: "center" }} direction={{ base: "column", md: "row" }} gap={3}>
               <Box>
                 <Heading size="lg">{headingTitle}</Heading>
-                <Text color={mutedColor}>{t("publicListing.filteredCount", { count: filtered.length })}</Text>
+                <Text color={mutedColor}>{t?.("publicListing.filteredCount", { count: filtered.length })}</Text>
               </Box>
               <HStack spacing={3} color={mutedColor} flexWrap="wrap">
                 <Icon as={LuMap} />
-                <Text>{t("publicListing.catalogSupportText")}</Text>
+                <Text>{t?.("publicListing.catalogSupportText")}</Text>
               </HStack>
             </Flex>
 
@@ -647,11 +667,11 @@ export default function PublicCatalog({ forcedType = null }) {
               <Box bg={cardBg} borderRadius="24px" p={5} borderWidth="1px" borderColor={borderColor}>
                 <Flex justify="space-between" align={{ base: "start", md: "center" }} direction={{ base: "column", md: "row" }} gap={3}>
                   <Stack spacing={1}>
-                    <Heading size="sm">{t("publicListing.comparePageTitle")}</Heading>
-                    <Text color={mutedColor}>{t("publicListing.comparePageText")}</Text>
+                    <Heading size="sm">{t?.("publicListing.comparePageTitle")}</Heading>
+                    <Text color={mutedColor}>{t?.("publicListing.comparePageText")}</Text>
                   </Stack>
                   <Button as={RouterLink} to="/offers/compare" leftIcon={<MdCompareArrows />} colorScheme="green">
-                    {t("publicListing.compareAction")}
+                    {t?.("publicListing.compareAction")}
                   </Button>
                 </Flex>
               </Box>
@@ -680,11 +700,11 @@ export default function PublicCatalog({ forcedType = null }) {
                           <Image src={getPrimaryImage(property)} alt={property?.name || property?.propertyAddress} h="240px" w="100%" objectFit="cover" />
                           <HStack position="absolute" top={4} left={4} spacing={2} flexWrap="wrap">
                             <Badge colorScheme="green" px={3} py={1} borderRadius="full">{normalizeStatus(property?.listingStatus, t)}</Badge>
-                            {rich && <Badge colorScheme="purple" px={3} py={1} borderRadius="full">{t("publicListing.richCardBadge")}</Badge>}
+                            {rich && <Badge colorScheme="purple" px={3} py={1} borderRadius="full">{t?.("publicListing.richCardBadge")}</Badge>}
                           </HStack>
                           <HStack position="absolute" top={4} right={4} spacing={2}>
-                            <IconButton aria-label={isFavorite ? t("publicListing.removeFromFavorites") : t("publicListing.addToFavorites")} icon={isFavorite ? <MdFavorite /> : <MdFavoriteBorder />} size="sm" colorScheme={isFavorite ? "red" : "blackAlpha"} variant={isFavorite ? "solid" : "outline"} onClick={() => handleFavoriteToggle(property?._id)} />
-                            <IconButton aria-label={isInCompare ? t("publicListing.removeFromCompare") : t("publicListing.addToCompare")} icon={<MdCompareArrows />} size="sm" colorScheme="green" variant={isInCompare ? "solid" : "outline"} onClick={() => handleCompareToggle(property?._id)} />
+                            <IconButton aria-label={isFavorite ? t?.("publicListing.removeFromFavorites") : t?.("publicListing.addToFavorites")} icon={isFavorite ? <MdFavorite /> : <MdFavoriteBorder />} size="sm" colorScheme={isFavorite ? "red" : "blackAlpha"} variant={isFavorite ? "solid" : "outline"} onClick={() => handleFavoriteToggle(property?._id)} />
+                            <IconButton aria-label={isInCompare ? t?.("publicListing.removeFromCompare") : t?.("publicListing.addToCompare")} icon={<MdCompareArrows />} size="sm" colorScheme="green" variant={isInCompare ? "solid" : "outline"} onClick={() => handleCompareToggle(property?._id)} />
                           </HStack>
                           <Text position="absolute" left={4} bottom={4} color="white" fontWeight="800" fontSize="2xl">
                             {formatPrice(property?.listingPrice, t)}
@@ -693,9 +713,9 @@ export default function PublicCatalog({ forcedType = null }) {
                         <Stack p={5} spacing={4}>
                           <Box>
                             <Heading size="md" noOfLines={2}>{property?.name || property?.propertyAddress}</Heading>
-                            <Text mt={2} color={mutedColor} noOfLines={1}>{property?.propertyAddress || t("publicListing.notSpecified")}</Text>
+                            <Text mt={2} color={mutedColor} noOfLines={1}>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
                           </Box>
-                          <Text color={mutedColor} minH="48px" noOfLines={2}>{property?.marketingDescription || property?.propertyDescription || t("publicListing.notSpecified")}</Text>
+                          <Text color={mutedColor} minH="48px" noOfLines={2}>{property?.marketingDescription || property?.propertyDescription || t?.("publicListing.notSpecified")}</Text>
                           <SimpleGrid columns={3} gap={3}>
                             <Box><HStack><Icon as={LuBedDouble} /><Text fontSize="sm">{property?.numberofBedrooms || "-"}</Text></HStack></Box>
                             <Box><HStack><Icon as={LuBath} /><Text fontSize="sm">{property?.numberofBathrooms || "-"}</Text></HStack></Box>
@@ -706,8 +726,8 @@ export default function PublicCatalog({ forcedType = null }) {
                             <Text>{getDocumentCount(property)}</Text>
                             <Text>{getFloorPlanCount(property)}</Text>
                           </SimpleGrid>
-                          <Button as={RouterLink} to={`/offers/${property?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>
-                            {t("publicListing.viewOffer")}
+                          <Button as={RouterLink} to={`/offers/${property?.publicSlug || property?._id}`} colorScheme="green" rightIcon={<MdArrowForward />}>
+                            {t?.("publicListing.viewOffer")}
                           </Button>
                         </Stack>
                       </Box>
@@ -716,20 +736,20 @@ export default function PublicCatalog({ forcedType = null }) {
                 </SimpleGrid>
                 <Flex justify="center" align="center" gap={3} pt={2} flexWrap="wrap">
                   <Button leftIcon={<MdKeyboardArrowLeft />} onClick={() => setPage((current) => Math.max(1, current - 1))} isDisabled={page === 1}>
-                    {t("publicListing.previousPage")}
+                    {t?.("publicListing.previousPage")}
                   </Button>
-                  <Text fontWeight="600">{t("publicListing.pageCounter", { page, total: pagesCount })}</Text>
+                  <Text fontWeight="600">{t?.("publicListing.pageCounter", { page, total: pagesCount })}</Text>
                   <Button rightIcon={<MdKeyboardArrowRight />} onClick={() => setPage((current) => Math.min(pagesCount, current + 1))} isDisabled={page === pagesCount}>
-                    {t("publicListing.nextPage")}
+                    {t?.("publicListing.nextPage")}
                   </Button>
                 </Flex>
               </>
             ) : (
               <Box bg={cardBg} borderRadius="28px" p={8} borderWidth="1px" borderColor={borderColor}>
                 <Stack spacing={3} align="start">
-                  <Heading size="md">{t("publicListing.noResults")}</Heading>
-                  <Text color={mutedColor}>{t("publicListing.noResultsText")}</Text>
-                  <Button onClick={resetFilters} variant="outline">{t("publicListing.resetFilters")}</Button>
+                  <Heading size="md">{t?.("publicListing.noResults")}</Heading>
+                  <Text color={mutedColor}>{t?.("publicListing.noResultsText")}</Text>
+                  <Button onClick={resetFilters} variant="outline">{t?.("publicListing.resetFilters")}</Button>
                 </Stack>
               </Box>
             )}

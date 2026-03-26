@@ -22,12 +22,14 @@ import AddEdit from "./AddEdit";
 import { useDispatch } from "react-redux";
 import { fetchEmailsData } from "../../../redux/slices/emailsSlice";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import AccountAdvanceSearch from "./components/AccountAdvanceSearch";
 import { fetchAccountData } from "../../../redux/slices/accountSlice";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import ImportModal from "./components/ImportModel";
 
 const Index = (props) => {
+  const { t } = useTranslation();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);
@@ -110,7 +112,7 @@ const Index = (props) => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: t("fields.accountName"),
+      Header: t?.("fields.accountName"),
       accessor: "name",
       cell: (cell) => (
         <div className="selectOpt">
@@ -131,15 +133,15 @@ const Index = (props) => {
       ),
     },
     {
-      Header: t("fields.officePhone"),
+      Header: t?.("fields.officePhone"),
       accessor: "officePhone",
     },
     {
-      Header: t("fields.fax"),
+      Header: t?.("fields.fax"),
       accessor: "fax",
     },
     {
-      Header: t("fields.emailAddress"),
+      Header: t?.("fields.emailAddress"),
       accessor: "emailAddress",
     },
     ...(permission?.update || permission?.view || permission?.delete
@@ -397,14 +399,23 @@ const Index = (props) => {
 
   const fetchData = async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchAccountData());
-
-    if (result.payload.status === 200) {
-      setData(result?.payload?.data);
-    } else {
-      toast.error("Failed to fetch data", "error");
+    try {
+      const result = await dispatch(fetchAccountData());
+      const data = Array.isArray(result?.payload) 
+        ? result.payload 
+        : Array.isArray(result?.payload?.data) 
+          ? result.payload.data 
+          : [];
+      
+      if (data.length > 0) {
+        setData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+      toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
+    } finally {
+      setIsLoding(false);
     }
-    setIsLoding(false);
   };
 
   // const [columns, setColumns] = useState([...tableColumns]);
