@@ -1,312 +1,379 @@
+import { useState, useEffect } from "react";
 import {
-  Badge,
   Box,
-  Button,
   Container,
-  Grid,
   Heading,
-  HStack,
-  IconButton,
-  Image,
-  SimpleGrid,
-  Skeleton,
   Stack,
+  HStack,
+  Button,
   Text,
+  SimpleGrid,
+  useToast,
+  Icon,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Badge,
+  Image,
+  Flex,
 } from "@chakra-ui/react";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useSearchParams, Link as RouterLink } from "react-router-dom";
+import { FiX, FiCheck, FiDownload, FiArrowLeft } from "react-icons/fi";
+import { MdCompareArrows } from "react-icons/md";
+import { LuMapPin, LuBuilding2, LuTrees } from "react-icons/lu";
+import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
-import { MdArrowForward, MdClose, MdCompareArrows } from "react-icons/md";
-import { Link as RouterLink } from "react-router-dom";
-import ModernFooter from "components/ModernFooter";
-import ModernHeader from "components/ModernHeader";
-import {
-  formatPrice,
-  getDocumentCount,
-  getFloorPlanCount,
-  getPhotoCount,
-  getPrimaryImage,
-  normalizeStatus,
-} from "./catalogData";
-import { clearCompareIds, getCompareIds, toggleCompareId } from "./catalogStorage";
-import { fetchPublicCatalog } from "./catalogService";
-import { publicBrand } from "../publicBrand";
+import { publicBrand } from "views/public/publicBrand";
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
-export default function PublicCompareView() {
-  const { t, i18n } = useTranslation();
+const ComparePage = () => {
+  const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
+  const toast = useToast();
   const [properties, setProperties] = useState([]);
-  const [compareIds, setCompareIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setCompareIds(getCompareIds());
-  }, []);
-
-  useEffect(() => {
-    const fetchProperties = async () => {
-      setLoading(true);
-      const catalog = await fetchPublicCatalog();
-      setProperties(catalog);
-      setLoading(false);
-    };
-
     fetchProperties();
-  }, []);
+  }, [searchParams]);
 
-  const compareProperties = useMemo(
-    () => compareIds.map((id) => properties.find((item) => item?._id === id)).filter(Boolean),
-    [compareIds, properties],
-  );
+  const fetchProperties = async () => {
+    try {
+      setLoading(true);
+      const ids = searchParams.get("ids");
+      if (!ids) {
+        toast({
+          title: "No properties selected for comparison",
+          status: "warning",
+          duration: 3000,
+        });
+        return;
+      }
 
-  const rows = useMemo(
-    () => [
-      { label: t?.("publicListing.priceLabel"), render: (property) => formatPrice(property?.listingPrice, t) },
-      { label: t?.("publicListing.status"), render: (property) => normalizeStatus(property?.listingStatus, t) },
-      { label: t?.("publicListing.type"), render: (property) => property?.propertyType || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.area"), render: (property) => property?.squareFootage || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.bedrooms"), render: (property) => property?.numberofBedrooms || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.bathrooms"), render: (property) => property?.numberofBathrooms || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.lotSize"), render: (property) => property?.lotSize || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.parking"), render: (property) => property?.parkingAvailability || t?.("publicListing.notSpecified") },
-      { label: t?.("publicListing.photosCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getPhotoCount(property)) },
-      { label: t?.("publicListing.docsCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getDocumentCount(property)) },
-      { label: t?.("publicListing.plansCount", { count: 0 }).replace("0", "").trim(), render: (property) => String(getFloorPlanCount(property)) },
-      { label: t?.("publicListing.aboutTitle"), render: (property) => property?.marketingDescription || property?.propertyDescription || t?.("publicListing.notSpecified") },
-    ],
-    [t],
-  );
-
-  const removeFromCompare = (id) => {
-    setCompareIds(toggleCompareId(id));
+      const response = await getApi(`api/property/public/by-ids?ids=${ids}`);
+      if (response && response.data) {
+        setProperties(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+      toast({
+        title: "Error loading properties",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const clearCompare = () => {
-    setCompareIds(clearCompareIds());
+  const removeProperty = (propertyId) => {
+    const newIds = properties
+      .filter((p) => p._id !== propertyId)
+      .map((p) => p._id);
+    
+    if (newIds.length > 0) {
+      window.history.pushState({}, "", `/offers/compare?ids=${newIds.join(",")}`);
+      setProperties(properties.filter((p) => p._id !== propertyId));
+    } else {
+      window.history.pushState({}, "", "/offers/compare");
+      setProperties([]);
+    }
+    
+    toast({
+      title: "Property removed from comparison",
+      status: "info",
+      duration: 2000,
+    });
   };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(212, 175, 55);
+    doc.text("Property Comparison", 14, 20);
+    
+    // Property names
+    const headers = ["Feature", ...properties.map((p, i) => `Property ${i + 1}`)];
+    const rows = [
+      ["Price", ...properties.map((p) => `$${p.listingPrice?.toLocaleString() || "On request"}`)],
+      ["Area (m²)", ...properties.map((p) => p.squareFootage || "—")],
+      ["Bedrooms", ...properties.map((p) => p.numberofBedrooms || "—")],
+      ["Bathrooms", ...properties.map((p) => p.numberofBathrooms || "—")],
+      ["Type", ...properties.map((p) => p.propertyTypeKey || "—")],
+      ["Location", ...properties.map((p) => p.propertyAddress || "—")],
+    ];
+
+    doc.autoTable({
+      startY: 30,
+      head: [headers],
+      body: rows,
+      theme: "striped",
+      headStyles: { fillColor: [212, 175, 55] },
+      columnStyles: {
+        0: { fontStyle: "bold", fillColor: [240, 240, 240] },
+      },
+    });
+
+    doc.save(`comparison-${Date.now()}.pdf`);
+    
+    toast({
+      title: "PDF exported successfully",
+      status: "success",
+      duration: 3000,
+    });
+  };
+
+  const comparisonFeatures = [
+    {
+      category: "Basic Info",
+      features: [
+        { key: "name", label: "Name", getValue: (p) => p.name || p.propertyAddress },
+        { key: "price", label: "Price", getValue: (p) => `$${p.listingPrice?.toLocaleString() || "On request"}` },
+        { key: "type", label: "Property Type", getValue: (p) => p.propertyTypeKey || "—" },
+      ],
+    },
+    {
+      category: "Details",
+      features: [
+        { key: "area", label: "Area (m²)", getValue: (p) => p.squareFootage || "—" },
+        { key: "bedrooms", label: "Bedrooms", getValue: (p) => p.numberofBedrooms || "—" },
+        { key: "bathrooms", label: "Bathrooms", getValue: (p) => p.numberofBathrooms || "—" },
+        { key: "floors", label: "Floors", getValue: (p) => p.floors || "—" },
+        { key: "year", label: "Year Built", getValue: (p) => p.yearBuilt || "—" },
+      ],
+    },
+    {
+      category: "Location",
+      features: [
+        { key: "address", label: "Address", getValue: (p) => p.propertyAddress || "—" },
+        { key: "city", label: "City", getValue: (p) => p.city || "—" },
+        { key: "state", label: "State", getValue: (p) => p.state || "—" },
+        { key: "zip", label: "ZIP Code", getValue: (p) => p.zipCode || "—" },
+      ],
+    },
+    {
+      category: "Features",
+      features: [
+        { key: "parking", label: "Parking", getValue: (p) => p.parkingSpaces || "—" },
+        { key: "garage", label: "Garage", getValue: (p) => p.garage ? "Yes" : "No" },
+        { key: "pool", label: "Pool", getValue: (p) => p.pool ? "Yes" : "No" },
+        { key: "garden", label: "Garden", getValue: (p) => p.garden ? "Yes" : "No" },
+        { key: "balcony", label: "Balcony", getValue: (p) => p.balcony ? "Yes" : "No" },
+      ],
+    },
+  ];
 
   if (loading) {
     return (
-      <Box minH="100vh" bg={publicBrand.colors.paper} py={10}>
-        <Container maxW="8xl">
-          <Skeleton h="540px" borderRadius="34px" />
-        </Container>
-      </Box>
+      <Container maxW="8xl" py={20}>
+        <Stack spacing={4}>
+          <Box className="skeleton" h="40px" w="300px" borderRadius="10px" />
+          <Box className="skeleton" h="600px" w="100%" borderRadius="20px" />
+        </Stack>
+      </Container>
     );
   }
 
-  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
-  const emptyText = locale === "ru"
-    ? "Добавьте до трех объектов в compare, чтобы увидеть цену, параметры и качество карточки бок о бок."
-    : "Add up to three properties to compare price, features, and listing quality side by side.";
-
-  return (
-    <Box minH="100vh" bg={publicBrand.colors.paper} py={{ base: 6, md: 10 }}>
-      <Box
-        bg={publicBrand.gradients.hero}
-        color="white"
-        position="relative"
-        overflow="hidden"
-        mb={{ base: 8, md: 10 }}
-      >
-        <Box
-          position="absolute"
-          inset="0"
-          bg="radial-gradient(circle at 18% 22%, rgba(245,208,118,0.16) 0%, rgba(245,208,118,0) 28%), radial-gradient(circle at 84% 14%, rgba(185,119,55,0.16) 0%, rgba(185,119,55,0) 32%)"
-        />
-        <ModernHeader />
-        <Container maxW="8xl" pt={{ base: 28, md: 32 }} pb={{ base: 12, md: 16 }} position="relative">
-          <Stack spacing={4} maxW="760px">
-            <Badge
-              w="fit-content"
-              px={4}
-              py={1.5}
-              borderRadius="full"
-              bg="rgba(245,208,118,0.14)"
-              color="#f5d076"
-              border="1px solid rgba(245,208,118,0.24)"
-              letterSpacing="0.12em"
-              textTransform="uppercase"
-            >
-              {t?.("publicListing.compareCount")}
-            </Badge>
-            <Heading as="h1" fontSize={{ base: "4xl", md: "6xl" }} lineHeight={{ base: "1.08", md: "0.98" }}>
-              {t?.("publicListing.comparePageTitle")}
-            </Heading>
-            <Text fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.800" lineHeight="1.9">
-              {t?.("publicListing.comparePageText")}
-            </Text>
-          </Stack>
-        </Container>
-      </Box>
-
-      <Container maxW="8xl">
-        <Stack spacing={8}>
-          <HStack justify="space-between" align="center" flexWrap="wrap">
-            <Button as={RouterLink} to="/offers" variant="outline" borderRadius="full">
-              {t?.("publicListing.backToCatalog")}
-            </Button>
-            <HStack spacing={3} flexWrap="wrap">
-              <Button onClick={clearCompare} variant="ghost" isDisabled={!compareIds.length}>
-                {t?.("publicListing.clearCompare") || "Clear"}
-              </Button>
-              <Button
-                as={RouterLink}
-                to="/auth/sign-in"
-                borderRadius="full"
-                bg={publicBrand.gradients.brass}
-                color={publicBrand.colors.ink}
-              >
-                {t?.("publicListing.signIn")}
-              </Button>
-            </HStack>
-          </HStack>
-
-          {compareProperties.length ? (
-            <Stack spacing={6}>
-              <SimpleGrid
-                columns={{ base: 1, md: compareProperties.length > 1 ? 2 : 1, xl: compareProperties.length }}
-                gap={6}
-              >
-                {compareProperties.map((property) => (
-                  <Box
-                    key={property?._id}
-                    bg="white"
-                    borderRadius="32px"
-                    overflow="hidden"
-                    boxShadow={publicBrand.shadows.soft}
-                    border="1px solid rgba(9,18,32,0.08)"
-                  >
-                    <Box position="relative">
-                      <Image src={getPrimaryImage(property)} alt={property?.name || property?.propertyAddress} h="250px" w="100%" objectFit="cover" />
-                      <Box
-                        position="absolute"
-                        inset="0"
-                        bg="linear-gradient(180deg, rgba(7,12,20,0.04) 0%, rgba(7,12,20,0.26) 40%, rgba(7,12,20,0.72) 100%)"
-                      />
-                      <IconButton
-                        aria-label={t?.("publicListing.removeFromCompare")}
-                        icon={<MdClose />}
-                        position="absolute"
-                        top={4}
-                        right={4}
-                        size="sm"
-                        bg="rgba(7,12,20,0.56)"
-                        color="white"
-                        border="1px solid rgba(227, 211, 184, 0.14)"
-                        onClick={() => removeFromCompare(property?._id)}
-                      />
-                    </Box>
-                    <Stack p={5} spacing={3}>
-                      <Badge w="fit-content" bg="rgba(212,175,55,0.12)" color={publicBrand.colors.copper}>
-                        {normalizeStatus(property?.listingStatus, t)}
-                      </Badge>
-                      <Heading size="md" color={publicBrand.colors.ink}>
-                        {property?.name || property?.propertyAddress}
-                      </Heading>
-                      <Text color={publicBrand.colors.textSoft}>
-                        {property?.propertyAddress || t?.("publicListing.notSpecified")}
-                      </Text>
-                      <Heading size="md" color={publicBrand.colors.copper}>
-                        {formatPrice(property?.listingPrice, t)}
-                      </Heading>
-                      <Button
-                        as={RouterLink}
-                        to={property?.publicSlugResolved ? `/offers/slug/${property.publicSlugResolved}` : `/offers/${property?._id}`}
-                        bg={publicBrand.colors.ink}
-                        color="white"
-                        rightIcon={<MdArrowForward />}
-                        borderRadius="full"
-                      >
-                        {t?.("publicListing.viewOffer")}
-                      </Button>
-                    </Stack>
-                  </Box>
-                ))}
-              </SimpleGrid>
-
-              <Grid
-                templateColumns={`220px repeat(${compareProperties.length}, minmax(250px, 1fr))`}
-                gap={3}
-                overflowX="auto"
-              >
-                <Box minW="220px"></Box>
-                {compareProperties.map((property) => (
-                  <Box
-                    key={property?._id}
-                    minW="250px"
-                    bg={publicBrand.gradients.panel}
-                    color="white"
-                    borderRadius="24px"
-                    p={4}
-                    border="1px solid rgba(227, 211, 184, 0.14)"
-                  >
-                    <Heading size="sm">{property?.name || property?.propertyAddress}</Heading>
-                  </Box>
-                ))}
-                {rows.map((row) => (
-                  <Fragment key={row.label}>
-                    <Box
-                      minW="220px"
-                      bg="rgba(212,175,55,0.10)"
-                      borderRadius="22px"
-                      p={4}
-                      border="1px solid rgba(212,175,55,0.16)"
-                    >
-                      <Text fontWeight="700" color={publicBrand.colors.ink}>
-                        {row.label}
-                      </Text>
-                    </Box>
-                    {compareProperties.map((property) => (
-                      <Box
-                        key={`${row.label}-${property?._id}`}
-                        minW="250px"
-                        bg="white"
-                        borderRadius="22px"
-                        p={4}
-                        border="1px solid rgba(9,18,32,0.08)"
-                      >
-                        <Text color={publicBrand.colors.textSoft} noOfLines={row.label === t?.("publicListing.aboutTitle") ? 4 : undefined}>
-                          {row.render(property)}
-                        </Text>
-                      </Box>
-                    ))}
-                  </Fragment>
-                ))}
-              </Grid>
-            </Stack>
-          ) : (
-            <Box
-              bg="white"
-              borderRadius="34px"
-              p={{ base: 8, md: 10 }}
-              boxShadow={publicBrand.shadows.soft}
-              border="1px solid rgba(9,18,32,0.08)"
-            >
-              <Stack spacing={4} align="start">
-                <Box
-                  w="56px"
-                  h="56px"
-                  borderRadius="22px"
-                  display="grid"
-                  placeItems="center"
-                  bg="rgba(212,175,55,0.12)"
-                  color={publicBrand.colors.copper}
-                >
-                  <MdCompareArrows size={24} />
-                </Box>
-                <Heading color={publicBrand.colors.ink}>{t?.("publicListing.emptyCompareTitle")}</Heading>
-                <Text color={publicBrand.colors.textSoft}>{emptyText}</Text>
-                <Button as={RouterLink} to="/offers" bg={publicBrand.gradients.brass} color={publicBrand.colors.ink} borderRadius="full">
-                  {t?.("publicListing.allOffers")}
-                </Button>
-              </Stack>
-            </Box>
-          )}
+  if (properties.length === 0) {
+    return (
+      <Container maxW="8xl" py={20}>
+        <Stack spacing={6} align="center">
+          <Icon as={MdCompareArrows} boxSize={20} color="gray.600" />
+          <Heading size="lg" color="gray.500">
+            No properties selected for comparison
+          </Heading>
+          <Text color="gray.400">
+            Select properties from the catalog to compare them
+          </Text>
+          <Button
+            as={RouterLink}
+            to="/offers"
+            colorScheme="green"
+            size="lg"
+            borderRadius="12px"
+            leftIcon={<FiArrowLeft />}
+          >
+            Browse Properties
+          </Button>
         </Stack>
       </Container>
+    );
+  }
 
-      <Box mt={{ base: 10, md: 14 }}>
-        <ModernFooter />
-      </Box>
+  return (
+    <Box minH="100vh" bg={publicBrand.gradients.page} color="white" py={10}>
+      <Container maxW="8xl">
+        <Stack spacing={8}>
+          {/* Header */}
+          <Flex justify="space-between" align="center" flexWrap="wrap" gap={4}>
+            <Stack spacing={2}>
+              <HStack>
+                <Icon as={MdCompareArrows} color="#F5D076" boxSize={8} />
+                <Heading size="xl">
+                  Property Comparison
+                </Heading>
+              </HStack>
+              <Text color="gray.400">
+                Comparing {properties.length} propert{properties.length !== 1 ? "ies" : "y"}
+              </Text>
+            </Stack>
+
+            <HStack spacing={3}>
+              <Button
+                as={RouterLink}
+                to="/offers"
+                variant="outline"
+                borderColor="rgba(255,255,255,0.2)"
+                leftIcon={<FiArrowLeft />}
+              >
+                Back to Catalog
+              </Button>
+              <Button
+                leftIcon={<FiDownload />}
+                variant="outline"
+                borderColor="rgba(212,175,55,0.3)"
+                color="#F5D076"
+                onClick={exportToPDF}
+              >
+                Export PDF
+              </Button>
+            </HStack>
+          </Flex>
+
+          {/* Property Cards */}
+          <SimpleGrid columns={{ base: 1, md: properties.length }} spacing={6}>
+            {properties.map((property) => (
+              <Box
+                key={property._id}
+                position="relative"
+                borderRadius="20px"
+                overflow="hidden"
+                border="1px solid rgba(255,255,255,0.1)"
+              >
+                <Image
+                  src={property.images?.[0] || property.primaryImage}
+                  alt={property.name || property.propertyAddress}
+                  h="200px"
+                  w="100%"
+                  objectFit="cover"
+                />
+                <Box p={4}>
+                  <Stack spacing={2}>
+                    <HStack justify="space-between">
+                      <Badge
+                        px={3}
+                        py={1}
+                        borderRadius="full"
+                        bg="rgba(212,175,55,0.2)"
+                        color="#F5D076"
+                      >
+                        <HStack spacing={2}>
+                          <Icon as={
+                            property.propertyTypeKey === "house" ? LuBuilding2 :
+                            property.propertyTypeKey === "apartment" ? LuBuilding2 :
+                            property.propertyTypeKey === "land" ? LuTrees :
+                            LuMapPin
+                          } />
+                          <Text textTransform="capitalize">{property.propertyTypeKey || "Property"}</Text>
+                        </HStack>
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        color="red.400"
+                        onClick={() => removeProperty(property._id)}
+                        leftIcon={<FiX />}
+                      >
+                        Remove
+                      </Button>
+                    </HStack>
+                    <Heading size="md" noOfLines={2}>
+                      {property.name || property.propertyAddress}
+                    </Heading>
+                    <Text color="#F5D076" fontWeight="bold" fontSize="xl">
+                      ${property.listingPrice?.toLocaleString() || "On request"}
+                    </Text>
+                    <HStack color="gray.400" fontSize="sm">
+                      <Icon as={LuMapPin} />
+                      <Text noOfLines={1}>{property.propertyAddress}</Text>
+                    </HStack>
+                  </Stack>
+                </Box>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          {/* Comparison Table */}
+          <Box
+            borderRadius="20px"
+            overflow="hidden"
+            border="1px solid rgba(255,255,255,0.1)"
+            bg="rgba(255,255,255,0.02)"
+          >
+            {comparisonFeatures.map((category, catIdx) => (
+              <Box key={catIdx} mb={catIdx > 0 ? 8 : 0}>
+                <Box
+                  px={6}
+                  py={4}
+                  bg="rgba(212,175,55,0.1)"
+                  borderBottom="1px solid rgba(255,255,255,0.1)"
+                >
+                  <Heading size="md">{category.category}</Heading>
+                </Box>
+                <Table variant="simple">
+                  <Tbody>
+                    {category.features.map((feature, featIdx) => {
+                      const values = properties.map((p) => feature.getValue(p));
+                      const uniqueValues = new Set(values);
+                      const isDifferent = uniqueValues.size > 1;
+
+                      return (
+                        <Tr
+                          key={feature.key}
+                          bg={featIdx % 2 === 1 ? "rgba(255,255,255,0.02)" : "transparent"}
+                        >
+                          <Td
+                            fontWeight={isDifferent ? "bold" : "normal"}
+                            color={isDifferent ? "#F5D076" : "inherit"}
+                            borderRight="1px solid rgba(255,255,255,0.1)"
+                          >
+                            <HStack>
+                              <Text>{feature.label}</Text>
+                              {isDifferent && (
+                                <Badge colorScheme="yellow" fontSize="xs">
+                                  Different
+                                </Badge>
+                              )}
+                            </HStack>
+                          </Td>
+                          {values.map((value, idx) => (
+                            <Td key={idx} borderRight="1px solid rgba(255,255,255,0.1)">
+                              <HStack>
+                                {value !== "—" && value !== "On request" && (
+                                  <Icon as={FiCheck} color="green.400" boxSize={4} />
+                                )}
+                                <Text>{value}</Text>
+                              </HStack>
+                            </Td>
+                          ))}
+                        </Tr>
+                      );
+                    })}
+                  </Tbody>
+                </Table>
+              </Box>
+            ))}
+          </Box>
+        </Stack>
+      </Container>
     </Box>
   );
-}
+};
+
+export default ComparePage;

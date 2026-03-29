@@ -26,6 +26,7 @@ const AdminLayout = lazy(() => import("layouts/admin"));
 const UserLayout = lazy(() => import("layouts/user"));
 const PublicCatalog = lazy(() => import("views/public/catalog"));
 const ModernLandingPage = lazy(() => import("views/public/ModernLandingPage"));
+const PropertyDetailPage = lazy(() => import("views/public/PropertyDetailPage"));
 const PublicOfferView = lazy(() => import("views/public/catalog/View"));
 const PublicOfferViewBySlug = lazy(() => import("views/public/catalog/ViewBySlug"));
 const PublicCompareView = lazy(() => import("views/public/catalog/Compare"));
@@ -91,6 +92,7 @@ function App() {
         <Route path="/offers/apartments" element={<PublicCatalog forcedType="apartment" />} />
         <Route path="/offers/plots" element={<PublicCatalog forcedType="land" />} />
         <Route path="/offers/commercial" element={<PublicCatalog forcedType="commercial" />} />
+        <Route path="/property/:slug" element={<PropertyDetailPage />} />
         <Route path="/collections/:slug" element={<SeoCollectionPage />} />
         <Route path="/offers/compare" element={<PublicCompareView />} />
         <Route path="/favorites" element={<FavoritesPage />} />

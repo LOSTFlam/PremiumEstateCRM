@@ -1,298 +1,368 @@
+import { useState, useEffect } from "react";
 import {
-  Badge,
   Box,
-  Button,
   Container,
   Heading,
-  HStack,
-  Icon,
-  SimpleGrid,
-  Skeleton,
   Stack,
+  HStack,
+  Button,
   Text,
+  SimpleGrid,
   useToast,
+  Badge,
+  Icon,
+  Flex,
 } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
-import { FiHeart } from "react-icons/fi";
-import { MdArrowForward, MdCompareArrows, MdOutlineHistory } from "react-icons/md";
-import ModernFooter from "components/ModernFooter";
-import ModernHeader from "components/ModernHeader";
+import { FiHeart, FiShare2, FiDownload, FiTrash2, FiGrid, FiList } from "react-icons/fi";
+import { MdCompareArrows } from "react-icons/md";
 import ModernPropertyCard from "components/ModernPropertyCard";
-import { fetchPublicCatalog } from "./catalog/catalogService";
-import {
-  getCompareIds,
-  getFavoriteIds,
-  getRecentlyViewedIds,
-  toggleCompareId,
-  toggleFavoriteId,
-} from "./catalog/catalogStorage";
-import { publicBrand } from "./publicBrand";
+import { getApi } from "services/api";
+import { useTranslation } from "react-i18next";
+import { publicBrand } from "views/public/publicBrand";
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
-export default function FavoritesPage() {
-  const { t, i18n } = useTranslation();
+const FavoritesPage = () => {
+  const { t } = useTranslation();
   const toast = useToast();
-  const [loading, setLoading] = useState(true);
-  const [properties, setProperties] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
-  const [recentIds, setRecentIds] = useState([]);
+  const [viewMode, setViewMode] = useState("grid"); // grid or list
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      const catalog = await fetchPublicCatalog();
-      setProperties(catalog);
-      setFavoriteIds(getFavoriteIds());
-      setCompareIds(getCompareIds());
-      setRecentIds(getRecentlyViewedIds());
-      setLoading(false);
-    };
-
-    load();
+    fetchFavorites();
   }, []);
 
-  const favorites = useMemo(
-    () => favoriteIds.map((id) => properties.find((item) => item?._id === id)).filter(Boolean),
-    [favoriteIds, properties],
-  );
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      const storedIds = JSON.parse(localStorage.getItem("favorites") || "[]");
+      setFavoriteIds(storedIds);
 
-  const recentProperties = useMemo(
-    () =>
-      recentIds
-        .filter((id) => !favoriteIds.includes(id))
-        .map((id) => properties.find((item) => item?._id === id))
-        .filter(Boolean)
-        .slice(0, 3),
-    [favoriteIds, properties, recentIds],
-  );
-
-  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
-  const copy = locale === "ru"
-    ? {
-        badge: "Saved shortlist",
-        title: "Ваша сохраненная подборка",
-        subtitle:
-          "Все объекты, к которым стоит вернуться: избранное, сравнение и недавно просмотренные предложения в одном спокойном сценарии.",
-        compareLink: "Открыть сравнение",
-        browseAll: "Вернуться в каталог",
-        emptyTitle: "Подборка пока пуста",
-        emptyText: "Добавляйте объекты в избранное прямо из каталога и формируйте shortlist для следующего шага.",
+      if (storedIds.length > 0) {
+        const response = await getApi(`api/property/public/by-ids?ids=${storedIds.join(",")}`);
+        if (response && response.data) {
+          setFavorites(response.data);
+        }
       }
-    : {
-        badge: "Saved shortlist",
-        title: "Your saved shortlist",
-        subtitle:
-          "Everything worth revisiting in one calmer flow: favorites, compare, and recently viewed offers collected in a buyer-friendly space.",
-        compareLink: "Open compare",
-        browseAll: "Back to catalog",
-        emptyTitle: "Your shortlist is still empty",
-        emptyText: "Save properties directly from the catalog and build a cleaner shortlist for the next step.",
-      };
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      toast({
+        title: "Error loading favorites",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleFavoriteToggle = (propertyId) => {
-    const next = toggleFavoriteId(propertyId);
-    setFavoriteIds(next);
+  const removeFromFavorites = (propertyId) => {
+    const newFavorites = favoriteIds.filter((id) => id !== propertyId);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+    setFavoriteIds(newFavorites);
+    setFavorites(favorites.filter((p) => p._id !== propertyId));
+    
     toast({
-      title: next.includes(propertyId)
-        ? t?.("publicListing.addToFavorites")
-        : t?.("publicListing.removeFromFavorites"),
-      status: "success",
-      duration: 1800,
+      title: "Removed from favorites",
+      status: "info",
+      duration: 2000,
     });
   };
 
-  const handleCompareToggle = (propertyId) => {
-    const next = toggleCompareId(propertyId);
-    setCompareIds(next);
+  const clearAllFavorites = () => {
+    localStorage.removeItem("favorites");
+    setFavoriteIds([]);
+    setFavorites([]);
     toast({
-      title: next.includes(propertyId)
-        ? t?.("publicListing.addToCompare")
-        : t?.("publicListing.removeFromCompare"),
-      status: "success",
-      duration: 1800,
+      title: "All favorites cleared",
+      status: "info",
+      duration: 2000,
     });
   };
 
-  return (
-    <Box minH="100vh" bg={publicBrand.colors.paper} color={publicBrand.colors.ink}>
-      <Box bg={publicBrand.gradients.hero} color="white" position="relative" overflow="hidden">
-        <Box
-          position="absolute"
-          inset="0"
-          bg="radial-gradient(circle at 18% 22%, rgba(245,208,118,0.16) 0%, rgba(245,208,118,0) 28%), radial-gradient(circle at 84% 14%, rgba(185,119,55,0.16) 0%, rgba(185,119,55,0) 32%)"
-        />
-        <ModernHeader />
-        <Container maxW="8xl" pt={{ base: 28, md: 32 }} pb={{ base: 12, md: 16 }} position="relative">
-          <Stack spacing={6}>
-            <Badge
-              w="fit-content"
-              px={4}
-              py={1.5}
-              borderRadius="full"
-              bg="rgba(245,208,118,0.14)"
-              color="#f5d076"
-              border="1px solid rgba(245,208,118,0.24)"
-              textTransform="uppercase"
-              letterSpacing="0.12em"
-            >
-              {copy.badge}
-            </Badge>
-            <Heading as="h1" fontSize={{ base: "4xl", md: "6xl" }} lineHeight={{ base: "1.08", md: "0.98" }} maxW="900px">
-              {copy.title}
-            </Heading>
-            <Text maxW="700px" fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.800" lineHeight="1.9">
-              {copy.subtitle}
-            </Text>
-            <HStack spacing={3} flexWrap="wrap">
-              <Button
-                as={RouterLink}
-                to="/offers"
-                bg={publicBrand.gradients.brass}
-                color={publicBrand.colors.ink}
-                rightIcon={<MdArrowForward />}
-                borderRadius="full"
-              >
-                {copy.browseAll}
-              </Button>
-              <Button
-                as={RouterLink}
-                to="/offers/compare"
-                variant="outline"
-                color="white"
-                borderColor="rgba(227, 211, 184, 0.24)"
-                leftIcon={<MdCompareArrows />}
-                borderRadius="full"
-              >
-                {copy.compareLink}
-              </Button>
-            </HStack>
-          </Stack>
-        </Container>
-      </Box>
+  const toggleCompare = (propertyId) => {
+    if (compareIds.includes(propertyId)) {
+      setCompareIds(compareIds.filter((id) => id !== propertyId));
+    } else {
+      if (compareIds.length >= 3) {
+        toast({
+          title: "Maximum 3 properties for comparison",
+          status: "warning",
+          duration: 3000,
+        });
+        return;
+      }
+      setCompareIds([...compareIds, propertyId]);
+      toast({
+        title: "Added to compare",
+        status: "success",
+        duration: 2000,
+      });
+    }
+  };
 
-      <Container maxW="8xl" py={{ base: 8, md: 12 }}>
-        <Stack spacing={8}>
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5}>
-            {[
-              { label: t?.("publicListing.favoritesCount"), value: favoriteIds.length, icon: FiHeart },
-              { label: t?.("publicListing.compareCount"), value: compareIds.length, icon: MdCompareArrows },
-              { label: t?.("publicListing.recentCount"), value: recentIds.length, icon: MdOutlineHistory },
-            ].map((item) => (
-              <Box
-                key={item.label}
-                borderRadius="32px"
-                px={6}
-                py={6}
-                bg="white"
-                border="1px solid rgba(9,18,32,0.08)"
-                boxShadow={publicBrand.shadows.soft}
-              >
-                <HStack justify="space-between" align="start">
-                  <Stack spacing={1}>
-                    <Text fontSize="xs" color={publicBrand.colors.copper} textTransform="uppercase" letterSpacing="0.14em">
-                      {item.label}
-                    </Text>
-                    <Text fontSize="4xl" fontWeight="700" color={publicBrand.colors.ink}>
-                      {item.value}
-                    </Text>
-                  </Stack>
-                  <Box
-                    w="48px"
-                    h="48px"
-                    borderRadius="18px"
-                    display="grid"
-                    placeItems="center"
-                    bg="rgba(212,175,55,0.12)"
-                    color={publicBrand.colors.copper}
-                  >
-                    <Icon as={item.icon} boxSize={5} />
-                  </Box>
-                </HStack>
-              </Box>
+  const handleShare = async () => {
+    const shareData = {
+      title: "My Favorite Properties",
+      text: `Check out these ${favorites.length} properties I've saved!`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link copied to clipboard",
+          status: "success",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(212, 175, 55);
+    doc.text("My Favorite Properties", 14, 20);
+    
+    // Date
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
+    
+    // Property table
+    const tableData = favorites.map((property, index) => [
+      index + 1,
+      property.name || property.propertyAddress || "Property",
+      `$${property.listingPrice?.toLocaleString() || "On request"}`,
+      `${property.squareFootage || "—"} m²`,
+      `${property.numberofBedrooms || "—"} bed`,
+      `${property.numberofBathrooms || "—"} bath`,
+    ]);
+
+    doc.autoTable({
+      startY: 35,
+      head: [["#", "Name", "Price", "Area", "Bedrooms", "Bathrooms"]],
+      body: tableData,
+      theme: "striped",
+      headStyles: { fillColor: [212, 175, 55] },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    // Save
+    doc.save(`favorites-${Date.now()}.pdf`);
+    
+    toast({
+      title: "PDF exported successfully",
+      status: "success",
+      duration: 3000,
+    });
+  };
+
+  if (loading) {
+    return (
+      <Container maxW="8xl" py={20}>
+        <Stack spacing={4}>
+          <Box className="skeleton" h="40px" w="300px" borderRadius="10px" />
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Box key={i} className="skeleton" h="520px" borderRadius="34px" />
             ))}
           </SimpleGrid>
+        </Stack>
+      </Container>
+    );
+  }
 
-          {loading ? (
-            <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={`favorite-skeleton-${index}`} h="520px" borderRadius="34px" />
-              ))}
-            </SimpleGrid>
-          ) : favorites.length ? (
-            <Box>
-              <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
-                {t?.("publicListing.favoritesTitle")}
-              </Heading>
-              <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-                {favorites.map((property) => (
-                  <ModernPropertyCard
-                    key={property?._id}
-                    property={property}
-                    isFavorite={favoriteIds.includes(property?._id)}
-                    isInCompare={compareIds.includes(property?._id)}
-                    onFavoriteToggle={handleFavoriteToggle}
-                    onCompareToggle={handleCompareToggle}
-                  />
-                ))}
-              </SimpleGrid>
-            </Box>
-          ) : (
-            <Box
-              borderRadius="34px"
-              px={{ base: 6, md: 8 }}
-              py={{ base: 8, md: 10 }}
-              bg="white"
-              border="1px solid rgba(9,18,32,0.08)"
-              boxShadow={publicBrand.shadows.soft}
-            >
-              <Stack spacing={4} align="start">
-                <Box
-                  w="56px"
-                  h="56px"
-                  borderRadius="22px"
-                  display="grid"
-                  placeItems="center"
-                  bg="rgba(212,175,55,0.12)"
-                  color={publicBrand.colors.copper}
+  return (
+    <Box minH="100vh" bg={publicBrand.gradients.page} color="white" py={10}>
+      <Container maxW="8xl">
+        <Stack spacing={8}>
+          {/* Header */}
+          <Flex justify="space-between" align="center" flexWrap="wrap" gap={4}>
+            <Stack spacing={2}>
+              <HStack>
+                <Icon as={FiHeart} color="#F5D076" boxSize={8} />
+                <Heading size="xl">
+                  {t("publicListing.favoritesTitle") || "My Favorites"}
+                </Heading>
+              </HStack>
+              <Text color="gray.400">
+                {favorites.length} {favorites.length === 1 ? "property" : "properties"} saved
+              </Text>
+            </Stack>
+
+            <HStack spacing={3} flexWrap="wrap">
+              {/* View Mode Toggle */}
+              <HStack
+                bg="rgba(255,255,255,0.05)"
+                borderRadius="full"
+                p={1}
+                border="1px solid rgba(255,255,255,0.1)"
+              >
+                <Button
+                  size="sm"
+                  variant={viewMode === "grid" ? "solid" : "ghost"}
+                  bg={viewMode === "grid" ? "rgba(212,175,55,0.3)" : "transparent"}
+                  color={viewMode === "grid" ? "white" : "gray.400"}
+                  borderRadius="full"
+                  onClick={() => setViewMode("grid")}
+                  leftIcon={<FiGrid />}
                 >
-                  <FiHeart size={24} />
-                </Box>
-                <Heading color={publicBrand.colors.ink}>{copy.emptyTitle}</Heading>
-                <Text color={publicBrand.colors.textSoft} maxW="560px" lineHeight="1.8">
-                  {copy.emptyText}
-                </Text>
-                <Button as={RouterLink} to="/offers" bg={publicBrand.gradients.brass} color={publicBrand.colors.ink} borderRadius="full">
-                  {copy.browseAll}
+                  Grid
                 </Button>
-              </Stack>
+                <Button
+                  size="sm"
+                  variant={viewMode === "list" ? "solid" : "ghost"}
+                  bg={viewMode === "list" ? "rgba(212,175,55,0.3)" : "transparent"}
+                  color={viewMode === "list" ? "white" : "gray.400"}
+                  borderRadius="full"
+                  onClick={() => setViewMode("list")}
+                  leftIcon={<FiList />}
+                >
+                  List
+                </Button>
+              </HStack>
+
+              {/* Actions */}
+              {favorites.length > 0 && (
+                <>
+                  <Button
+                    leftIcon={<FiDownload />}
+                    variant="outline"
+                    borderColor="rgba(212,175,55,0.3)"
+                    color="#F5D076"
+                    onClick={exportToPDF}
+                  >
+                    Export PDF
+                  </Button>
+                  <Button
+                    leftIcon={<FiShare2 />}
+                    variant="outline"
+                    borderColor="rgba(255,255,255,0.2)"
+                    onClick={handleShare}
+                  >
+                    Share
+                  </Button>
+                  <Button
+                    leftIcon={<FiTrash2 />}
+                    variant="ghost"
+                    color="red.400"
+                    onClick={clearAllFavorites}
+                  >
+                    Clear All
+                  </Button>
+                </>
+              )}
+            </HStack>
+          </Flex>
+
+          {/* Compare Bar */}
+          {compareIds.length > 0 && (
+            <Box
+              p={4}
+              borderRadius="20px"
+              bg="rgba(212,175,55,0.1)"
+              border="1px solid rgba(212,175,55,0.3)"
+            >
+              <HStack justify="space-between">
+                <HStack>
+                  <Icon as={MdCompareArrows} color="#F5D076" />
+                  <Text>
+                    {compareIds.length} property{compareIds.length !== 1 ? "ies" : "y"} selected for comparison
+                  </Text>
+                </HStack>
+                <HStack>
+                  <Button
+                    as={RouterLink}
+                    to={`/offers/compare?ids=${compareIds.join(",")}`}
+                    colorScheme="green"
+                    size="sm"
+                    borderRadius="12px"
+                  >
+                    Compare Now
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCompareIds([])}
+                  >
+                    Clear
+                  </Button>
+                </HStack>
+              </HStack>
             </Box>
           )}
 
-          {!loading && recentProperties.length ? (
-            <Box>
-              <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
-                {t?.("publicListing.recentlyViewedTitle")}
+          {/* Properties Grid/List */}
+          {favorites.length === 0 ? (
+            <Stack spacing={6} align="center" py={20}>
+              <Icon as={FiHeart} boxSize={20} color="gray.600" />
+              <Heading size="lg" color="gray.500">
+                No favorites yet
               </Heading>
-              <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-                {recentProperties.map((property) => (
+              <Text color="gray.400" textAlign="center">
+                Start exploring properties and save your favorites here
+              </Text>
+              <Button
+                as={RouterLink}
+                to="/offers"
+                colorScheme="green"
+                size="lg"
+                borderRadius="12px"
+                leftIcon={<FiHeart />}
+              >
+                Browse Properties
+              </Button>
+            </Stack>
+          ) : (
+            <SimpleGrid
+              columns={viewMode === "grid" ? { base: 1, md: 2, lg: 3 } : 1}
+              spacing={6}
+            >
+              {favorites.map((property) => (
+                <Box key={property._id} position="relative">
                   <ModernPropertyCard
-                    key={`recent-favorite-${property?._id}`}
                     property={property}
-                    isFavorite={favoriteIds.includes(property?._id)}
-                    isInCompare={compareIds.includes(property?._id)}
-                    onFavoriteToggle={handleFavoriteToggle}
-                    onCompareToggle={handleCompareToggle}
+                    isFavorite={true}
+                    isInCompare={compareIds.includes(property._id)}
+                    onFavoriteToggle={() => removeFromFavorites(property._id)}
+                    onCompareToggle={() => toggleCompare(property._id)}
                   />
-                ))}
-              </SimpleGrid>
-            </Box>
-          ) : null}
+                  {/* Quick Remove Button */}
+                  <Button
+                    position="absolute"
+                    top={4}
+                    right={4}
+                    size="sm"
+                    bg="rgba(220, 38, 38, 0.9)"
+                    color="white"
+                    borderRadius="full"
+                    onClick={() => removeFromFavorites(property._id)}
+                    _hover={{ bg: "red.600" }}
+                    zIndex={10}
+                  >
+                    <Icon as={FiTrash2} />
+                  </Button>
+                </Box>
+              ))}
+            </SimpleGrid>
+          )}
         </Stack>
       </Container>
-
-      <ModernFooter />
     </Box>
   );
-}
+};
+
+export default FavoritesPage;
