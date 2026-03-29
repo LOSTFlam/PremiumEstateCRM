@@ -39,7 +39,6 @@ const MultiRoleModel = (props) => {
     role,
   } = props;
   const title = "Roles";
-  const dispatch = useDispatch();
 
   const [isLoding, setIsLoding] = useState(false);
   const [roleData, setRoleData] = useState([]);
