@@ -33,6 +33,7 @@ import {
   publicBrand,
   resolvePublicBrandRecord,
 } from "views/public/publicBrand";
+import ThemeToggle from "components/ThemeToggle";
 
 const brandShellStyles = {
   bg: "rgba(7, 12, 20, 0.45)",
@@ -219,6 +220,9 @@ export default function ModernHeader({ largeLogo = [] }) {
             </HStack>
 
             <HStack spacing={1.5} display={{ base: "none", lg: "flex" }}>
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
               <HStack
                 spacing={1}
                 px={2}
