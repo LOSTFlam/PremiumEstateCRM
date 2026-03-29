@@ -33,6 +33,8 @@ const PublicCompareView = lazy(() => import("views/public/catalog/Compare"));
 const FavoritesPage = lazy(() => import("views/public/FavoritesPage"));
 const PropertyViewBySlug = lazy(() => import("views/admin/property/ViewBySlug"));
 const SeoCollectionPage = lazy(() => import("views/public/catalog/SeoCollectionPage"));
+const AnalyticsDashboard = lazy(() => import("views/admin/analytics/AnalyticsDashboard"));
+const LeadKanban = lazy(() => import("views/admin/leads/LeadKanban"));
 const SignUp = lazy(() => import("views/auth/signUp"));
 const SignIn = lazy(() => import("views/auth/signIn"));
 
@@ -108,7 +110,11 @@ function App() {
           user?.role === "user" ? (
             <Route path="/*" element={<UserLayout />} />
           ) : user?.role === "superAdmin" ? (
-            <Route path="/*" element={<AdminLayout />} />
+            <>
+              <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+              <Route path="/admin/leads" element={<LeadKanban />} />
+              <Route path="/*" element={<AdminLayout />} />
+            </>
           ) : (
             <Route path="/*" element={<Navigate to="/" replace />} />
           )
