@@ -13,7 +13,6 @@ import React, { useEffect, useState } from "react";
 import Spinner from "components/spinner/Spinner";
 import { GiClick } from "react-icons/gi";
 import CommonCheckTable from "components/reactTable/checktable";
-import { useDispatch } from "react-redux";
 import { getApi } from "services/api";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -48,13 +47,30 @@ const MultiRoleModel = (props) => {
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
-    const result = await dispatch(getApi("api/role/"));
-    setRoleData(result?.payload?.data || []);
-    setIsLoding(false);
+    try {
+      const result = await getApi("api/role/");
+      setRoleData(result?.data || []);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    } finally {
+      setIsLoding(false);
+    }
   };
 
   useEffect(() => {
-    fetchCustomDataFields();
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      if (isMounted) {
+        await fetchCustomDataFields();
+      }
+    };
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubmit = async () => {

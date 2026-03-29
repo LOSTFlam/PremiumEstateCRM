@@ -699,15 +699,7 @@ const CommonCheckTable = (props) => {
               ) : (data && data?.length === 0) || data === undefined ? (
                 <Tr>
                   <Td colSpan={columns?.length}>
-                    <Text
-                      textAlign={"center"}
-                      width="100%"
-                      color={textColor}
-                      fontSize="sm"
-                      fontWeight="700"
-                    >
-                      <DataNotFound />
-                    </Text>
+                    <DataNotFound />
                   </Td>
                 </Tr>
               ) : (

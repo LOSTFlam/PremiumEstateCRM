@@ -140,19 +140,34 @@ const AddEditUser = (props) => {
   };
   const fetchRoleData = async () => {
     setIsLoding(true);
-    let result = await getApi("api/role-access");
-    setRoles(
-      result.data?.map((item) => ({
-        ...item,
-        value: item?._id,
-        label: item?.roleName,
-      }))
-    );
-    setIsLoding(false);
+    try {
+      let result = await getApi("api/role-access");
+      setRoles(
+        (result.data || []).map((item) => ({
+          ...item,
+          value: item?._id,
+          label: item?.roleName,
+        }))
+      );
+    } finally {
+      setIsLoding(false);
+    }
   };
 
   useEffect(() => {
-    fetchRoleData();
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      if (isMounted) {
+        await fetchRoleData();
+      }
+    };
+    
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
   return (
     <Modal isOpen={isOpen} isCentered>
@@ -220,15 +235,15 @@ const AddEditUser = (props) => {
             </GridItem>
             <GridItem colSpan={{ base: 12 }}>
               <Flex alignItems={"end"} justifyContent={"space-between"}>
-                <Text w={"100%"}>
+                <Flex w={"100%"} flexDirection="column">
                   <CUIAutoComplete
                     label={`Choose Role`}
                     placeholder="Type a Name"
                     name="roles"
-                    items={roles}
+                    items={roles || []}
                     mb={errors?.roles && touched?.roles ? undefined : "10px"}
                     className="custom-autoComplete"
-                    selectedItems={roles?.filter((item) =>
+                    selectedItems={(roles || []).filter((item) =>
                       values?.roles?.includes(item?._id)
                     )}
                     onSelectedItemsChange={(changes) => {
@@ -241,7 +256,7 @@ const AddEditUser = (props) => {
                       errors?.roles && touched?.roles ? "red.300" : null
                     }
                   />
-                </Text>
+                </Flex>
                 <IconButton
                   mb={6}
                   onClick={() => setRoleModelOpen(true)}
