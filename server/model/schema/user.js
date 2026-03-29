@@ -15,6 +15,7 @@ const user = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        select: false,
     },
     role: { type: String, default: 'user' },
     emailsent: { type: Number, default: 0 },

@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import PublicOfferView from './View';
-import { getApi } from 'services/api';
-import { getCatalogDataset } from './catalogData';
+import React, { useEffect, useState } from "react";
+import { useParams, Navigate } from "react-router-dom";
+import { fetchPublicPropertyBySlug } from "./catalogService";
 
 /**
  * Wrapper component that finds a property by publicSlug and redirects to its ID-based view
@@ -17,18 +15,14 @@ export default function PublicOfferViewBySlug() {
     const findPropertyBySlug = async () => {
       setLoading(true);
       try {
-        const response = await getApi('api/property/public');
-        const properties = getCatalogDataset(Array.isArray(response) ? response : Array.isArray(response?.data) ? response.data : []);
-        
-        const property = properties.find(p => p?.publicSlug === slug || p?.seo?.slug === slug);
-        
+        const property = await fetchPublicPropertyBySlug(slug);
         if (property) {
           setPropertyId(property._id);
         } else {
           setNotFound(true);
         }
       } catch (error) {
-        console.error('Error finding property by slug:', error);
+        console.error("Error finding property by slug:", error);
         setNotFound(true);
       } finally {
         setLoading(false);
@@ -45,7 +39,7 @@ export default function PublicOfferViewBySlug() {
         justifyContent: 'center', 
         alignItems: 'center', 
         minHeight: '100vh',
-        background: '#0F172A'
+        background: '#111827'
       }}>
         <div style={{ 
           width: '48px', 
@@ -69,5 +63,5 @@ export default function PublicOfferViewBySlug() {
     return <Navigate to="/offers" replace />;
   }
 
-  return <PublicOfferView />;
+  return <Navigate to={`/offers/${propertyId}`} replace />;
 }

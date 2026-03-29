@@ -166,9 +166,10 @@ export default function User(props) {
     },
   ];
 
-  route?.map((item, i) => {
-    if (!newRoute.some((route) => route.name === item.moduleName)) {
-      return newRoute.push({
+  const baseRoutes = Array.isArray(newRoute) ? [...newRoute] : [];
+  const dynamicRoutes = (route || []).reduce((acc, item) => {
+    if (!baseRoutes.some((routeItem) => routeItem.name === item?.moduleName)) {
+      acc.push({
         name: item?.moduleName,
         layout: [ROLE_PATH.user],
         path: pathName(item.moduleName),
@@ -183,8 +184,12 @@ export default function User(props) {
         component: DynamicPage,
       });
     }
-  });
-  const accessRoute = newRoute?.filter((item) =>
+
+    return acc;
+  }, []);
+
+  const routeCatalog = [...baseRoutes, ...dynamicRoutes];
+  const accessRoute = routeCatalog?.filter((item) =>
     Object.keys(mergedPermissions)?.find(
       (data) =>
         data?.toLowerCase() === item?.name?.toLowerCase() ||

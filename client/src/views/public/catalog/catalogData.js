@@ -460,7 +460,19 @@ export const normalizePropertyTypeKey = (value = "") => {
 export const getCatalogDataset = (properties) =>
   properties.map((p) => ({
     ...p,
-    propertyType: normalizePropertyTypeKey(p?.propertyType),
+    propertyTypeKey: normalizePropertyTypeKey(p?.propertyType),
+    publicSlugResolved: p?.publicSlug || p?.seo?.slug || p?.seoSlug || "",
+    normalizedStatus: normalizeStatus(p?.listingStatus, t),
+    searchableText: [
+      p?.name,
+      p?.propertyAddress,
+      p?.propertyType,
+      p?.marketingDescription,
+      p?.propertyDescription,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase(),
   }));
 
 export const splitFeatures = (...lists) =>

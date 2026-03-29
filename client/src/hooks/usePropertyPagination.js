@@ -116,7 +116,7 @@ export const PropertyPagination = ({
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        leftIcon={<Icon as={ChevronLeft} boxSize={4} />}
+        leftIcon={<Icon as={FiChevronLeft} boxSize={4} />}
       >
         Previous
       </Button>
@@ -137,7 +137,7 @@ export const PropertyPagination = ({
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        rightIcon={<Icon as={ChevronRight} boxSize={4} />}
+        rightIcon={<Icon as={FiChevronRight} boxSize={4} />}
       >
         Next
       </Button>

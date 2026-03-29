@@ -1,340 +1,206 @@
-import React, { useState } from 'react';
+import { useMemo, useState } from "react";
 import {
+  Badge,
   Box,
   Button,
-  Checkbox,
-  Flex,
   FormControl,
   FormLabel,
   Heading,
-  Input,
-  Select,
-  SimpleGrid,
-  Slider,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderTrack,
-  Text,
-  useColorModeValue,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Badge,
-  Icon,
-  Progress,
-  VStack,
-  HStack,
-  useToast,
-} from '@chakra-ui/react';
-import { FiAward, FiHeart, FiHome, FiDollarSign, FiMapPin, FiStar } from 'react-icons/fi';
-import { getApi } from 'services/api';
+  Select,
+  Stack,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { FiSliders } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+import { normalizePropertyTypeKey, parsePrice } from "views/public/catalog/catalogData";
+import { publicBrand } from "views/public/publicBrand";
 
-export default function AIPropertyMatcher({ properties, onMatchFound }) {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const toast = useToast();
-  const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [matches, setMatches] = useState([]);
-  const [step, setStep] = useState(1);
+const copy = {
+  ru: {
+    badge: "Guided finder",
+    title: "Консьерж-подбор",
+    subtitle: "Короткий сценарий, который мягко сужает поиск и отправляет в подходящие предложения.",
+    open: "Открыть подбор",
+    propertyType: "Тип объекта",
+    budget: "Бюджет",
+    bedrooms: "Спальни",
+    apply: "Применить",
+    all: "Все",
+    house: "Дом",
+    apartment: "Квартира",
+    land: "Участок",
+    commercial: "Коммерция",
+  },
+  en: {
+    badge: "Guided finder",
+    title: "Concierge finder",
+    subtitle: "A short guided flow that narrows the search and moves you straight into relevant offers.",
+    open: "Open finder",
+    propertyType: "Property type",
+    budget: "Budget",
+    bedrooms: "Bedrooms",
+    apply: "Apply",
+    all: "All",
+    house: "House",
+    apartment: "Apartment",
+    land: "Land",
+    commercial: "Commercial",
+  },
+};
 
-  // User preferences
-  const [preferences, setPreferences] = useState({
-    budget: 500000,
-    location: '',
-    propertyType: 'all',
-    bedrooms: 2,
-    bathrooms: 2,
-    mustHaves: [],
-  });
+export default function GuidedFinder({ properties = [], onMatchFound, variant = "dark" }) {
+  const { i18n } = useTranslation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [propertyType, setPropertyType] = useState("all");
+  const [budget, setBudget] = useState("all");
+  const [bedrooms, setBedrooms] = useState("all");
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const text = copy[locale];
 
-  const mustHaveOptions = [
-    { id: 'garage', label: 'Garage', icon: FiHome },
-    { id: 'pool', label: 'Pool', icon: FiHeart },
-    { id: 'gym', label: 'Gym', icon: FiAward },
-    { id: 'park', label: 'Near Park', icon: FiMapPin },
-    { id: 'school', label: 'Good Schools', icon: FiStar },
-    { id: 'transport', label: 'Public Transport', icon: FiMapPin },
-  ];
+  const match = useMemo(() => {
+    return properties.find((property) => {
+      const matchesType =
+        propertyType === "all" ||
+        normalizePropertyTypeKey(property?.propertyType) === propertyType ||
+        property?.propertyTypeKey === propertyType;
+      const matchesBudget = budget === "all" || parsePrice(property?.listingPrice) <= Number(budget);
+      const matchesBedrooms =
+        bedrooms === "all" || Number(property?.numberofBedrooms || 0) >= Number(bedrooms);
 
-  const handleMatch = async () => {
-    setLoading(true);
-    
-    // Simulate AI matching algorithm
-    setTimeout(() => {
-      // Filter properties based on preferences
-      const matched = properties.filter(property => {
-        const score = calculateMatchScore(property, preferences);
-        return score >= 60; // 60% match or higher
-      }).map(property => ({
-        ...property,
-        matchScore: calculateMatchScore(property, preferences),
-      })).sort((a, b) => b.matchScore - a.matchScore);
-
-      setMatches(matched.slice(0, 5)); // Top 5 matches
-      setStep(2);
-      setLoading(false);
-
-      toast({
-        title: 'AI Match Complete!',
-        description: `Found ${matched.length} properties that match your preferences`,
-        status: 'success',
-        duration: 3000,
-      });
-    }, 2000);
-  };
-
-  const calculateMatchScore = (property, prefs) => {
-    let score = 0;
-    let maxScore = 0;
-
-    // Budget match (40 points)
-    maxScore += 40;
-    if (property.listingPrice <= prefs.budget) {
-      score += 40;
-    } else if (property.listingPrice <= prefs.budget * 1.1) {
-      score += 30;
-    } else if (property.listingPrice <= prefs.budget * 1.2) {
-      score += 20;
-    }
-
-    // Property type match (20 points)
-    maxScore += 20;
-    if (prefs.propertyType === 'all' || property.propertyType === prefs.propertyType) {
-      score += 20;
-    }
-
-    // Bedrooms match (20 points)
-    maxScore += 20;
-    if (property.numberofBedrooms >= prefs.bedrooms) {
-      score += 20;
-    } else if (property.numberofBedrooms >= prefs.bedrooms - 1) {
-      score += 10;
-    }
-
-    // Bathrooms match (10 points)
-    maxScore += 10;
-    if (property.numberofBathrooms >= prefs.bathrooms) {
-      score += 10;
-    }
-
-    // Must-haves bonus (10 points)
-    maxScore += 10;
-    // In real implementation, check property features
-    score += prefs.mustHaves.length * 2;
-
-    return Math.min(100, Math.round((score / maxScore) * 100));
-  };
-
-  const resetSearch = () => {
-    setStep(1);
-    setMatches([]);
-    setPreferences({
-      budget: 500000,
-      location: '',
-      propertyType: 'all',
-      bedrooms: 2,
-      bathrooms: 2,
-      mustHaves: [],
+      return matchesType && matchesBudget && matchesBedrooms;
     });
-  };
+  }, [bedrooms, budget, properties, propertyType]);
+
+  const darkVariant = variant !== "light";
 
   return (
     <>
-      <Button
-        leftIcon={<FiAward />}
-        colorScheme="purple"
-        onClick={() => setIsOpen(true)}
-        size="lg"
+      <Box
+        borderRadius="30px"
+        px={5}
+        py={5}
+        bg={darkVariant ? "rgba(255,255,255,0.06)" : publicBrand.gradients.panelLight}
+        color={darkVariant ? "white" : publicBrand.colors.ink}
+        border={
+          darkVariant
+            ? "1px solid rgba(227, 211, 184, 0.14)"
+            : "1px solid rgba(9,18,32,0.08)"
+        }
+        boxShadow={darkVariant ? publicBrand.shadows.inset : publicBrand.shadows.soft}
       >
-        AI Property Matcher
-      </Button>
+        <HStack justify="space-between" align="start" spacing={4}>
+          <Box maxW="320px">
+            <Badge
+              mb={3}
+              px={3}
+              py={1.5}
+              borderRadius="full"
+              bg={darkVariant ? "rgba(245,208,118,0.14)" : "rgba(212,175,55,0.12)"}
+              color={darkVariant ? "#f5d076" : publicBrand.colors.copper}
+              border={
+                darkVariant
+                  ? "1px solid rgba(245,208,118,0.24)"
+                  : "1px solid rgba(212,175,55,0.16)"
+              }
+            >
+              {text.badge}
+            </Badge>
+            <Heading size="md">{text.title}</Heading>
+            <Text mt={2} color={darkVariant ? "whiteAlpha.760" : publicBrand.colors.textSoft}>
+              {text.subtitle}
+            </Text>
+          </Box>
+          <Button
+            leftIcon={<FiSliders />}
+            borderRadius="full"
+            bg={publicBrand.gradients.brass}
+            color={publicBrand.colors.ink}
+            fontWeight="700"
+            _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+            onClick={onOpen}
+          >
+            {text.open}
+          </Button>
+        </HStack>
+      </Box>
 
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        size="xl"
-        isCentered
-      >
-        <ModalOverlay backdropFilter="blur(5px)" />
-        <ModalContent borderRadius="2xl">
-          <ModalHeader>
-            <Flex align="center" gap={3}>
-              <Icon as={FiAward} boxSize={6} color="purple.500" />
-              <Text fontSize="2xl" fontWeight="bold">AI Property Matcher</Text>
-            </Flex>
-          </ModalHeader>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+        <ModalOverlay bg="rgba(7,12,20,0.55)" backdropFilter="blur(10px)" />
+        <ModalContent borderRadius="32px" bg={publicBrand.gradients.panelLight} overflow="hidden">
+          <ModalHeader pt={6}>{text.title}</ModalHeader>
           <ModalCloseButton />
-
-          <ModalBody>
-            {step === 1 ? (
-              <VStack spacing={6} align="stretch">
-                <Text fontSize="lg" color="gray.600">
-                  Tell us what you're looking for and our AI will find your perfect match!
-                </Text>
-
-                {/* Budget */}
-                <FormControl>
-                  <FormLabel fontWeight="600">
-                    Budget: ${preferences.budget.toLocaleString()}
-                  </FormLabel>
-                  <Slider
-                    value={preferences.budget}
-                    onChange={(value) => setPreferences(prev => ({ ...prev, budget: value }))}
-                    min={100000}
-                    max={2000000}
-                    step={50000}
-                    colorScheme="purple"
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <SliderThumb boxSize={6} />
-                  </Slider>
-                </FormControl>
-
-                {/* Property Type */}
-                <FormControl>
-                  <FormLabel fontWeight="600">Property Type</FormLabel>
-                  <Select
-                    value={preferences.propertyType}
-                    onChange={(e) => setPreferences(prev => ({ ...prev, propertyType: e.target.value }))}
-                  >
-                    <option value="all">Any Type</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Land">Land</option>
-                    <option value="Commercial">Commercial</option>
-                  </Select>
-                </FormControl>
-
-                {/* Bedrooms */}
-                <FormControl>
-                  <FormLabel fontWeight="600">Bedrooms: {preferences.bedrooms}+</FormLabel>
-                  <Slider
-                    value={preferences.bedrooms}
-                    onChange={(value) => setPreferences(prev => ({ ...prev, bedrooms: value }))}
-                    min={0}
-                    max={6}
-                    step={1}
-                    colorScheme="purple"
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <SliderThumb boxSize={6}>{preferences.bedrooms}</SliderThumb>
-                  </Slider>
-                </FormControl>
-
-                {/* Bathrooms */}
-                <FormControl>
-                  <FormLabel fontWeight="600">Bathrooms: {preferences.bathrooms}+</FormLabel>
-                  <Slider
-                    value={preferences.bathrooms}
-                    onChange={(value) => setPreferences(prev => ({ ...prev, bathrooms: value }))}
-                    min={1}
-                    max={5}
-                    step={1}
-                    colorScheme="purple"
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <SliderThumb boxSize={6}>{preferences.bathrooms}</SliderThumb>
-                  </Slider>
-                </FormControl>
-
-                {/* Must Haves */}
-                <FormControl>
-                  <FormLabel fontWeight="600">Must Haves</FormLabel>
-                  <SimpleGrid columns={2} gap={3}>
-                    {mustHaveOptions.map(option => (
-                      <Checkbox
-                        key={option.id}
-                        isChecked={preferences.mustHaves.includes(option.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setPreferences(prev => ({
-                              ...prev,
-                              mustHaves: [...prev.mustHaves, option.id],
-                            }));
-                          } else {
-                            setPreferences(prev => ({
-                              ...prev,
-                              mustHaves: prev.mustHaves.filter(id => id !== option.id),
-                            }));
-                          }
-                        }}
-                      >
-                        <Flex align="center" gap={2}>
-                          <Icon as={option.icon} />
-                          <Text>{option.label}</Text>
-                        </Flex>
-                      </Checkbox>
-                    ))}
-                  </SimpleGrid>
-                </FormControl>
-              </VStack>
-            ) : (
-              <VStack spacing={4} align="stretch">
-                <Heading size="md">Top Matches</Heading>
-                {matches.map((property, index) => (
-                  <Box
-                    key={property._id}
-                    p={4}
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    position="relative"
-                  >
-                    <Badge
-                      position="absolute"
-                      top={2}
-                      right={2}
-                      colorScheme={property.matchScore >= 80 ? 'green' : 'blue'}
-                      fontSize="sm"
-                    >
-                      {property.matchScore}% Match
-                    </Badge>
-                    <Text fontWeight="bold">{property.name}</Text>
-                    <Text color="blue.500" fontWeight="bold">
-                      ${property.listingPrice.toLocaleString()}
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {property.bedrooms} bed • {property.bathrooms} bath • {property.squareFootage} sqft
-                    </Text>
-                    <Progress
-                      value={property.matchScore}
-                      colorScheme={property.matchScore >= 80 ? 'green' : 'blue'}
-                      size="sm"
-                      mt={2}
-                      borderRadius="full"
-                    />
-                  </Box>
-                ))}
-              </VStack>
-            )}
-          </ModalBody>
-
-          <ModalFooter>
-            {step === 1 ? (
+          <ModalBody pb={7}>
+            <Stack spacing={4}>
+              <FormControl>
+                <FormLabel>{text.propertyType}</FormLabel>
+                <Select
+                  value={propertyType}
+                  onChange={(event) => setPropertyType(event.target.value)}
+                  borderRadius="18px"
+                  h="54px"
+                >
+                  <option value="all">{text.all}</option>
+                  <option value="house">{text.house}</option>
+                  <option value="apartment">{text.apartment}</option>
+                  <option value="land">{text.land}</option>
+                  <option value="commercial">{text.commercial}</option>
+                </Select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>{text.budget}</FormLabel>
+                <Select
+                  value={budget}
+                  onChange={(event) => setBudget(event.target.value)}
+                  borderRadius="18px"
+                  h="54px"
+                >
+                  <option value="all">{text.all}</option>
+                  <option value="150000">$150k</option>
+                  <option value="300000">$300k</option>
+                  <option value="600000">$600k</option>
+                  <option value="1000000">$1M</option>
+                </Select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>{text.bedrooms}</FormLabel>
+                <Select
+                  value={bedrooms}
+                  onChange={(event) => setBedrooms(event.target.value)}
+                  borderRadius="18px"
+                  h="54px"
+                >
+                  <option value="all">{text.all}</option>
+                  <option value="1">1+</option>
+                  <option value="2">2+</option>
+                  <option value="3">3+</option>
+                  <option value="4">4+</option>
+                </Select>
+              </FormControl>
               <Button
-                colorScheme="purple"
-                onClick={handleMatch}
-                isLoading={loading}
-                loadingText="AI is thinking..."
-                leftIcon={<FiAward />}
+                mt={2}
+                borderRadius="full"
+                bg={publicBrand.gradients.brass}
+                color={publicBrand.colors.ink}
+                fontWeight="700"
+                onClick={() => {
+                  if (match) {
+                    onMatchFound?.(match);
+                  }
+                  onClose();
+                }}
               >
-                Find My Perfect Match
+                {text.apply}
               </Button>
-            ) : (
-              <Button colorScheme="blue" onClick={resetSearch}>
-                Start New Search
-              </Button>
-            )}
-          </ModalFooter>
+            </Stack>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

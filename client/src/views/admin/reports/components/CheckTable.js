@@ -18,12 +18,9 @@ import {
   useTable,
 } from "react-table";
 
-// Custom components
-import { DeleteIcon } from "@chakra-ui/icons";
 import Card from "components/card/Card";
 import Pagination from "components/pagination/Pagination";
 import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
-import Delete from "views/admin/contact/Delete";
 import DataNotFound from "components/notFoundData";
 import Spinner from "components/spinner/Spinner";
 
@@ -34,9 +31,7 @@ export default function CheckTable(props) {
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
   const columns = useMemo(() => columnsData, [columnsData]);
   const [selectedValues, setSelectedValues] = useState([]);
-
-  const [deleteModel, setDelete] = useState(false);
-  const data = useMemo(() => barData, [barData]);
+  const [data, setData] = useState(useMemo(() => barData, [barData]));
   const [gopageValue, setGopageValue] = useState();
 
   const tableInstance = useTable(
@@ -88,19 +83,7 @@ export default function CheckTable(props) {
           Reports ({data?.length})
         </Text>
         {/* <Menu /> */}
-        {selectedValues?.length > 0 && (
-          <DeleteIcon onClick={() => setDelete(true)} color={"red"} />
-        )}
       </Flex>
-      {/* Delete model */}
-      <Delete
-        isOpen={deleteModel}
-        onClose={setDelete}
-        setSelectedValues={setSelectedValues}
-        url="api/contact/deleteMany"
-        data={selectedValues}
-        method="many"
-      />
       <Box overflowY={"auto"} className="table-fix-container">
         <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
           <Thead>

@@ -1,414 +1,448 @@
-import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from "react";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import {
+  Badge,
   Box,
-  Flex,
   Button,
   Container,
-  HStack,
-  IconButton,
+  Divider,
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  useColorModeValue,
-  Icon,
-  Text,
+  Flex,
+  HStack,
+  IconButton,
+  Image,
   Stack,
-} from '@chakra-ui/react';
-import { FiMenu, FiX, FiSearch, FiUser, FiHome, FiBriefcase, FiPhone, FiMail, FiGlobe } from 'react-icons/fi';
-import { MdOutlineRealEstateAgent, MdDashboard, MdLanguage } from 'react-icons/md';
-import { useTranslation } from 'react-i18next';
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { FiHeart, FiMenu, FiUser, FiX } from "react-icons/fi";
+import { MdCompareArrows } from "react-icons/md";
+import { useTranslation } from "react-i18next";
+import useActiveBranding, {
+  getActiveBrandRecord,
+  getBrandLogoSrc,
+} from "hooks/useActiveBranding";
+import {
+  getPublicSubline,
+  getPublicTagline,
+  publicBrand,
+  resolvePublicBrandRecord,
+} from "views/public/publicBrand";
 
-export default function ModernHeader({ largeLogo }) {
+const brandShellStyles = {
+  bg: "rgba(7, 12, 20, 0.45)",
+  border: `1px solid rgba(227, 211, 184, 0.08)`,
+  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+  backdropFilter: "blur(20px)",
+};
+
+export default function ModernHeader({ largeLogo = [] }) {
   const { i18n, t } = useTranslation();
-  const currentLanguage = i18n.language || 'en';
-
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-  };
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const isAuthenticated = !!localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'));
+  const branding = useActiveBranding(largeLogo);
+  const isAuthenticated = Boolean(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  const currentLanguage = i18n.language?.startsWith("ru") ? "ru" : "en";
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 18);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
-    { label: t('publicListing.homeNav'), href: '/offers', icon: FiHome },
-    { label: t('publicListing.propertiesNav'), href: '/offers', icon: MdOutlineRealEstateAgent },
-    { label: t('publicListing.agentsNav'), href: '/offers#agents', icon: FiUser },
-    { label: t('publicListing.contactNav'), href: '/offers#contact', icon: FiPhone },
-  ];
+  const brandRecord = useMemo(
+    () => resolvePublicBrandRecord(getActiveBrandRecord(branding)),
+    [branding],
+  );
+  const desktopLogo = useMemo(() => getBrandLogoSrc(brandRecord, "large"), [brandRecord]);
+  const mobileLogo = useMemo(
+    () => getBrandLogoSrc(brandRecord, "small") || desktopLogo,
+    [brandRecord, desktopLogo],
+  );
+  const navLinks = useMemo(
+    () => [
+      { label: t("publicListing.homeNav"), href: "/" },
+      { label: t("publicListing.propertiesNav"), href: "/offers" },
+      { label: t("publicListing.aboutNav"), href: "/#about" },
+      { label: t("publicListing.contactNav"), href: "/#contact" },
+    ],
+    [t],
+  );
 
-  const handleNavigation = (href) => {
+  const navigateAndClose = (href) => {
     navigate(href);
     onClose();
   };
 
-  const bgColor = useColorModeValue('white/80', 'gray.900/80');
-  const borderColor = useColorModeValue('gray.200/50', 'gray.700/50');
+  const isActivePath = (href) => {
+    const basePath = href.split("#")[0];
+    if (!basePath) return false;
+    if (basePath === "/") return location.pathname === "/";
+    return location.pathname.startsWith(basePath);
+  };
+
+  const langLabel = currentLanguage === "ru" ? "RU" : "EN";
+  const subline = getPublicSubline(currentLanguage);
+  const tagline = getPublicTagline(currentLanguage);
 
   return (
     <>
-      <Box
-        position="fixed"
-        top={0}
-        left={0}
-        right={0}
-        zIndex={1000}
-        transition="all 0.3s ease"
-        className={isScrolled ? 'glass-dark shadow-2xl' : 'bg-transparent'}
-        style={{
-          backdropFilter: isScrolled ? 'blur(20px)' : 'none',
-          borderBottom: isScrolled ? `1px solid rgba(255,255,255,0.1)` : 'none',
-        }}
-      >
-        <Container maxW="8xl">
+      <Box position="fixed" top="0" left="0" right="0" zIndex="30" px={{ base: 2, md: 3 }} pt={{ base: 2, md: 3 }}>
+        <style>{`
+          @keyframes logo-shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+          }
+          @keyframes logo-glow {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6)); }
+          }
+          .logo-container {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .logo-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+          }
+          .logo-image {
+            animation: logo-shimmer 3s ease-in-out infinite;
+          }
+          .logo-container:hover .logo-image {
+            animation: logo-glow 2s ease-in-out infinite;
+          }
+        `}</style>
+        <Container maxW="8xl" px={{ base: 0, md: 1 }}>
           <Flex
             align="center"
             justify="space-between"
-            py={4}
-            px={2}
+            px={{ base: 3, md: 4 }}
+            py={{ base: 2, md: 2.5 }}
+            borderRadius={{ base: "20px", md: "24px" }}
+            bg={isScrolled || location.pathname !== "/" ? "rgba(7, 12, 20, 0.65)" : "rgba(7, 12, 20, 0.35)"}
+            border="1px solid rgba(227, 211, 184, 0.06)"
+            boxShadow={isScrolled || location.pathname !== "/" ? "0 4px 30px rgba(0, 0, 0, 0.15)" : "none"}
+            backdropFilter={isScrolled || location.pathname !== "/" ? "blur(20px)" : "blur(10px)"}
+            transition="all 0.3s ease"
           >
-            {/* Logo */}
-            <RouterLink to="/offers" className="flex items-center space-x-3 group">
-              {largeLogo && largeLogo.length > 0 && largeLogo[0]?.image ? (
-                <img
-                  src={largeLogo[0]?.image}
-                  alt="Logo"
-                  className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                />
-              ) : (
-                <Flex align="center" gap={2}>
-                  <Box
-                    className="p-2 rounded-xl bg-gradient-to-br from-luxury-gold to-accent-500"
-                    style={{ boxShadow: '0 4px 20px rgba(212, 175, 55, 0.4)' }}
-                  >
-                    <MdOutlineRealEstateAgent className="text-white text-2xl" />
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold" fontSize="xl" className="text-white">
-                      {t('publicListing.footerTitle')}
+            <RouterLink to="/">
+              <HStack spacing={{ base: 2, md: 3 }} align="center" className="logo-container">
+                <Box
+                  px={{ base: 2, md: 3 }}
+                  py={{ base: 1.5, md: 2 }}
+                  borderRadius="20px"
+                  bg="transparent"
+                  border="1px solid rgba(227, 211, 184, 0.06)"
+                  transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                  _hover={{
+                    borderColor: "rgba(212, 175, 55, 0.2)",
+                    boxShadow: "0 0 20px rgba(212, 175, 55, 0.1)",
+                  }}
+                >
+                  <Image
+                    src={desktopLogo || mobileLogo}
+                    alt={publicBrand.name}
+                    maxH={{ base: "28px", md: "32px" }}
+                    objectFit="contain"
+                    className="logo-image"
+                    filter="drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2))"
+                  />
+                </Box>
+                <Box display={{ base: "none", md: "block" }}>
+                  <HStack spacing={2} align="center">
+                    <Text
+                      color="white"
+                      fontWeight="600"
+                      fontSize="xx-small"
+                      letterSpacing="0.18em"
+                      textTransform="uppercase"
+                      opacity={0.7}
+                    >
+                      {tagline}
                     </Text>
-                    <Text fontSize="xs" className="text-luxury-gold/80">
-                      {t('publicListing.premiumProperties')}
-                    </Text>
-                  </Box>
-                </Flex>
-              )}
+                    <Badge
+                      borderRadius="full"
+                      px={2}
+                      py={0.5}
+                      bg="rgba(245, 208, 118, 0.1)"
+                      color="#f5d076"
+                      border="1px solid rgba(245, 208, 118, 0.15)"
+                      fontSize="xx-small"
+                    >
+                      {langLabel}
+                    </Badge>
+                  </HStack>
+                </Box>
+              </HStack>
             </RouterLink>
 
-            {/* Desktop Navigation */}
-            <HStack spacing={8} display={{ base: 'none', lg: 'flex' }}>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.label}
-                  variant="ghost"
-                  color="white"
-                  _hover={{ 
-                    color: 'luxury.gold',
-                    bg: 'whiteAlpha.100'
-                  }}
-                  onClick={() => handleNavigation(link.href)}
-                  className="relative group"
-                >
-                  <HStack spacing={2}>
-                    <Icon as={link.icon} className="transition-transform duration-300 group-hover:scale-110" />
-                    <Text fontWeight="500">{link.label}</Text>
-                  </HStack>
-                  <Box
-                    className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-luxury-gold to-accent-500 rounded-full"
-                    style={{ width: '0%', transition: 'width 0.3s ease' }}
-                    _groupHover={{ width: '100%' }}
-                  />
-                </Button>
-              ))}
+            <HStack spacing={2} display={{ base: "none", xl: "flex" }}>
+              {navLinks.map((link) => {
+                const active = isActivePath(link.href);
+                return (
+                  <Button
+                    key={link.href}
+                    onClick={() => navigate(link.href)}
+                    variant="ghost"
+                    position="relative"
+                    color="whiteAlpha.600"
+                    fontWeight="500"
+                    px={3}
+                    fontSize="sm"
+                    bg="transparent"
+                    _hover={{ color: "white", bg: "transparent" }}
+                    _after={
+                      active
+                        ? {
+                            content: '""',
+                            position: "absolute",
+                            left: "12px",
+                            right: "12px",
+                            bottom: "4px",
+                            h: "1.5px",
+                            borderRadius: "999px",
+                            bg: "rgba(212, 175, 55, 0.5)",
+                          }
+                        : undefined
+                    }
+                  >
+                    {link.label}
+                  </Button>
+                );
+              })}
             </HStack>
 
-            {/* Action Buttons */}
-            <HStack spacing={4} display={{ base: 'none', lg: 'flex' }}>
-              {/* Language Switcher */}
-              <HStack spacing={1} bg="whiteAlpha.100" borderRadius="xl" px={2} py={1}>
+            <HStack spacing={1.5} display={{ base: "none", lg: "flex" }}>
+              <HStack
+                spacing={1}
+                px={2}
+                py={1.5}
+                borderRadius="full"
+                bg="transparent"
+                border="1px solid rgba(227, 211, 184, 0.06)"
+              >
                 <Button
                   size="xs"
-                  variant={currentLanguage === 'en' ? 'solid' : 'ghost'}
-                  onClick={() => changeLanguage('en')}
-                  style={{
-                    background: currentLanguage === 'en' 
-                      ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(205, 127, 50, 0.9) 100%)'
-                      : 'transparent',
-                    border: 'none',
-                    color: currentLanguage === 'en' ? 'white' : 'gray.300',
-                    fontWeight: '700',
-                    borderRadius: '8px',
-                    padding: '6px 10px',
-                    fontSize: '11px',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
+                  minW="32px"
+                  borderRadius="full"
+                  variant={currentLanguage === "en" ? "solid" : "ghost"}
+                  bg={currentLanguage === "en" ? "rgba(212, 175, 55, 0.2)" : "transparent"}
+                  color={currentLanguage === "en" ? "white" : "whiteAlpha.600"}
+                  fontSize="xx-small"
                   _hover={{
-                    transform: 'scale(1.05)',
-                    color: 'white',
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(205, 127, 50, 0.7) 100%)',
+                    bg: currentLanguage === "en" ? "rgba(212, 175, 55, 0.25)" : "rgba(255,255,255,0.05)",
                   }}
-                  _active={{
-                    transform: 'scale(0.98)',
-                  }}
+                  onClick={() => i18n.changeLanguage("en")}
                 >
                   EN
                 </Button>
-                <Box w="1px" h="4" bg="whiteAlpha.300" />
                 <Button
                   size="xs"
-                  variant={currentLanguage === 'ru' ? 'solid' : 'ghost'}
-                  onClick={() => changeLanguage('ru')}
-                  style={{
-                    background: currentLanguage === 'ru'
-                      ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(205, 127, 50, 0.9) 100%)'
-                      : 'transparent',
-                    border: 'none',
-                    color: currentLanguage === 'ru' ? 'white' : 'gray.300',
-                    fontWeight: '700',
-                    borderRadius: '8px',
-                    padding: '6px 10px',
-                    fontSize: '11px',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
+                  minW="32px"
+                  borderRadius="full"
+                  variant={currentLanguage === "ru" ? "solid" : "ghost"}
+                  bg={currentLanguage === "ru" ? "rgba(212, 175, 55, 0.2)" : "transparent"}
+                  color={currentLanguage === "ru" ? "white" : "whiteAlpha.600"}
+                  fontSize="xx-small"
                   _hover={{
-                    transform: 'scale(1.05)',
-                    color: 'white',
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(205, 127, 50, 0.7) 100%)',
+                    bg: currentLanguage === "ru" ? "rgba(212, 175, 55, 0.25)" : "rgba(255,255,255,0.05)",
                   }}
-                  _active={{
-                    transform: 'scale(0.98)',
-                  }}
+                  onClick={() => i18n.changeLanguage("ru")}
                 >
-                  РУ
+                  RU
                 </Button>
               </HStack>
-              
-              <IconButton
-                aria-label="Search"
-                icon={isSearchOpen ? <FiX /> : <FiSearch />}
+
+              <Button
+                as={RouterLink}
+                to="/offers/compare"
                 variant="ghost"
-                color="white"
-                _hover={{ bg: 'whiteAlpha.100', color: 'luxury.gold' }}
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              />
-              
+                color="whiteAlpha.500"
+                fontSize="sm"
+                px={2}
+                bg="transparent"
+                _hover={{ bg: "transparent", color: "white" }}
+              >
+                <MdCompareArrows size={18} />
+              </Button>
+
+              <Button
+                as={RouterLink}
+                to="/favorites"
+                variant="ghost"
+                color="whiteAlpha.500"
+                fontSize="sm"
+                px={2}
+                bg="transparent"
+                _hover={{ bg: "transparent", color: "white" }}
+              >
+                <FiHeart size={18} />
+              </Button>
+
               {isAuthenticated ? (
                 <Button
                   as={RouterLink}
                   to="/dashboard"
-                  className="btn-luxury"
-                  leftIcon={<FiUser />}
+                  variant="ghost"
+                  color="whiteAlpha.600"
+                  fontSize="sm"
+                  px={2}
+                  bg="transparent"
+                  _hover={{ bg: "transparent", color: "white" }}
                 >
-                  {t('navigation.dashboard')}
+                  <FiUser size={18} />
                 </Button>
               ) : (
-                <>
-                  <Button
-                    as={RouterLink}
-                    to="/auth/sign-in"
-                    variant="ghost"
-                    color="white"
-                    _hover={{ bg: 'whiteAlpha.100' }}
-                  >
-                    {t('auth.signIn.signInButton')}
-                  </Button>
-                  <Button
-                    as={RouterLink}
-                    to="/auth/sign-up"
-                    className="btn-luxury"
-                  >
-                    {t('auth.signUp.createAccountButton')}
-                  </Button>
-                </>
+                <Button
+                  as={RouterLink}
+                  to="/auth/sign-in"
+                  variant="ghost"
+                  color="whiteAlpha.500"
+                  fontSize="sm"
+                  px={2}
+                  bg="transparent"
+                  _hover={{ bg: "transparent", color: "white" }}
+                >
+                  Sign In
+                </Button>
               )}
             </HStack>
 
-            {/* Mobile Menu Button */}
             <IconButton
-              aria-label="Menu"
+              display={{ base: "inline-flex", lg: "none" }}
+              aria-label="Open menu"
               icon={isOpen ? <FiX /> : <FiMenu />}
+              onClick={isOpen ? onClose : onOpen}
               variant="ghost"
               color="white"
-              size="lg"
-              display={{ base: 'flex', lg: 'none' }}
-              onClick={isOpen ? onClose : onOpen}
+              _hover={{ bg: "whiteAlpha.100" }}
             />
           </Flex>
-
-          {/* Search Bar */}
-          {isSearchOpen && (
-            <Box
-              pb={4}
-              className="animate-fade-in-down"
-              display={{ base: 'none', lg: 'block' }}
-            >
-              <Flex gap={2}>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search properties..."
-                  className="input-luxury flex-1"
-                  autoFocus
-                />
-                <Button className="btn-luxury">
-                  <FiSearch />
-                </Button>
-              </Flex>
-            </Box>
-          )}
         </Container>
       </Box>
 
-      {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
-        <DrawerOverlay className="bg-black/50" />
-        <DrawerContent className="bg-gradient-luxury border-l border-white/10">
-          <DrawerCloseButton color="white" />
-          <DrawerHeader className="border-b border-white/10 pt-8">
-            <Flex align="center" gap={3}>
-              <Box className="p-2 rounded-xl bg-gradient-to-br from-luxury-gold to-accent-500">
-                <MdOutlineRealEstateAgent className="text-white text-2xl" />
-              </Box>
-              <Box>
-                <Text fontWeight="bold" fontSize="xl" className="text-white">
-                  {t('publicListing.footerTitle')}
-                </Text>
-                <Text fontSize="xs" className="text-luxury-gold/80">
-                  {t('publicListing.premiumProperties')}
-                </Text>
-              </Box>
-            </Flex>
-          </DrawerHeader>
-          <DrawerBody className="py-6">
+        <DrawerOverlay />
+        <DrawerContent bg={publicBrand.colors.ink} color="white">
+          <DrawerCloseButton />
+          <DrawerHeader pt={8}>
             <Stack spacing={4}>
-              {navLinks.map((link) => (
-                <Button
-                  key={link.label}
-                  variant="ghost"
-                  color="white"
-                  justifyContent="flex-start"
-                  _hover={{ bg: 'whiteAlpha.100', color: 'luxury.gold' }}
-                  onClick={() => handleNavigation(link.href)}
-                  className="group"
+              <HStack spacing={4}>
+                <Box
+                  px={3}
+                  py={2.5}
+                  borderRadius="20px"
+                  bg="rgba(255,255,255,0.05)"
+                  border="1px solid rgba(227, 211, 184, 0.14)"
+                  className="logo-container"
                 >
-                  <HStack spacing={3}>
-                    <Icon as={link.icon} className="transition-transform duration-300 group-hover:scale-110" />
-                    <Text fontWeight="500">{link.label}</Text>
-                  </HStack>
+                  <Image
+                    src={mobileLogo || desktopLogo}
+                    alt={publicBrand.name}
+                    maxH="40px"
+                    objectFit="contain"
+                    className="logo-image"
+                    filter="drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))"
+                  />
+                </Box>
+                <Stack spacing={0.5}>
+                  <Text fontWeight="700" color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                    {tagline}
+                  </Text>
+                  <Text color="whiteAlpha.760" fontSize="sm">
+                    {subline}
+                  </Text>
+                </Stack>
+              </HStack>
+            </Stack>
+          </DrawerHeader>
+          <DrawerBody pb={8}>
+            <Stack spacing={6}>
+              <Stack spacing={3}>
+                {navLinks.map((link) => (
+                  <Button
+                    key={link.href}
+                    onClick={() => navigateAndClose(link.href)}
+                    justifyContent="space-between"
+                    variant="ghost"
+                    color="white"
+                    h="52px"
+                    borderRadius="18px"
+                    bg={isActivePath(link.href) ? "rgba(255,255,255,0.08)" : "transparent"}
+                    _hover={{ bg: "rgba(255,255,255,0.08)" }}
+                  >
+                    {link.label}
+                  </Button>
+                ))}
+              </Stack>
+
+              <Divider borderColor="rgba(227, 211, 184, 0.14)" />
+
+              <HStack spacing={3}>
+                <Button
+                  flex="1"
+                  borderRadius="full"
+                  bg={currentLanguage === "en" ? publicBrand.gradients.brass : "rgba(255,255,255,0.05)"}
+                  color={currentLanguage === "en" ? publicBrand.colors.ink : "white"}
+                  onClick={() => i18n.changeLanguage("en")}
+                >
+                  English
                 </Button>
-              ))}
+                <Button
+                  flex="1"
+                  borderRadius="full"
+                  bg={currentLanguage === "ru" ? publicBrand.gradients.brass : "rgba(255,255,255,0.05)"}
+                  color={currentLanguage === "ru" ? publicBrand.colors.ink : "white"}
+                  onClick={() => i18n.changeLanguage("ru")}
+                >
+                  Русский
+                </Button>
+              </HStack>
 
-              {/* Language Switcher in Mobile Menu */}
-              <Box className="border-t border-white/10 my-4" />
-              <Box>
-                <Text fontSize="sm" color="gray.400" mb={3}>Language / Язык</Text>
-                <HStack spacing={3}>
-                  <Button
-                    flex={1}
-                    variant={currentLanguage === 'en' ? 'solid' : 'outline'}
-                    onClick={() => changeLanguage('en')}
-                    style={{
-                      background: currentLanguage === 'en' 
-                        ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(205, 127, 50, 0.9) 100%)'
-                        : 'transparent',
-                      border: '1px solid rgba(212, 175, 55, 0.5)',
-                      color: 'white',
-                      fontWeight: '600',
-                      borderRadius: '12px',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
-                    _hover={{
-                      transform: 'scale(1.05)',
-                      boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
-                      background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(205, 127, 50, 0.7) 100%)',
-                    }}
-                    _active={{
-                      transform: 'scale(0.98)',
-                    }}
-                  >
-                    EN
-                  </Button>
-                  <Button
-                    flex={1}
-                    variant={currentLanguage === 'ru' ? 'solid' : 'outline'}
-                    onClick={() => changeLanguage('ru')}
-                    style={{
-                      background: currentLanguage === 'ru'
-                        ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(205, 127, 50, 0.9) 100%)'
-                        : 'transparent',
-                      border: '1px solid rgba(212, 175, 55, 0.5)',
-                      color: 'white',
-                      fontWeight: '600',
-                      borderRadius: '12px',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
-                    _hover={{
-                      transform: 'scale(1.05)',
-                      boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)',
-                      background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.7) 0%, rgba(205, 127, 50, 0.7) 100%)',
-                    }}
-                    _active={{
-                      transform: 'scale(0.98)',
-                    }}
-                  >
-                    РУ
-                  </Button>
-                </HStack>
-              </Box>
+              <Stack spacing={3}>
+                <Button as={RouterLink} to="/offers/compare" onClick={onClose} leftIcon={<MdCompareArrows />}>
+                  {t("publicListing.compareAction")}
+                </Button>
+                <Button as={RouterLink} to="/favorites" onClick={onClose} leftIcon={<FiHeart />}>
+                  {t("publicListing.favoritesTitle") || t("publicListing.savedOffers")}
+                </Button>
+              </Stack>
 
-              <Box className="border-t border-white/10 my-4" />
-              
               {isAuthenticated ? (
                 <Button
                   as={RouterLink}
                   to="/dashboard"
-                  className="btn-luxury w-full"
-                  leftIcon={<FiUser />}
                   onClick={onClose}
+                  leftIcon={<FiUser />}
+                  borderRadius="full"
+                  bg={publicBrand.gradients.brass}
+                  color={publicBrand.colors.ink}
                 >
-                  {t('navigation.dashboard')}
+                  {t("navigation.dashboard")}
                 </Button>
               ) : (
-                <>
-                  <Button
-                    as={RouterLink}
-                    to="/auth/sign-in"
-                    variant="ghost"
-                    color="white"
-                    justifyContent="flex-start"
-                    _hover={{ bg: 'whiteAlpha.100' }}
-                    onClick={onClose}
-                  >
-                    {t('auth.signIn.signInButton')}
+                <Stack spacing={3}>
+                  <Button as={RouterLink} to="/auth/sign-in" onClick={onClose} variant="outline" color="white" borderColor="rgba(227, 211, 184, 0.24)">
+                    {t("auth.signIn.signInButton")}
                   </Button>
                   <Button
                     as={RouterLink}
                     to="/auth/sign-up"
-                    className="btn-luxury w-full"
                     onClick={onClose}
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                    fontWeight="700"
                   >
-                    {t('auth.signUp.createAccountButton')}
+                    {t("auth.signUp.createAccountButton")}
                   </Button>
-                </>
+                </Stack>
               )}
             </Stack>
           </DrawerBody>

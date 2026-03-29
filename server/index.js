@@ -1,21 +1,30 @@
-const express = require('express');
-const db = require('./db/config')
-const route = require('./controllers/route');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const cookieParser = require('cookie-parser');
-const compression = require('compression');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
+const compression = require("compression");
+const db = require("./db/config");
+const route = require("./controllers/route");
+const errorHandler = require("./middelwares/errorHandler");
 
-const port = 5001
-require('dotenv').config()
+require("dotenv").config();
 
-const fs = require('fs');
-const path = require('path');
+const port = Number(process.env.PORT || 5001);
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:3001",
+  process.env.CLIENT_URL,
+]
+  .filter(Boolean)
+  .map((value) => String(value).trim());
 
 //Setup Express App
 const app = express();
+app.disable("x-powered-by");
 
 // Security middleware
 app.use(helmet()); // Security headers
@@ -56,10 +65,25 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Set up CORS with options
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      origin.includes("localhost") ||
+      origin.includes("127.0.0.1");
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      const error = new Error("Not allowed by CORS");
+      error.statusCode = 403;
+      callback(error);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // Apply auth limiter to auth routes
@@ -67,6 +91,14 @@ app.use('/api/user', authLimiter);
 
 //API Routes
 app.use('/api', route);
+
+app.use((req, res, next) => {
+  const error = new Error("Route not found");
+  error.statusCode = 404;
+  next(error);
+});
+
+app.use(errorHandler);
 
 
 app.get('/', async (req, res) => {

@@ -42,7 +42,7 @@ const PropertyBackground = () => {
         ctx.globalAlpha = this.opacity;
 
         // Draw simple house silhouette
-        ctx.fillStyle = 'rgba(100, 200, 150, 1)';
+        ctx.fillStyle = 'rgba(212, 175, 55, 1)';
         
         // House body
         ctx.beginPath();
@@ -95,7 +95,7 @@ const PropertyBackground = () => {
       // Draw gradient background
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, 'rgba(15, 23, 42, 0)');
-      gradient.addColorStop(1, 'rgba(100, 200, 150, 0.05)');
+      gradient.addColorStop(1, 'rgba(212, 175, 55, 0.07)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 

@@ -1,11 +1,12 @@
 const express = require("express");
-const property = require("./property");
+const property = require("./property.facade");
 const auth = require("../../middelwares/auth");
 const { propertyValidation } = require("../../middelwares/validation");
 
 const router = express.Router();
 
 router.get("/public", property.publicIndex);
+router.get("/public/slug/:slug", property.publicViewBySlug);
 router.get("/public/:id", property.publicView);
 
 router.get("/", auth, property.index);
@@ -74,4 +75,3 @@ router.use(
 // router.post('/file', property.upload.single('file'), property.file)
 
 module.exports = router;
-

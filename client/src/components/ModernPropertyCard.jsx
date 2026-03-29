@@ -1,403 +1,418 @@
 import {
-  Box,
-  Image,
-  Stack,
-  Text,
-  HStack,
   Badge,
+  Box,
   Button,
+  HStack,
   Icon,
   IconButton,
-  useColorModeValue,
-  useDisclosure,
-  Tooltip,
-} from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+  Image,
+  SimpleGrid,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import { memo } from "react";
+import { useTranslation } from "react-i18next";
+import { Link as RouterLink } from "react-router-dom";
+import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
 import {
-  FiHeart,
-  FiShare2,
-  FiVideo,
-  FiMapPin,
-  FiHome,
-  FiMaximize,
-  FiPercent,
-  FiPrinter,
-} from 'react-icons/fi';
-import { MdCompareArrows, MdArrowForward, MdMeetingRoom, MdBathtub, MdSquareFoot } from 'react-icons/md';
-import { LuMapPin } from 'react-icons/lu';
+  MdArrowForward,
+  MdBathtub,
+  MdCompareArrows,
+  MdMeetingRoom,
+  MdOutlineDescription,
+  MdOutlinePhotoLibrary,
+  MdOutlineSquareFoot,
+} from "react-icons/md";
+import { LuMapPin } from "react-icons/lu";
 import {
   formatPrice,
+  getDocumentCount,
+  getFloorPlanCount,
+  getPhotoCount,
   getPrimaryImage,
+  isRichListing,
+  normalizePropertyTypeKey,
   normalizeStatus,
-  normalizePropertyTypeKey
-} from 'views/public/catalog/catalogData';
-import { useState, memo, useCallback } from 'react';
-import MortgageCalculator from './property/MortgageCalculator';
-import { VirtualTourViewer } from './property/VirtualTourViewer';
-import { ShareProperty, PrintProperty } from './property/PropertyExtras';
+} from "views/public/catalog/catalogData";
+import { publicBrand } from "views/public/publicBrand";
 
-const ModernPropertyCard = memo(function ModernPropertyCard({ property, t, isFavorite, isInCompare, onFavoriteToggle, onCompareToggle }) {
-  const [isHovered, setIsHovered] = useState(false);
-  
-  // Modal states
-  const { isOpen: isMortgageOpen, onOpen: onMortgageOpen, onClose: onMortgageClose } = useDisclosure();
-  const { isOpen: isTourOpen, onOpen: onTourOpen, onClose: onTourClose } = useDisclosure();
-  const { isOpen: isShareOpen, onOpen: onShareOpen, onClose: onShareClose } = useDisclosure();
-  const { isOpen: isPrintOpen, onOpen: onPrintOpen, onClose: onPrintClose } = useDisclosure();
+const metricText = (value, fallback = "—") => {
+  if (value === null || value === undefined || value === "" || Number(value) === 0) {
+    return fallback;
+  }
+  return String(value);
+};
 
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const mutedColor = useColorModeValue('gray.600', 'gray.400');
+const propertyTypeLabel = (property, t) => {
+  const key = property?.propertyTypeKey || normalizePropertyTypeKey(property?.propertyType);
+  if (key === "house") return t?.("publicListing.houses") || "House";
+  if (key === "apartment") return t?.("publicListing.apartments") || "Apartment";
+  if (key === "land") return t?.("publicListing.plots") || "Land";
+  if (key === "commercial") return t?.("publicListing.commercial") || "Commercial";
+  return property?.propertyType || (t?.("publicListing.propertyType") || "Property");
+};
 
-  const propertyType = normalizePropertyTypeKey(property?.propertyType);
+const buildPropertyHref = (property) => {
+  const slug = property?.publicSlugResolved || property?.publicSlug;
+  return slug ? `/offers/slug/${slug}` : `/offers/${property?._id}`;
+};
+
+const buildShareUrl = (property) => `${window.location.origin}${buildPropertyHref(property)}`;
+
+const actionStyles = {
+  bg: "rgba(7, 12, 20, 0.56)",
+  border: "1px solid rgba(227, 211, 184, 0.14)",
+  color: "white",
+};
+
+const metricBlocks = (property, t) => [
+  {
+    label: t?.("publicListing.bedrooms") || "Bedrooms",
+    icon: MdMeetingRoom,
+    value: metricText(property?.numberofBedrooms),
+  },
+  {
+    label: t?.("publicListing.bathrooms") || "Bathrooms",
+    icon: MdBathtub,
+    value: metricText(property?.numberofBathrooms),
+  },
+  {
+    label: t?.("publicListing.area") || "Area",
+    icon: MdOutlineSquareFoot,
+    value: metricText(property?.squareFootage),
+  },
+];
+
+const assetBlocks = (property, t) => [
+  {
+    label: t?.("publicListing.photosCount", { count: getPhotoCount(property) }) || "Photos",
+    icon: MdOutlinePhotoLibrary,
+    value: String(getPhotoCount(property)),
+  },
+  {
+    label: t?.("publicListing.docsCount", { count: getDocumentCount(property) }) || "Docs",
+    icon: MdOutlineDescription,
+    value: String(getDocumentCount(property)),
+  },
+  {
+    label: t?.("publicListing.plansCount", { count: getFloorPlanCount(property) }) || "Plans",
+    icon: FiSearch,
+    value: String(getFloorPlanCount(property)),
+  },
+];
+
+const ModernPropertyCard = memo(function ModernPropertyCard({
+  property,
+  isFavorite,
+  isInCompare,
+  onFavoriteToggle,
+  onCompareToggle,
+}) {
+  const { t } = useTranslation();
+  const toast = useToast();
   const status = normalizeStatus(property?.listingStatus, t);
-  const price = formatPrice(property?.listingPrice, t);
-  const primaryImage = getPrimaryImage(property);
+  const typeLabel = propertyTypeLabel(property, t);
+  const verificationScore = Number(property?.verification?.score || 0);
+  const richListing = isRichListing(property);
+  const propertyHref = buildPropertyHref(property);
 
-  // Memoize handlers to prevent re-creation on every render
-  const handleFavoriteClick = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onFavoriteToggle?.(property?._id);
-  }, [property?._id, onFavoriteToggle]);
+  const handleShare = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
-  const handleCompareClick = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onCompareToggle?.(property?._id);
-  }, [property?._id, onCompareToggle]);
+    try {
+      await navigator.clipboard.writeText(buildShareUrl(property));
+      toast({
+        title: t?.("publicListing.copied") || "Link copied",
+        status: "success",
+        duration: 1800,
+      });
+    } catch (error) {
+      toast({ title: "Unable to copy link", status: "error", duration: 1800 });
+    }
+  };
 
   return (
     <Box
-      className="group relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{ perspective: '1000px' }}
+      as={RouterLink}
+      to={propertyHref}
+      className="property-card"
+      borderRadius="40px"
+      overflow="hidden"
+      bg={publicBrand.gradients.panelLight}
+      border="1px solid rgba(9,18,32,0.06)"
+      boxShadow="0 4px 20px rgba(0, 0, 0, 0.15), 0 0 20px rgba(212, 175, 55, 0.05)"
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius: "40px",
+        background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(212,175,55,0.03) 100%)",
+        opacity: 0,
+        transition: "opacity 0.4s ease",
+        zIndex: 0,
+      }}
+      _hover={{
+        _before: {
+          opacity: 1,
+        },
+        transform: "translateY(-8px) scale(1.01)",
+        boxShadow: "0 15px 50px rgba(0, 0, 0, 0.2), 0 0 30px rgba(212, 175, 55, 0.1), 0 0 60px rgba(255, 255, 255, 0.05)",
+      }}
     >
-      {/* Main Card */}
-      <Box
-        className="relative overflow-hidden rounded-3xl"
-        style={{
-          background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: isHovered 
-            ? '0 25px 80px rgba(0,0,0,0.3), 0 0 40px rgba(212, 175, 55, 0.1)' 
-            : '0 10px 40px rgba(0,0,0,0.2)',
-          transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
-          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
-      >
-        {/* Image Container */}
-        <Box className="relative overflow-hidden" style={{ height: '280px' }}>
+      <Box position="relative" overflow="hidden" borderRadius="34px 34px 0 0">
+        <Box
+          className="property-image-wrapper"
+          transition="transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+          _hover={{
+            transform: "scale(1.08)",
+          }}
+        >
           <Image
-            src={primaryImage}
+            src={getPrimaryImage(property)}
             alt={property?.name || property?.propertyAddress}
-            className="w-full h-full object-cover"
-            style={{
-              transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-              transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
+            h="320px"
+            w="100%"
+            objectFit="cover"
           />
-          
-          {/* Gradient Overlay */}
-          <Box
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%)',
-            }}
-          />
-
-          {/* Badges */}
-          <HStack position="absolute" top={4} left={4} spacing={2} flexWrap="wrap">
-            <Badge
-              className="backdrop-blur-md"
-              style={{
-                background: 'rgba(212, 175, 55, 0.9)',
-                color: 'white',
-                padding: '6px 14px',
-                borderRadius: '20px',
-                fontWeight: '600',
-                fontSize: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              {status}
-            </Badge>
-            {propertyType === 'house' && (
-              <Badge
-                className="backdrop-blur-md"
-                style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  color: 'white',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontWeight: '500',
-                  fontSize: '11px',
-                }}
-              >
-                {t('publicListing.categoryHouses')}
-              </Badge>
-            )}
-          </HStack>
-
-          {/* Action Buttons */}
-          <HStack position="absolute" top={4} right={4} spacing={2}>
-            <IconButton
-              aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-              icon={<FiHeart />}
-              size="md"
-              className={`backdrop-blur-md transition-all duration-300 ${
-                isFavorite 
-                  ? 'bg-red-500 text-white' 
-                  : 'bg-white/20 text-white hover:bg-red-500/80'
-              }`}
-              style={{
-                borderRadius: '12px',
-                width: '40px',
-                height: '40px',
-              }}
-              onClick={handleFavoriteClick}
-            />
-            <IconButton
-              aria-label={isInCompare ? 'Remove from compare' : 'Add to compare'}
-              icon={<MdCompareArrows />}
-              size="md"
-              className={`backdrop-blur-md transition-all duration-300 ${
-                isInCompare 
-                  ? 'bg-luxury-gold text-white' 
-                  : 'bg-white/20 text-white hover:bg-luxury-gold/80'
-              }`}
-              style={{
-                borderRadius: '12px',
-                width: '40px',
-                height: '40px',
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                onCompareToggle(property?._id);
-              }}
-            />
-          </HStack>
-
-          {/* Price Tag */}
-          <Box
-            position="absolute"
-            bottom={4}
-            left={4}
-            className="backdrop-blur-md"
-            style={{
-              background: 'rgba(15, 23, 42, 0.9)',
-              padding: '10px 20px',
-              borderRadius: '16px',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-            }}
-          >
-            <Text
-              fontWeight="bold"
-              fontSize="2xl"
-              className="text-gradient"
-              style={{
-                background: 'linear-gradient(135deg, #D4AF37 0%, #F7E7CE 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              {price}
-            </Text>
-          </Box>
-
-          {/* Quick Actions */}
-          <HStack
-            position="absolute"
-            bottom={4}
-            right={4}
-            spacing={2}
-            className={`transition-all duration-300 ${
-              isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
-            <IconButton
-              aria-label="View photos"
-              icon={<FiVideo />}
-              size="md"
-              className="backdrop-blur-md bg-white/20 text-white hover:bg-white/30"
-              style={{ borderRadius: '12px' }}
-            />
-            <IconButton
-              aria-label="Share"
-              icon={<FiShare2 />}
-              size="md"
-              className="backdrop-blur-md bg-white/20 text-white hover:bg-white/30"
-              style={{ borderRadius: '12px' }}
-            />
-          </HStack>
         </Box>
+        <Box
+          position="absolute"
+          inset="0"
+          bg="linear-gradient(180deg, rgba(7,12,20,0.04) 0%, rgba(7,12,20,0.34) 38%, rgba(7,12,20,0.84) 100%)"
+          transition="opacity 0.4s ease"
+          _groupHover={{
+            opacity: 0.7,
+          }}
+        />
 
-        {/* Content */}
-        <Stack p={6} spacing={4}>
-          {/* Title */}
-          <Box>
-            <RouterLink to={`/offers/${property?._id}`}>
+        <HStack position="absolute" top={4} left={4} spacing={2} flexWrap="wrap">
+          <Badge
+            px={3.5}
+            py={1.5}
+            borderRadius="full"
+            bg="rgba(255,255,255,0.16)"
+            color="white"
+            border="1px solid rgba(255,255,255,0.18)"
+            backdropFilter="blur(10px)"
+          >
+            {status}
+          </Badge>
+          <Badge
+            px={3.5}
+            py={1.5}
+            borderRadius="full"
+            bg="rgba(7,12,20,0.56)"
+            color="#f5d076"
+            border="1px solid rgba(227, 211, 184, 0.14)"
+          >
+            {typeLabel}
+          </Badge>
+          {richListing ? (
+            <Badge
+              px={3.5}
+              py={1.5}
+              borderRadius="full"
+              bg="rgba(143,193,154,0.14)"
+              color="#bbdbbf"
+              border="1px solid rgba(143,193,154,0.18)"
+            >
+              {t?.("publicListing.richLabel") || "Rich"}
+            </Badge>
+          ) : null}
+        </HStack>
+
+        <HStack position="absolute" top={4} right={4} spacing={2}>
+          <IconButton
+            aria-label="Toggle favorite"
+            icon={<FiHeart />}
+            size="sm"
+            bg={isFavorite ? publicBrand.gradients.brass : actionStyles.bg}
+            color={isFavorite ? publicBrand.colors.ink : actionStyles.color}
+            border={actionStyles.border}
+            transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+            _hover={{ 
+              bg: isFavorite ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
+              transform: "scale(1.15)",
+              boxShadow: isFavorite ? "0 0 20px rgba(212, 175, 55, 0.5)" : "0 0 15px rgba(255, 255, 255, 0.2)",
+            }}
+            _active={{ transform: "scale(0.95)" }}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onFavoriteToggle?.(property?._id);
+            }}
+          />
+          <IconButton
+            aria-label="Toggle compare"
+            icon={<MdCompareArrows />}
+            size="sm"
+            bg={isInCompare ? publicBrand.gradients.brass : actionStyles.bg}
+            color={isInCompare ? publicBrand.colors.ink : actionStyles.color}
+            border={actionStyles.border}
+            transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+            _hover={{ 
+              bg: isInCompare ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
+              transform: "scale(1.15)",
+              boxShadow: isInCompare ? "0 0 20px rgba(212, 175, 55, 0.5)" : "0 0 15px rgba(255, 255, 255, 0.2)",
+            }}
+            _active={{ transform: "scale(0.95)" }}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onCompareToggle?.(property?._id);
+            }}
+          />
+          <IconButton
+            aria-label="Share"
+            icon={<FiShare2 />}
+            size="sm"
+            bg={actionStyles.bg}
+            color={actionStyles.color}
+            border={actionStyles.border}
+            transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+            _hover={{ 
+              bg: "rgba(7, 12, 20, 0.76)",
+              transform: "scale(1.15)",
+              boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)",
+            }}
+            _active={{ transform: "scale(0.95)" }}
+            onClick={handleShare}
+          />
+        </HStack>
+
+        <Stack position="absolute" left={4} right={4} bottom={4} spacing={3}>
+          <HStack justify="space-between" align="end" spacing={4}>
+            <Stack spacing={1}>
               <Text
-                fontWeight="bold"
-                fontSize="lg"
-                className="text-white group-hover:text-luxury-gold transition-colors duration-300"
-                noOfLines={2}
-                style={{ cursor: 'pointer' }}
+                fontSize={{ base: "2xl", md: "3xl" }}
+                fontWeight="700"
+                lineHeight="1"
+                letterSpacing="-0.04em"
+                color="white"
               >
-                {property?.name || property?.propertyAddress}
+                {formatPrice(property?.listingPrice, t)}
               </Text>
-            </RouterLink>
-            <HStack mt={2} spacing={1} className="text-gray-400">
-              <Icon as={LuMapPin} />
-              <Text fontSize="sm" noOfLines={1}>
-                {property?.propertyAddress || t('publicListing.notSpecified')}
+              <Text color="whiteAlpha.700" fontSize="sm">
+                {t?.("publicListing.priceLabel") || "Price"}
               </Text>
-            </HStack>
-          </Box>
-
-          {/* Description */}
-          <Text
-            color={mutedColor}
-            fontSize="sm"
-            noOfLines={2}
-            minH="40px"
-          >
-            {property?.marketingDescription || property?.propertyDescription || t('publicListing.notSpecified')}
-          </Text>
-
-          {/* Features */}
-          <HStack spacing={4} justify="space-between" className="border-t border-white/10 pt-4">
-            <HStack spacing={2} className="text-gray-400">
-              <Icon as={MdMeetingRoom} className="text-luxury-gold" />
-              <Text fontSize="sm" fontWeight="600">
-                {property?.numberofBedrooms || '-'}
+            </Stack>
+            <Box
+              px={4}
+              py={3}
+              borderRadius="22px"
+              bg="rgba(7,12,20,0.54)"
+              border="1px solid rgba(227, 211, 184, 0.14)"
+              backdropFilter="blur(10px)"
+            >
+              <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                {t?.("publicListing.verificationTitle") || "Verification"}
               </Text>
-              <Text fontSize="xs">{t('publicListing.beds')}</Text>
-            </HStack>
-            <HStack spacing={2} className="text-gray-400">
-              <Icon as={MdBathtub} className="text-luxury-gold" />
-              <Text fontSize="sm" fontWeight="600">
-                {property?.numberofBathrooms || '-'}
+              <Text color="white" fontWeight="700" mt={1}>
+                {verificationScore ? `${verificationScore}%` : t?.("publicListing.notSpecified") || "On request"}
               </Text>
-              <Text fontSize="xs">{t('publicListing.baths')}</Text>
-            </HStack>
-            <HStack spacing={2} className="text-gray-400">
-              <Icon as={MdSquareFoot} className="text-luxury-gold" />
-              <Text fontSize="sm" fontWeight="600">
-                {property?.squareFootage || '-'}
-              </Text>
-              <Text fontSize="xs">{t('publicListing.sqFt')}</Text>
-            </HStack>
+            </Box>
           </HStack>
-
-          {/* Quick Actions */}
-          <HStack spacing={2} mt={3}>
-            <Tooltip label="Mortgage Calculator">
-              <IconButton
-                size="sm"
-                icon={<FiPercent />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onMortgageOpen();
-                }}
-                aria-label="Mortgage Calculator"
-                variant="ghost"
-                colorScheme="green"
-              />
-            </Tooltip>
-            <Tooltip label="Virtual Tour">
-              <IconButton
-                size="sm"
-                icon={<FiVideo />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onTourOpen();
-                }}
-                aria-label="Virtual Tour"
-                variant="ghost"
-                colorScheme="blue"
-              />
-            </Tooltip>
-            <Tooltip label="Share">
-              <IconButton
-                size="sm"
-                icon={<FiShare2 />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onShareOpen();
-                }}
-                aria-label="Share"
-                variant="ghost"
-                colorScheme="purple"
-              />
-            </Tooltip>
-            <Tooltip label="Print">
-              <IconButton
-                size="sm"
-                icon={<FiPrinter />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onPrintOpen();
-                }}
-                aria-label="Print"
-                variant="ghost"
-                colorScheme="orange"
-              />
-            </Tooltip>
-          </HStack>
-
-          {/* View Button */}
-          <Button
-            as={RouterLink}
-            to={`/offers/${property?._id}`}
-            className="w-full btn-luxury group/btn"
-            rightIcon={
-              <MdArrowForward 
-                className={`transition-transform duration-300 ${
-                  isHovered ? 'translate-x-1' : ''
-                }`}
-              />
-            }
-            style={{
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(205, 127, 50, 0.2) 100%)',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-            }}
-            _hover={{
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(205, 127, 50, 0.3) 100%)',
-            }}
-          >
-            {t('publicListing.viewOffer')}
-          </Button>
         </Stack>
       </Box>
 
-      {/* Modals */}
-      <MortgageCalculator
-        propertyPrice={property?.listingPrice}
-        isOpen={isMortgageOpen}
-        onClose={onMortgageClose}
-      />
-      <VirtualTourViewer
-        property={property}
-        isOpen={isTourOpen}
-        onClose={onTourClose}
-      />
-      <ShareProperty
-        property={property}
-        isOpen={isShareOpen}
-        onClose={onShareClose}
-      />
-      <PrintProperty
-        property={property}
-        isOpen={isPrintOpen}
-        onClose={onPrintClose}
-      />
+      <Stack p={6} spacing={5}>
+        <Stack spacing={3}>
+          <Text fontSize="xl" fontWeight="700" lineHeight="1.15" color={publicBrand.colors.ink} noOfLines={2}>
+            {property?.name || property?.propertyAddress}
+          </Text>
+          <HStack spacing={2} color={publicBrand.colors.textSoft}>
+            <Icon as={LuMapPin} />
+            <Text fontSize="sm" noOfLines={1}>
+              {property?.propertyAddress || (t?.("publicListing.notSpecified") || "Location on request")}
+            </Text>
+          </HStack>
+          <Text color={publicBrand.colors.textSoft} noOfLines={3} lineHeight="1.8">
+            {property?.marketingDescription ||
+              property?.propertyDescription ||
+              "A structured premium listing with clear facts, direct inquiry, and stronger buyer confidence."}
+          </Text>
+        </Stack>
+
+        <SimpleGrid columns={3} spacing={3}>
+          {metricBlocks(property, t).map((metric) => (
+            <Box
+              key={metric.label}
+              borderRadius="22px"
+              px={4}
+              py={4}
+              bg="rgba(9,18,32,0.04)"
+              border="1px solid rgba(9,18,32,0.06)"
+            >
+              <HStack spacing={2} color={publicBrand.colors.textSoft}>
+                <Icon as={metric.icon} />
+                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                  {metric.label}
+                </Text>
+              </HStack>
+              <Text mt={2} fontWeight="700" color={publicBrand.colors.ink}>
+                {metric.value}
+              </Text>
+            </Box>
+          ))}
+        </SimpleGrid>
+
+        <SimpleGrid columns={3} spacing={3}>
+          {assetBlocks(property, t).map((asset) => (
+            <HStack
+              key={asset.label}
+              spacing={3}
+              borderRadius="20px"
+              px={3.5}
+              py={3}
+              bg="rgba(245,239,228,0.75)"
+              border="1px solid rgba(9,18,32,0.06)"
+            >
+              <Box
+                w="34px"
+                h="34px"
+                borderRadius="14px"
+                display="grid"
+                placeItems="center"
+                bg="rgba(245,208,118,0.12)"
+                color={publicBrand.colors.copper}
+              >
+                <Icon as={asset.icon} />
+              </Box>
+              <Box minW="0">
+                <Text fontSize="xs" color={publicBrand.colors.textSoft} noOfLines={1}>
+                  {asset.label}
+                </Text>
+                <Text fontWeight="700" color={publicBrand.colors.ink}>
+                  {asset.value}
+                </Text>
+              </Box>
+            </HStack>
+          ))}
+        </SimpleGrid>
+
+        <HStack justify="space-between" align="center" pt={1}>
+          <Text color={publicBrand.colors.copper} fontSize="sm" fontWeight="700">
+            {richListing
+              ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
+              : t?.("publicListing.openOffer") || "Open offer"}
+          </Text>
+          <Button
+            rightIcon={<MdArrowForward />}
+            borderRadius="full"
+            bg={publicBrand.colors.ink}
+            color="white"
+            _hover={{ bg: publicBrand.colors.inkElevated }}
+          >
+            {t?.("publicListing.viewOffer") || "View offer"}
+          </Button>
+        </HStack>
+      </Stack>
     </Box>
   );
 });

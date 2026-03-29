@@ -1,23 +1,6 @@
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import Spinner from "components/spinner/Spinner";
-import { GiClick } from "react-icons/gi";
-import CommonCheckTable from "components/reactTable/checktable";
-import { useDispatch } from "react-redux";
-import { getApi } from "services/api";
-import { fetchContactData } from "../../redux/slices/contactSlice";
-import { toast } from "react-toastify";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import BaseSelectionModal from "./BaseSelectionModal";
 
 const ContactModel = (props) => {
   const { t: i18nT } = useTranslation();
@@ -39,82 +22,29 @@ const ContactModel = (props) => {
     setFieldValue,
     data,
   } = props;
-  const title = "Contacts";
-  const dispatch = useDispatch();
+  const [isLoding] = useState(false);
 
-  const [isLoding, setIsLoding] = useState(false);
-  const [selectedValues, setSelectedValues] = useState([]);
-
-  const handleSubmit = async () => {
-    try {
-      setIsLoding(true);
-      setFieldValue(fieldName, selectedValues);
-      onClose();
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoding(false);
-    }
-  };
-  
-  const tableColumns = [
-    { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-    { Header: safeT("fields.fullName", "Full Name"), accessor: "fullName" },
-    { Header: safeT("fields.email", "Email"), accessor: "email" },
-    { Header: safeT("fields.phoneNumber", "Phone Number"), accessor: "phoneNumber" },
-  ];
+  const tableColumns = useMemo(
+    () => [
+      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+      { Header: safeT("fields.fullName", "Full Name"), accessor: "fullName" },
+      { Header: safeT("fields.email", "Email"), accessor: "email" },
+      { Header: safeT("fields.phoneNumber", "Phone Number"), accessor: "phoneNumber" },
+    ],
+    [i18nT],
+  );
 
   return (
-    <Modal onClose={onClose} size="full" isOpen={isOpen}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Select Contact</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {isLoding ? (
-            <Flex justifyContent={"center"} alignItems={"center"} width="100%">
-              <Spinner />
-            </Flex>
-          ) : (
-            <CommonCheckTable
-              title={title}
-              isLoding={isLoding}
-              columnData={tableColumns ?? []}
-              allData={data ?? []}
-              tableData={data}
-              AdvanceSearch={() => ""}
-              ManageGrid={false}
-              deleteMany={false}
-              selectedValues={selectedValues}
-              setSelectedValues={setSelectedValues}
-              selectType="single"
-              customSearch={false}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="brand"
-            size="sm"
-            me={2}
-            disabled={isLoding ? true : false}
-            leftIcon={<GiClick />}
-            onClick={handleSubmit}
-          >
-            {" "}
-            {isLoding ? <Spinner /> : "Select"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            colorScheme="red"
-            onClick={() => onClose()}
-          >
-            Close
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <BaseSelectionModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Contacts"
+      fieldName={fieldName}
+      setFieldValue={setFieldValue}
+      data={data ?? []}
+      columns={tableColumns}
+      isLoading={isLoding}
+    />
   );
 };
 

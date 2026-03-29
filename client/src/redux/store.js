@@ -22,62 +22,71 @@ import accountSlice from "./slices/accountSlice";
 import quotesSlice from "./slices/quotesSlice";
 import invoicesSlice from "./slices/invoicesSlice";
 import opportunityProjectSlice from "./slices/opportunityprojectSlice";
-import getBankSlice from "./slices/bankDetailsSlice"
-import languageSlice from "./slices/languageSlice"
+import getBankSlice from "./slices/bankDetailsSlice";
+import languageSlice from "./slices/languageSlice";
 
-const middleware = (getDefaultMiddleware) => {
-  return getDefaultMiddleware({
+const middleware = (getDefaultMiddleware) =>
+  getDefaultMiddleware({
     serializableCheck: false,
   });
-};
 
-const userPersistConfig = {
+const rolePersistConfig = {
   key: "userDetails",
   storage,
 };
+
 const routePersistConfig = {
   key: "route",
   storage,
 };
+
 const imagesPersistConfig = {
   key: "image",
   storage,
 };
+
 const leadPersistConfig = {
   key: "lead",
   storage,
 };
+
 const contactPersistConfig = {
   key: "contact",
   storage,
 };
 
+const persistedReducers = {
+  roles: persistReducer(rolePersistConfig, roleReducer),
+  images: persistReducer(imagesPersistConfig, imageReducer),
+  route: persistReducer(routePersistConfig, routeReducer),
+  leadData: persistReducer(leadPersistConfig, leadSlice),
+  contactData: persistReducer(contactPersistConfig, contactSlice),
+};
+
+const reducers = {
+  ...persistedReducers,
+  modules: moduleSlice,
+  user: userReducer,
+  language: languageSlice,
+  advanceSearchData: advanceSearchSlice,
+  propertyCustomFiled: propertyCustomFiledSlice,
+  contactCustomFiled: contactCustomFiledSlice,
+  leadCustomFiled: leadCustomFiledSlice,
+  propertyData: propertySlice,
+  taskData: taskSlice,
+  meetingData: meetingSlice,
+  emailsData: emailsSlice,
+  emailTempData: emailTempSlice,
+  opportunityData: opportunitySlice,
+  accountData: accountSlice,
+  quotesData: quotesSlice,
+  invoicesData: invoicesSlice,
+  opportunityProjectData: opportunityProjectSlice,
+  bankData: getBankSlice,
+};
+
 export const store = configureStore({
-  reducer: {
-    roles: persistReducer(userPersistConfig, roleReducer),
-    modules: moduleSlice,
-    images: persistReducer(imagesPersistConfig, imageReducer),
-    user: userReducer,
-    route: persistReducer(routePersistConfig, routeReducer),
-    language: languageSlice,
-    advanceSearchData: advanceSearchSlice,
-    leadData: persistReducer(leadPersistConfig, leadSlice),
-    contactData: persistReducer(contactPersistConfig, contactSlice),
-    propertyCustomFiled: propertyCustomFiledSlice,
-    contactCustomFiled: contactCustomFiledSlice,
-    leadCustomFiled: leadCustomFiledSlice,
-    propertyData: propertySlice,
-    taskData: taskSlice,
-    meetingData: meetingSlice,
-    emailsData: emailsSlice,
-    emailTempData: emailTempSlice,
-    opportunityData: opportunitySlice,
-    accountData: accountSlice,
-    quotesData: quotesSlice,
-    invoicesData: invoicesSlice,
-    opportunityProjectData: opportunityProjectSlice,
-    bankData : getBankSlice
-  },
+  reducer: reducers,
   middleware,
 });
 

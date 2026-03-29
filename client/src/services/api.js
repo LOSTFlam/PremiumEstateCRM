@@ -2,39 +2,25 @@ import axios from "axios";
 import { constant } from "constant";
 import { toast } from "react-toastify";
 
-// Axios interceptor for global error handling
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Handle 401 Unauthorized - redirect to login
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("user");
-      window.location.href = "/auth/sign-in";
-      toast.error("Session expired. Please login again.");
-    }
+const apiClient = axios.create({
+  baseURL: constant?.baseUrl,
+  timeout: 30000,
+  withCredentials: true,
+});
 
-    // Handle other errors
-    const errorMessage =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      "An unexpected error occurred";
-
-    // Don't show toast for cancelled requests
-    if (!axios.isCancel(error)) {
-      console.error("API Error:", errorMessage);
-    }
-
-    return Promise.reject(error);
-  }
-);
+const requestCache = new Map();
+const GET_CACHE_DURATION = 5 * 60 * 1000;
 
 const getStoredToken = () => {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   return token;
+};
+
+const clearStoredAuth = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("user");
 };
 
 const persistAuth = (result, rememberMe) => {
@@ -51,105 +37,211 @@ const persistAuth = (result, rememberMe) => {
   fallbackStorage.removeItem("user");
 };
 
-export const postApi = async (path, data, login, isFormData = false) => {
-  try {
-    const token = getStoredToken();
+const buildHeaders = (isFormData = false, headers = {}) => {
+  const token = getStoredToken();
+  const nextHeaders = {
+    ...headers,
+  };
 
-    const headers = {};
+  if (isFormData) {
+    nextHeaders["Content-Type"] = "multipart/form-data";
+  } else if (!nextHeaders["Content-Type"]) {
+    nextHeaders["Content-Type"] = "application/json";
+  }
 
-    if (isFormData) {
-      headers["Content-Type"] = "multipart/form-data";
-    } else {
-      headers["Content-Type"] = "application/json";
+  if (token) {
+    nextHeaders.Authorization = `Bearer ${token}`;
+  }
+
+  return nextHeaders;
+};
+
+const shouldSkipAuthRedirect = (url = "") =>
+  url.includes("/api/user/login") || url.includes("/api/user/register");
+
+const getCacheEntry = (cacheKey) => {
+  const entry = requestCache.get(cacheKey);
+  if (!entry) return null;
+
+  if (Date.now() - entry.timestamp > GET_CACHE_DURATION) {
+    requestCache.delete(cacheKey);
+    return null;
+  }
+
+  return entry.data;
+};
+
+const setCacheEntry = (cacheKey, data) => {
+  requestCache.set(cacheKey, {
+    data,
+    timestamp: Date.now(),
+  });
+};
+
+const buildCacheKey = (path, params) => `${path}:${JSON.stringify(params || {})}`;
+
+apiClient.interceptors.request.use((config) => ({
+  ...config,
+  headers: buildHeaders(
+    config?.headers?.["Content-Type"] === "multipart/form-data",
+    config.headers,
+  ),
+}));
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
     }
 
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    const errorMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "An unexpected error occurred";
+
+    if (error.response?.status === 401 && !shouldSkipAuthRedirect(error.config?.url || "")) {
+      clearStoredAuth();
+      window.location.href = "/auth/sign-in";
+      toast.error("Session expired. Please login again.");
+    } else if (error.response?.status === 429) {
+      toast.error("Too many requests. Please wait a moment.");
+    } else if (error.response?.status >= 500) {
+      toast.error("Server error. Please try again later.");
     }
 
-    const result = await axios.post(constant?.baseUrl + path, data, {
-      headers: headers,
+    console.error("API Error:", {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: errorMessage,
     });
 
-    persistAuth(result, login);
-    return result;
-  } catch (e) {
-    // Error is already handled by interceptor
-    throw e;
+    return Promise.reject(error);
+  },
+);
+
+const normalizeGetArgs = (path, idOrOptions, maybeOptions) => {
+  let url = path;
+  let params = {};
+  let options = {};
+
+  if (typeof idOrOptions === "string" || typeof idOrOptions === "number") {
+    url = `${path}${idOrOptions}`;
+    options = maybeOptions || {};
+  } else if (idOrOptions && typeof idOrOptions === "object" && !Array.isArray(idOrOptions)) {
+    const hasOptionKeys =
+      "params" in idOrOptions ||
+      "useCache" in idOrOptions ||
+      "cacheKey" in idOrOptions ||
+      "headers" in idOrOptions ||
+      "timeout" in idOrOptions ||
+      "signal" in idOrOptions;
+
+    if (hasOptionKeys) {
+      options = idOrOptions;
+      params = idOrOptions.params || {};
+    } else {
+      params = idOrOptions;
+      options = maybeOptions || {};
+    }
   }
+
+  return { url, params, options };
+};
+
+const normalizeWriteArgs = (loginOrOptions, isFormData) => {
+  if (loginOrOptions && typeof loginOrOptions === "object" && !Array.isArray(loginOrOptions)) {
+    return {
+      rememberMe: Boolean(loginOrOptions.rememberMe),
+      isFormData: Boolean(loginOrOptions.isFormData),
+      requestConfig: loginOrOptions.requestConfig || {},
+    };
+  }
+
+  return {
+    rememberMe: Boolean(loginOrOptions),
+    isFormData: Boolean(isFormData),
+    requestConfig: {},
+  };
+};
+
+export const clearApiCache = (prefix = "") => {
+  if (!prefix) {
+    requestCache.clear();
+    return;
+  }
+
+  Array.from(requestCache.keys()).forEach((key) => {
+    if (key.startsWith(prefix)) {
+      requestCache.delete(key);
+    }
+  });
+};
+
+export const postApi = async (path, data, login, isFormData = false) => {
+  const { rememberMe, isFormData: useFormData, requestConfig } = normalizeWriteArgs(
+    login,
+    isFormData,
+  );
+
+  const result = await apiClient.post(path, data, {
+    ...requestConfig,
+    headers: buildHeaders(useFormData, requestConfig.headers),
+  });
+
+  persistAuth(result, rememberMe);
+  return result;
 };
 
 export const postApiBlob = async (path, data = {}) => {
-  try {
-    return await axios.post(constant?.baseUrl + path, data, {
-      headers: {
-        Authorization: getStoredToken(),
-      },
-      responseType: "blob",
-    });
-  } catch (e) {
-    throw e;
-  }
+  return apiClient.post(path, data, {
+    headers: buildHeaders(false),
+    responseType: "blob",
+  });
 };
 
 export const putApi = async (path, data, id) => {
-  try {
-    return await axios.put(constant?.baseUrl + path, data, {
-      headers: {
-        Authorization: getStoredToken(),
-      },
-    });
-  } catch (e) {
-    throw e;
-  }
+  return apiClient.put(path, data, {
+    headers: buildHeaders(false),
+  });
 };
 
 export const deleteApi = async (path, param) => {
-  try {
-    const result = await axios.delete(constant?.baseUrl + path + param, {
-      headers: {
-        Authorization: getStoredToken(),
-      },
-    });
-
-    if (result?.data?.token) {
-      localStorage.setItem("token", result.data.token);
-    }
-
-    return result;
-  } catch (e) {
-    throw e;
-  }
+  return apiClient.delete(path + param, {
+    headers: buildHeaders(false),
+  });
 };
 
 export const deleteManyApi = async (path, data) => {
-  try {
-    const result = await axios.post(constant?.baseUrl + path, data, {
-      headers: {
-        Authorization: getStoredToken(),
-      },
-    });
-
-    if (result?.data?.token) {
-      localStorage.setItem("token", result.data.token);
-    }
-
-    return result;
-  } catch (e) {
-    throw e;
-  }
+  return apiClient.post(path, data, {
+    headers: buildHeaders(false),
+  });
 };
 
 export const getApi = async (path, id) => {
-  try {
-    const result = await axios.get(constant?.baseUrl + path + (id || ""), {
-      headers: {
-        Authorization: getStoredToken(),
-      },
-    });
+  const { url, params, options } = normalizeGetArgs(path, id);
+  const useCache = Boolean(options.useCache);
+  const cacheKey = options.cacheKey || buildCacheKey(url, params);
 
-    return result?.data || result;
-  } catch (e) {
-    throw e;
+  if (useCache) {
+    const cached = getCacheEntry(cacheKey);
+    if (cached) {
+      return cached;
+    }
   }
+
+  const result = await apiClient.get(url, {
+    params,
+    timeout: options.timeout,
+    signal: options.signal,
+    headers: buildHeaders(false, options.headers),
+  });
+
+  const normalized = result?.data || result;
+  if (useCache) {
+    setCacheEntry(cacheKey, normalized);
+  }
+
+  return normalized;
 };

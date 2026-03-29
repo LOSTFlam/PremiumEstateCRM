@@ -1,26 +1,48 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const { AUTH_COOKIE_NAME } = require("../controllers/user/auth.service");
+
+const resolveAuthToken = (req) => {
+  const authorization = req.headers.authorization;
+  const cookieToken = req.cookies?.[AUTH_COOKIE_NAME];
+
+  if (typeof authorization === "string" && authorization.startsWith("Bearer ")) {
+    return authorization.slice(7).trim();
+  }
+
+  if (typeof authorization === "string" && authorization.trim()) {
+    return authorization.trim();
+  }
+
+  if (typeof cookieToken === "string" && cookieToken.trim()) {
+    return cookieToken.trim();
+  }
+
+  return null;
+};
 
 const auth = (req, res, next) => {
-    // Try to get token from Authorization header or cookie
-    let token = req.headers.authorization || req.cookies?.token;
+  if (!process.env.JWT_SECRET) {
+    return res.status(500).json({ message: "Server authentication is not configured" });
+  }
 
-    if (!token) {
-        return res.status(401).json({ message: "Authentication failed, Token missing" });
-    }
+  const token = resolveAuthToken(req);
+  if (!token) {
+    return res.status(401).json({ message: "Authentication failed, token missing" });
+  }
 
-    // Remove "Bearer " prefix if present
-    if (token.startsWith('Bearer ')) {
-        token = token.slice(7, token.length);
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    req.authToken = token;
+    return next();
+  } catch (error) {
+    const message =
+      error?.name === "TokenExpiredError"
+        ? "Authentication failed. Token expired."
+        : "Authentication failed. Invalid token.";
 
-    try {
-        const decode = jwt.verify(token, process.env.JWT_SECRET || 'secret_key')
-        req.user = decode
-        next();
-    } catch (err) {
-        console.error("❌ Token verification failed:", err.message);
-        res.status(401).json({ message: 'Authentication failed. Invalid token.' })
-    }
-}
+    return res.status(401).json({ message });
+  }
+};
 
-module.exports = auth
+module.exports = auth;

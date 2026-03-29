@@ -1,13 +1,15 @@
 const express = require('express');
 const user = require('./user');
 const auth = require('../../middelwares/auth');
+const { userValidation } = require("../../middelwares/validation");
 
 const router = express.Router();
 
-router.post('/admin-register', user.adminRegister)
+router.post('/admin-register', userValidation.adminRegister, user.adminRegister)
 router.get('/', auth, user.index)
-router.post('/register', user.register)
-router.post('/login', user.login)
+router.post('/register', userValidation.register, user.register)
+router.post('/login', userValidation.login, user.login)
+router.post('/logout', user.logout)
 router.post('/deleteMany', auth, user.deleteMany)
 router.get('/view/:id', auth, user.view)
 router.delete('/delete/:id', auth, user.deleteData)

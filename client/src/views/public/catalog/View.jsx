@@ -21,7 +21,6 @@ import {
   StatLabel,
   StatNumber,
   Text,
-  useColorModeValue,
   useToast,
   Flex,
 } from "@chakra-ui/react";
@@ -51,17 +50,16 @@ import {
   MdOutlineSquareFoot,
 } from "react-icons/md";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { getApi } from "services/api";
+import ModernFooter from "components/ModernFooter";
+import ModernHeader from "components/ModernHeader";
 import {
   estimateMortgage,
   formatDate,
   formatPrice,
-  getCatalogDataset,
   getDocumentCount,
   getFloorPlanCount,
   getPhotoCount,
   getPrimaryImage,
-  getPropertyById,
   normalizeStatus,
   placeholderImage,
 } from "./catalogData";
@@ -72,9 +70,11 @@ import {
   toggleCompareId,
   toggleFavoriteId,
 } from "./catalogStorage";
+import { fetchPublicCatalog, fetchPublicPropertyById } from "./catalogService";
 import LeadCaptureCard from "./LeadCaptureCard";
 import SeoMeta from "./SeoMeta";
 import i18n from "i18n/i18n.config";
+import { publicBrand } from "../publicBrand";
 
 const splitFeatures = (...values) =>
   values
@@ -120,34 +120,28 @@ export default function PublicOfferView() {
   const [termYears, setTermYears] = useState(20);
   const [interestRate, setInterestRate] = useState(18);
 
-  const pageBg = useColorModeValue("#f3ecdf", "gray.900");
-  const cardBg = useColorModeValue("white", "gray.800");
-  const subtleBg = useColorModeValue("#f8f2e7", "whiteAlpha.100");
-  const mutedColor = useColorModeValue("gray.600", "gray.300");
-  const borderColor = useColorModeValue("rgba(16,45,36,0.08)", "whiteAlpha.200");
+  const pageBg = publicBrand.colors.paper;
+  const cardBg = publicBrand.gradients.panelLight;
+  const subtleBg = "rgba(244, 238, 229, 0.82)";
+  const mutedColor = publicBrand.colors.textSoft;
+  const borderColor = "rgba(9,18,32,0.08)";
+  const cardShadow = publicBrand.shadows.soft;
 
   useEffect(() => {
     const fetchProperty = async () => {
       setLoading(true);
 
       try {
-        const listResponse = await getApi("api/property/public");
-        const catalog = getCatalogDataset(Array.isArray(listResponse) ? listResponse : Array.isArray(listResponse?.data) ? listResponse.data : []);
+        const catalog = await fetchPublicCatalog();
         setAllProperties(catalog);
 
-        const localProperty = getPropertyById(catalog, id);
+        const localProperty = catalog.find((item) => item?._id === id);
         if (localProperty) {
           setProperty(localProperty);
           return;
         }
 
-        // Fetch single property by ID
-        const response = await getApi(`api/property/public/${id}`);
-        const propertyData = Array.isArray(response) 
-          ? response.find(p => p._id === id)
-          : Array.isArray(response?.data) 
-            ? response.data.find(p => p._id === id)
-            : response?.property || response?.data?.property;
+        const propertyData = await fetchPublicPropertyById(id);
         setProperty(propertyData || null);
       } finally {
         setLoading(false);
@@ -185,6 +179,10 @@ export default function PublicOfferView() {
   );
 
   const highlights = useMemo(() => buildHighlights(property, t), [property, t]);
+  const unitTypes = useMemo(
+    () => (Array.isArray(property?.unitType) ? property.unitType.filter(Boolean) : []),
+    [property?.unitType],
+  );
   const similarProperties = useMemo(
     () =>
       allProperties
@@ -254,11 +252,18 @@ export default function PublicOfferView() {
     return (
       <Box minH="100vh" bg={pageBg} py={10}>
         <Container maxW="5xl">
-          <Box bg={cardBg} borderRadius="32px" p={10}>
+          <Box bg={cardBg} borderRadius="34px" p={10} boxShadow={cardShadow} border="1px solid rgba(9,18,32,0.08)">
             <Stack spacing={4}>
               <Heading>{t?.("publicListing.propertyNotFound")}</Heading>
               <Text color={mutedColor}>{t?.("publicListing.propertyNotFoundText")}</Text>
-              <Button as={RouterLink} to="/offers" w="fit-content">
+              <Button
+                as={RouterLink}
+                to="/offers"
+                w="fit-content"
+                borderRadius="full"
+                bg={publicBrand.gradients.brass}
+                color={publicBrand.colors.ink}
+              >
                 {t?.("publicListing.backToCatalog")}
               </Button>
             </Stack>
@@ -269,18 +274,143 @@ export default function PublicOfferView() {
   }
 
   return (
-    <Box minH="100vh" bg={pageBg} py={{ base: 6, md: 10 }}>
-      <Container maxW="8xl">
+    <Box minH="100vh" bg={pageBg}>
+      <Box
+        bg={publicBrand.gradients.hero}
+        color="white"
+        position="relative"
+        overflow="hidden"
+        mb={{ base: 8, md: 10 }}
+      >
+        <Box
+          position="absolute"
+          inset="0"
+          bg="radial-gradient(circle at 18% 22%, rgba(245,208,118,0.16) 0%, rgba(245,208,118,0) 28%), radial-gradient(circle at 84% 14%, rgba(185,119,55,0.16) 0%, rgba(185,119,55,0) 32%)"
+        />
+        <ModernHeader />
+        <Container maxW="8xl" pt={{ base: 28, md: 32 }} pb={{ base: 12, md: 16 }} position="relative">
+          <Grid templateColumns={{ base: "1fr", xl: "1.04fr 0.96fr" }} gap={8} alignItems="end">
+            <GridItem>
+              <Stack spacing={5} maxW="780px">
+                <Badge
+                  w="fit-content"
+                  px={4}
+                  py={1.5}
+                  borderRadius="full"
+                  bg="rgba(245,208,118,0.14)"
+                  color="#f5d076"
+                  border="1px solid rgba(245,208,118,0.24)"
+                  letterSpacing="0.12em"
+                  textTransform="uppercase"
+                >
+                  {normalizeStatus(property?.listingStatus, t)}
+                </Badge>
+                <Heading as="h1" fontSize={{ base: "4xl", md: "6xl" }} lineHeight={{ base: "1.08", md: "0.98" }}>
+                  {property?.name || property?.propertyAddress}
+                </Heading>
+                <Text maxW="720px" fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.800" lineHeight="1.9">
+                  {property?.marketingDescription || property?.propertyDescription || t?.("publicListing.detailsTitle")}
+                </Text>
+                <HStack spacing={3} flexWrap="wrap">
+                  <Button
+                    as={RouterLink}
+                    to="/offers"
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                  >
+                    {t?.("publicListing.backToCatalog")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    color="white"
+                    borderRadius="full"
+                    borderColor="rgba(227, 211, 184, 0.24)"
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(window.location.href);
+                      toast({ title: t?.("publicListing.copied"), status: "success" });
+                    }}
+                  >
+                    {t?.("publicListing.shareOffer")}
+                  </Button>
+                </HStack>
+              </Stack>
+            </GridItem>
+
+            <GridItem>
+              <Box
+                borderRadius="34px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+                bg="rgba(7,12,20,0.42)"
+                border="1px solid rgba(227, 211, 184, 0.14)"
+                backdropFilter="blur(14px)"
+              >
+                <Stack spacing={5}>
+                  <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                    {t?.("publicListing.detailsTitle")}
+                  </Text>
+                  <Heading size="xl">{formatPrice(property?.listingPrice, t)}</Heading>
+                  <SimpleGrid columns={3} spacing={3}>
+                    <Box
+                      px={4}
+                      py={4}
+                      borderRadius="22px"
+                      bg="rgba(255,255,255,0.05)"
+                      border="1px solid rgba(227, 211, 184, 0.12)"
+                    >
+                      <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                        {t?.("publicListing.photosCount", { count: photoCount })}
+                      </Text>
+                      <Text mt={2} fontWeight="700">{photoCount}</Text>
+                    </Box>
+                    <Box
+                      px={4}
+                      py={4}
+                      borderRadius="22px"
+                      bg="rgba(255,255,255,0.05)"
+                      border="1px solid rgba(227, 211, 184, 0.12)"
+                    >
+                      <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                        {t?.("publicListing.docsCount", { count: documentCount })}
+                      </Text>
+                      <Text mt={2} fontWeight="700">{documentCount}</Text>
+                    </Box>
+                    <Box
+                      px={4}
+                      py={4}
+                      borderRadius="22px"
+                      bg="rgba(255,255,255,0.05)"
+                      border="1px solid rgba(227, 211, 184, 0.12)"
+                    >
+                      <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                        {t?.("publicListing.plansCount", { count: floorPlanCount })}
+                      </Text>
+                      <Text mt={2} fontWeight="700">{floorPlanCount}</Text>
+                    </Box>
+                  </SimpleGrid>
+                  <HStack color="whiteAlpha.760" align="start">
+                    <Icon as={MdOutlineLocationOn} mt={1} />
+                    <Text>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
+                  </HStack>
+                </Stack>
+              </Box>
+            </GridItem>
+          </Grid>
+        </Container>
+      </Box>
+
+      <Container maxW="8xl" py={{ base: 6, md: 10 }}>
         <SeoMeta
           title={property?.seo?.title || property?.name || property?.propertyAddress}
           description={property?.seo?.description || property?.marketingDescription || property?.propertyDescription}
           keywords={property?.seo?.keywords || property?.propertyType || "real estate"}
-          canonicalPath={`/offers/${id}`}
+          canonicalPath={property?.publicSlugResolved ? `/offers/slug/${property.publicSlugResolved}` : `/offers/${id}`}
           image={currentImage}
         />
         <Stack spacing={8}>
           <HStack justify="space-between" align="center" flexWrap="wrap">
-            <Button as={RouterLink} to="/offers" variant="outline">
+            <Button as={RouterLink} to="/offers" variant="outline" borderRadius="full">
               {t?.("publicListing.backToCatalog")}
             </Button>
             <HStack spacing={3} flexWrap="wrap">
@@ -289,7 +419,7 @@ export default function PublicOfferView() {
                 <Button
                   size="sm"
                   variant={i18n.language === "ru" ? "solid" : "outline"}
-                  colorScheme="green"
+                  colorScheme="orange"
                   onClick={() => i18n.changeLanguage("ru")}
                 >
                   RU
@@ -297,7 +427,7 @@ export default function PublicOfferView() {
                 <Button
                   size="sm"
                   variant={i18n.language === "en" ? "solid" : "outline"}
-                  colorScheme="green"
+                  colorScheme="orange"
                   onClick={() => i18n.changeLanguage("en")}
                 >
                   EN
@@ -305,6 +435,7 @@ export default function PublicOfferView() {
               </HStack>
               <Button
                 variant="outline"
+                borderRadius="full"
                 onClick={async () => {
                   await navigator.clipboard.writeText(window.location.href);
                   toast({ title: t?.("publicListing.copied"), status: "success" });
@@ -315,19 +446,29 @@ export default function PublicOfferView() {
               <IconButton
                 aria-label={isFavorite ? t?.("publicListing.removeFromFavorites") : t?.("publicListing.addToFavorites")}
                 icon={isFavorite ? <MdFavorite /> : <MdFavoriteBorder />}
-                colorScheme={isFavorite ? "red" : "gray"}
-                variant={isFavorite ? "solid" : "outline"}
+                bg={isFavorite ? publicBrand.gradients.brass : "white"}
+                color={isFavorite ? publicBrand.colors.ink : publicBrand.colors.ink}
+                border="1px solid rgba(9,18,32,0.08)"
                 onClick={handleFavoriteToggle}
               />
               <Button
                 leftIcon={<MdCompareArrows />}
                 variant={isInCompare ? "solid" : "outline"}
-                colorScheme="green"
+                bg={isInCompare ? publicBrand.gradients.brass : "transparent"}
+                color={isInCompare ? publicBrand.colors.ink : publicBrand.colors.ink}
+                borderColor="rgba(9,18,32,0.12)"
+                borderRadius="full"
                 onClick={handleCompareToggle}
               >
                 {isInCompare ? t?.("publicListing.removeFromCompare") : t?.("publicListing.addToCompare")}
               </Button>
-              <Button as={RouterLink} to="/auth/sign-in" colorScheme="green">
+              <Button
+                as={RouterLink}
+                to="/auth/sign-in"
+                borderRadius="full"
+                bg={publicBrand.gradients.brass}
+                color={publicBrand.colors.ink}
+              >
                 {t?.("publicListing.loginCta")}
               </Button>
             </HStack>
@@ -335,7 +476,7 @@ export default function PublicOfferView() {
 
           <Grid templateColumns={{ base: "1fr", xl: "1.2fr 0.8fr" }} gap={6}>
             <GridItem>
-              <Box bg={cardBg} borderRadius="32px" overflow="hidden" boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
+              <Box bg={cardBg} borderRadius="34px" overflow="hidden" boxShadow={cardShadow} borderWidth="1px" borderColor={borderColor}>
                 <Box position="relative">
                   <Image
                     src={currentImage}
@@ -344,7 +485,7 @@ export default function PublicOfferView() {
                     w="100%"
                     objectFit="cover"
                   />
-                  <Badge position="absolute" top={5} left={5} colorScheme="green" px={3} py={1.5} borderRadius="full">
+                  <Badge position="absolute" top={5} left={5} bg="rgba(245,208,118,0.14)" color="#f5d076" px={3} py={1.5} borderRadius="full">
                     {normalizeStatus(property?.listingStatus, t)}
                   </Badge>
                 </Box>
@@ -381,7 +522,7 @@ export default function PublicOfferView() {
                       <Icon as={MdOutlineLocationOn} mt={1} />
                       <Text>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
                     </HStack>
-                    <Heading size="2xl" color="green.600">
+                    <Heading size="2xl" color="orange.500">
                       {formatPrice(property?.listingPrice, t)}
                     </Heading>
                     <SimpleGrid columns={2} gap={4}>
@@ -399,7 +540,9 @@ export default function PublicOfferView() {
                       </Box>
                       <Box>
                         <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.updatedAt")}</Text>
-                        <Text fontWeight="700">{formatDate(property?.updatedAt) || t?.("publicListing.notSpecified")}</Text>
+                        <Text fontWeight="700">
+                          {formatDate(property?.updatedDate || property?.updatedAt || property?.createdDate) || t?.("publicListing.notSpecified")}
+                        </Text>
                       </Box>
                       <Box>
                         <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.listingDate")}</Text>
@@ -438,7 +581,7 @@ export default function PublicOfferView() {
                         </Stat>
                       </Box>
                     </SimpleGrid>
-                    <Button as={RouterLink} to="/auth/sign-in" colorScheme="green">
+                    <Button as={RouterLink} to="/auth/sign-in" colorScheme="orange">
                       {t?.("publicListing.bookCta")}
                     </Button>
                   </Stack>
@@ -475,16 +618,23 @@ export default function PublicOfferView() {
                       <Icon as={LuUser} boxSize={6} />
                       <Heading size="md">{t?.("publicListing.propertyConsultant")}</Heading>
                     </HStack>
-                    <HStack color="green.600">
+                    <HStack color="orange.500">
                       <Icon as={LuClock} />
                       <Text fontSize="sm" fontWeight="600">{t?.("publicListing.respondsInMinutes")}</Text>
                     </HStack>
                     {property?.agent ? (
                       <>
-                        <Text fontWeight="600">{property.agent.name || t?.("publicListing.notSpecified")}</Text>
-                        {property.agent.phone && (
-                          <Button as="a" href={`tel:${property.agent.phone}`} colorScheme="green" w="full">
-                            {property.agent.phone}
+                        <Text fontWeight="600">
+                          {property.agent.fullName || property.agent.name || property.agent.label || t?.("publicListing.notSpecified")}
+                        </Text>
+                        {(property.agent.phoneNumber || property.agent.phone) && (
+                          <Button
+                            as="a"
+                            href={`tel:${property.agent.phoneNumber || property.agent.phone}`}
+                            colorScheme="orange"
+                            w="full"
+                          >
+                            {property.agent.phoneNumber || property.agent.phone}
                           </Button>
                         )}
                         {property.agent.email && (
@@ -640,7 +790,14 @@ export default function PublicOfferView() {
                   </SimpleGrid>
                   <Box bg={subtleBg} borderRadius="24px" p={4}>
                     <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.unitTypes")}</Text>
-                    <Text mt={2} whiteSpace="pre-wrap">{property?.unitType || t?.("publicListing.notSpecified")}</Text>
+                    <Text mt={2} whiteSpace="pre-wrap">
+                      {unitTypes.length
+                        ? unitTypes
+                            .map((unit) => unit?.name || unit?.label || unit?.title)
+                            .filter(Boolean)
+                            .join(", ")
+                        : property?.unitType || t?.("publicListing.notSpecified")}
+                    </Text>
                   </Box>
                 </Stack>
               </Box>
@@ -671,9 +828,9 @@ export default function PublicOfferView() {
               <Box bg={cardBg} borderRadius="32px" p={6} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
                 <Stack spacing={4}>
                   <Heading size="md">{t?.("publicListing.unitTypesTitle")}</Heading>
-                  {property?.unitType?.length ? (
+                  {unitTypes.length ? (
                     <Stack spacing={3}>
-                      {property.unitType.map((unit) => (
+                      {unitTypes.map((unit) => (
                         <Box key={unit?._id || unit?.name} borderWidth="1px" borderRadius="20px" borderColor={borderColor} p={4}>
                           <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
                             <Box><Text fontSize="sm" color={mutedColor}>{t?.("publicListing.type")}</Text><Text fontWeight="700">{unit?.name || t?.("publicListing.notSpecified")}</Text></Box>
@@ -716,7 +873,7 @@ export default function PublicOfferView() {
                     {property?.propertyDocuments?.length ? (
                       <Stack spacing={3}>
                         {property.propertyDocuments.map((doc, index) => (
-                          <Link key={doc?.img || index} href={doc?.img || "#"} isExternal color="green.600" fontWeight="600">
+                          <Link key={doc?.img || index} href={doc?.img || "#"} isExternal color="orange.500" fontWeight="600">
                             <HStack>
                               <Icon as={LuExternalLink} />
                               <Text>{doc?.filename || `Document ${index + 1}`}</Text>
@@ -747,7 +904,7 @@ export default function PublicOfferView() {
                       <Stack p={4} spacing={3}>
                         <Heading size="sm">{item?.name || item?.propertyAddress}</Heading>
                         <Text color={mutedColor} noOfLines={2}>{item?.marketingDescription || item?.propertyDescription}</Text>
-                        <Button as={RouterLink} to={`/offers/${item?._id}`} size="sm" colorScheme="green" variant="outline">
+                        <Button as={RouterLink} to={`/offers/${item?._id}`} size="sm" colorScheme="orange" variant="outline">
                           {t?.("publicListing.viewOffer")}
                         </Button>
                       </Stack>
@@ -759,7 +916,7 @@ export default function PublicOfferView() {
           )}
         </Stack>
       </Container>
+      <ModernFooter />
     </Box>
   );
 }
-

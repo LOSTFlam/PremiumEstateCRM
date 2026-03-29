@@ -4,8 +4,8 @@ import { Box, useColorModeValue } from '@chakra-ui/react';
 const ParticleCanvas = () => {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0, radius: 200 });
-  const particleColor = useColorModeValue('rgba(100, 200, 150,', 'rgba(134, 239, 172,');
-  const equipmentColor = useColorModeValue('rgba(50, 80, 70,', 'rgba(80, 120, 100,');
+  const particleColor = useColorModeValue('rgba(212, 175, 55,', 'rgba(245, 208, 118,');
+  const equipmentColor = useColorModeValue('rgba(88, 64, 28,', 'rgba(180, 140, 72,');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -189,14 +189,14 @@ const ParticleCanvas = () => {
       const orb2Y = canvas.height * (0.6 + Math.sin(time * 0.6) * 0.1);
 
       const orb1Gradient = ctx.createRadialGradient(orb1X, orb1Y, 0, orb1X, orb1Y, 400);
-      orb1Gradient.addColorStop(0, 'rgba(100, 200, 150, 0.15)');
-      orb1Gradient.addColorStop(1, 'rgba(100, 200, 150, 0)');
+      orb1Gradient.addColorStop(0, 'rgba(212, 175, 55, 0.15)');
+      orb1Gradient.addColorStop(1, 'rgba(212, 175, 55, 0)');
       ctx.fillStyle = orb1Gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const orb2Gradient = ctx.createRadialGradient(orb2X, orb2Y, 0, orb2X, orb2Y, 350);
-      orb2Gradient.addColorStop(0, 'rgba(147, 51, 234, 0.12)');
-      orb2Gradient.addColorStop(1, 'rgba(147, 51, 234, 0)');
+      orb2Gradient.addColorStop(0, 'rgba(180, 83, 9, 0.12)');
+      orb2Gradient.addColorStop(1, 'rgba(180, 83, 9, 0)');
       ctx.fillStyle = orb2Gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 

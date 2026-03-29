@@ -1,22 +1,12 @@
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import Spinner from "components/spinner/Spinner";
-import { GiClick } from "react-icons/gi";
-import CommonCheckTable from "components/reactTable/checktable";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPropertyData } from "../../redux/slices/propertySlice.js";
-import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import BaseSelectionModal from "./BaseSelectionModal";
+import {
+  selectPropertyList,
+  selectPropertyLoading,
+} from "../../redux/selectors/entitySelectors";
 
 const PropertyModel = (props) => {
   const { t: i18nT } = useTranslation();
@@ -38,26 +28,11 @@ const PropertyModel = (props) => {
     setFieldValue,
     data,
   } = props;
-  const title = "Properties";
   const dispatch = useDispatch();
-  
-  // Get properties from Redux store
-  const propertiesData = useSelector((state) => state?.propertyData?.data || []);
+  const propertiesData = useSelector(selectPropertyList);
+  const storeLoading = useSelector(selectPropertyLoading);
 
   const [isLoding, setIsLoding] = useState(false);
-  const [selectedValues, setSelectedValues] = useState([]);
-
-  const handleSubmit = async () => {
-    try {
-      setIsLoding(true);
-      setFieldValue(fieldName, selectedValues);
-      onClose();
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoding(false);
-    }
-  };
 
   const fetchData = async () => {
     setIsLoding(true);
@@ -75,65 +50,28 @@ const PropertyModel = (props) => {
     fetchData();
   }, []);
 
-  const tableColumns = [
-    { Header: "#", accessor: "_id", isSortable: false, width: 10 },
-    { Header: safeT("fields.name", "Name"), accessor: "name" },
-    { Header: safeT("fields.propertyAddress", "Address"), accessor: "propertyAddress" },
-    { Header: safeT("fields.propertyType", "Type"), accessor: "propertyType" },
-    { Header: safeT("fields.listingPrice", "Price"), accessor: "listingPrice" },
-  ];
+  const tableColumns = useMemo(
+    () => [
+      { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+      { Header: safeT("fields.name", "Name"), accessor: "name" },
+      { Header: safeT("fields.propertyAddress", "Address"), accessor: "propertyAddress" },
+      { Header: safeT("fields.propertyType", "Type"), accessor: "propertyType" },
+      { Header: safeT("fields.listingPrice", "Price"), accessor: "listingPrice" },
+    ],
+    [i18nT],
+  );
 
   return (
-    <Modal onClose={onClose} size="full" isOpen={isOpen}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Select Property</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {isLoding ? (
-            <Flex justifyContent={"center"} alignItems={"center"} width="100%">
-              <Spinner />
-            </Flex>
-          ) : (
-            <CommonCheckTable
-              title={title}
-              isLoding={isLoding}
-              columnData={tableColumns ?? []}
-              allData={propertiesData ?? []}
-              tableData={propertiesData}
-              AdvanceSearch={() => ""}
-              ManageGrid={false}
-              deleteMany={false}
-              selectedValues={selectedValues}
-              setSelectedValues={setSelectedValues}
-              selectType="single"
-              customSearch={false}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="brand"
-            size="sm"
-            me={2}
-            disabled={isLoding ? true : false}
-            leftIcon={<GiClick />}
-            onClick={handleSubmit}
-          >
-            {" "}
-            {isLoding ? <Spinner /> : "Select"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            colorScheme="red"
-            onClick={() => onClose()}
-          >
-            Close
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <BaseSelectionModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Properties"
+      fieldName={fieldName}
+      setFieldValue={setFieldValue}
+      data={propertiesData ?? data ?? []}
+      columns={tableColumns}
+      isLoading={isLoding || storeLoading}
+    />
   );
 };
 

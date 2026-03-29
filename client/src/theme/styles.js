@@ -93,14 +93,15 @@ export const globalStyles = {
       body: {
         overflowX: "hidden",
         bg: mode("secondaryGray.300", "navy.900")(props),
-        fontFamily: "Inter,sans-serif",
-        letterSpacing: "-0.5px",
+        color: mode("gray.700", "white")(props),
+        fontFamily: '"DM Sans", sans-serif',
+        letterSpacing: "-0.02em",
       },
       input: {
         color: "gray.700",
       },
       html: {
-        fontFamily: "Inter,sans-serif",
+        fontFamily: '"DM Sans", sans-serif',
       },
     }),
   },

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Custom hook for handling API calls with loading and error states
@@ -37,7 +37,7 @@ export const useApi = (apiFunction) => {
 export const useDebounce = (value, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
@@ -48,6 +48,41 @@ export const useDebounce = (value, delay = 500) => {
   }, [value, delay]);
 
   return debouncedValue;
+};
+
+/**
+ * Custom hook for async actions with automatic mounted-state protection
+ * @param {Function} asyncFunction
+ * @returns {{execute: Function, loading: boolean, error: any, data: any, reset: Function}}
+ */
+export const useAsyncAction = (asyncFunction) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const execute = useCallback(async (...args) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await asyncFunction(...args);
+      setData(result);
+      return result;
+    } catch (err) {
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [asyncFunction]);
+
+  const reset = useCallback(() => {
+    setData(null);
+    setError(null);
+    setLoading(false);
+  }, []);
+
+  return { data, loading, error, execute, reset };
 };
 
 /**
@@ -80,4 +115,4 @@ export const useLocalStorage = (key, initialValue) => {
   return [storedValue, setValue];
 };
 
-export default { useApi, useDebounce, useLocalStorage };
+export default { useApi, useDebounce, useLocalStorage, useAsyncAction };

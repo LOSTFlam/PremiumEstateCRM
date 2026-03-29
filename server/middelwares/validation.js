@@ -94,16 +94,62 @@ const propertyValidation = {
 
 // User validation rules
 const userValidation = {
-  register: [
-    body('username')
+  adminRegister: [
+    body("username")
       .trim()
-      .notEmpty().withMessage('Username is required')
-      .isEmail().withMessage('Invalid email format')
+      .notEmpty()
+      .withMessage("Username is required")
+      .isEmail()
+      .withMessage("Username must be a valid email")
       .normalizeEmail(),
+
+    body("password")
+      .notEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters"),
+
+    body("firstName")
+      .trim()
+      .notEmpty()
+      .withMessage("First name is required")
+      .isLength({ max: 100 })
+      .withMessage("First name must be less than 100 characters"),
+
+    body("lastName")
+      .optional()
+      .trim()
+      .isLength({ max: 100 })
+      .withMessage("Last name must be less than 100 characters"),
+
+    validate,
+  ],
+
+  register: [
+    body()
+      .custom((value) => {
+        if (!value?.email && !value?.username) {
+          throw new Error("Email or username is required");
+        }
+        return true;
+      }),
+
+    body("email")
+      .optional({ values: "falsy" })
+      .trim()
+      .isEmail()
+      .withMessage("Invalid email format")
+      .normalizeEmail(),
+
+    body("username")
+      .optional({ values: "falsy" })
+      .trim()
+      .isLength({ min: 2, max: 100 })
+      .withMessage("Username must be between 2 and 100 characters"),
     
     body('password')
       .notEmpty().withMessage('Password is required')
-      .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
     
     body('firstName')
       .trim()
@@ -119,9 +165,26 @@ const userValidation = {
   ],
   
   login: [
-    body('username')
+    body()
+      .custom((value) => {
+        if (!value?.username && !value?.email) {
+          throw new Error("Username or email is required");
+        }
+        return true;
+      }),
+
+    body("username")
+      .optional({ values: "falsy" })
       .trim()
-      .notEmpty().withMessage('Username or email is required'),
+      .isLength({ min: 2, max: 100 })
+      .withMessage("Username must be between 2 and 100 characters"),
+
+    body("email")
+      .optional({ values: "falsy" })
+      .trim()
+      .isEmail()
+      .withMessage("Invalid email format")
+      .normalizeEmail(),
     
     body('password')
       .notEmpty().withMessage('Password is required'),

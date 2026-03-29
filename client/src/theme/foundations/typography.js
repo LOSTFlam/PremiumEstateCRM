@@ -36,9 +36,8 @@ const typography = {
     black: "900",
   },
   fonts: {
-    heading:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    heading: '"Playfair Display", Georgia, serif',
+    body: '"DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     mono: 'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace',
   },
   fontSizes: {

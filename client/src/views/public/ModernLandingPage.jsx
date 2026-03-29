@@ -1,224 +1,229 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
-import { Box, Container, useToast, Spinner, Flex, Text, Heading, Button, HStack, IconButton } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import { getApi } from 'services/api';
-import ThreeBackground from 'components/ThreeBackground';
-import ParticleCanvas from 'components/ParticleCanvas';
-import GradientOrbs from 'components/GradientOrbs';
-import PropertyBackground from 'components/PropertyBackground';
-import GlassCard from 'components/GlassCard';
-import ModernHeader from 'components/ModernHeader';
-import ModernHero from 'components/ModernHero';
-import ModernFeatures from 'components/ModernFeatures';
-import ModernPropertyCard from 'components/ModernPropertyCard';
-import ModernFooter from 'components/ModernFooter';
-import WhyChooseUs from 'components/WhyChooseUs';
-import TrustedService from 'components/TrustedService';
-import { PropertyCardSkeleton } from 'components/skeletons/Skeletons';
-import PropertyFilters from 'components/property/PropertyFilters';
-import { PropertySort, PropertyPagination, usePropertyPagination } from 'hooks/usePropertyPagination';
-import AIPropertyMatcher from 'components/property/AIPropertyMatcher';
+import { memo, useEffect, useMemo, useState } from "react";
 import {
-  formatCompactNumber,
-  getCatalogDataset,
-  getPrimaryImage,
-  isRichListing,
-  normalizePropertyTypeKey,
-  normalizeStatus,
-  parsePrice,
-  placeholderImage,
-  samplePublicProperties,
-} from 'views/public/catalog/catalogData';
+  Badge,
+  Box,
+  Button,
+  Container,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
+  Icon,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  useMediaQuery,
+  usePrefersReducedMotion,
+  useToast,
+} from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { FiArrowRight, FiHeart, FiSearch } from "react-icons/fi";
+import { MdCompareArrows } from "react-icons/md";
+import { LuBuilding2 } from "react-icons/lu";
+import GradientOrbs from "components/GradientOrbs";
+import ModernFeatures from "components/ModernFeatures";
+import ModernFooter from "components/ModernFooter";
+import ModernHeader from "components/ModernHeader";
+import ModernHero from "components/ModernHero";
+import ModernPropertyCard from "components/ModernPropertyCard";
+import ParticleCanvas from "components/ParticleCanvas";
+import PropertyBackground from "components/PropertyBackground";
+import ThreeBackground from "components/ThreeBackground";
+import PremiumEtherealBackground from "components/PremiumEtherealBackground";
+import DeepParallaxBackground from "components/DeepParallaxBackground";
+import MouseGlowEffect from "components/MouseGlowEffect";
+import FloatingGradientOrbs from "components/FloatingGradientOrbs";
+import ShimmerParticles from "components/ShimmerParticles";
+import GuidedFinder from "components/property/AIPropertyMatcher";
+import { fetchPublicCatalog } from "./catalog/catalogService";
+import { getPrimaryImage } from "./catalog/catalogData";
 import {
   getCompareIds,
   getFavoriteIds,
   toggleCompareId,
   toggleFavoriteId,
-} from 'views/public/catalog/catalogStorage';
-import { MdArrowForward, FiFilter } from 'react-icons/md';
-import { FiFilter as FiFilterIcon } from 'react-icons/fi';
+} from "./catalog/catalogStorage";
+import { publicBrand } from "./publicBrand";
 
-// Memoize child components to prevent unnecessary re-renders
-const MemoizedModernHeader = memo(ModernHeader);
-const MemoizedModernHero = memo(ModernHero);
 const MemoizedModernFeatures = memo(ModernFeatures);
+const MemoizedModernHero = memo(ModernHero);
 const MemoizedModernPropertyCard = memo(ModernPropertyCard);
-const MemoizedWhyChooseUs = memo(WhyChooseUs);
-const MemoizedTrustedService = memo(TrustedService);
-const MemoizedModernFooter = memo(ModernFooter);
 
-const ModernLandingPage = () => {
+const scrollToCatalogPreview = () => {
+  const section = document.getElementById("properties-section");
+  if (section) {
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+const resultsTitle = (language, count) =>
+  language?.startsWith("ru") ? `Найдено объектов: ${count}` : `Properties found: ${count}`;
+
+const resultsText = (language) =>
+  language?.startsWith("ru")
+    ? "Показаны предложения, которые совпадают с вашим поиском на главной витрине."
+    : "These signature listings match your current homepage search.";
+
+const signatureCopy = {
+  ru: {
+    badge: "Signature residences",
+    title: "Сильная витрина начинается не с фильтра, а с ощущения уровня объекта.",
+    text:
+      "Ниже собраны предложения, которые формируют первую эмоцию от коллекции: выразительная архитектура, качественная карточка и понятный маршрут к личному показу.",
+    finderTitle: "Короткий путь к подборке",
+    finderText:
+      "Используйте guided finder, сохраните shortlist или перейдите сразу в каталог с URL-синхронизированными фильтрами.",
+    shortlist: "Сохраненная подборка",
+    compare: "Сравнение",
+    allCatalog: "Открыть каталог",
+    finalBadge: "Private viewing",
+    finalTitle: "Когда объект действительно подходит, до следующего шага должен быть один клик.",
+    finalText:
+      "Из главной вы можете сразу перейти в каталог, сравнение, избранное и детальную карточку без потери контекста и без ощущения сырого интерфейса.",
+  },
+  en: {
+    badge: "Signature residences",
+    title: "A stronger storefront starts with atmosphere before the first filter.",
+    text:
+      "These featured properties set the tone for the collection: expressive architecture, richer listing quality, and a clear route into private viewing.",
+    finderTitle: "A shorter route to the right shortlist",
+    finderText:
+      "Use the guided finder, save a shortlist, or move straight into the catalog with URL-synced filters and cleaner buyer tools.",
+    shortlist: "Saved shortlist",
+    compare: "Compare",
+    allCatalog: "Open catalog",
+    finalBadge: "Private viewing",
+    finalTitle: "When a property feels right, the next step should be one calm click away.",
+    finalText:
+      "From the homepage you can now move into the catalog, comparison, favorites, and the detail page without losing context or hitting unfinished-looking surfaces.",
+  },
+};
+
+export default function ModernLandingPage() {
   const { t, i18n } = useTranslation();
   const toast = useToast();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [isDesktop] = useMediaQuery("(min-width: 62em)");
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
-  const [largeLogo, setLargeLogo] = useState([]);
-  const [propertyCount, setPropertyCount] = useState(0);
-  
-  // New filter and pagination state
-  const [filters, setFilters] = useState({
-    type: 'all',
-    status: 'all',
-    minPrice: '',
-    maxPrice: '',
-    minBedrooms: '',
-    maxBedrooms: '',
-    minBathrooms: '',
-    maxBathrooms: '',
-    minArea: '',
-    maxArea: '',
-  });
-  const [sortBy, setSortBy] = useState('default');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Use custom pagination hook
-  const {
-    filteredProperties,
-    paginatedProperties,
-    totalPages,
-    currentPage: hookCurrentPage,
-    totalResults,
-  } = usePropertyPagination(properties, filters, sortBy, currentPage, 6);
-
-  // Sync favorites and compare from localStorage - memoized
-  const syncLocalCollections = useCallback(() => {
-    setFavoriteIds(getFavoriteIds());
-    setCompareIds(getCompareIds());
-  }, []);
+  const enableFullMotion = isDesktop && !prefersReducedMotion;
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const copy = signatureCopy[locale];
 
   useEffect(() => {
-    syncLocalCollections();
-    window.addEventListener('focus', syncLocalCollections);
-    return () => window.removeEventListener('focus', syncLocalCollections);
-  }, [syncLocalCollections]);
-
-  // Fetch properties with caching
-  useEffect(() => {
-    const fetchProperties = async () => {
+    const loadCatalog = async () => {
       setLoading(true);
-      try {
-        const response = await getApi('api/property/public');
-        let propertiesData = [];
-
-        if (Array.isArray(response)) {
-          propertiesData = response;
-        } else if (Array.isArray(response?.data)) {
-          propertiesData = response.data;
-        } else {
-          propertiesData = samplePublicProperties;
-        }
-
-        if (propertiesData.length === 0) {
-          propertiesData = samplePublicProperties;
-        }
-
-        setProperties(getCatalogDataset(propertiesData));
-        setPropertyCount(propertiesData.length);
-      } catch (error) {
-        console.error('Error fetching properties:', error);
-        setProperties(getCatalogDataset(samplePublicProperties));
-        setPropertyCount(samplePublicProperties.length);
-      } finally {
-        setLoading(false);
-      }
+      const catalog = await fetchPublicCatalog();
+      setProperties(catalog);
+      setLoading(false);
     };
 
-    fetchProperties();
+    loadCatalog();
   }, []);
 
-  // Fetch logo (silent fail - not critical)
   useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const response = await getApi('api/image/getall');
-        const activeLogos = (response?.data || []).filter(item => item.isActive);
-        setLargeLogo(activeLogos);
-      } catch (error) {
-        // Silently fail for logo - not critical
-        setLargeLogo([]);
-      }
+    const syncCollections = () => {
+      setFavoriteIds(getFavoriteIds());
+      setCompareIds(getCompareIds());
     };
 
-    fetchLogo();
+    syncCollections();
+    window.addEventListener("focus", syncCollections);
+    return () => window.removeEventListener("focus", syncCollections);
   }, []);
 
-  // Get featured properties (show first 6 with any image)
+  const filteredProperties = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    if (!query) return properties;
+
+    return properties.filter((property) => {
+      const haystack = [
+        property?.name,
+        property?.propertyAddress,
+        property?.propertyType,
+        property?.marketingDescription,
+        property?.propertyDescription,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(query);
+    });
+  }, [properties, searchQuery]);
+
   const featuredProperties = useMemo(() => {
     const withImages = filteredProperties.filter((property) => {
-      const img = getPrimaryImage(property);
-      return img && !img.includes('placeholder');
+      const primaryImage = getPrimaryImage(property);
+      return primaryImage && !primaryImage.includes("placeholder");
     });
-    // If no properties with images, show first 6 anyway
-    return withImages.length > 0 ? withImages.slice(0, 6) : filteredProperties.slice(0, 6);
+    const source = withImages.length ? withImages : filteredProperties;
+    return source.slice(0, 6);
   }, [filteredProperties]);
 
-  // Handle favorite toggle
-  const handleFavoriteToggle = (id) => {
-    setFavoriteIds(toggleFavoriteId(id));
-    const isRemoving = favoriteIds.includes(id);
+  const marqueeProperties = featuredProperties.slice(0, 3);
+
+  const handleFavoriteToggle = (propertyId) => {
+    const next = toggleFavoriteId(propertyId);
+    setFavoriteIds(next);
     toast({
-      title: isRemoving ? t('publicListing.removeFromFavorites') : t('publicListing.addToFavorites'),
-      status: isRemoving ? 'info' : 'success',
-      duration: 2000,
-      isClosable: true,
+      title: next.includes(propertyId)
+        ? t("publicListing.addToFavorites")
+        : t("publicListing.removeFromFavorites"),
+      status: "success",
+      duration: 1800,
     });
   };
 
-  // Handle compare toggle
-  const handleCompareToggle = (id) => {
-    if (!compareIds.includes(id) && compareIds.length >= 3) {
-      toast({ 
-        title: t('publicListing.compareLimit'), 
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
+  const handleCompareToggle = (propertyId) => {
+    if (!compareIds.includes(propertyId) && compareIds.length >= 3) {
+      toast({
+        title: t("publicListing.compareLimit"),
+        status: "info",
+        duration: 2200,
       });
       return;
     }
 
-    setCompareIds(toggleCompareId(id));
-    const isRemoving = compareIds.includes(id);
+    const next = toggleCompareId(propertyId);
+    setCompareIds(next);
     toast({
-      title: isRemoving ? t('publicListing.removeFromCompare') : t('publicListing.addToCompare'),
-      status: isRemoving ? 'info' : 'success',
-      duration: 2000,
-      isClosable: true,
+      title: next.includes(propertyId)
+        ? t("publicListing.addToCompare")
+        : t("publicListing.removeFromCompare"),
+      status: "success",
+      duration: 1800,
     });
   };
 
-  // Handle search
-  const handleSearch = () => {
-    // Search is already applied via filteredProperties
-    const element = document.getElementById('properties-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const handleGuidedMatch = (property) => {
+    if (!property) return;
+    setSearchQuery(property?.name || property?.propertyAddress || "");
+    scrollToCatalogPreview();
   };
 
   return (
-    <Box className="relative min-h-screen" style={{ background: '#0F172A' }}>
-      {/* Gradient Orbs Background */}
-      <GradientOrbs />
-      
-      {/* Property Silhouettes Background */}
-      <PropertyBackground />
-      
-      {/* Particle Canvas Background */}
-      <ParticleCanvas />
-
-      {/* Three.js Background */}
-      <ThreeBackground />
-
-      {/* Custom CSS for animations */}
+    <Box 
+      minH="100vh" 
+      position="relative" 
+      bg={publicBrand.gradients.page} 
+      color="white" 
+      overflowX="hidden"
+      width="100%"
+      maxWidth="100vw"
+    >
       <style>{`
         @keyframes fade-in-up {
           from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(28px);
           }
           to {
             opacity: 1;
@@ -227,287 +232,158 @@ const ModernLandingPage = () => {
         }
 
         .animate-fade-in-up {
-          animation: fade-in-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: fade-in-up 0.65s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .text-gradient {
-          background: linear-gradient(135deg, #D4AF37 0%, #F7E7CE 50%, #D4AF37 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: gradient-shift 3s ease infinite;
+        /* Premium rounded corners everywhere */
+        .premium-rounded {
+          border-radius: 40px !important;
         }
-
-        @keyframes gradient-shift {
-          0%, 100% {
-            background-position: 0% center;
-          }
-          50% {
-            background-position: 100% center;
-          }
+        .premium-rounded-lg {
+          border-radius: 48px !important;
         }
-
-        .btn-luxury {
-          position: relative;
-          overflow: hidden;
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.85) 0%, rgba(184, 134, 11, 0.8) 100%);
-          color: #FFFFFF;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-          border: 1px solid rgba(212, 175, 55, 0.5);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          font-weight: 600;
+        .premium-rounded-xl {
+          border-radius: 56px !important;
         }
-
-        .btn-luxury::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-          transition: left 0.5s;
+        
+        /* Depth-based opacity for layers */
+        .depth-far {
+          opacity: 0.4;
+          filter: blur(2px);
         }
-
-        .btn-luxury:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5);
-          border-color: rgba(212, 175, 55, 0.8);
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(184, 134, 11, 0.9) 100%);
+        .depth-mid {
+          opacity: 0.6;
+          filter: blur(1px);
         }
-
-        .btn-luxury:hover::before {
-          left: 100%;
+        .depth-near {
+          opacity: 0.8;
+          filter: blur(0.5px);
         }
-
-        /* Glass morphism utilities */
-        .glass-panel {
-          backdrop-filter: blur(20px) saturate(180%);
-          -webkit-backdrop-filter: blur(20px) saturate(180%);
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Smooth scroll */
-        html {
-          scroll-behavior: smooth;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-          width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-          background: rgba(15, 23, 42, 0.5);
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: rgba(100, 200, 150, 0.3);
-          border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: rgba(100, 200, 150, 0.5);
+        .depth-foreground {
+          opacity: 1;
+          filter: blur(0);
         }
       `}</style>
 
-      {/* Header */}
-      <ModernHeader largeLogo={largeLogo} />
+      {/* Mouse-following glow effect */}
+      {enableFullMotion && <MouseGlowEffect />}
+      
+      {/* Deep Parallax Background - furthest layer */}
+      <DeepParallaxBackground />
+      
+      {/* Floating gradient orbs */}
+      {!prefersReducedMotion && <FloatingGradientOrbs />}
+      
+      {/* Premium Ethereal Background - mid layer */}
+      <PremiumEtherealBackground />
+      
+      {/* Shimmer particles */}
+      {!prefersReducedMotion && (
+        <Box position="absolute" inset={0} overflow="hidden" zIndex={1}>
+          <ShimmerParticles count={30} />
+        </Box>
+      )}
+      
+      {/* Property silhouettes - near layer */}
+      {!prefersReducedMotion ? <PropertyBackground /> : null}
+      
+      {/* Particle system - foreground */}
+      {enableFullMotion ? <ParticleCanvas /> : null}
+      
+      {/* 3D elements - closest foreground */}
+      {enableFullMotion ? <ThreeBackground /> : null}
 
-      {/* Main Content */}
+      <ModernHeader />
+
       <Box position="relative" zIndex={1}>
-        {/* Hero Section */}
-        <ModernHero
+        <MemoizedModernHero
           properties={properties}
           t={t}
-          onSearch={handleSearch}
+          onSearch={scrollToCatalogPreview}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
 
-        {/* Features Section */}
-        <ModernFeatures properties={properties} t={t} />
+        {/* Features Section - Integrated into single scroll */}
+        <Box id="about" pt={{ base: 16, md: 20 }}>
+          <MemoizedModernFeatures properties={properties} t={t} />
+        </Box>
 
-        {/* Properties Section */}
         <Box
           id="properties-section"
-          py={20}
-          style={{
-            background: 'linear-gradient(180deg, rgba(10,15,30,0.8) 0%, rgba(15,23,42,0.95) 100%)',
-          }}
+          py={{ base: 16, md: 20 }}
+          bg="linear-gradient(180deg, rgba(7,12,20,0.08) 0%, rgba(244,238,229,1) 18%, rgba(244,238,229,1) 100%)"
         >
           <Container maxW="8xl">
-            <Box mb={12}>
-              <Box mb={6}>
-                <Box
-                  className="inline-block px-5 py-2 rounded-full mb-4"
-                  style={{
-                    background: 'rgba(212, 175, 55, 0.2)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    color: '#D4AF37',
-                    fontWeight: '600',
-                    fontSize: '13px',
-                    letterSpacing: '1px',
-                    textTransform: 'uppercase',
-                  }}
+            <Stack spacing={10}>
+              {/* Header - Full width */}
+              <Stack spacing={6} align="center" textAlign="center">
+                <Badge
+                  w="fit-content"
+                  px={4}
+                  py={1.5}
+                  className="rounded-max"
+                  borderRadius="full"
+                  bg="rgba(212,175,55,0.12)"
+                  border="1px solid rgba(212,175,55,0.18)"
+                  color={publicBrand.colors.copper}
+                  letterSpacing="0.12em"
+                  textTransform="uppercase"
                 >
-                  {t('publicListing.featuredProperties') || 'Featured Properties'}
-                </Box>
-                <Box>
-                  <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                    {searchQuery 
-                      ? t('publicListing.searchResults') || 'Search Results'
-                      : t('publicListing.catalogTitle') || 'Discover Exceptional Properties'}
-                  </h2>
-                  <p className="text-gray-400 text-lg max-w-700">
-                    {searchQuery 
-                      ? `${filteredProperties.length} properties found`
-                      : t('publicListing.heroDescription') || 'Explore our curated selection of premium properties'}
-                  </p>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Filter and Sort Controls */}
-            <Flex justify="space-between" align="center" mb={6} gap={4} flexWrap="wrap">
-              <HStack>
-                <PropertyFilters
-                  isOpen={isFilterOpen}
-                  onClose={() => setIsFilterOpen(false)}
-                  filters={filters}
-                  onApplyFilters={(newFilters) => {
-                    setFilters(newFilters);
-                    setCurrentPage(1);
-                  }}
-                  onClearFilters={(clearedFilters) => {
-                    setFilters(clearedFilters);
-                    setCurrentPage(1);
-                  }}
-                />
-                <Text fontWeight="600">
-                  {totalResults} {totalResults === 1 ? 'Property' : 'Properties'}
-                </Text>
-              </HStack>
-              <HStack>
-                <AIPropertyMatcher properties={properties} />
-                <PropertySort sortBy={sortBy} onSortChange={setSortBy} />
-              </HStack>
-            </Flex>
-
-            {/* Property Grid with Skeleton Loading */}
-            {loading ? (
-              <Box
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                style={{ perspective: '1000px' }}
-              >
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <PropertyCardSkeleton key={index} />
-                ))}
-              </Box>
-            ) : paginatedProperties.length > 0 ? (
-              <>
-                <Box
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                  style={{ perspective: '1000px' }}
-                >
-                  {paginatedProperties.map((property, index) => (
-                    <Box
-                      key={property._id}
-                      className="animate-fade-in-up"
-                      style={{
-                        animationDelay: `${index * 100}ms`,
-                        animationFillMode: 'both',
-                      }}
-                    >
-                      <MemoizedModernPropertyCard
-                        property={property}
-                        t={t}
-                        isFavorite={favoriteIds.includes(property._id)}
-                        isInCompare={compareIds.includes(property._id)}
-                        onFavoriteToggle={handleFavoriteToggle}
-                        onCompareToggle={handleCompareToggle}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </>
-            ) : (
-              <Box
-                textAlign="center"
-                py={20}
-                className="rounded-3xl"
-                style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  padding: '80px 40px',
-                }}
-              >
-                <Box mb={6}>
-                  <Text
-                    fontSize="6xl"
-                    className="text-gradient"
-                    style={{
-                      background: 'linear-gradient(135deg, #D4AF37 0%, #F7E7CE 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }}
-                  >
-                    🔍
-                  </Text>
-                </Box>
-                <Heading size="xl" className="text-white mb-4">
-                  {t('publicListing.noResults') || 'No Properties Found'}
+                  {t("publicListing.featuredProperties")}
+                </Badge>
+                <Heading size="2xl" color={publicBrand.colors.ink} maxW="900px">
+                  {searchQuery
+                    ? resultsTitle(i18n.language, filteredProperties.length)
+                    : t("publicListing.catalogTitle")}
                 </Heading>
-                <Text color="gray.400" fontSize="lg" mb={8}>
-                  {t('publicListing.noResultsText') ||
-                    'We couldn\'t find any properties matching your search. Try adjusting your filters.'}
+                <Text color={publicBrand.colors.textSoft} fontSize={{ base: "md", md: "lg" }} lineHeight="1.8" maxW="800px">
+                  {searchQuery ? resultsText(i18n.language) : t("publicListing.heroDescription")}
                 </Text>
-                <Button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilters({
-                      type: 'all',
-                      status: 'all',
-                      minPrice: '',
-                      maxPrice: '',
-                      minBedrooms: '',
-                      maxBedrooms: '',
-                      minBathrooms: '',
-                      maxBathrooms: '',
-                      minArea: '',
-                      maxArea: '',
-                    });
-                  }}
-                  className="btn-luxury"
-                >
-                  {t('publicListing.resetFilters') || 'Clear All Filters'}
-                </Button>
-              </Box>
-            )}
+                {/* Simple action buttons */}
+                <HStack spacing={4} flexWrap="wrap" justify="center">
+                  <Button
+                    as={RouterLink}
+                    to="/offers"
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                    rightIcon={<FiArrowRight />}
+                    px={8}
+                    h="50px"
+                  >
+                    {t("publicListing.viewAllProperties")}
+                  </Button>
+                </HStack>
+              </Stack>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <PropertyPagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            )}
+              {/* Property Grid */}
+              {loading ? (
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton key={`landing-skeleton-${index}`} h="520px" borderRadius="40px" />
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                  {featuredProperties.map((property) => (
+                    <MemoizedModernPropertyCard
+                      key={property?._id}
+                      property={property}
+                      isFavorite={favoriteIds.includes(property?._id)}
+                      isInCompare={compareIds.includes(property?._id)}
+                      onFavoriteToggle={handleFavoriteToggle}
+                      onCompareToggle={handleCompareToggle}
+                    />
+                  ))}
+                </SimpleGrid>
+              )}
+            </Stack>
           </Container>
         </Box>
 
-        {/* Why Choose Us Section */}
-        <MemoizedWhyChooseUs />
-
-        {/* Trusted Service Section */}
-        <MemoizedTrustedService />
-
-        {/* Footer */}
-        <MemoizedModernFooter />
+        <ModernFooter />
       </Box>
     </Box>
   );
-};
-
-export default ModernLandingPage;
+}

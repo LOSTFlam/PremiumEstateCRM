@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   FormControl,
@@ -9,12 +10,12 @@ import {
   Stack,
   Text,
   Textarea,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { postApi } from "services/api";
+import { publicBrand } from "../publicBrand";
 
 export default function LeadCaptureCard({
   property,
@@ -23,7 +24,7 @@ export default function LeadCaptureCard({
   title,
   subtitle,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [values, setValues] = useState({
@@ -34,11 +35,7 @@ export default function LeadCaptureCard({
     preferredContact: "phone",
   });
 
-  const cardBg = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("rgba(16,45,36,0.08)", "whiteAlpha.200");
-  const subtleBg = useColorModeValue("#f8f2e7", "whiteAlpha.100");
-  const mutedColor = useColorModeValue("gray.600", "gray.300");
-
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const resolvedAgent = useMemo(() => agent || property?.agent || null, [agent, property?.agent]);
 
   if (!property) return null;
@@ -83,50 +80,121 @@ export default function LeadCaptureCard({
   };
 
   return (
-    <Box bg={cardBg} borderRadius="32px" p={6} boxShadow="sm" borderWidth="1px" borderColor={borderColor}>
-      <Stack spacing={4}>
-        <Heading size="md">{title || t?.("publicListing.agentLeadTitle")}</Heading>
-        <Text color={mutedColor}>{subtitle || t?.("publicListing.agentLeadText")}</Text>
+    <Box
+      borderRadius="34px"
+      p={6}
+      bg={publicBrand.gradients.panel}
+      color="white"
+      boxShadow={publicBrand.shadows.deep}
+      border="1px solid rgba(227, 211, 184, 0.14)"
+    >
+      <Stack spacing={5}>
+        <Stack spacing={2}>
+          <Badge
+            w="fit-content"
+            px={3}
+            py={1.5}
+            borderRadius="full"
+            bg="rgba(245,208,118,0.14)"
+            color="#f5d076"
+            border="1px solid rgba(245,208,118,0.22)"
+          >
+            {locale === "ru" ? "Private inquiry" : "Private inquiry"}
+          </Badge>
+          <Heading size="md">{title || t?.("publicListing.agentLeadTitle")}</Heading>
+          <Text color="whiteAlpha.740">{subtitle || t?.("publicListing.agentLeadText")}</Text>
+        </Stack>
 
         {resolvedAgent && (
-          <Box bg={subtleBg} borderRadius="24px" p={4}>
+          <Box
+            borderRadius="24px"
+            p={4}
+            bg="rgba(255,255,255,0.05)"
+            border="1px solid rgba(227, 211, 184, 0.12)"
+          >
             <Stack spacing={2}>
               <Text fontWeight="700">{resolvedAgent?.fullName || resolvedAgent?.label}</Text>
-              {resolvedAgent?.label && resolvedAgent?.label !== resolvedAgent?.fullName && (
-                <Text color={mutedColor}>{resolvedAgent.label}</Text>
-              )}
-              {resolvedAgent?.email && <Text color={mutedColor}>{resolvedAgent.email}</Text>}
-              {resolvedAgent?.phoneNumber && <Text color={mutedColor}>{resolvedAgent.phoneNumber}</Text>}
-              <Text fontSize="sm" color={mutedColor}>{resolvedAgent?.responseTimeText || t?.("publicListing.agentResponseTime")}</Text>
+              {resolvedAgent?.label && resolvedAgent?.label !== resolvedAgent?.fullName ? (
+                <Text color="whiteAlpha.680">{resolvedAgent.label}</Text>
+              ) : null}
+              {resolvedAgent?.email ? <Text color="whiteAlpha.740">{resolvedAgent.email}</Text> : null}
+              {resolvedAgent?.phoneNumber ? <Text color="whiteAlpha.740">{resolvedAgent.phoneNumber}</Text> : null}
+              <Text fontSize="sm" color="#f5d076">
+                {resolvedAgent?.responseTimeText || t?.("publicListing.agentResponseTime")}
+              </Text>
             </Stack>
           </Box>
         )}
 
         <FormControl>
-          <FormLabel>{t?.("publicListing.leadName")}</FormLabel>
-          <Input value={values.fullName} onChange={(event) => setValues((current) => ({ ...current, fullName: event.target.value }))} />
+          <FormLabel color="whiteAlpha.880">{t?.("publicListing.leadName")}</FormLabel>
+          <Input
+            value={values.fullName}
+            onChange={(event) => setValues((current) => ({ ...current, fullName: event.target.value }))}
+            bg="rgba(255,255,255,0.08)"
+            borderColor="rgba(227, 211, 184, 0.14)"
+            borderRadius="18px"
+            h="52px"
+          />
         </FormControl>
         <FormControl>
-          <FormLabel>{t?.("publicListing.leadEmail")}</FormLabel>
-          <Input type="email" value={values.email} onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))} />
+          <FormLabel color="whiteAlpha.880">{t?.("publicListing.leadEmail")}</FormLabel>
+          <Input
+            type="email"
+            value={values.email}
+            onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))}
+            bg="rgba(255,255,255,0.08)"
+            borderColor="rgba(227, 211, 184, 0.14)"
+            borderRadius="18px"
+            h="52px"
+          />
         </FormControl>
         <FormControl>
-          <FormLabel>{t?.("publicListing.leadPhone")}</FormLabel>
-          <Input value={values.phoneNumber} onChange={(event) => setValues((current) => ({ ...current, phoneNumber: event.target.value }))} />
+          <FormLabel color="whiteAlpha.880">{t?.("publicListing.leadPhone")}</FormLabel>
+          <Input
+            value={values.phoneNumber}
+            onChange={(event) => setValues((current) => ({ ...current, phoneNumber: event.target.value }))}
+            bg="rgba(255,255,255,0.08)"
+            borderColor="rgba(227, 211, 184, 0.14)"
+            borderRadius="18px"
+            h="52px"
+          />
         </FormControl>
         <FormControl>
-          <FormLabel>{t?.("publicListing.preferredContact")}</FormLabel>
-          <Select value={values.preferredContact} onChange={(event) => setValues((current) => ({ ...current, preferredContact: event.target.value }))}>
+          <FormLabel color="whiteAlpha.880">{t?.("publicListing.preferredContact")}</FormLabel>
+          <Select
+            value={values.preferredContact}
+            onChange={(event) => setValues((current) => ({ ...current, preferredContact: event.target.value }))}
+            bg="white"
+            color={publicBrand.colors.ink}
+            borderRadius="18px"
+            h="52px"
+          >
             <option value="phone">{t?.("publicListing.contactByPhone")}</option>
             <option value="email">{t?.("publicListing.contactByEmail")}</option>
           </Select>
         </FormControl>
         <FormControl>
-          <FormLabel>{t?.("publicListing.leadMessage")}</FormLabel>
-          <Textarea value={values.message} onChange={(event) => setValues((current) => ({ ...current, message: event.target.value }))} rows={4} />
+          <FormLabel color="whiteAlpha.880">{t?.("publicListing.leadMessage")}</FormLabel>
+          <Textarea
+            value={values.message}
+            onChange={(event) => setValues((current) => ({ ...current, message: event.target.value }))}
+            rows={4}
+            bg="rgba(255,255,255,0.08)"
+            borderColor="rgba(227, 211, 184, 0.14)"
+            borderRadius="18px"
+          />
         </FormControl>
 
-        <Button colorScheme="green" onClick={submitLead} isLoading={submitting}>
+        <Button
+          bg={publicBrand.gradients.brass}
+          color={publicBrand.colors.ink}
+          fontWeight="700"
+          borderRadius="full"
+          onClick={submitLead}
+          isLoading={submitting}
+          _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+        >
           {t?.("publicListing.sendLead")}
         </Button>
       </Stack>

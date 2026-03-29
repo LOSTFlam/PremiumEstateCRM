@@ -1,329 +1,322 @@
+import { useMemo } from "react";
 import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  Stack,
-  SimpleGrid,
-  Button,
-  HStack,
   Badge,
+  Box,
+  Button,
+  Container,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
   Icon,
-  useColorModeValue,
-  Flex,
-} from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
-import { FiCheck, FiStar, FiUsers, FiAward } from 'react-icons/fi';
-import { MdArrowForward } from 'react-icons/md';
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { Link as RouterLink } from "react-router-dom";
+import { FiArrowRight, FiCheck, FiShield } from "react-icons/fi";
+import { LuBuilding2, LuKeyRound, LuSparkles, LuTrees } from "react-icons/lu";
+import { useTranslation } from "react-i18next";
+import { publicBrand } from "views/public/publicBrand";
+import { normalizePropertyTypeKey } from "views/public/catalog/catalogData";
+import { useScrollReveal } from "hooks/useScrollReveal";
 
-export default function ModernFeatures({ properties, t }) {
-  const cardBg = useColorModeValue('white/5', 'gray.800/50');
-  const borderColor = useColorModeValue('white/10', 'white/5');
-  const mutedColor = useColorModeValue('gray.600', 'gray.400');
-
-  const features = [
+const pillarCopy = {
+  ru: [
     {
-      icon: FiAward,
-      title: t('publicListing.premiumProperties'),
-      description: t('publicListing.premiumPropertiesText'),
-      benefits: [
-        t('publicListing.verifiedListings'),
-        t('publicListing.exclusiveAccess'),
-        t('publicListing.premiumSupport'),
-      ],
+      icon: LuSparkles,
+      title: "Кураторский отбор",
+      text: "Каждая карточка собирается так, чтобы покупатель сразу видел суть предложения, уровень подачи и путь к показу.",
+      points: ["Сильная визуальная подача", "Структурированные данные", "Проверяемая информация"],
     },
     {
-      icon: FiUsers,
-      title: t('publicListing.expertAgents'),
-      description: t('publicListing.expertAgentsText'),
-      benefits: [
-        t('publicListing.support247'),
-        t('publicListing.expertAdvice'),
-        t('publicListing.personalizedService'),
-      ],
+      icon: LuKeyRound,
+      title: "Спокойный сервис",
+      text: "От первого просмотра до сделки коммуникация остается точной, быстрой и личной, без лишнего маркетингового шума.",
+      points: ["Частный брокеридж", "Быстрые ответы", "Сопровождение на всем пути"],
     },
     {
-      icon: FiStar,
-      title: t('publicListing.trustedService'),
-      description: t('publicListing.trustedServiceHelp'),
-      benefits: [
-        t('publicListing.transparent'),
-        t('publicListing.secureTransactions'),
-        t('publicListing.provenTrack'),
-      ],
+      icon: FiShield,
+      title: "Решения с доверием",
+      text: "Покупатель получает не просто подборку, а рабочий инструмент для shortlist, сравнения и выхода на объект.",
+      points: ["Избранное и сравнение", "Сохраненные поиски", "Прямая связь с консультантом"],
     },
-  ];
+  ],
+  en: [
+    {
+      icon: LuSparkles,
+      title: "Curated selection",
+      text: "Each offer is presented so the buyer immediately understands the proposition, the quality of the listing, and the route to viewing.",
+      points: ["Stronger visual presentation", "Structured property data", "Clear verification cues"],
+    },
+    {
+      icon: LuKeyRound,
+      title: "Calm private service",
+      text: "From first browse to closing, communication stays precise, quick, and personal rather than noisy or transactional.",
+      points: ["Private brokerage", "Faster responses", "Guided journey to the deal"],
+    },
+    {
+      icon: FiShield,
+      title: "Confidence in decisions",
+      text: "The platform is not only a gallery, but a working buyer tool for shortlist building, comparison, and direct inquiry.",
+      points: ["Favorites and compare", "Saved searches", "Direct consultant outreach"],
+    },
+  ],
+};
 
-  const stats = [
-    { value: '500+', label: t('publicListing.propertiesSoldCount'), icon: FiAward },
-    { value: '98%', label: t('publicListing.happyClientsCount'), icon: FiStar },
-    { value: '15+', label: t('publicListing.yearsExperienceCount'), icon: FiCheck },
-    { value: '50+', label: t('publicListing.expertAgentsCount'), icon: FiUsers },
-  ];
+export default function ModernFeatures({ properties = [], t }) {
+  const { i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const pillars = pillarCopy[locale];
+
+  // Scroll reveal refs
+  const [titleRef, titleRevealed] = useScrollReveal({ threshold: 0.2 });
+  const [pillarsRef, pillarsRevealed] = useScrollReveal({ threshold: 0.1, delay: 200 });
+  const [approachRef, approachRevealed] = useScrollReveal({ threshold: 0.2, delay: 400 });
+  const [statsRef, statsRevealed] = useScrollReveal({ threshold: 0.2, delay: 600 });
+
+  const typeStats = useMemo(() => {
+    const counts = properties.reduce((acc, property) => {
+      const key = normalizePropertyTypeKey(property?.propertyType);
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+
+    return [
+      {
+        key: "house",
+        label: t("publicListing.categoryHouses"),
+        value: counts.house || 0,
+        icon: LuBuilding2,
+      },
+      {
+        key: "apartment",
+        label: t("publicListing.categoryApartments"),
+        value: counts.apartment || 0,
+        icon: LuBuilding2,
+      },
+      {
+        key: "land",
+        label: t("publicListing.categoryPlots"),
+        value: counts.land || 0,
+        icon: LuTrees,
+      },
+    ];
+  }, [properties, t]);
 
   return (
-    <Box
-      py={20}
-      style={{
-        background: 'linear-gradient(180deg, rgba(15,23,42,0.5) 0%, rgba(10,15,30,0.8) 100%)',
-      }}
-    >
+    <Box py={{ base: 16, md: 20 }} bg="linear-gradient(180deg, rgba(7,12,20,0.24) 0%, rgba(10,16,25,0.02) 100%)">
       <Container maxW="8xl">
-        <Stack spacing={16}>
-          {/* Features Section */}
-          <Stack spacing={10}>
-            {/* Section Header */}
-            <Stack spacing={4} align="center" textAlign="center">
-              <Badge
-                style={{
-                  background: 'rgba(212, 175, 55, 0.2)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  padding: '8px 20px',
-                  borderRadius: '20px',
-                  color: '#D4AF37',
-                  fontWeight: '600',
-                  fontSize: '13px',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {t('publicListing.whyChooseUs')}
-              </Badge>
-              <Heading
-                as="h2"
-                size="2xl"
-                className="text-white"
-                style={{
-                  textShadow: '0 2px 10px rgba(0,0,0,0.3)',
-                }}
-              >
-                {t('publicListing.whyChooseUsHelp')}
-              </Heading>
-              <Text color="gray.300" fontSize="lg" maxW="700px">
-                {t('publicListing.featuresDescription')}
-              </Text>
-            </Stack>
-
-            {/* Feature Cards */}
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap={8}>
-              {features.map((feature, index) => (
-                <Box
-                  key={feature.titleKey || index}
-                  className="group"
-                  style={{
-                    background: cardBg,
-                    backdropFilter: 'blur(20px)',
-                    border: `1px solid ${borderColor}`,
-                    borderRadius: '32px',
-                    padding: '40px',
-                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                  _hover={{
-                    transform: 'translateY(-12px)',
-                    borderColor: 'rgba(212, 175, 55, 0.4)',
-                    boxShadow: '0 30px 100px rgba(0,0,0,0.4), 0 0 60px rgba(212, 175, 55, 0.1)',
-                  }}
+        <Stack spacing={12}>
+          <Grid templateColumns={{ base: "1fr", xl: "0.95fr 1.05fr" }} gap={8} alignItems="start">
+            <GridItem>
+              <Stack spacing={5} maxW="620px" ref={titleRef} style={{
+                transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: titleRevealed ? 1 : 0,
+                transform: titleRevealed ? "translateY(0)" : "translateY(40px)",
+              }}>
+                <Badge
+                  w="fit-content"
+                  px={4}
+                  py={1.5}
+                  borderRadius="full"
+                  bg="rgba(245,208,118,0.14)"
+                  border="1px solid rgba(245,208,118,0.24)"
+                  color="#f5d076"
+                  letterSpacing="0.14em"
+                  textTransform="uppercase"
                 >
-                  {/* Gradient Overlay on Hover */}
-                  <Box
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(205, 127, 50, 0.05) 100%)',
-                    }}
-                  />
-                  
-                  <Stack spacing={6} position="relative" zIndex={1}>
-                    {/* Icon */}
-                    <Box
-                      className="p-4 rounded-2xl inline-block"
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(205, 127, 50, 0.2) 100%)',
-                        border: '1px solid rgba(212, 175, 55, 0.3)',
-                        width: 'fit-content',
-                        transition: 'all 0.4s ease',
-                      }}
-                      _groupHover={{
-                        transform: 'scale(1.1) rotate(-5deg)',
-                        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
-                      }}
-                    >
-                      <Icon as={feature.icon} className="text-luxury-gold text-3xl" />
-                    </Box>
-
-                    {/* Content */}
-                    <Box>
-                      <Heading as="h3" size="lg" className="text-white mb-3">
-                        {feature.title}
-                      </Heading>
-                      <Text color={mutedColor} lineHeight="relaxed">
-                        {feature.description}
-                      </Text>
-                    </Box>
-
-                    {/* Benefits */}
-                    <Stack spacing={3}>
-                      {feature.benefits.map((benefit, idx) => (
-                        <HStack key={idx} spacing={3}>
-                          <Box
-                            className="rounded-full p-1"
-                            style={{
-                              background: 'rgba(212, 175, 55, 0.2)',
-                              border: '1px solid rgba(212, 175, 55, 0.3)',
-                            }}
-                          >
-                            <FiCheck className="text-luxury-gold text-xs" />
-                          </Box>
-                          <Text color="gray.300" fontSize="sm" fontWeight="500">
-                            {benefit}
-                          </Text>
-                        </HStack>
-                      ))}
-                    </Stack>
-                  </Stack>
-                </Box>
-              ))}
-            </SimpleGrid>
-          </Stack>
-
-          {/* Stats Section */}
-          <Box
-            className="relative rounded-3xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(205, 127, 50, 0.05) 100%)',
-              border: '1px solid rgba(212, 175, 55, 0.2)',
-              padding: '60px 40px',
-            }}
-          >
-            {/* Decorative Elements */}
-            <Box
-              position="absolute"
-              top="-50%"
-              right="-20%"
-              w="600px"
-              h="600px"
-              style={{
-                background: 'radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%)',
-                filter: 'blur(100px)',
-              }}
-            />
-            
-            <Stack spacing={10} position="relative" zIndex={1}>
-              {/* Section Header */}
-              <Stack spacing={4} align="center" textAlign="center">
-                <Heading as="h2" size="xl" className="text-white">
-                  Trusted by{' '}
-                  <Text
-                    as="span"
-                    className="text-gradient"
-                    style={{
-                      background: 'linear-gradient(135deg, #D4AF37 0%, #F7E7CE 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }}
-                  >
-                    {t('publicListing.trustedByThousands')}
-                  </Text>
+                  {t("publicListing.whyChooseUs")}
+                </Badge>
+                <Heading
+                  as="h2"
+                  fontSize={{ base: "3xl", md: "5xl" }}
+                  lineHeight={{ base: "1.08", md: "1.02" }}
+                  letterSpacing="-0.04em"
+                  color="white"
+                >
+                  {locale === "ru"
+                    ? "Сайт больше не выглядит как шаблон. Он ведет покупателя через атмосферу, факты и действие."
+                    : "The experience no longer reads like a template. It guides buyers through atmosphere, facts, and action."}
                 </Heading>
-                <Text color="gray.300" fontSize="lg">
-                  {t('publicListing.trackRecordSpeaks')}
+                <Text color="whiteAlpha.760" fontSize={{ base: "md", md: "lg" }} lineHeight="1.9">
+                  {locale === "ru"
+                    ? "Мы сместили акцент с случайных карточек и utility-блоков на более взрослую недвижимостную подачу: сильный визуал, кураторская структура, buyer tools и мягкий переход к личной консультации."
+                    : "The focus shifts from utility blocks and generic cards toward a more mature real-estate presentation: stronger visuals, editorial structure, buyer tools, and a softer path into private consultation."}
                 </Text>
+                <HStack spacing={3} flexWrap="wrap">
+                  <Button
+                    as={RouterLink}
+                    to="/offers"
+                    rightIcon={<FiArrowRight />}
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                    fontWeight="700"
+                    _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+                  >
+                    {t("publicListing.viewAllProperties")}
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/favorites"
+                    borderRadius="full"
+                    bg="rgba(255,255,255,0.05)"
+                    color="white"
+                    border="1px solid rgba(227, 211, 184, 0.14)"
+                    _hover={{ bg: "rgba(255,255,255,0.08)" }}
+                  >
+                    {t("publicListing.savedOffers")}
+                  </Button>
+                </HStack>
               </Stack>
+            </GridItem>
 
-              {/* Stats Grid */}
-              <SimpleGrid columns={{ base: 2, md: 4 }} gap={8}>
-                {stats.map((stat, index) => (
+            <GridItem>
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={5} ref={pillarsRef} style={{
+                transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: pillarsRevealed ? 1 : 0,
+                transform: pillarsRevealed ? "translateY(0)" : "translateY(40px)",
+              }}>
+                {pillars.map((pillar, idx) => (
                   <Box
-                    key={index}
-                    textAlign="center"
-                    className="group"
+                    key={pillar.title}
+                    className={`hover-lift stagger-${idx}`}
                     style={{
-                      padding: '30px 20px',
-                      borderRadius: '24px',
-                      transition: 'all 0.3s ease',
+                      transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                     }}
                     _hover={{
-                      background: 'rgba(255,255,255,0.05)',
-                      transform: 'translateY(-4px)',
+                      transform: "translateY(-10px)",
+                      boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 175, 55, 0.15)",
                     }}
                   >
-                    <Flex justify="center" mb={4}>
+                    <Stack spacing={5}>
                       <Box
-                        className="p-3 rounded-xl"
-                        style={{
-                          background: 'rgba(212, 175, 55, 0.1)',
-                          border: '1px solid rgba(212, 175, 55, 0.2)',
-                          transition: 'all 0.3s ease',
-                        }}
-                        _groupHover={{
-                          background: 'rgba(212, 175, 55, 0.2)',
-                          borderColor: 'rgba(212, 175, 55, 0.4)',
-                          transform: 'scale(1.1)',
-                        }}
+                        w="54px"
+                        h="54px"
+                        borderRadius="20px"
+                        display="grid"
+                        placeItems="center"
+                        bg="rgba(245,208,118,0.12)"
+                        color="#f5d076"
                       >
-                        <Icon as={stat.icon} className="text-luxury-gold text-2xl" />
+                        <Icon as={pillar.icon} boxSize={5} />
                       </Box>
-                    </Flex>
-                    <Text
-                      fontSize="4xl"
-                      fontWeight="bold"
-                      className="text-gradient"
-                      style={{
-                        background: 'linear-gradient(135deg, #D4AF37 0%, #F7E7CE 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                      }}
-                    >
-                      {stat.value}
-                    </Text>
-                    <Text color="gray.400" fontSize="sm" fontWeight="500" mt={2}>
-                      {stat.label}
-                    </Text>
+                      <Stack spacing={2.5}>
+                        <Heading size="md" color="white">
+                          {pillar.title}
+                        </Heading>
+                        <Text color="whiteAlpha.760" lineHeight="1.8" fontSize="sm">
+                          {pillar.text}
+                        </Text>
+                      </Stack>
+                      <Stack spacing={3}>
+                        {pillar.points.map((point) => (
+                          <HStack key={point} align="start" spacing={3}>
+                            <Box
+                              mt={1}
+                              w="22px"
+                              h="22px"
+                              borderRadius="full"
+                              display="grid"
+                              placeItems="center"
+                              bg="rgba(245,208,118,0.12)"
+                              color="#f5d076"
+                            >
+                              <FiCheck size={12} />
+                            </Box>
+                            <Text color="whiteAlpha.820" fontSize="sm" lineHeight="1.7">
+                              {point}
+                            </Text>
+                          </HStack>
+                        ))}
+                      </Stack>
+                    </Stack>
                   </Box>
                 ))}
               </SimpleGrid>
-            </Stack>
-          </Box>
+            </GridItem>
+          </Grid>
 
-          {/* CTA Section */}
-          <Box
-            textAlign="center"
-            style={{
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(205, 127, 50, 0.1) 100%)',
-              borderRadius: '32px',
-              padding: '60px 40px',
-              border: '1px solid rgba(212, 175, 55, 0.2)',
-            }}
-          >
-            <Stack spacing={6} align="center">
-              <Heading size="xl" className="text-white">
-                {t('publicListing.readyToFindDream')}
-              </Heading>
-              <Text color="gray.300" fontSize="lg" maxW="600px">
-                {t('publicListing.startJourneyToday')}
-              </Text>
-              <HStack spacing={4} flexWrap="wrap" justify="center">
-                <Button
-                  as={RouterLink}
-                  to="/offers"
-                  className="btn-luxury"
-                  rightIcon={<MdArrowForward />}
-                  size="lg"
-                >
-                  {t('publicListing.browseProperties')}
-                </Button>
-                <Button
-                  as={RouterLink}
-                  to="/auth/sign-up"
-                  className="btn-luxury-outline"
-                  size="lg"
-                >
-                  {t('publicListing.createAccountCta')}
-                </Button>
-              </HStack>
-            </Stack>
-          </Box>
+          <Grid templateColumns={{ base: "1fr", xl: "1.1fr 0.9fr" }} gap={6}>
+            <GridItem>
+              <Box
+                className="hover-lift"
+                style={{
+                  transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
+                _hover={{
+                  transform: "translateY(-8px)",
+                  boxShadow: "0 25px 70px rgba(0, 0, 0, 0.2)",
+                }}
+                ref={approachRef}
+                borderRadius="38px"
+                px={{ base: 6, md: 8 }}
+                py={{ base: 7, md: 8 }}
+                bg={publicBrand.gradients.panelLight}
+                boxShadow={publicBrand.shadows.soft}
+                border="1px solid rgba(9,18,32,0.08)"
+              >
+                <Stack spacing={5}>
+                  <Text color={publicBrand.colors.copper} fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                    {locale === "ru" ? "Подход к витрине" : "Storefront approach"}
+                  </Text>
+                  <Heading color={publicBrand.colors.ink} fontSize={{ base: "2xl", md: "4xl" }} lineHeight="1.05">
+                    {locale === "ru"
+                      ? "Мы строим не просто каталог, а ощущение частной резиденции еще до первого звонка."
+                      : "We build not only a catalog, but the feeling of a private residence before the first call."}
+                  </Heading>
+                  <Text color={publicBrand.colors.textSoft} fontSize={{ base: "md", md: "lg" }} lineHeight="1.8">
+                    {locale === "ru"
+                      ? "Hero, карточки, comparison и detail pages работают как одна история: вдохновить, дать уверенность, помочь выбрать и аккуратно подтолкнуть к действию."
+                      : "Hero, cards, comparison, and detail pages now work as one story: inspire, build confidence, support decisions, and gently move toward action."}
+                  </Text>
+                </Stack>
+              </Box>
+            </GridItem>
+
+            <GridItem>
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} ref={statsRef} style={{
+                transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                opacity: statsRevealed ? 1 : 0,
+                transform: statsRevealed ? "translateY(0)" : "translateY(40px)",
+              }}>
+                {typeStats.map((stat, idx) => (
+                  <Box
+                    key={stat.key}
+                    className={`hover-lift stagger-${idx}`}
+                    style={{
+                      transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    }}
+                    _hover={{
+                      transform: "translateY(-8px)",
+                      boxShadow: "0 15px 40px rgba(0, 0, 0, 0.2), 0 0 20px rgba(212, 175, 55, 0.1)",
+                    }}
+                  >
+                    <Stack spacing={3}>
+                      <Box
+                        w="48px"
+                        h="48px"
+                        borderRadius="18px"
+                        display="grid"
+                        placeItems="center"
+                        bg="rgba(245,208,118,0.12)"
+                        color="#f5d076"
+                      >
+                        <Icon as={stat.icon} boxSize={5} />
+                      </Box>
+                      <Text color="whiteAlpha.620" fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
+                        {stat.label}
+                      </Text>
+                      <Text color="white" fontSize={{ base: "2xl", md: "3xl" }} fontWeight="700">
+                        {stat.value}
+                      </Text>
+                    </Stack>
+                  </Box>
+                ))}
+              </SimpleGrid>
+            </GridItem>
+          </Grid>
         </Stack>
       </Container>
     </Box>

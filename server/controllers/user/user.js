@@ -1,149 +1,145 @@
 const User = require("../../model/schema/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const {
+  AUTH_COOKIE_NAME,
+  assertJwtSecret,
+  signAuthToken,
+  getAuthCookieOptions,
+  getLogoutCookieOptions,
+  sanitizeUser,
+} = require("./auth.service");
+
+const getDefaultUsers = () =>
+  String(process.env.DEFAULT_USERS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+const normalizeIdentity = (value) => String(value || "").trim().toLowerCase();
 
 // Admin register
-const adminRegister = async (req, res) => {
+const adminRegister = async (req, res, next) => {
   try {
+    assertJwtSecret();
     const { username, password, firstName, lastName, phoneNumber } = req.body;
-    const user = await User.findOne({ username: username });
+    const normalizedUsername = normalizeIdentity(username);
+    const user = await User.findOne({ username: normalizedUsername });
     if (user) {
       return res
         .status(400)
         .json({ message: "Admin already exist please try another email" });
-    } else {
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-      // Create a new user
-      const user = new User({
-        username,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        phoneNumber,
-        role: "superAdmin",
-      });
-      // Save the user to the database
-      await user.save();
-      res.status(200).json({ message: "Admin created successfully" });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username: normalizedUsername,
+      email: normalizedUsername,
+      password: hashedPassword,
+      firstName: String(firstName || "").trim(),
+      lastName: String(lastName || "").trim(),
+      phoneNumber,
+      role: "superAdmin",
+      createdDate: new Date(),
+    });
+
+    await newUser.save();
+    res.status(200).json({ message: "Admin created successfully" });
   } catch (error) {
-    res.status(500).json({ error: error });
+    next(error);
   }
 };
 
 // User Registration - accepts email and generates username from it
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
+    assertJwtSecret();
     const { email, username, password, firstName, lastName, phoneNumber, roles } = req.body;
-    
-    // Use email if username not provided (generate from email)
-    const finalUsername = username || (email ? email.split("@")[0] : null);
-    
+
+    const normalizedEmail = email ? normalizeIdentity(email) : null;
+    const finalUsername = normalizeIdentity(username || (normalizedEmail ? normalizedEmail.split("@")[0] : ""));
+
     if (!finalUsername) {
       return res.status(400).json({ message: "Username or email is required" });
     }
 
-    // Check if user exists by username OR email
     const existingUser = await User.findOne({
       $or: [
         { username: finalUsername },
-        { email: email }
-      ]
+        ...(normalizedEmail ? [{ email: normalizedEmail }] : []),
+      ],
     });
 
     if (existingUser) {
       return res
         .status(401)
         .json({ message: "User already exist please try another email" });
-    } else {
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-      // Create a new user
-      const newUser = new User({
-        username: finalUsername,
-        email: email, // Store email as well
-        password: hashedPassword,
-        roles: roles || [],
-        firstName,
-        lastName,
-        phoneNumber,
-        role: "user", // Default role
-        createdDate: new Date(),
-      });
-      // Save the user to the database
-      await newUser.save();
-
-      // Generate JWT token
-      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET || "secret_key", {
-        expiresIn: "1d",
-      });
-
-      // Return user and token (exclude password)
-      const userResponse = {
-        _id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        role: newUser.role,
-        roles: newUser.roles,
-        phoneNumber: newUser.phoneNumber,
-        createdDate: newUser.createdDate,
-        updatedDate: newUser.updatedDate,
-      };
-
-      res.status(201).json({ 
-        message: "User created successfully",
-        user: userResponse,
-        token: token 
-      });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      username: finalUsername,
+      email: normalizedEmail,
+      password: hashedPassword,
+      roles: Array.isArray(roles) ? roles : [],
+      firstName: String(firstName || "").trim(),
+      lastName: String(lastName || "").trim(),
+      phoneNumber,
+      role: "user",
+      createdDate: new Date(),
+    });
+
+    await newUser.save();
+
+    const token = signAuthToken({ userId: newUser._id });
+    res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: sanitizeUser(newUser),
+      token,
+    });
   } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({ error: error.message || "Registration failed" });
+    next(error);
   }
 };
 
-const index = async (req, res) => {
+const index = async (req, res, next) => {
   try {
     const query = { ...req.query, deleted: false };
 
-    let user = await User.find(query)
+    const user = await User.find(query)
       .populate({
         path: "roles",
       })
       .exec();
 
-    res.status(200).json({ user });
+    res.status(200).json({ user: user.map(sanitizeUser) });
   } catch (error) {
-    res.status(500).json({ error });
+    next(error);
   }
 };
 
-const view = async (req, res) => {
+const view = async (req, res, next) => {
   try {
-    let user = await User.findOne({ _id: req.params.id }).populate({
+    const user = await User.findOne({ _id: req.params.id, deleted: false }).populate({
       path: "roles",
     });
     if (!user) return res.status(404).json({ message: "no Data Found." });
-    res.status(200).json(user);
+    res.status(200).json(sanitizeUser(user));
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error });
+    next(error);
   }
 };
 
-let deleteData = async (req, res) => {
+let deleteData = async (req, res, next) => {
   try {
     const userId = req.params.id;
 
-    // Assuming you have retrieved the user document using userId
     const user = await User.findById(userId);
-    if (process.env.DEFAULT_USERS.includes(user?.username)) {
+    if (getDefaultUsers().includes(user?.username)) {
       return res
         .status(400)
-        .json({ message: `You don't have access to delete ${username}` });
+        .json({ message: `You don't have access to delete ${user?.username}` });
     }
     if (!user) {
       return res
@@ -158,27 +154,20 @@ let deleteData = async (req, res) => {
       res.status(404).json({ message: "admin can not delete" });
     }
   } catch (error) {
-    res.status(500).json({ error });
+    next(error);
   }
 };
 
-const deleteMany = async (req, res) => {
+const deleteMany = async (req, res, next) => {
   try {
-    // if(process.env.DEFAULT_USERS.includes(username)){
-    //     return res.status(400).json({ message: `You don't have access to change ${username}` })
-    // }
-    // const updatedUsers = await User.updateMany({ _id: { $in: req.body }, role: { $ne: 'superAdmin' } }, { $set: { deleted: true } });
-
-    const userIds = req.body; // Assuming req.body is an array of user IDs
+    const userIds = req.body;
     const users = await User.find({ _id: { $in: userIds } });
 
-    // Check for default users and filter them out
-    const defaultUsers = process.env.DEFAULT_USERS;
+    const defaultUsers = getDefaultUsers();
     const filteredUsers = users.filter(
       (user) => !defaultUsers.includes(user.username)
     );
 
-    // Further filter out superAdmin users
     const nonSuperAdmins = filteredUsers.filter(
       (user) => user.role !== "superAdmin"
     );
@@ -198,123 +187,113 @@ const deleteMany = async (req, res) => {
 
     res.status(200).json({ message: "done", updatedUsers });
   } catch (err) {
-    res.status(404).json({ message: "error", err });
+    next(err);
   }
 };
 
-const edit = async (req, res) => {
+const edit = async (req, res, next) => {
   try {
-    let { username, firstName, lastName, phoneNumber } = req.body;
+    const { username, email, firstName, lastName, phoneNumber } = req.body;
+    const update = {
+      updatedDate: new Date(),
+    };
 
-    let result = await User.updateOne(
+    if (username) {
+      update.username = normalizeIdentity(username);
+    }
+
+    if (email) {
+      update.email = normalizeIdentity(email);
+    }
+
+    if (firstName !== undefined) update.firstName = String(firstName).trim();
+    if (lastName !== undefined) update.lastName = String(lastName).trim();
+    if (phoneNumber !== undefined) update.phoneNumber = phoneNumber;
+
+    const result = await User.updateOne(
       { _id: req.params.id },
       {
-        $set: {
-          username,
-          firstName,
-          lastName,
-          phoneNumber,
-        },
+        $set: update,
       }
     );
 
     res.status(200).json(result);
   } catch (err) {
-    console.error("Failed to Update User:", err);
-    res.status(400).json({ error: "Failed to Update User" });
+    next(err);
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
-    // Accept both username and email from client
+    assertJwtSecret();
     const { username, email, password } = req.body;
-    const loginIdentifier = username || email; // Use whichever is provided
+    const loginIdentifier = normalizeIdentity(username || email);
 
-    console.log("🔑 Login attempt:", { 
-      username, 
-      email, 
-      loginIdentifier,
-      passwordLength: password?.length 
-    });
-
-    // Search by username OR email
     const user = await User.findOne({
       deleted: false,
       $or: [
         { username: loginIdentifier },
         { email: loginIdentifier }
       ]
-    }).populate({
-      path: "roles",
-    });
+    })
+      .select("+password")
+      .populate({
+        path: "roles",
+      });
 
     if (!user) {
-      console.log("❌ User not found:", loginIdentifier);
       res
         .status(401)
         .json({ error: "Authentication failed, invalid username" });
       return;
     }
 
-    console.log("✅ User found:", user.username, "Role:", user.role);
-
-    // Compare the provided password with the hashed password stored in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log("🔐 Password match:", passwordMatch);
-    
     if (!passwordMatch) {
-      console.log("❌ Password does not match for user:", user.username);
       res
         .status(401)
         .json({ error: "Authentication failed, password does not match" });
       return;
     }
 
-    // Create a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || "secret_key", {
-      expiresIn: "1d",
-    });
-
-    console.log("✅ Login successful for user:", user.username);
-
-    // Set httpOnly cookie for better security
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
+    const token = signAuthToken({ userId: user._id });
+    res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
 
     res
       .status(200)
       .setHeader("Authorization", `Bearer ${token}`)
-      .json({ token: token, user });
+      .json({ token, user: sanitizeUser(user) });
   } catch (error) {
-    console.error("❌ Login error:", error);
-    res.status(500).json({ error: "An error occurred" });
+    next(error);
   }
 };
 
-const changeRoles = async (req, res) => {
+const logout = async (req, res) => {
+  res
+    .clearCookie(AUTH_COOKIE_NAME, getLogoutCookieOptions())
+    .status(200)
+    .json({ message: "Logged out successfully" });
+};
+
+const changeRoles = async (req, res, next) => {
   try {
     const userId = req.params.id;
 
-    let result = await User.updateOne(
+    const result = await User.updateOne(
       { _id: userId },
       { $set: { roles: req.body } }
     );
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Failed to Change Role:", error);
-    res.status(400).json({ error: "Failed to Change Role" });
+    next(error);
   }
 };
 
 module.exports = {
   register,
   login,
+  logout,
   adminRegister,
   index,
   deleteMany,

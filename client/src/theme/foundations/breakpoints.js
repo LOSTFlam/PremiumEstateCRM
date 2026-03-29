@@ -11,4 +11,4 @@ export const breakpoints = createBreakpoints({
   "3xl": "1920px",
 });
 
-// export default breakpoints
+export default breakpoints;

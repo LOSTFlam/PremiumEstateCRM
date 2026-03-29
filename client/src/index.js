@@ -1,10 +1,9 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom";
-import { Helmet } from "react-helmet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import ErrorBoundary from "components/ErrorBoundary";
 import SEO from "components/SEO";
+import GlobalAnimationStyles from "components/GlobalAnimationStyles";
 import "assets/css/App.css";
 import "assets/css/tailwind.css";
 import {
@@ -13,21 +12,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import AuthLayout from "./layouts/auth";
-import AdminLayout from "layouts/admin";
-import UserLayout from "layouts/user";
-import PublicCatalog from "views/public/catalog";
-import ModernLandingPage from "views/public/ModernLandingPage";
-import PublicOfferView from "views/public/catalog/View";
-import PublicOfferViewBySlug from "views/public/catalog/ViewBySlug";
-import PublicCompareView from "views/public/catalog/Compare";
-import FavoritesPage from "views/public/FavoritesPage";
-import ComparePage from "views/public/ComparePage";
-import PropertyViewBySlug from "views/admin/property/ViewBySlug";
-import SeoCollectionPage from "views/public/catalog/SeoCollectionPage";
-import SignUp from "views/auth/signUp";
-import SignIn from "views/auth/signIn";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, Container, Spinner, Stack, Text } from "@chakra-ui/react";
 import theme from "theme/theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,11 +20,29 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "./i18n/i18n.config";
-import Alpine from 'alpinejs';
 
-// Initialize Alpine.js
-window.Alpine = Alpine;
-Alpine.start();
+const AuthLayout = lazy(() => import("./layouts/auth"));
+const AdminLayout = lazy(() => import("layouts/admin"));
+const UserLayout = lazy(() => import("layouts/user"));
+const PublicCatalog = lazy(() => import("views/public/catalog"));
+const ModernLandingPage = lazy(() => import("views/public/ModernLandingPage"));
+const PublicOfferView = lazy(() => import("views/public/catalog/View"));
+const PublicOfferViewBySlug = lazy(() => import("views/public/catalog/ViewBySlug"));
+const PublicCompareView = lazy(() => import("views/public/catalog/Compare"));
+const FavoritesPage = lazy(() => import("views/public/FavoritesPage"));
+const PropertyViewBySlug = lazy(() => import("views/admin/property/ViewBySlug"));
+const SeoCollectionPage = lazy(() => import("views/public/catalog/SeoCollectionPage"));
+const SignUp = lazy(() => import("views/auth/signUp"));
+const SignIn = lazy(() => import("views/auth/signIn"));
+
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "development"
+    ? lazy(() =>
+        import("@tanstack/react-query-devtools").then((module) => ({
+          default: module.ReactQueryDevtools,
+        })),
+      )
+    : null;
 
 const getStoredUser = () => {
   const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -54,6 +57,20 @@ const getStoredUser = () => {
   }
 };
 
+function RouteFallback() {
+  return (
+    <Box minH="100vh" bg="#e7e5e4" color="#111827" display="flex" alignItems="center">
+      <Container maxW="md">
+        <Stack spacing={4} align="center" textAlign="center">
+          <Spinner size="xl" color="orange.400" thickness="4px" />
+          <Text fontWeight="700">Loading Premium Estate</Text>
+          <Text color="gray.500">Preparing the next screen and listing data.</Text>
+        </Stack>
+      </Container>
+    </Box>
+  );
+}
+
 function App() {
   const token =
     localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -61,16 +78,15 @@ function App() {
   const isAuthenticated = Boolean(token && user?.role);
 
   return (
-    <>
+    <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route
           path="/"
           element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/offers" replace />
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <ModernLandingPage />
           }
         />
-        {/* New Modern Landing Page */}
-        <Route path="/offers" element={<ModernLandingPage />} />
+        <Route path="/offers" element={<PublicCatalog />} />
         <Route path="/offers/houses" element={<PublicCatalog forcedType="house" />} />
         <Route path="/offers/apartments" element={<PublicCatalog forcedType="apartment" />} />
         <Route path="/offers/plots" element={<PublicCatalog forcedType="land" />} />
@@ -78,7 +94,7 @@ function App() {
         <Route path="/collections/:slug" element={<SeoCollectionPage />} />
         <Route path="/offers/compare" element={<PublicCompareView />} />
         <Route path="/favorites" element={<FavoritesPage />} />
-        <Route path="/compare" element={<ComparePage />} />
+        <Route path="/compare" element={<Navigate to="/offers/compare" replace />} />
         <Route path="/offers/:id" element={<PublicOfferView />} />
         <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
         <Route path="/propertyView/:slug" element={<PropertyViewBySlug />} />
@@ -92,13 +108,13 @@ function App() {
           ) : user?.role === "superAdmin" ? (
             <Route path="/*" element={<AdminLayout />} />
           ) : (
-            <Route path="/*" element={<AuthLayout />} />
+            <Route path="/*" element={<Navigate to="/" replace />} />
           )
         ) : (
-          <Route path="/*" element={<AuthLayout />} />
+          <Route path="/*" element={<Navigate to="/" replace />} />
         )}
       </Routes>
-    </>
+    </Suspense>
   );
 }
 
@@ -118,13 +134,28 @@ ReactDOM.render(
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <SEO />
+        <GlobalAnimationStyles />
+        <style>{`
+          html, body {
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+          }
+          * {
+            box-sizing: border-box;
+          }
+        `}</style>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <Router>
               <ChakraProvider theme={theme}>
                 <ToastContainer />
                 <App />
-                <ReactQueryDevtools initialIsOpen={false} />
+                {ReactQueryDevtools ? (
+                  <Suspense fallback={null}>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                  </Suspense>
+                ) : null}
               </ChakraProvider>
             </Router>
           </PersistGate>
@@ -134,5 +165,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root"),
 );
-
-
