@@ -223,7 +223,7 @@ export default function ModernHeader({ largeLogo = [] }) {
               {/* Theme Toggle */}
               <ThemeToggle />
               
-              {/* Language Switcher */}
+              {/* Language Switcher - EN & RU only */}
               <HStack
                 spacing={1}
                 px={2}
@@ -232,24 +232,36 @@ export default function ModernHeader({ largeLogo = [] }) {
                 bg="transparent"
                 border="1px solid rgba(227, 211, 184, 0.06)"
               >
-                {['en', 'ru', 'de', 'fr'].map((lang) => (
-                  <Button
-                    key={lang}
-                    size="xs"
-                    minW="32px"
-                    borderRadius="full"
-                    variant={currentLanguage === lang ? "solid" : "ghost"}
-                    bg={currentLanguage === lang ? "rgba(212, 175, 55, 0.2)" : "transparent"}
-                    color={currentLanguage === lang ? "white" : "whiteAlpha.600"}
-                    fontSize="xx-small"
-                    _hover={{
-                      bg: currentLanguage === lang ? "rgba(212, 175, 55, 0.25)" : "rgba(255,255,255,0.05)",
-                    }}
-                    onClick={() => i18n.changeLanguage(lang)}
-                  >
-                    {lang.toUpperCase()}
-                  </Button>
-                ))}
+                <Button
+                  size="xs"
+                  minW="32px"
+                  borderRadius="full"
+                  variant={currentLanguage === "en" ? "solid" : "ghost"}
+                  bg={currentLanguage === "en" ? "rgba(212, 175, 55, 0.2)" : "transparent"}
+                  color={currentLanguage === "en" ? "white" : "whiteAlpha.600"}
+                  fontSize="xx-small"
+                  _hover={{
+                    bg: currentLanguage === "en" ? "rgba(212, 175, 55, 0.25)" : "rgba(255,255,255,0.05)",
+                  }}
+                  onClick={() => i18n.changeLanguage("en")}
+                >
+                  EN
+                </Button>
+                <Button
+                  size="xs"
+                  minW="32px"
+                  borderRadius="full"
+                  variant={currentLanguage === "ru" ? "solid" : "ghost"}
+                  bg={currentLanguage === "ru" ? "rgba(212, 175, 55, 0.2)" : "transparent"}
+                  color={currentLanguage === "ru" ? "white" : "whiteAlpha.600"}
+                  fontSize="xx-small"
+                  _hover={{
+                    bg: currentLanguage === "ru" ? "rgba(212, 175, 55, 0.25)" : "rgba(255,255,255,0.05)",
+                  }}
+                  onClick={() => i18n.changeLanguage("ru")}
+                >
+                  RU
+                </Button>
               </HStack>
 
               <Button
