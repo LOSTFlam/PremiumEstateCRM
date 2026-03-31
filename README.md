@@ -2,7 +2,7 @@
 
 A modern, premium real estate management system with advanced property listings, lead management, and analytics.
 
-![Premium Estate CRM](https://img.shields.io/badge/version-0.3.2.26-blue)
+![Premium Estate CRM](https://img.shields.io/badge/version-0.4.1.26-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![React](https://img.shields.io/badge/React-17.0.2-blue)
 ![Node](https://img.shields.io/badge/Node-14+-green)
@@ -350,7 +350,34 @@ Currently supported:
 
 ## 📝 Changelog
 
-### Version 0.3.1.26 (Latest)
+### Version 0.4.1.26 (Latest) - Accessibility Improvements
+**♿ Accessibility Fixes:**
+- Fixed all label htmlFor associations (Input, Textarea, Slider, RadioGroup, Checkbox)
+- Added id to all form fields in commonForm component
+- Fixed date inputs in advanceSearch (From/To fields)
+- Fixed customView Input fields (text, tel types)
+- Fixed Parking field and all custom property fields
+- All label htmlFor now match element id
+
+**🐛 DOM Nesting Fixes:**
+- Fixed 14 admin views (Text → Flex in Action columns)
+- Fixed: opportunities, property, account, contact
+- Fixed: dynamicPage, emailTemplate, invoice, newQuotes
+- Fixed: opportunityproject, phoneCall, quotes, task, users, bankDetails
+
+**⚠️ Bug Fixes:**
+- Fixed duplicate key warnings (added index to option keys)
+- Removed duplicate Flex imports
+- Cleaned up all React console warnings
+- Fixed select/radio option keys in commonForm and customView
+
+**📊 Impact:**
+- Improved form accessibility for screen readers
+- Better browser autofill support
+- Cleaner console output
+- Enhanced user experience
+
+### Version 0.3.1.26
 **✨ New Features:**
 - Analytics Dashboard with 6 key metrics
 - Lead Kanban Board with 7 statuses
@@ -779,7 +806,34 @@ PremiumEstateCRM/
 
 ## 📝 Журнал изменений
 
-### Версия 0.3.2.26 (Текущая)
+### Версия 0.4.1.26 (Текущая) - Улучшения доступности
+**♿ Исправления доступности:**
+- Исправлены все label htmlFor ассоциации (Input, Textarea, Slider, RadioGroup, Checkbox)
+- Добавлен id ко всем полям форм в commonForm
+- Исправлены поля дат в advanceSearch (From/To)
+- Исправлены Input поля в customView (text, tel типы)
+- Исправлено поле Parking и все пользовательские поля объектов
+- Все label htmlFor теперь соответствуют element id
+
+**🐛 Исправления DOM Nesting:**
+- Исправлено 14 admin views (Text → Flex в Action колонках)
+- Исправлено: opportunities, property, account, contact
+- Исправлено: dynamicPage, emailTemplate, invoice, newQuotes
+- Исправлено: opportunityproject, phoneCall, quotes, task, users, bankDetails
+
+**⚠️ Исправления ошибок:**
+- Исправлены предупреждения о дублирующихся ключах (добавлен индекс к option keys)
+- Удалены дублирующиеся импорты Flex
+- Очищены все предупреждения React в консоли
+- Исправлены ключи select/radio опций в commonForm и customView
+
+**📊 Влияние:**
+- Улучшена доступность форм для скринридеров
+- Лучшая поддержка автозаполнения браузера
+- Чище вывод консоли
+- Улучшен пользовательский опыт
+
+### Версия 0.3.2.26
 **✨ Новые функции:**
 - Маршруты и фильтры витрины (Storefront Routes & Filters)
 - Расширенная главная страница с сегментами каталога
