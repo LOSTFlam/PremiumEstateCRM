@@ -49,7 +49,34 @@
   - Text shadow для читаемости
   - Усиленный hover эффект
 
-### 4. 🎨 Логотип и Брендинг ✨ НОВЫЙ
+### 4. ✨ v0.4.0.26 - UI Enhancements and Bug Fixes
+
+#### UI Improvements:
+- **ModernHero.jsx** - Property category cards enlarged:
+  - Icons: 44px → 56px
+  - Padding: 4px → 6px
+  - Border radius: 24px → 32px
+  - Spacing: 3 → 5
+  - Font sizes increased for better readability
+
+- **ModernHero.jsx** - Market block full-width:
+  - Changed from narrow 2-column to full-width container
+  - Routes displayed in 4-column grid (lg breakpoint)
+  - Added glass container background
+
+- **ModernLandingPage.jsx** - Market section grid redesign:
+  - Separated stats and routes into distinct grid sections
+  - Full-width layout instead of 2-column split
+  - Enhanced visual hierarchy
+
+#### Bug Fixes:
+- **FloatingGradientOrbs.jsx** - Moved animationDelay to CSS animation shorthand
+- **ShimmerParticles.jsx** - Fixed particles and light rays animation props
+- **PremiumEtherealBackground.jsx** - Fixed sparkle and ray animation delays
+- **checktable.js** - Changed Text to Flex for title counter
+- **opportunities/index.js** - Fixed Menu inside Text (DOM nesting)
+
+### 5. 🎨 Логотип и Брендинг ✨ НОВЫЙ
 
 #### Новый минималистичный логотип Premium Estate:
 - **Видимость**: ✅ Улучшенная контрастность (золото на тёмном фоне)
