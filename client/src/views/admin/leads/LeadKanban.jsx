@@ -43,7 +43,7 @@ const statusColors = {
 };
 
 const LeadKanban = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +52,22 @@ const LeadKanban = () => {
   const [selectedLead, setSelectedLead] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [note, setNote] = useState("");
+  const isRu = i18n.language?.startsWith("ru");
+  const statusLabels = {
+    new: isRu ? "Новый" : "New",
+    contacted: isRu ? "Связались" : "Contacted",
+    qualified: isRu ? "Квалифицирован" : "Qualified",
+    viewing: isRu ? "Просмотр" : "Viewing",
+    offer: isRu ? "Предложение" : "Offer",
+    closed: isRu ? "Закрыт" : "Closed",
+    lost: isRu ? "Потерян" : "Lost",
+  };
+  const typeLabels = {
+    viewing: isRu ? "Просмотр" : "Viewing",
+    info: isRu ? "Информация" : "Info",
+    offer: isRu ? "Предложение" : "Offer",
+    consultation: isRu ? "Консультация" : "Consultation",
+  };
 
   const statuses = ["new", "contacted", "qualified", "viewing", "offer", "closed", "lost"];
 
@@ -78,14 +94,14 @@ const LeadKanban = () => {
       await putApi(`api/lead/${leadId}`, { status: newStatus });
       setLeads(leads.map((lead) => (lead._id === leadId ? { ...lead, status: newStatus } : lead)));
       toast({
-        title: "Status updated",
+        title: isRu ? "Статус обновлен" : "Status updated",
         status: "success",
         duration: 2000,
       });
     } catch (error) {
       console.error("Error updating lead:", error);
       toast({
-        title: "Error updating status",
+        title: isRu ? "Ошибка обновления статуса" : "Error updating status",
         status: "error",
         duration: 3000,
       });
@@ -96,7 +112,7 @@ const LeadKanban = () => {
     try {
       await postApi(`api/lead/${selectedLead._id}/note`, { note });
       toast({
-        title: "Note added",
+        title: isRu ? "Заметка добавлена" : "Note added",
         status: "success",
         duration: 2000,
       });
@@ -105,7 +121,7 @@ const LeadKanban = () => {
     } catch (error) {
       console.error("Error adding note:", error);
       toast({
-        title: "Error adding note",
+        title: isRu ? "Ошибка добавления заметки" : "Error adding note",
         status: "error",
         duration: 3000,
       });
@@ -131,12 +147,16 @@ const LeadKanban = () => {
         {/* Header */}
         <HStack justify="space-between" flexWrap="wrap" gap={4}>
           <Stack spacing={1}>
-            <Heading size="xl">Lead Management</Heading>
-            <Text color="gray.500">Track and manage your leads through the sales pipeline</Text>
+            <Heading size="xl">{isRu ? "Управление лидами" : "Lead Management"}</Heading>
+            <Text color="gray.500">
+              {isRu
+                ? "Отслеживайте лиды и ведите их по воронке продаж"
+                : "Track and manage your leads through the sales pipeline"}
+            </Text>
           </Stack>
           <HStack spacing={3}>
             <Input
-              placeholder="Search leads..."
+              placeholder={isRu ? "Поиск лидов..." : "Search leads..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               maxW="300px"
@@ -149,10 +169,10 @@ const LeadKanban = () => {
               maxW="200px"
               borderRadius="12px"
             >
-              <option value="all">All Status</option>
+              <option value="all">{isRu ? "Все статусы" : "All Status"}</option>
               {statuses.map((status) => (
                 <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {statusLabels[status] || status}
                 </option>
               ))}
             </Select>
@@ -173,7 +193,7 @@ const LeadKanban = () => {
                       {statusLeads.length}
                     </Badge>
                     <Text fontWeight="600" textTransform="capitalize">
-                      {status}
+                      {statusLabels[status] || status}
                     </Text>
                   </HStack>
                 </HStack>
@@ -187,10 +207,10 @@ const LeadKanban = () => {
                             <Avatar size="sm" name={lead.name} bg={colors.color} />
                             <Stack spacing={0}>
                               <Text fontWeight="600" fontSize="sm">
-                                {lead.name || "Anonymous"}
+                                {lead.name || (isRu ? "Без имени" : "Anonymous")}
                               </Text>
                               <Text color="gray.500" fontSize="xs" noOfLines={1}>
-                                {lead.property || "No property"}
+                                {lead.property || (isRu ? "Объект не указан" : "No property")}
                               </Text>
                             </Stack>
                           </HStack>
@@ -205,11 +225,11 @@ const LeadKanban = () => {
                                   onClick={() => updateLeadStatus(lead._id, s)}
                                   isDisabled={s === status}
                                 >
-                                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                                  {statusLabels[s] || s}
                                 </MenuItem>
                               ))}
                               <MenuItem onClick={() => { setSelectedLead(lead); setIsModalOpen(true); }}>
-                                Add Note
+                                {isRu ? "Добавить заметку" : "Add Note"}
                               </MenuItem>
                             </MenuList>
                           </Menu>
@@ -247,7 +267,7 @@ const LeadKanban = () => {
                             {new Date(lead.createdAt).toLocaleDateString()}
                           </Text>
                           <Badge fontSize="xs" colorScheme={lead.type === "viewing" ? "green" : "blue"}>
-                            {lead.type}
+                            {typeLabels[lead.type] || lead.type}
                           </Badge>
                         </HStack>
                       </Stack>
@@ -256,7 +276,7 @@ const LeadKanban = () => {
 
                   {statusLeads.length === 0 && (
                     <Text textAlign="center" color="gray.400" py={8}>
-                      No leads
+                      {isRu ? "Лидов нет" : "No leads"}
                     </Text>
                   )}
                 </Stack>
@@ -275,7 +295,7 @@ const LeadKanban = () => {
             <HStack spacing={3}>
               <Icon as={FiMessageSquare} color="#F5D076" boxSize={6} />
               <Text fontSize="2xl" fontWeight="bold">
-                Add Note
+                {isRu ? "Добавить заметку" : "Add Note"}
               </Text>
             </HStack>
           </ModalHeader>
@@ -291,7 +311,7 @@ const LeadKanban = () => {
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Add a note about this lead..."
+              placeholder={isRu ? "Добавьте заметку по этому лиду..." : "Add a note about this lead..."}
               rows={6}
               borderRadius="12px"
               bg="rgba(255,255,255,0.05)"
@@ -309,7 +329,7 @@ const LeadKanban = () => {
               mt={4}
               isDisabled={!note.trim()}
             >
-              Add Note
+              {isRu ? "Добавить заметку" : "Add Note"}
             </Button>
           </ModalBody>
         </ModalContent>

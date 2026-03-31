@@ -38,7 +38,7 @@ const pillarCopy = {
     {
       icon: FiShield,
       title: "Решения с доверием",
-      text: "Покупатель получает не просто подборку, а рабочий инструмент для shortlist, сравнения и выхода на объект.",
+      text: "Покупатель получает не просто подборку, а рабочий инструмент для отбора, сравнения и выхода на объект.",
       points: ["Избранное и сравнение", "Сохраненные поиски", "Прямая связь с консультантом"],
     },
   ],
@@ -141,7 +141,7 @@ export default function ModernFeatures({ properties = [], t }) {
                 </Heading>
                 <Text color="whiteAlpha.760" fontSize={{ base: "md", md: "lg" }} lineHeight="1.9">
                   {locale === "ru"
-                    ? "Мы сместили акцент с случайных карточек и utility-блоков на более взрослую недвижимостную подачу: сильный визуал, кураторская структура, buyer tools и мягкий переход к личной консультации."
+                    ? "Мы сместили акцент со случайных карточек и служебных блоков на более взрослую недвижимостную подачу: сильный визуал, кураторская структура, инструменты выбора и мягкий переход к личной консультации."
                     : "The focus shifts from utility blocks and generic cards toward a more mature real-estate presentation: stronger visuals, editorial structure, buyer tools, and a softer path into private consultation."}
                 </Text>
                 <HStack spacing={3} flexWrap="wrap">
@@ -268,7 +268,7 @@ export default function ModernFeatures({ properties = [], t }) {
                   </Heading>
                   <Text color={publicBrand.colors.textSoft} fontSize={{ base: "md", md: "lg" }} lineHeight="1.8">
                     {locale === "ru"
-                      ? "Hero, карточки, comparison и detail pages работают как одна история: вдохновить, дать уверенность, помочь выбрать и аккуратно подтолкнуть к действию."
+                      ? "Первый экран, карточки, сравнение и страницы объектов работают как одна история: вдохновить, дать уверенность, помочь выбрать и аккуратно подтолкнуть к действию."
                       : "Hero, cards, comparison, and detail pages now work as one story: inspire, build confidence, support decisions, and gently move toward action."}
                   </Text>
                 </Stack>

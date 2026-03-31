@@ -35,11 +35,16 @@ import {
 } from "views/public/publicBrand";
 import ThemeToggle from "components/ThemeToggle";
 
-const brandShellStyles = {
-  bg: "rgba(7, 12, 20, 0.45)",
-  border: `1px solid rgba(227, 211, 184, 0.08)`,
-  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-  backdropFilter: "blur(20px)",
+const scrollToHashTarget = (hash) => {
+  const targetId = String(hash || "").replace(/^#/, "");
+  if (!targetId) return;
+
+  window.requestAnimationFrame(() => {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
 };
 
 export default function ModernHeader({ largeLogo = [] }) {
@@ -58,6 +63,12 @@ export default function ModernHeader({ largeLogo = [] }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (location.hash) {
+      scrollToHashTarget(location.hash);
+    }
+  }, [location.hash, location.pathname]);
+
   const brandRecord = useMemo(
     () => resolvePublicBrandRecord(getActiveBrandRecord(branding)),
     [branding],
@@ -71,20 +82,41 @@ export default function ModernHeader({ largeLogo = [] }) {
     () => [
       { label: t("publicListing.homeNav"), href: "/" },
       { label: t("publicListing.propertiesNav"), href: "/offers" },
-      { label: t("publicListing.aboutNav"), href: "/#about" },
+      { label: currentLanguage === "ru" ? "Маршруты" : "Routes", href: "/#market" },
+      { label: currentLanguage === "ru" ? "Подборки" : "Collections", href: "/#collections" },
+      { label: currentLanguage === "ru" ? "Сервисы" : "Services", href: "/#services" },
       { label: t("publicListing.contactNav"), href: "/#contact" },
     ],
-    [t],
+    [currentLanguage, t],
   );
 
-  const navigateAndClose = (href) => {
+  const navigateToHref = (href) => {
+    const hash = href.includes("#") ? `#${href.split("#")[1]}` : "";
+
+    if (hash && location.pathname === "/" && location.hash === hash) {
+      scrollToHashTarget(hash);
+      return;
+    }
+
     navigate(href);
+
+    if (hash && location.pathname === "/") {
+      scrollToHashTarget(hash);
+    }
+  };
+
+  const navigateAndClose = (href) => {
+    navigateToHref(href);
     onClose();
   };
 
   const isActivePath = (href) => {
+    const hash = href.includes("#") ? href.split("#")[1] : "";
     const basePath = href.split("#")[0];
     if (!basePath) return false;
+    if (basePath === "/" && hash) {
+      return location.pathname === "/" && location.hash === `#${hash}`;
+    }
     if (basePath === "/") return location.pathname === "/";
     return location.pathname.startsWith(basePath);
   };
@@ -189,7 +221,7 @@ export default function ModernHeader({ largeLogo = [] }) {
                 return (
                   <Button
                     key={link.href}
-                    onClick={() => navigate(link.href)}
+                    onClick={() => navigateToHref(link.href)}
                     variant="ghost"
                     position="relative"
                     color="whiteAlpha.600"

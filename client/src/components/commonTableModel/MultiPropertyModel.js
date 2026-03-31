@@ -16,6 +16,7 @@ import { fetchPropertyData } from "../../redux/slices/propertySlice.js";
 import PropertyTable from "./Property.js";
 import { GiClick } from "react-icons/gi";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const MultiPropertyModel = (props) => {
   const { onClose, isOpen, fieldName, setFieldValue, data, selectedItems } =
@@ -27,6 +28,8 @@ const MultiPropertyModel = (props) => {
   const [contactData, setContactData] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
@@ -70,7 +73,7 @@ const MultiPropertyModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Property</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать объект" : "Select Property"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -79,7 +82,7 @@ const MultiPropertyModel = (props) => {
             </Flex>
           ) : (
             <PropertyTable
-              title={"Property"}
+              title={isRu ? "Объект" : "Property"}
               isLoding={isLoding}
               allData={data}
               tableData={data}
@@ -103,9 +106,9 @@ const MultiPropertyModel = (props) => {
             leftIcon={<GiClick />}
           >
             {" "}
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
-          <Button onClick={() => onClose()}>Close</Button>
+          <Button onClick={() => onClose()}>{isRu ? "Закрыть" : "Close"}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

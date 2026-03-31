@@ -19,7 +19,8 @@ import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 
 const UserModel = (props) => {
-  const { t: i18nT } = useTranslation();
+  const { t: i18nT, i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
   
   // Safe translation with fallback - always returns a string
   const safeT = (key, fallback) => {
@@ -107,7 +108,7 @@ const UserModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select User</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать пользователя" : "Select User"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -142,7 +143,7 @@ const UserModel = (props) => {
             onClick={handleSubmit}
           >
             {" "}
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
           <Button
             variant="outline"
@@ -150,7 +151,7 @@ const UserModel = (props) => {
             colorScheme="red"
             onClick={() => onClose()}
           >
-            Close
+            {isRu ? "Закрыть" : "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>

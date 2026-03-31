@@ -25,7 +25,7 @@ import { publicBrand } from "views/public/publicBrand";
 
 const copy = {
   ru: {
-    badge: "Guided finder",
+    badge: "Пошаговый подбор",
     title: "Консьерж-подбор",
     subtitle: "Короткий сценарий, который мягко сужает поиск и отправляет в подходящие предложения.",
     open: "Открыть подбор",
@@ -64,6 +64,22 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
   const [bedrooms, setBedrooms] = useState("all");
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const text = copy[locale];
+  const budgetOptions =
+    locale === "ru"
+      ? [
+          { value: "all", label: text.all },
+          { value: "150000", label: "До 150 000 $" },
+          { value: "300000", label: "До 300 000 $" },
+          { value: "600000", label: "До 600 000 $" },
+          { value: "1000000", label: "До 1 000 000 $" },
+        ]
+      : [
+          { value: "all", label: text.all },
+          { value: "150000", label: "$150k" },
+          { value: "300000", label: "$300k" },
+          { value: "600000", label: "$600k" },
+          { value: "1000000", label: "$1M" },
+        ];
 
   const match = useMemo(() => {
     return properties.find((property) => {
@@ -162,11 +178,11 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
                   borderRadius="18px"
                   h="54px"
                 >
-                  <option value="all">{text.all}</option>
-                  <option value="150000">$150k</option>
-                  <option value="300000">$300k</option>
-                  <option value="600000">$600k</option>
-                  <option value="1000000">$1M</option>
+                  {budgetOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl>

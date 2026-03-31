@@ -53,6 +53,7 @@ export function SidebarLinks(props) {
     "Reporting and Analytics": "navigation.reports",
     Reports: "navigation.reports",
     "Admin Setting": "navigation.adminSettings",
+    "Storefront Filters": "navigation.storefrontFilters",
     Settings: "navigation.settings",
     Users: "navigation.users",
     Roles: "navigation.roles",

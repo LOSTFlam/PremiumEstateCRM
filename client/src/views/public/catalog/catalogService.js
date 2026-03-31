@@ -1,6 +1,44 @@
 import { getApi } from "services/api";
 import { extractCollection, extractEntity } from "utils/normalizeResponse";
-import { getCatalogDataset, samplePublicProperties } from "./catalogData";
+import {
+  getCatalogDataset,
+  normalizePropertyTypeKey,
+  samplePublicProperties,
+} from "./catalogData";
+
+const MIN_TYPE_COUNTS = {
+  house: 3,
+  apartment: 3,
+  land: 3,
+  commercial: 3,
+};
+
+const ensureCatalogCoverage = (properties = []) => {
+  const liveProperties = Array.isArray(properties) ? properties.filter(Boolean) : [];
+  if (!liveProperties.length) {
+    return samplePublicProperties;
+  }
+
+  const counts = liveProperties.reduce((acc, property) => {
+    const key = normalizePropertyTypeKey(property?.propertyType);
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const seenIds = new Set(liveProperties.map((property) => property?._id).filter(Boolean));
+  const additions = samplePublicProperties.filter((property) => {
+    const key = normalizePropertyTypeKey(property?.propertyType);
+    if (!MIN_TYPE_COUNTS[key]) return false;
+    if ((counts[key] || 0) >= MIN_TYPE_COUNTS[key]) return false;
+    if (seenIds.has(property?._id)) return false;
+
+    counts[key] = (counts[key] || 0) + 1;
+    seenIds.add(property?._id);
+    return true;
+  });
+
+  return [...liveProperties, ...additions];
+};
 
 export const fetchPublicCatalog = async (options = {}) => {
   try {
@@ -10,7 +48,7 @@ export const fetchPublicCatalog = async (options = {}) => {
       ...options,
     });
     const collection = extractCollection(response);
-    return getCatalogDataset(collection.length ? collection : samplePublicProperties);
+    return getCatalogDataset(ensureCatalogCoverage(collection));
   } catch (error) {
     console.error("Failed to fetch public catalog:", error);
     return getCatalogDataset(samplePublicProperties);

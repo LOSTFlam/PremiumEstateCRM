@@ -15,6 +15,13 @@ export default function Footer() {
     { base: "gray.400", lg: "gray.400" },
     "gray.400",
   );
+  const isRu =
+    typeof window !== "undefined" &&
+    String(
+      window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "ru",
+    )
+      .toLowerCase()
+      .startsWith("ru");
   return (
     <Flex
       zIndex="3"
@@ -48,18 +55,25 @@ export default function Footer() {
             href="https://premiumestate.com/"
           >
             {" "}
-            PremiumEstate.
+            {isRu ? "Премиум Эстейт." : "PremiumEstate."}
           </Link>{" "}
-          Need help, facing issues, or looking for a new feature? Contact us for
-          paid support and services at{" "}
-          <Link
-            href="mailto:alternatecrm@gmail.com"
-            fontWeight="500"
-            color={textColor}
-            target="_blank"
-          >
-            alternatecrm@gmail.com
-          </Link>
+          {isRu
+            ? "Нужна помощь, доработка или поддержка? Напишите нам:"
+            : "Need help, facing issues, or looking for a new feature? Contact us for paid support and services at"}{" "}
+          {isRu ? (
+            <Text as="span" fontWeight="500" color={textColor}>
+              через форму обращения в системе
+            </Text>
+          ) : (
+            <Link
+              href="mailto:alternatecrm@gmail.com"
+              fontWeight="500"
+              color={textColor}
+              target="_blank"
+            >
+              alternatecrm@gmail.com
+            </Link>
+          )}
         </Text>
       </Text>
       {/* <List display='flex'>

@@ -55,6 +55,7 @@ import {
   setSearchValue,
 } from "../../redux/slices/advanceSearchSlice";
 import { commonUtils } from "utils/utils";
+import { useTranslation } from "react-i18next";
 
 const CommonCheckTable = (props) => {
   const {
@@ -92,6 +93,8 @@ const CommonCheckTable = (props) => {
   } = props;
   const { dataLength } = props;
   const { handleSearchType } = props;
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -563,13 +566,11 @@ const CommonCheckTable = (props) => {
                     onClick={() => setManageColumnsModel(true)}
                     width={"165px"}
                   >
-                    {" "}
-                    Manage Columns
+                    {isRu ? "Настроить колонки" : "Manage Columns"}
                   </MenuItem>
                   {typeof setIsImport === "function" && (
                     <MenuItem width={"165px"} onClick={() => setIsImport(true)}>
-                      {" "}
-                      Import {title}
+                      {isRu ? "Импорт данных" : `Import ${title}`}
                     </MenuItem>
                   )}
                   {exportColumn !== false && allData && allData?.length > 0 && (
@@ -580,16 +581,16 @@ const CommonCheckTable = (props) => {
                         onClick={() => handleExportLeads("csv")}
                       >
                         {selectedValues && selectedValues?.length > 0
-                          ? "Export Selected Data as CSV"
-                          : "Export as CSV"}
+                          ? (isRu ? "Экспорт выбранного в таблицу CSV" : "Export Selected Data as CSV")
+                          : (isRu ? "Экспорт в таблицу CSV" : "Export as CSV")}
                       </MenuItem>
                       <MenuItem
                         width={"165px"}
                         onClick={() => handleExportLeads("xlsx")}
                       >
                         {selectedValues && selectedValues?.length > 0
-                          ? "Export Selected Data as Excel"
-                          : "Export as Excel"}
+                          ? (isRu ? "Экспорт выбранного в таблицу Excel" : "Export Selected Data as Excel")
+                          : (isRu ? "Экспорт в таблицу Excel" : "Export as Excel")}
                       </MenuItem>
                     </>
                   )}
@@ -603,7 +604,7 @@ const CommonCheckTable = (props) => {
                 variant="brand"
                 leftIcon={<AddIcon />}
               >
-                Add New
+                {isRu ? "Добавить" : "Add New"}
               </Button>
             )}
             {BackButton && BackButton}
@@ -818,7 +819,7 @@ const CommonCheckTable = (props) => {
         >
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Manage Columns</ModalHeader>
+            <ModalHeader>{isRu ? "Настроить колонки" : "Manage Columns"}</ModalHeader>
             <ModalCloseButton
               onClick={() => {
                 setManageColumnsModel(false);
@@ -851,7 +852,7 @@ const CommonCheckTable = (props) => {
                 disabled={isLoding ? true : false}
                 size="sm"
               >
-                {isLoding ? <Spinner /> : "Save"}
+                {isLoding ? <Spinner /> : isRu ? "Сохранить" : "Save"}
               </Button>
               <Button
                 variant="outline"
@@ -859,7 +860,7 @@ const CommonCheckTable = (props) => {
                 size="sm"
                 onClick={() => handleColumnClose()}
               >
-                Close
+                {isRu ? "Закрыть" : "Close"}
               </Button>
             </ModalFooter>
           </ModalContent>

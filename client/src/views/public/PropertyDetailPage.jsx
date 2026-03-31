@@ -48,10 +48,65 @@ import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
 import { publicBrand } from "views/public/publicBrand";
 
+const detailCopy = {
+  ru: {
+    loadError: "Не удалось загрузить объект",
+    removed: "Удалено из избранного",
+    added: "Добавлено в избранное",
+    linkCopied: "Ссылка скопирована",
+    linkCopyFailed: "Не удалось скопировать ссылку",
+    notFound: "Объект не найден",
+    back: "Назад в каталог",
+    bedrooms: "Спальни",
+    bathrooms: "Санузлы",
+    area: "Площадь",
+    price: "Цена",
+    onRequest: "По запросу",
+    available: "Доступно",
+    property: "Объект",
+    viewAllPhotos: (count) => `Открыть все фото: ${count}`,
+    description: "Описание",
+    noDescription: "Описание пока не добавлено.",
+    features: "Особенности",
+    videoTour: "Видеообзор",
+    videoThumb: "Превью видео",
+    schedule: "Записаться на просмотр",
+    requestInfo: "Запросить информацию",
+    makeOffer: "Отправить предложение",
+    contactAgent: "Связаться с агентом",
+  },
+  en: {
+    loadError: "Error loading property",
+    removed: "Removed from favorites",
+    added: "Added to favorites",
+    linkCopied: "Link copied!",
+    linkCopyFailed: "Failed to copy link",
+    notFound: "Property not found",
+    back: "Back to catalog",
+    bedrooms: "Bedrooms",
+    bathrooms: "Bathrooms",
+    area: "Area",
+    price: "Price",
+    onRequest: "On request",
+    available: "Available",
+    property: "Property",
+    viewAllPhotos: (count) => `View all ${count} photos`,
+    description: "Description",
+    noDescription: "No description available.",
+    features: "Features",
+    videoTour: "Video Tour",
+    videoThumb: "Video thumbnail",
+    schedule: "Schedule a Viewing",
+    requestInfo: "Request Information",
+    makeOffer: "Make an Offer",
+    contactAgent: "Contact Agent",
+  },
+};
+
 const PropertyDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,6 +115,8 @@ const PropertyDetailPage = () => {
   const [showVideo, setShowVideo] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadFormType, setLeadFormType] = useState("viewing");
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const copy = detailCopy[locale];
 
   useEffect(() => {
     fetchProperty();
@@ -75,7 +132,7 @@ const PropertyDetailPage = () => {
     } catch (error) {
       console.error("Error fetching property:", error);
       toast({
-        title: "Error loading property",
+        title: copy.loadError,
         status: "error",
         duration: 3000,
       });
@@ -90,10 +147,10 @@ const PropertyDetailPage = () => {
     
     if (isFavorite) {
       newFavorites = favorites.filter((id) => id !== property._id);
-      toast({ title: "Removed from favorites", status: "info", duration: 2000 });
+      toast({ title: copy.removed, status: "info", duration: 2000 });
     } else {
       newFavorites = [...favorites, property._id];
-      toast({ title: "Added to favorites", status: "success", duration: 2000 });
+      toast({ title: copy.added, status: "success", duration: 2000 });
     }
     
     localStorage.setItem("favorites", JSON.stringify(newFavorites));
@@ -103,9 +160,9 @@ const PropertyDetailPage = () => {
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Link copied!", status: "success", duration: 2000 });
+      toast({ title: copy.linkCopied, status: "success", duration: 2000 });
     } catch (error) {
-      toast({ title: "Failed to copy link", status: "error", duration: 2000 });
+      toast({ title: copy.linkCopyFailed, status: "error", duration: 2000 });
     }
   };
 
@@ -130,9 +187,9 @@ const PropertyDetailPage = () => {
     return (
       <Container maxW="8xl" py={20}>
         <Stack spacing={4} align="center">
-          <Heading size="xl">Property not found</Heading>
+          <Heading size="xl">{copy.notFound}</Heading>
           <Button as={RouterLink} to="/offers" colorScheme="green">
-            Back to catalog
+            {copy.back}
           </Button>
         </Stack>
       </Container>
@@ -147,10 +204,10 @@ const PropertyDetailPage = () => {
   };
 
   const amenities = [
-    { icon: MdMeetingRoom, label: "Bedrooms", value: property.numberofBedrooms || "—" },
-    { icon: MdBathtub, label: "Bathrooms", value: property.numberofBathrooms || "—" },
-    { icon: MdOutlineSquareFoot, label: "Area", value: `${property.squareFootage || "—"} m²` },
-    { icon: FiDollarSign, label: "Price", value: `$${property.listingPrice?.toLocaleString() || "On request"}` },
+    { icon: MdMeetingRoom, label: copy.bedrooms, value: property.numberofBedrooms || "—" },
+    { icon: MdBathtub, label: copy.bathrooms, value: property.numberofBathrooms || "—" },
+    { icon: MdOutlineSquareFoot, label: copy.area, value: `${property.squareFootage || "—"} m²` },
+    { icon: FiDollarSign, label: copy.price, value: `$${property.listingPrice?.toLocaleString() || copy.onRequest}` },
   ];
 
   return (
@@ -204,7 +261,7 @@ const PropertyDetailPage = () => {
           color="white"
           fontWeight="600"
         >
-          {property.listingStatus || "Available"}
+          {property.listingStatus || copy.available}
         </Badge>
 
         {/* Gallery Button */}
@@ -219,7 +276,7 @@ const PropertyDetailPage = () => {
             onClick={() => setShowGallery(true)}
             _hover={{ bg: "white" }}
           >
-            View all {property.images.length} photos
+            {copy.viewAllPhotos(property.images.length)}
           </Button>
         )}
       </Box>
@@ -242,7 +299,7 @@ const PropertyDetailPage = () => {
                 >
                   <HStack spacing={2}>
                     <Icon as={propertyTypeIcons[property.propertyTypeKey] || FiHome} />
-                    <Text textTransform="capitalize">{property.propertyTypeKey || "Property"}</Text>
+                    <Text textTransform="capitalize">{property.propertyTypeKey || copy.property}</Text>
                   </HStack>
                 </Badge>
                 {property.features?.map((feature, idx) => (
@@ -269,9 +326,9 @@ const PropertyDetailPage = () => {
             >
               <HStack justify="space-between">
                 <Stack spacing={1}>
-                  <Text color="gray.400" fontSize="sm">Price</Text>
+                  <Text color="gray.400" fontSize="sm">{copy.price}</Text>
                   <Heading size="xl" color="#F5D076">
-                    ${property.listingPrice?.toLocaleString() || "On request"}
+                    ${property.listingPrice?.toLocaleString() || copy.onRequest}
                   </Heading>
                 </Stack>
                 {property.pricePerSqm && (
@@ -315,16 +372,16 @@ const PropertyDetailPage = () => {
 
             {/* Description */}
             <Stack spacing={4}>
-              <Heading size="lg">Description</Heading>
+              <Heading size="lg">{copy.description}</Heading>
               <Text color="gray.300" lineHeight="1.8">
-                {property.propertyDescription || property.marketingDescription || "No description available."}
+                {property.propertyDescription || property.marketingDescription || copy.noDescription}
               </Text>
             </Stack>
 
             {/* Features */}
             {property.features?.length > 0 && (
               <Stack spacing={4}>
-                <Heading size="lg">Features</Heading>
+                <Heading size="lg">{copy.features}</Heading>
                 <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3}>
                   {property.features.map((feature, idx) => (
                     <HStack key={idx} spacing={2}>
@@ -339,7 +396,7 @@ const PropertyDetailPage = () => {
             {/* Video Tour */}
             {property.videoTour && (
               <Stack spacing={4}>
-                <Heading size="lg">Video Tour</Heading>
+                <Heading size="lg">{copy.videoTour}</Heading>
                 <Box
                   borderRadius="20px"
                   overflow="hidden"
@@ -349,7 +406,7 @@ const PropertyDetailPage = () => {
                   cursor="pointer"
                   _hover={{ opacity: 0.9 }}
                 >
-                  <Image src={property.videoThumbnail} alt="Video thumbnail" w="100%" h="100%" objectFit="cover" />
+                  <Image src={property.videoThumbnail} alt={copy.videoThumb} w="100%" h="100%" objectFit="cover" />
                   <Box position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)">
                     <Icon as={FiVideo} boxSize={16} color="white" />
                   </Box>
@@ -379,7 +436,7 @@ const PropertyDetailPage = () => {
                   borderRadius="12px"
                   onClick={() => openLeadForm("viewing")}
                 >
-                  Schedule a Viewing
+                  {copy.schedule}
                 </Button>
                 <Button
                   w="full"
@@ -390,7 +447,7 @@ const PropertyDetailPage = () => {
                   borderRadius="12px"
                   onClick={() => openLeadForm("info")}
                 >
-                  Request Information
+                  {copy.requestInfo}
                 </Button>
                 <Button
                   w="full"
@@ -399,14 +456,14 @@ const PropertyDetailPage = () => {
                   borderRadius="12px"
                   onClick={() => openLeadForm("offer")}
                 >
-                  Make an Offer
+                  {copy.makeOffer}
                 </Button>
               </Stack>
 
               <Divider borderColor="rgba(255,255,255,0.1)" />
 
               <Stack spacing={4} mt={6}>
-                <Text color="gray.400" fontSize="sm">Contact Agent</Text>
+                <Text color="gray.400" fontSize="sm">{copy.contactAgent}</Text>
                 {property.agent && (
                   <HStack spacing={4}>
                     <Box

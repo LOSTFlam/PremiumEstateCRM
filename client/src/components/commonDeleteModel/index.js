@@ -11,11 +11,14 @@ import {
 import Spinner from "components/spinner/Spinner";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CommonDeleteModel = (props) => {
   const { isOpen, onClose, type, handleDeleteData, ids, selectedValues } =
     props;
   const [isLoding, setIsLoding] = useState(false);
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
 
   const handleDelete = () => {
     handleDeleteData(ids, selectedValues);
@@ -30,9 +33,11 @@ const CommonDeleteModel = (props) => {
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete {`${type}`}</ModalHeader>
+          <ModalHeader>{isRu ? "Удалить запись" : `Delete ${`${type}`}`}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>Are You Sure To Delete selected {`${type}`} ?</ModalBody>
+          <ModalBody>
+            {isRu ? "Вы уверены, что хотите удалить выбранную запись?" : `Are You Sure To Delete selected ${`${type}`} ?`}
+          </ModalBody>
           <ModalFooter>
             <Button
               colorScheme="red"
@@ -41,10 +46,10 @@ const CommonDeleteModel = (props) => {
               onClick={handleDelete}
               disabled={isLoding ? true : false}
             >
-              {isLoding ? <Spinner /> : "Yes"}
+              {isLoding ? <Spinner /> : isRu ? "Да" : "Yes"}
             </Button>
             <Button variant="outline" size="sm" onClick={handleClose}>
-              No
+              {isRu ? "Нет" : "No"}
             </Button>
           </ModalFooter>
         </ModalContent>

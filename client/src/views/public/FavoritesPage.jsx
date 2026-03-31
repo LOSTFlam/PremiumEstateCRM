@@ -23,14 +23,81 @@ import { publicBrand } from "views/public/publicBrand";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 
+const pageCopy = {
+  ru: {
+    loadError: "Не удалось загрузить избранное",
+    removed: "Удалено из избранного",
+    cleared: "Избранное очищено",
+    compareLimit: "Можно сравнивать не более 3 объектов",
+    addedToCompare: "Добавлено к сравнению",
+    shareTitle: "Моя подборка объектов",
+    shareText: (count) => `Посмотрите ${count} сохраненных объектов из моей подборки.`,
+    linkCopied: "Ссылка скопирована",
+    pdfTitle: "Моя подборка объектов",
+    generatedOn: "Дата выгрузки",
+    propertyFallback: "Объект",
+    onRequest: "По запросу",
+    bedroomsShort: "сп.",
+    bathroomsShort: "сан.",
+    pdfExported: "Файл успешно сохранен",
+    title: "Ваша подборка",
+    saved: (count) => `${count} ${count === 1 ? "объект" : "объектов"} сохранено`,
+    grid: "Сетка",
+    list: "Список",
+    exportPdf: "Скачать файл",
+    share: "Поделиться",
+    clearAll: "Очистить все",
+    compareSelected: (count) => `${count} ${count === 1 ? "объект выбран" : "объекта выбрано"} для сравнения`,
+    compareNow: "Сравнить сейчас",
+    clear: "Очистить",
+    emptyTitle: "Пока нет избранных объектов",
+    emptyText: "Откройте каталог и сохраните интересные объекты в подборку.",
+    browse: "Открыть каталог",
+    tableHead: ["#", "Название", "Цена", "Площадь", "Спальни", "Санузлы"],
+  },
+  en: {
+    loadError: "Error loading favorites",
+    removed: "Removed from favorites",
+    cleared: "All favorites cleared",
+    compareLimit: "Maximum 3 properties for comparison",
+    addedToCompare: "Added to compare",
+    shareTitle: "My Favorite Properties",
+    shareText: (count) => `Check out these ${count} properties I've saved!`,
+    linkCopied: "Link copied to clipboard",
+    pdfTitle: "My Favorite Properties",
+    generatedOn: "Generated on",
+    propertyFallback: "Property",
+    onRequest: "On request",
+    bedroomsShort: "bed",
+    bathroomsShort: "bath",
+    pdfExported: "PDF exported successfully",
+    title: "My Favorites",
+    saved: (count) => `${count} ${count === 1 ? "property" : "properties"} saved`,
+    grid: "Grid",
+    list: "List",
+    exportPdf: "Export PDF",
+    share: "Share",
+    clearAll: "Clear All",
+    compareSelected: (count) => `${count} property${count !== 1 ? "ies" : "y"} selected for comparison`,
+    compareNow: "Compare Now",
+    clear: "Clear",
+    emptyTitle: "No favorites yet",
+    emptyText: "Start exploring properties and save your favorites here",
+    browse: "Browse Properties",
+    tableHead: ["#", "Name", "Price", "Area", "Bedrooms", "Bathrooms"],
+  },
+};
+
 const FavoritesPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [favorites, setFavorites] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
   const [viewMode, setViewMode] = useState("grid"); // grid or list
   const [loading, setLoading] = useState(true);
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const copy = pageCopy[locale];
 
   useEffect(() => {
     fetchFavorites();
@@ -51,7 +118,7 @@ const FavoritesPage = () => {
     } catch (error) {
       console.error("Error fetching favorites:", error);
       toast({
-        title: "Error loading favorites",
+        title: copy.loadError,
         status: "error",
         duration: 3000,
       });
@@ -67,7 +134,7 @@ const FavoritesPage = () => {
     setFavorites(favorites.filter((p) => p._id !== propertyId));
     
     toast({
-      title: "Removed from favorites",
+      title: copy.removed,
       status: "info",
       duration: 2000,
     });
@@ -78,7 +145,7 @@ const FavoritesPage = () => {
     setFavoriteIds([]);
     setFavorites([]);
     toast({
-      title: "All favorites cleared",
+      title: copy.cleared,
       status: "info",
       duration: 2000,
     });
@@ -90,7 +157,7 @@ const FavoritesPage = () => {
     } else {
       if (compareIds.length >= 3) {
         toast({
-          title: "Maximum 3 properties for comparison",
+          title: copy.compareLimit,
           status: "warning",
           duration: 3000,
         });
@@ -98,7 +165,7 @@ const FavoritesPage = () => {
       }
       setCompareIds([...compareIds, propertyId]);
       toast({
-        title: "Added to compare",
+        title: copy.addedToCompare,
         status: "success",
         duration: 2000,
       });
@@ -107,8 +174,8 @@ const FavoritesPage = () => {
 
   const handleShare = async () => {
     const shareData = {
-      title: "My Favorite Properties",
-      text: `Check out these ${favorites.length} properties I've saved!`,
+      title: copy.shareTitle,
+      text: copy.shareText(favorites.length),
       url: window.location.href,
     };
 
@@ -118,7 +185,7 @@ const FavoritesPage = () => {
       } else {
         await navigator.clipboard.writeText(window.location.href);
         toast({
-          title: "Link copied to clipboard",
+          title: copy.linkCopied,
           status: "success",
           duration: 2000,
         });
@@ -134,26 +201,30 @@ const FavoritesPage = () => {
     // Title
     doc.setFontSize(20);
     doc.setTextColor(212, 175, 55);
-    doc.text("My Favorite Properties", 14, 20);
+    doc.text(copy.pdfTitle, 14, 20);
     
     // Date
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
+    doc.text(
+      `${copy.generatedOn}: ${new Date().toLocaleDateString(locale === "ru" ? "ru-RU" : "en-US")}`,
+      14,
+      28,
+    );
     
     // Property table
     const tableData = favorites.map((property, index) => [
       index + 1,
-      property.name || property.propertyAddress || "Property",
-      `$${property.listingPrice?.toLocaleString() || "On request"}`,
+      property.name || property.propertyAddress || copy.propertyFallback,
+      `$${property.listingPrice?.toLocaleString() || copy.onRequest}`,
       `${property.squareFootage || "—"} m²`,
-      `${property.numberofBedrooms || "—"} bed`,
-      `${property.numberofBathrooms || "—"} bath`,
+      `${property.numberofBedrooms || "—"} ${copy.bedroomsShort}`,
+      `${property.numberofBathrooms || "—"} ${copy.bathroomsShort}`,
     ]);
 
     doc.autoTable({
       startY: 35,
-      head: [["#", "Name", "Price", "Area", "Bedrooms", "Bathrooms"]],
+      head: [copy.tableHead],
       body: tableData,
       theme: "striped",
       headStyles: { fillColor: [212, 175, 55] },
@@ -164,7 +235,7 @@ const FavoritesPage = () => {
     doc.save(`favorites-${Date.now()}.pdf`);
     
     toast({
-      title: "PDF exported successfully",
+      title: copy.pdfExported,
       status: "success",
       duration: 3000,
     });
@@ -195,11 +266,11 @@ const FavoritesPage = () => {
               <HStack>
                 <Icon as={FiHeart} color="#F5D076" boxSize={8} />
                 <Heading size="xl">
-                  {t("publicListing.favoritesTitle") || "My Favorites"}
+                  {t("publicListing.favoritesTitle") || copy.title}
                 </Heading>
               </HStack>
               <Text color="gray.400">
-                {favorites.length} {favorites.length === 1 ? "property" : "properties"} saved
+                {copy.saved(favorites.length)}
               </Text>
             </Stack>
 
@@ -220,7 +291,7 @@ const FavoritesPage = () => {
                   onClick={() => setViewMode("grid")}
                   leftIcon={<FiGrid />}
                 >
-                  Grid
+                  {copy.grid}
                 </Button>
                 <Button
                   size="sm"
@@ -231,7 +302,7 @@ const FavoritesPage = () => {
                   onClick={() => setViewMode("list")}
                   leftIcon={<FiList />}
                 >
-                  List
+                  {copy.list}
                 </Button>
               </HStack>
 
@@ -245,7 +316,7 @@ const FavoritesPage = () => {
                     color="#F5D076"
                     onClick={exportToPDF}
                   >
-                    Export PDF
+                    {copy.exportPdf}
                   </Button>
                   <Button
                     leftIcon={<FiShare2 />}
@@ -253,7 +324,7 @@ const FavoritesPage = () => {
                     borderColor="rgba(255,255,255,0.2)"
                     onClick={handleShare}
                   >
-                    Share
+                    {copy.share}
                   </Button>
                   <Button
                     leftIcon={<FiTrash2 />}
@@ -261,7 +332,7 @@ const FavoritesPage = () => {
                     color="red.400"
                     onClick={clearAllFavorites}
                   >
-                    Clear All
+                    {copy.clearAll}
                   </Button>
                 </>
               )}
@@ -280,7 +351,7 @@ const FavoritesPage = () => {
                 <HStack>
                   <Icon as={MdCompareArrows} color="#F5D076" />
                   <Text>
-                    {compareIds.length} property{compareIds.length !== 1 ? "ies" : "y"} selected for comparison
+                    {copy.compareSelected(compareIds.length)}
                   </Text>
                 </HStack>
                 <HStack>
@@ -291,14 +362,14 @@ const FavoritesPage = () => {
                     size="sm"
                     borderRadius="12px"
                   >
-                    Compare Now
+                    {copy.compareNow}
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setCompareIds([])}
                   >
-                    Clear
+                    {copy.clear}
                   </Button>
                 </HStack>
               </HStack>
@@ -310,10 +381,10 @@ const FavoritesPage = () => {
             <Stack spacing={6} align="center" py={20}>
               <Icon as={FiHeart} boxSize={20} color="gray.600" />
               <Heading size="lg" color="gray.500">
-                No favorites yet
+                {copy.emptyTitle}
               </Heading>
               <Text color="gray.400" textAlign="center">
-                Start exploring properties and save your favorites here
+                {copy.emptyText}
               </Text>
               <Button
                 as={RouterLink}
@@ -323,7 +394,7 @@ const FavoritesPage = () => {
                 borderRadius="12px"
                 leftIcon={<FiHeart />}
               >
-                Browse Properties
+                {copy.browse}
               </Button>
             </Stack>
           ) : (

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorBoundary from "components/ErrorBoundary";
@@ -60,14 +60,155 @@ const getStoredUser = () => {
   }
 };
 
+const resolveLocale = () => {
+  if (typeof window === "undefined") return "ru";
+  const stored = window.localStorage?.getItem("i18nextLng");
+  const fallback = stored || window.navigator?.language || "ru";
+  return String(fallback).toLowerCase().startsWith("ru") ? "ru" : "en";
+};
+
+const RU_LEGACY_TEXT_REPLACEMENTS = [
+  ["Track and manage your leads through the sales pipeline", "Отслеживайте лиды и ведите их по воронке продаж"],
+  ["Export Selected Data as Excel", "Экспорт выбранного в таблицу Excel"],
+  ["Export Selected Data as CSV", "Экспорт выбранного в таблицу CSV"],
+  ["No properties with photos yet", "Объектов с фото пока нет"],
+  ["Upload your first property photo", "Загрузите первую фотографию объекта"],
+  ["Property Documents", "Документы объекта"],
+  ["Property Photos", "Фото объектов"],
+  ["Property All Photos", "Все фото объекта"],
+  ["Property All Document", "Все документы объекта"],
+  ["Print as PDF", "Печать в файл"],
+  ["Search properties...", "Поиск объектов..."],
+  ["Search leads...", "Поиск лидов..."],
+  ["Lead Management", "Управление лидами"],
+  ["All Status", "Все статусы"],
+  ["Status updated", "Статус обновлен"],
+  ["Error updating status", "Ошибка обновления статуса"],
+  ["Note added", "Заметка добавлена"],
+  ["Error adding note", "Ошибка добавления заметки"],
+  ["No properties found", "Объекты не найдены"],
+  ["No photos uploaded yet", "Фотографии пока не загружены"],
+  ["Photo Preview", "Просмотр фото"],
+  ["Upload Photos", "Загрузить фото"],
+  ["Uploading...", "Загрузка..."],
+  ["Set as primary", "Сделать основным"],
+  ["Remove photo", "Удалить фото"],
+  ["Manage Columns", "Настроить колонки"],
+  ["Export as Excel", "Экспорт в таблицу Excel"],
+  ["Export as CSV", "Экспорт в таблицу CSV"],
+  ["Add New", "Добавить"],
+  ["Add Note", "Добавить заметку"],
+  ["No leads", "Лидов нет"],
+  ["No property", "Объект не указан"],
+  ["Anonymous", "Без имени"],
+  ["Email Address", "Адрес эл. почты"],
+  ["Non Primary Email", "Дополнительная эл. почта"],
+  ["Call Notes", "Заметки по звонку"],
+  ["Search...", "Поиск..."],
+  ["Select Property", "Выбрать объект"],
+  ["Select Contact", "Выбрать контакт"],
+  ["Select Role", "Выбрать роль"],
+  ["Select User", "Выбрать пользователя"],
+  ["Select Lead", "Выбрать лид"],
+  ["Select", "Выбрать"],
+  ["Close", "Закрыть"],
+  ["Email Template", "Шаблоны писем"],
+  ["Emails", "Письма"],
+  ["Email Id", "Эл. почта"],
+  ["Email", "Эл. почта"],
+  ["Primary", "Основное"],
+  ["Notes", "Заметки"],
+  ["Please Wait...", "Подождите..."],
+  ["No Data Found", "Данные не найдены"],
+  ["No Document Found", "Документы не найдены"],
+  ["File Not Found", "Файл не найден"],
+  ["Not Invoiced", "Не выставлен счет"],
+  ["Not For Profit", "Некоммерческая"],
+  ["None", "Нет"],
+  ["Yes", "Да"],
+  ["No", "Нет"],
+];
+
+function replaceLegacyRuText(value) {
+  if (typeof value !== "string" || !value.trim()) return value;
+
+  let nextValue = value;
+  RU_LEGACY_TEXT_REPLACEMENTS.forEach(([from, to]) => {
+    if (nextValue.includes(from)) {
+      nextValue = nextValue.split(from).join(to);
+    }
+  });
+
+  return nextValue;
+}
+
+function LegacyRuTextGuard() {
+  useEffect(() => {
+    if (resolveLocale() !== "ru" || typeof document === "undefined") return undefined;
+
+    const applyReplacements = () => {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let currentNode = walker.nextNode();
+
+      while (currentNode) {
+        const parentTag = currentNode.parentElement?.tagName;
+        if (parentTag !== "SCRIPT" && parentTag !== "STYLE") {
+          const replaced = replaceLegacyRuText(currentNode.textContent || "");
+          if (replaced !== currentNode.textContent) {
+            currentNode.textContent = replaced;
+          }
+        }
+        currentNode = walker.nextNode();
+      }
+
+      document.querySelectorAll("*").forEach((element) => {
+        ["placeholder", "aria-label", "title"].forEach((attribute) => {
+          const value = element.getAttribute(attribute);
+          const replaced = replaceLegacyRuText(value);
+          if (value && replaced !== value) {
+            element.setAttribute(attribute, replaced);
+          }
+        });
+      });
+    };
+
+    const rafId = window.requestAnimationFrame(applyReplacements);
+    const observer = new MutationObserver(() => {
+      window.requestAnimationFrame(applyReplacements);
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["placeholder", "aria-label", "title"],
+    });
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      observer.disconnect();
+    };
+  }, []);
+
+  return null;
+}
+
 function RouteFallback() {
+  const locale = resolveLocale();
   return (
     <Box minH="100vh" bg="#e7e5e4" color="#111827" display="flex" alignItems="center">
       <Container maxW="md">
         <Stack spacing={4} align="center" textAlign="center">
           <Spinner size="xl" color="orange.400" thickness="4px" />
-          <Text fontWeight="700">Loading Premium Estate</Text>
-          <Text color="gray.500">Preparing the next screen and listing data.</Text>
+          <Text fontWeight="700">
+            {locale === "ru" ? "Загружаем экран" : "Loading Premium Estate"}
+          </Text>
+          <Text color="gray.500">
+            {locale === "ru"
+              ? "Подготавливаем интерфейс и данные по объектам."
+              : "Preparing the next screen and listing data."}
+          </Text>
         </Stack>
       </Container>
     </Box>
@@ -158,6 +299,7 @@ ReactDOM.render(
             <Router>
               <ChakraProvider theme={theme}>
                 <ToastContainer />
+                <LegacyRuTextGuard />
                 <App />
                 {ReactQueryDevtools ? (
                   <Suspense fallback={null}>

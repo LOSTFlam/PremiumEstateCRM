@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon } from "@chakra-ui/react";
 import { FaCreativeCommonsBy, FaWpforms } from "react-icons/fa";
+import { FiSliders } from "react-icons/fi";
 import { TbExchange, TbTableColumn } from "react-icons/tb";
 import { GrValidate } from "react-icons/gr";
 import { VscFileSubmodule } from "react-icons/vsc";
@@ -8,6 +9,7 @@ import { ROLE_PATH } from "../../roles";
 import { createRoute } from "../../utils/routeHelpers";
 
 const AdminSetting = React.lazy(() => import("views/admin/adminSetting"));
+const StorefrontFilters = React.lazy(() => import("views/admin/storefrontFilters"));
 const Role = React.lazy(() => import("views/admin/role"));
 const CustomField = React.lazy(() => import("views/admin/customField"));
 const ChangeImage = React.lazy(() => import("views/admin/image"));
@@ -23,6 +25,13 @@ export const adminRoutes = [
     under: "admin",
     path: "/admin-setting",
     component: AdminSetting,
+  }),
+  createRoute({
+    name: "Storefront Filters",
+    layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
+    path: "/storefront-filters",
+    icon: <Icon as={FiSliders} width="20px" height="20px" color="inherit" />,
+    component: StorefrontFilters,
   }),
   createRoute({
     name: "Roles",

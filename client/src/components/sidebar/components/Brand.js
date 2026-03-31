@@ -6,6 +6,7 @@ import { HSeparator } from "components/separator/Separator";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../../redux/slices/imageSlice";
+import i18next from "i18next";
 
 export function SidebarBrand(props) {
   const { setOpenSidebar, openSidebar, from, largeLogo } = props;
@@ -13,6 +14,7 @@ export function SidebarBrand(props) {
   //   Chakra color mode
   let logoColor = useColorModeValue("navy.700", "white");
   let sidebarBg = useColorModeValue("white", "navy.900");
+  const isRu = i18next.language?.startsWith("ru");
 
   return (
     <Flex
@@ -48,7 +50,7 @@ export function SidebarBrand(props) {
             userSelect={"none"}
             color={logoColor}
           >
-            {openSidebar === true ? "PremiumEstate" : "PE"}
+            {openSidebar === true ? (isRu ? "Премиум Эстейт" : "PremiumEstate") : (isRu ? "ПЭ" : "PE")}
           </Heading>
         )}
       </Flex>

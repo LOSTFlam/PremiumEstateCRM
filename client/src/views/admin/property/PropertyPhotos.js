@@ -9,11 +9,12 @@ import { FiUpload, FiImage } from "react-icons/fi";
 import DataNotFound from "components/notFoundData";
 
 const PropertyPhotos = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const isRu = i18n.language?.startsWith("ru");
 
   const cardBg = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
@@ -44,9 +45,9 @@ const PropertyPhotos = () => {
     <Grid templateColumns="repeat(12, 1fr)" gap={4}>
       <GridItem colSpan={12}>
         <Flex justify="space-between" align="center" mb={4}>
-          <Heading size="lg">{t?.("navigation.propertyPhotos") || "Property Photos"}</Heading>
+          <Heading size="lg">{t?.("navigation.propertyPhotos") || (isRu ? "Фото объектов" : "Property Photos")}</Heading>
           <Input
-            placeholder="Search properties..."
+            placeholder={isRu ? "Поиск объектов..." : "Search properties..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             maxW="300px"
@@ -74,7 +75,7 @@ const PropertyPhotos = () => {
                 <Text color="gray.500" fontSize="sm" noOfLines={1}>{property.propertyAddress}</Text>
                 <Flex justify="space-between" align="center">
                   <Text fontSize="sm" color="green.600" fontWeight="bold">
-                    {property.propertyPhotos?.length || 0} {property.propertyPhotos?.length === 1 ? 'photo' : 'photos'}
+                    {property.propertyPhotos?.length || 0} {isRu ? "фото" : property.propertyPhotos?.length === 1 ? "photo" : "photos"}
                   </Text>
                   <Icon as={FiImage} boxSize={5} color="gray.400" />
                 </Flex>
@@ -89,7 +90,7 @@ const PropertyPhotos = () => {
                   >
                     <img
                       src={property.propertyPhotos[0]?.img}
-                      alt={property.name || "Property"}
+                      alt={property.name || (isRu ? "Объект" : "Property")}
                       style={{ width: "100%", height: "200px", objectFit: "cover" }}
                     />
                     {property.propertyPhotos.length > 1 && (
@@ -104,7 +105,7 @@ const PropertyPhotos = () => {
                         borderRadius="md"
                         fontSize="sm"
                       >
-                        +{property.propertyPhotos.length - 1} more
+                        +{property.propertyPhotos.length - 1} {isRu ? "еще" : "more"}
                       </Box>
                     )}
                   </Box>
@@ -135,7 +136,9 @@ const PropertyPhotos = () => {
             <Flex direction="column" align="center" gap={4}>
               <Icon as={FiUpload} boxSize={12} color="gray.400" />
               <Text color="gray.500" fontSize="lg">
-                {searchQuery ? "No properties found" : "No properties with photos yet"}
+                {searchQuery
+                  ? (isRu ? "Объекты не найдены" : "No properties found")
+                  : (isRu ? "Объектов с фото пока нет" : "No properties with photos yet")}
               </Text>
               {!searchQuery && <DataNotFound />}
             </Flex>

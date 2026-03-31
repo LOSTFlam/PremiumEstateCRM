@@ -55,6 +55,7 @@ const routeNameToI18nKey = {
   "Reporting and Analytics": "navigation.reports",
   Reports: "navigation.reports",
   "Admin Setting": "navigation.adminSettings",
+  "Storefront Filters": "navigation.storefrontFilters",
   Users: "navigation.users",
   Roles: "navigation.roles",
   "Custom Fields": "navigation.customFields",
@@ -70,6 +71,9 @@ const translateRouteName = (name) => {
   const key = routeNameToI18nKey[name];
   return key ? i18next.t(key) : name;
 };
+
+const defaultBrandLabel = () =>
+  i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";
 
 // Custom Chakra theme
 export default function User(props) {
@@ -217,7 +221,7 @@ export default function User(props) {
   routes.push(...activeRoutes);
 
   const getActiveRoute = (routes) => {
-    let activeRoute = "PremiumEstate";
+    let activeRoute = defaultBrandLabel();
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
         let collapseActiveRoute = getActiveRoute(routes[i].items);
@@ -234,7 +238,7 @@ export default function User(props) {
           window.location.href.indexOf(routes[i].path.replace("/:id", "")) !==
           -1
         ) {
-          return routes[i].name;
+          return translateRouteName(routes[i].name);
         }
       }
     }

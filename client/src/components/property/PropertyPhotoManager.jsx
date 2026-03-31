@@ -29,12 +29,13 @@ import { FiUpload, FiX, FiImage, FiPlus, FiTrash2, FiEdit } from 'react-icons/fi
 import { postApi, putApi, getApi } from 'services/api';
 
 export default function PropertyPhotoManager({ propertyId, photos = [], onChange, isOpen, onClose }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [localPhotos, setLocalPhotos] = useState(photos || []);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const isRu = i18n.language?.startsWith('ru');
 
   const cardBg = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -71,7 +72,9 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
 
         toast({
           title: t?.('publicListing.photosUploaded') || 'Photos uploaded',
-          description: `${files.length} photo(s) uploaded successfully`,
+          description: isRu
+            ? `${files.length} фото успешно загружено`
+            : `${files.length} photo(s) uploaded successfully`,
           status: 'success',
           duration: 3000,
         });
@@ -79,7 +82,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
     } catch (error) {
       console.error('Upload error:', error);
       toast({
-        title: t?.('publicListing.uploadError') || 'Upload error',
+        title: t?.('publicListing.uploadError') || (isRu ? 'Ошибка загрузки' : 'Upload error'),
         status: 'error',
         duration: 3000,
       });
@@ -114,7 +117,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
       });
     } catch (error) {
       toast({
-        title: t?.('publicListing.removeError') || 'Error removing photo',
+        title: t?.('publicListing.removeError') || (isRu ? 'Ошибка удаления фото' : 'Error removing photo'),
         status: 'error',
         duration: 3000,
       });
@@ -145,7 +148,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
       });
     } catch (error) {
       toast({
-        title: 'Error setting primary image',
+        title: isRu ? 'Ошибка выбора основного изображения' : 'Error setting primary image',
         status: 'error',
         duration: 3000,
       });
@@ -156,7 +159,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
     <>
       <Flex direction="column" gap={4}>
         <Flex justify="space-between" align="center">
-          <Heading size="md">{t?.('publicListing.propertyImages') || 'Property Images'}</Heading>
+          <Heading size="md">{t?.('publicListing.propertyImages') || (isRu ? 'Изображения объекта' : 'Property Images')}</Heading>
           <Input
             type="file"
             accept="image/*"
@@ -172,10 +175,10 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
             size="sm"
             leftIcon={<Icon as={FiUpload} />}
             isLoading={isUploading}
-            loadingText="Uploading..."
+            loadingText={isRu ? "Загрузка..." : "Uploading..."}
             cursor="pointer"
           >
-            Upload Photos
+            {isRu ? "Загрузить фото" : "Upload Photos"}
           </Button>
         </Flex>
 
@@ -197,7 +200,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
               >
                 <Image
                   src={photo?.img}
-                  alt={photo?.title || `Photo ${index + 1}`}
+                  alt={photo?.title || (isRu ? `Фото ${index + 1}` : `Photo ${index + 1}`)}
                   w="100%"
                   h="200px"
                   objectFit="cover"
@@ -217,7 +220,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
                     py={1}
                     borderRadius="md"
                   >
-                    Primary
+                    {isRu ? "Основное" : "Primary"}
                   </Badge>
                 )}
 
@@ -232,9 +235,9 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
                   transition="opacity 0.3s"
                 >
                   {index > 0 && (
-                    <Tooltip label="Set as primary">
+                    <Tooltip label={isRu ? "Сделать основным" : "Set as primary"}>
                       <IconButton
-                        aria-label="Set as primary"
+                        aria-label={isRu ? "Сделать основным" : "Set as primary"}
                         icon={<FiImage />}
                         size="sm"
                         colorScheme="green"
@@ -246,9 +249,9 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
                       />
                     </Tooltip>
                   )}
-                  <Tooltip label="Remove photo">
+                  <Tooltip label={isRu ? "Удалить фото" : "Remove photo"}>
                     <IconButton
-                      aria-label="Remove photo"
+                      aria-label={isRu ? "Удалить фото" : "Remove photo"}
                       icon={<FiTrash2 />}
                       size="sm"
                       colorScheme="red"
@@ -274,10 +277,10 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
           >
             <Icon as={FiImage} boxSize={12} color="gray.400" mb={3} />
             <Text color="gray.500" fontSize="lg">
-              No photos uploaded yet
+              {isRu ? "Фотографии пока не загружены" : "No photos uploaded yet"}
             </Text>
             <Text color="gray.400" fontSize="sm" mt={2}>
-              Upload your first property photo
+              {isRu ? "Загрузите первую фотографию объекта" : "Upload your first property photo"}
             </Text>
           </Box>
         )}
@@ -287,13 +290,13 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
       <Modal isOpen={!!selectedPhoto} onClose={() => setSelectedPhoto(null)} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{selectedPhoto?.title || 'Photo Preview'}</ModalHeader>
+          <ModalHeader>{selectedPhoto?.title || (isRu ? 'Просмотр фото' : 'Photo Preview')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedPhoto && (
               <Image
                 src={selectedPhoto?.img}
-                alt={selectedPhoto?.title || 'Photo'}
+                alt={selectedPhoto?.title || (isRu ? 'Фото' : 'Photo')}
                 w="100%"
                 maxH="600px"
                 objectFit="contain"
@@ -302,7 +305,7 @@ export default function PropertyPhotoManager({ propertyId, photos = [], onChange
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={() => setSelectedPhoto(null)}>
-              Close
+              {isRu ? "Закрыть" : "Close"}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -30,12 +30,105 @@ import { publicBrand } from "views/public/publicBrand";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 
+const compareCopy = {
+  ru: {
+    noSelection: "Объекты для сравнения не выбраны",
+    loadError: "Не удалось загрузить объекты",
+    removed: "Объект удален из сравнения",
+    pdfTitle: "Сравнение объектов",
+    pdfExported: "Файл успешно сохранен",
+    feature: "Параметр",
+    property: (index) => `Объект ${index + 1}`,
+    price: "Цена",
+    onRequest: "По запросу",
+    area: "Площадь (м²)",
+    bedrooms: "Спальни",
+    bathrooms: "Санузлы",
+    type: "Тип объекта",
+    location: "Локация",
+    basicInfo: "Основная информация",
+    details: "Параметры",
+    locationTitle: "Расположение",
+    features: "Особенности",
+    name: "Название",
+    propertyType: "Тип объекта",
+    floors: "Этажи",
+    yearBuilt: "Год постройки",
+    address: "Адрес",
+    city: "Город",
+    state: "Регион",
+    zip: "Индекс",
+    parking: "Парковка",
+    garage: "Гараж",
+    pool: "Бассейн",
+    garden: "Сад",
+    balcony: "Балкон",
+    yes: "Да",
+    no: "Нет",
+    emptyTitle: "Объекты для сравнения пока не выбраны",
+    emptyText: "Добавьте объекты из каталога, чтобы посмотреть их рядом.",
+    browse: "Открыть каталог",
+    title: "Сравнение объектов",
+    comparing: (count) => `Сравниваем ${count} ${count === 1 ? "объект" : "объекта"}`,
+    back: "Назад в каталог",
+    exportPdf: "Скачать файл",
+    remove: "Убрать",
+    different: "Есть отличия",
+  },
+  en: {
+    noSelection: "No properties selected for comparison",
+    loadError: "Error loading properties",
+    removed: "Property removed from comparison",
+    pdfTitle: "Property Comparison",
+    pdfExported: "PDF exported successfully",
+    feature: "Feature",
+    property: (index) => `Property ${index + 1}`,
+    price: "Price",
+    onRequest: "On request",
+    area: "Area (m²)",
+    bedrooms: "Bedrooms",
+    bathrooms: "Bathrooms",
+    type: "Type",
+    location: "Location",
+    basicInfo: "Basic Info",
+    details: "Details",
+    locationTitle: "Location",
+    features: "Features",
+    name: "Name",
+    propertyType: "Property Type",
+    floors: "Floors",
+    yearBuilt: "Year Built",
+    address: "Address",
+    city: "City",
+    state: "State",
+    zip: "ZIP Code",
+    parking: "Parking",
+    garage: "Garage",
+    pool: "Pool",
+    garden: "Garden",
+    balcony: "Balcony",
+    yes: "Yes",
+    no: "No",
+    emptyTitle: "No properties selected for comparison",
+    emptyText: "Select properties from the catalog to compare them",
+    browse: "Browse Properties",
+    title: "Property Comparison",
+    comparing: (count) => `Comparing ${count} propert${count !== 1 ? "ies" : "y"}`,
+    back: "Back to Catalog",
+    exportPdf: "Export PDF",
+    remove: "Remove",
+    different: "Different",
+  },
+};
+
 const ComparePage = () => {
   const [searchParams] = useSearchParams();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
   const toast = useToast();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const copy = compareCopy[locale];
 
   useEffect(() => {
     fetchProperties();
@@ -47,7 +140,7 @@ const ComparePage = () => {
       const ids = searchParams.get("ids");
       if (!ids) {
         toast({
-          title: "No properties selected for comparison",
+          title: copy.noSelection,
           status: "warning",
           duration: 3000,
         });
@@ -61,7 +154,7 @@ const ComparePage = () => {
     } catch (error) {
       console.error("Error fetching properties:", error);
       toast({
-        title: "Error loading properties",
+        title: copy.loadError,
         status: "error",
         duration: 3000,
       });
@@ -84,7 +177,7 @@ const ComparePage = () => {
     }
     
     toast({
-      title: "Property removed from comparison",
+      title: copy.removed,
       status: "info",
       duration: 2000,
     });
@@ -96,17 +189,17 @@ const ComparePage = () => {
     // Title
     doc.setFontSize(20);
     doc.setTextColor(212, 175, 55);
-    doc.text("Property Comparison", 14, 20);
+    doc.text(copy.pdfTitle, 14, 20);
     
     // Property names
-    const headers = ["Feature", ...properties.map((p, i) => `Property ${i + 1}`)];
+    const headers = [copy.feature, ...properties.map((p, i) => copy.property(i))];
     const rows = [
-      ["Price", ...properties.map((p) => `$${p.listingPrice?.toLocaleString() || "On request"}`)],
-      ["Area (m²)", ...properties.map((p) => p.squareFootage || "—")],
-      ["Bedrooms", ...properties.map((p) => p.numberofBedrooms || "—")],
-      ["Bathrooms", ...properties.map((p) => p.numberofBathrooms || "—")],
-      ["Type", ...properties.map((p) => p.propertyTypeKey || "—")],
-      ["Location", ...properties.map((p) => p.propertyAddress || "—")],
+      [copy.price, ...properties.map((p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}`)],
+      [copy.area, ...properties.map((p) => p.squareFootage || "—")],
+      [copy.bedrooms, ...properties.map((p) => p.numberofBedrooms || "—")],
+      [copy.bathrooms, ...properties.map((p) => p.numberofBathrooms || "—")],
+      [copy.type, ...properties.map((p) => p.propertyTypeKey || "—")],
+      [copy.location, ...properties.map((p) => p.propertyAddress || "—")],
     ];
 
     doc.autoTable({
@@ -123,7 +216,7 @@ const ComparePage = () => {
     doc.save(`comparison-${Date.now()}.pdf`);
     
     toast({
-      title: "PDF exported successfully",
+      title: copy.pdfExported,
       status: "success",
       duration: 3000,
     });
@@ -131,40 +224,40 @@ const ComparePage = () => {
 
   const comparisonFeatures = [
     {
-      category: "Basic Info",
+      category: copy.basicInfo,
       features: [
-        { key: "name", label: "Name", getValue: (p) => p.name || p.propertyAddress },
-        { key: "price", label: "Price", getValue: (p) => `$${p.listingPrice?.toLocaleString() || "On request"}` },
-        { key: "type", label: "Property Type", getValue: (p) => p.propertyTypeKey || "—" },
+        { key: "name", label: copy.name, getValue: (p) => p.name || p.propertyAddress },
+        { key: "price", label: copy.price, getValue: (p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}` },
+        { key: "type", label: copy.propertyType, getValue: (p) => p.propertyTypeKey || "—" },
       ],
     },
     {
-      category: "Details",
+      category: copy.details,
       features: [
-        { key: "area", label: "Area (m²)", getValue: (p) => p.squareFootage || "—" },
-        { key: "bedrooms", label: "Bedrooms", getValue: (p) => p.numberofBedrooms || "—" },
-        { key: "bathrooms", label: "Bathrooms", getValue: (p) => p.numberofBathrooms || "—" },
-        { key: "floors", label: "Floors", getValue: (p) => p.floors || "—" },
-        { key: "year", label: "Year Built", getValue: (p) => p.yearBuilt || "—" },
+        { key: "area", label: copy.area, getValue: (p) => p.squareFootage || "—" },
+        { key: "bedrooms", label: copy.bedrooms, getValue: (p) => p.numberofBedrooms || "—" },
+        { key: "bathrooms", label: copy.bathrooms, getValue: (p) => p.numberofBathrooms || "—" },
+        { key: "floors", label: copy.floors, getValue: (p) => p.floors || "—" },
+        { key: "year", label: copy.yearBuilt, getValue: (p) => p.yearBuilt || "—" },
       ],
     },
     {
-      category: "Location",
+      category: copy.locationTitle,
       features: [
-        { key: "address", label: "Address", getValue: (p) => p.propertyAddress || "—" },
-        { key: "city", label: "City", getValue: (p) => p.city || "—" },
-        { key: "state", label: "State", getValue: (p) => p.state || "—" },
-        { key: "zip", label: "ZIP Code", getValue: (p) => p.zipCode || "—" },
+        { key: "address", label: copy.address, getValue: (p) => p.propertyAddress || "—" },
+        { key: "city", label: copy.city, getValue: (p) => p.city || "—" },
+        { key: "state", label: copy.state, getValue: (p) => p.state || "—" },
+        { key: "zip", label: copy.zip, getValue: (p) => p.zipCode || "—" },
       ],
     },
     {
-      category: "Features",
+      category: copy.features,
       features: [
-        { key: "parking", label: "Parking", getValue: (p) => p.parkingSpaces || "—" },
-        { key: "garage", label: "Garage", getValue: (p) => p.garage ? "Yes" : "No" },
-        { key: "pool", label: "Pool", getValue: (p) => p.pool ? "Yes" : "No" },
-        { key: "garden", label: "Garden", getValue: (p) => p.garden ? "Yes" : "No" },
-        { key: "balcony", label: "Balcony", getValue: (p) => p.balcony ? "Yes" : "No" },
+        { key: "parking", label: copy.parking, getValue: (p) => p.parkingSpaces || "—" },
+        { key: "garage", label: copy.garage, getValue: (p) => (p.garage ? copy.yes : copy.no) },
+        { key: "pool", label: copy.pool, getValue: (p) => (p.pool ? copy.yes : copy.no) },
+        { key: "garden", label: copy.garden, getValue: (p) => (p.garden ? copy.yes : copy.no) },
+        { key: "balcony", label: copy.balcony, getValue: (p) => (p.balcony ? copy.yes : copy.no) },
       ],
     },
   ];
@@ -186,10 +279,10 @@ const ComparePage = () => {
         <Stack spacing={6} align="center">
           <Icon as={MdCompareArrows} boxSize={20} color="gray.600" />
           <Heading size="lg" color="gray.500">
-            No properties selected for comparison
+            {copy.emptyTitle}
           </Heading>
           <Text color="gray.400">
-            Select properties from the catalog to compare them
+            {copy.emptyText}
           </Text>
           <Button
             as={RouterLink}
@@ -199,7 +292,7 @@ const ComparePage = () => {
             borderRadius="12px"
             leftIcon={<FiArrowLeft />}
           >
-            Browse Properties
+            {copy.browse}
           </Button>
         </Stack>
       </Container>
@@ -216,11 +309,11 @@ const ComparePage = () => {
               <HStack>
                 <Icon as={MdCompareArrows} color="#F5D076" boxSize={8} />
                 <Heading size="xl">
-                  Property Comparison
+                  {copy.title}
                 </Heading>
               </HStack>
               <Text color="gray.400">
-                Comparing {properties.length} propert{properties.length !== 1 ? "ies" : "y"}
+                {copy.comparing(properties.length)}
               </Text>
             </Stack>
 
@@ -232,7 +325,7 @@ const ComparePage = () => {
                 borderColor="rgba(255,255,255,0.2)"
                 leftIcon={<FiArrowLeft />}
               >
-                Back to Catalog
+                {copy.back}
               </Button>
               <Button
                 leftIcon={<FiDownload />}
@@ -241,7 +334,7 @@ const ComparePage = () => {
                 color="#F5D076"
                 onClick={exportToPDF}
               >
-                Export PDF
+                {copy.exportPdf}
               </Button>
             </HStack>
           </Flex>
@@ -280,7 +373,7 @@ const ComparePage = () => {
                             property.propertyTypeKey === "land" ? LuTrees :
                             LuMapPin
                           } />
-                          <Text textTransform="capitalize">{property.propertyTypeKey || "Property"}</Text>
+                          <Text textTransform="capitalize">{property.propertyTypeKey || copy.propertyType}</Text>
                         </HStack>
                       </Badge>
                       <Button
@@ -290,14 +383,14 @@ const ComparePage = () => {
                         onClick={() => removeProperty(property._id)}
                         leftIcon={<FiX />}
                       >
-                        Remove
+                        {copy.remove}
                       </Button>
                     </HStack>
                     <Heading size="md" noOfLines={2}>
                       {property.name || property.propertyAddress}
                     </Heading>
                     <Text color="#F5D076" fontWeight="bold" fontSize="xl">
-                      ${property.listingPrice?.toLocaleString() || "On request"}
+                      ${property.listingPrice?.toLocaleString() || copy.onRequest}
                     </Text>
                     <HStack color="gray.400" fontSize="sm">
                       <Icon as={LuMapPin} />
@@ -347,7 +440,7 @@ const ComparePage = () => {
                               <Text>{feature.label}</Text>
                               {isDifferent && (
                                 <Badge colorScheme="yellow" fontSize="xs">
-                                  Different
+                                  {copy.different}
                                 </Badge>
                               )}
                             </HStack>
@@ -355,7 +448,7 @@ const ComparePage = () => {
                           {values.map((value, idx) => (
                             <Td key={idx} borderRight="1px solid rgba(255,255,255,0.1)">
                               <HStack>
-                                {value !== "—" && value !== "On request" && (
+                                {value !== "—" && value !== copy.onRequest && (
                                   <Icon as={FiCheck} color="green.400" boxSize={4} />
                                 )}
                                 <Text>{value}</Text>

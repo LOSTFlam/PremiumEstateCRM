@@ -11,6 +11,7 @@ import {
 import AdminNavbarLinks from "components/navbar/NavbarLinksAdmin";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import i18next from "i18next";
 
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { AiOutlineMenuFold } from "react-icons/ai";
@@ -38,6 +39,8 @@ export default function AdminNavbar(props) {
     largeLogo,
     routes,
   } = props;
+  const brandName = i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";
+  const brandMark = i18next.language?.startsWith("ru") ? "ПЭ" : "PE";
   // Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
   let mainText = useColorModeValue("navy.700", "white");
   let secondaryText = useColorModeValue("gray.700", "white");
@@ -179,7 +182,7 @@ export default function AdminNavbar(props) {
                 onClick={() => !props?.from && setOpenSidebar(!openSidebar)}
                 userSelect={"none"}
               >
-                {openSidebar === true ? "PremiumEstate" : "PE"}
+                {openSidebar === true ? brandName : brandMark}
               </Heading>
             )}
           </Flex>
@@ -203,7 +206,7 @@ export default function AdminNavbar(props) {
               />
             ) : (
               <Heading my={4} cursor={"pointer"} userSelect={"none"}>
-                {openSidebar === true ? "PremiumEstate" : "PE"}
+                {openSidebar === true ? brandName : brandMark}
               </Heading>
             )}
           </Link>

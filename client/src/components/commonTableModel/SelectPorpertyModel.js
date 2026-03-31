@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { GiClick } from "react-icons/gi";
 import { useDispatch } from "react-redux";
 import { fetchPropertyCustomFiled } from "../../redux/slices/propertyCustomFiledSlice.js";
+import { useTranslation } from "react-i18next";
 
 const SelectPorpertyModel = (props) => {
   const { onClose, isOpen, fieldName, setFieldValue, data } = props;
@@ -23,6 +24,8 @@ const SelectPorpertyModel = (props) => {
   const [isLoding, setIsLoding] = useState(false);
   const [columns, setColumns] = useState([]);
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
 
   const handleSubmit = async () => {
     try {
@@ -59,7 +62,7 @@ const SelectPorpertyModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Property</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать объект" : "Select Property"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -68,7 +71,7 @@ const SelectPorpertyModel = (props) => {
             </Flex>
           ) : (
             <CommonCheckTable
-              title="Property"
+              title={isRu ? "Объект" : "Property"}
               isLoding={isLoding}
               columnData={columns ?? []}
               allData={data ?? []}
@@ -97,7 +100,7 @@ const SelectPorpertyModel = (props) => {
             disabled={isLoding ? true : false}
             leftIcon={<GiClick />}
           >
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
           <Button
             variant="outline"
@@ -105,7 +108,7 @@ const SelectPorpertyModel = (props) => {
             colorScheme="red"
             onClick={() => onClose()}
           >
-            Close
+            {isRu ? "Закрыть" : "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>

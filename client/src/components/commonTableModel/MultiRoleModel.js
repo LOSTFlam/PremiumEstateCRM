@@ -18,7 +18,8 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const MultiRoleModel = (props) => {
-  const { t: i18nT } = useTranslation();
+  const { t: i18nT, i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
   
   // Safe translation with fallback - always returns a string
   const safeT = (key, fallback) => {
@@ -103,7 +104,7 @@ const MultiRoleModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Role</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать роль" : "Select Role"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -137,7 +138,7 @@ const MultiRoleModel = (props) => {
             onClick={handleSubmit}
           >
             {" "}
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
           <Button
             variant="outline"
@@ -145,7 +146,7 @@ const MultiRoleModel = (props) => {
             colorScheme="red"
             onClick={() => onClose()}
           >
-            Close
+            {isRu ? "Закрыть" : "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>

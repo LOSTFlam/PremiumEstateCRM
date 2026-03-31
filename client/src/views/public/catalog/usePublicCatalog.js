@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { fetchPublicStorefrontSettings } from "services/storefrontSettings";
+import {
+  DEFAULT_STOREFRONT_PRESETS,
+  getStorefrontPresetBySlug,
+  resolveStorefrontPresetSlug,
+} from "utils/storefrontPresets";
 import {
   getCompareIds,
   getFavoriteIds,
@@ -12,29 +18,16 @@ import {
 } from "./catalogStorage";
 import {
   formatCompactNumber,
-  getDocumentCount,
-  getFloorPlanCount,
   getPhotoCount,
   isRichListing,
-  normalizePropertyTypeKey,
-  parsePrice,
 } from "./catalogData";
+import {
+  DEFAULT_PUBLIC_FILTERS,
+  extractPresetFilters,
+  filterAndSortCatalogProperties,
+} from "./catalogFilters";
 import { fetchPublicCatalog } from "./catalogService";
 import { getSeoCollectionConfig } from "./seoCollections";
-
-export const DEFAULT_PUBLIC_FILTERS = {
-  search: "",
-  status: "all",
-  type: "all",
-  sortBy: "latest",
-  page: 1,
-  minPrice: "",
-  maxPrice: "",
-  bedrooms: "all",
-  bathrooms: "all",
-  onlyWithPhotos: false,
-  onlyRich: false,
-};
 
 const booleanFromParam = (value) => value === "1" || value === "true";
 const numberParam = (value, fallback = 1) => {
@@ -42,20 +35,29 @@ const numberParam = (value, fallback = 1) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
-const buildFiltersFromParams = (searchParams, forcedType = null) => ({
-  ...DEFAULT_PUBLIC_FILTERS,
-  search: searchParams.get("search") || "",
-  status: searchParams.get("status") || "all",
-  type: forcedType || searchParams.get("type") || "all",
-  sortBy: searchParams.get("sort") || "latest",
-  page: numberParam(searchParams.get("page"), 1),
-  minPrice: searchParams.get("minPrice") || "",
-  maxPrice: searchParams.get("maxPrice") || "",
-  bedrooms: searchParams.get("bedrooms") || "all",
-  bathrooms: searchParams.get("bathrooms") || "all",
-  onlyWithPhotos: booleanFromParam(searchParams.get("withPhotos")),
-  onlyRich: booleanFromParam(searchParams.get("rich")),
-});
+const buildFiltersFromParams = (searchParams, forcedType = null, presetFilters = null) => {
+  const preset = extractPresetFilters(presetFilters);
+  const hasWithPhotos = searchParams.has("withPhotos");
+  const hasRich = searchParams.has("rich");
+
+  return {
+    ...DEFAULT_PUBLIC_FILTERS,
+    ...preset,
+    search: searchParams.get("search") || preset.search || "",
+    status: searchParams.get("status") || preset.status || "all",
+    type: forcedType || searchParams.get("type") || preset.type || "all",
+    sortBy: searchParams.get("sort") || preset.sortBy || "latest",
+    page: numberParam(searchParams.get("page"), 1),
+    minPrice: searchParams.get("minPrice") || preset.minPrice || "",
+    maxPrice: searchParams.get("maxPrice") || preset.maxPrice || "",
+    bedrooms: searchParams.get("bedrooms") || preset.bedrooms || "all",
+    bathrooms: searchParams.get("bathrooms") || preset.bathrooms || "all",
+    onlyWithPhotos: hasWithPhotos ? booleanFromParam(searchParams.get("withPhotos")) : Boolean(preset.onlyWithPhotos),
+    onlyRich: hasRich ? booleanFromParam(searchParams.get("rich")) : Boolean(preset.onlyRich),
+    verificationStatus: searchParams.get("verificationStatus") || preset.verificationStatus || "all",
+    featuredCollection: searchParams.get("collection") || preset.featuredCollection || "",
+  };
+};
 
 const applyFiltersToParams = (filters) => {
   const params = new URLSearchParams();
@@ -71,6 +73,8 @@ const applyFiltersToParams = (filters) => {
   if (filters.bathrooms !== "all") params.set("bathrooms", String(filters.bathrooms));
   if (filters.onlyWithPhotos) params.set("withPhotos", "1");
   if (filters.onlyRich) params.set("rich", "1");
+  if (filters.verificationStatus !== "all") params.set("verificationStatus", String(filters.verificationStatus));
+  if (filters.featuredCollection) params.set("collection", String(filters.featuredCollection));
 
   return params;
 };
@@ -86,13 +90,6 @@ const buildSavedSearchLabel = (filters, language = "en") => {
   return parts.join(" · ");
 };
 
-const getRichScore = (property) =>
-  (isRichListing(property) ? 1000 : 0) +
-  getPhotoCount(property) * 10 +
-  getDocumentCount(property) * 5 +
-  getFloorPlanCount(property) * 8 +
-  String(property?.marketingDescription || property?.propertyDescription || "").length;
-
 export const usePublicCatalog = ({
   forcedType = null,
   collectionSlug = "",
@@ -102,15 +99,56 @@ export const usePublicCatalog = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState(buildFiltersFromParams(searchParams, forcedType));
+  const [presetsLoading, setPresetsLoading] = useState(true);
+  const activePresetSlug = useMemo(
+    () => resolveStorefrontPresetSlug({ forcedType, collectionSlug }),
+    [collectionSlug, forcedType],
+  );
+  const [storefrontPresets, setStorefrontPresets] = useState(DEFAULT_STOREFRONT_PRESETS);
+  const activePreset = useMemo(
+    () => getStorefrontPresetBySlug(storefrontPresets, activePresetSlug),
+    [activePresetSlug, storefrontPresets],
+  );
+  const [filters, setFilters] = useState(
+    buildFiltersFromParams(
+      searchParams,
+      forcedType,
+      getStorefrontPresetBySlug(DEFAULT_STOREFRONT_PRESETS, activePresetSlug),
+    ),
+  );
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
   const [recentIds, setRecentIds] = useState([]);
   const [savedSearches, setSavedSearches] = useState([]);
 
   useEffect(() => {
-    setFilters(buildFiltersFromParams(searchParams, forcedType));
-  }, [forcedType, searchParams]);
+    setFilters(buildFiltersFromParams(searchParams, forcedType, activePreset));
+  }, [activePreset, forcedType, searchParams]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const loadPresets = async () => {
+      setPresetsLoading(true);
+
+      try {
+        const response = await fetchPublicStorefrontSettings();
+        if (!ignore) {
+          setStorefrontPresets(response.presets);
+        }
+      } finally {
+        if (!ignore) {
+          setPresetsLoading(false);
+        }
+      }
+    };
+
+    loadPresets();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -135,47 +173,10 @@ export const usePublicCatalog = ({
     [collectionSlug, language],
   );
 
-  const filteredProperties = useMemo(() => {
-    const search = filters.search.trim().toLowerCase();
-    const minPrice = parsePrice(filters.minPrice);
-    const maxPrice = parsePrice(filters.maxPrice);
-
-    const base = properties.filter((property) => {
-      const propertyTypeKey =
-        property?.propertyTypeKey || normalizePropertyTypeKey(property?.propertyType);
-      const price = parsePrice(property?.listingPrice);
-      const bedrooms = Number(property?.numberofBedrooms || 0);
-      const bathrooms = Number(property?.numberofBathrooms || 0);
-      const status = String(property?.listingStatus || "").toLowerCase();
-      const matchesCollection = collectionConfig?.filter ? collectionConfig.filter(property) : true;
-
-      return (
-        matchesCollection &&
-        (!search || property?.searchableText?.includes(search)) &&
-        (filters.status === "all" || status.includes(String(filters.status).toLowerCase())) &&
-        (filters.type === "all" || propertyTypeKey === filters.type) &&
-        (!minPrice || price >= minPrice) &&
-        (!maxPrice || price <= maxPrice) &&
-        (filters.bedrooms === "all" || bedrooms >= Number(filters.bedrooms)) &&
-        (filters.bathrooms === "all" || bathrooms >= Number(filters.bathrooms)) &&
-        (!filters.onlyWithPhotos || getPhotoCount(property) > 0) &&
-        (!filters.onlyRich || isRichListing(property))
-      );
-    });
-
-    return [...base].sort((left, right) => {
-      if (filters.sortBy === "priceHigh") {
-        return parsePrice(right?.listingPrice) - parsePrice(left?.listingPrice);
-      }
-      if (filters.sortBy === "priceLow") {
-        return parsePrice(left?.listingPrice) - parsePrice(right?.listingPrice);
-      }
-      if (filters.sortBy === "bestFilled") {
-        return getRichScore(right) - getRichScore(left);
-      }
-      return new Date(right?.updatedDate || right?.createdDate || 0) - new Date(left?.updatedDate || left?.createdDate || 0);
-    });
-  }, [collectionConfig, filters, properties]);
+  const filteredProperties = useMemo(
+    () => filterAndSortCatalogProperties(properties, filters),
+    [filters, properties],
+  );
 
   const totalPages = Math.max(Math.ceil(filteredProperties.length / pageSize), 1);
   const currentPage = Math.min(filters.page || 1, totalPages);
@@ -241,6 +242,7 @@ export const usePublicCatalog = ({
   const resetFilters = () => {
     setFilters({
       ...DEFAULT_PUBLIC_FILTERS,
+      ...extractPresetFilters(activePreset),
       type: forcedType || "all",
     });
   };
@@ -291,7 +293,7 @@ export const usePublicCatalog = ({
     featuredProperties,
     savedProperties,
     recentProperties,
-    loading,
+    loading: loading || presetsLoading,
     filters: { ...filters, page: currentPage },
     updateFilters,
     resetFilters,
@@ -309,5 +311,8 @@ export const usePublicCatalog = ({
     stats,
     activeFilterCount,
     collectionConfig,
+    activePreset,
+    activePresetSlug,
+    storefrontPresets,
   };
 };

@@ -16,6 +16,7 @@ import { fetchContactCustomFiled } from "../../redux/slices/contactCustomFiledSl
 import { fetchContactData } from "../../redux/slices/contactSlice.js";
 import { GiClick } from "react-icons/gi";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const MultiContactModel = (props) => {
   const { onClose, isOpen, fieldName, setFieldValue, data } = props;
@@ -24,6 +25,8 @@ const MultiContactModel = (props) => {
   const [contactData, setContactData] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
@@ -64,7 +67,7 @@ const MultiContactModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Contact</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать контакт" : "Select Contact"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -73,7 +76,7 @@ const MultiContactModel = (props) => {
             </Flex>
           ) : (
             <ContactTable
-              title={"Contacts"}
+              title={isRu ? "Контакты" : "Contacts"}
               isLoding={isLoding}
               allData={data}
               tableData={data}
@@ -97,9 +100,9 @@ const MultiContactModel = (props) => {
             leftIcon={<GiClick />}
           >
             {" "}
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
-          <Button onClick={() => onClose()}>Close</Button>
+          <Button onClick={() => onClose()}>{isRu ? "Закрыть" : "Close"}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

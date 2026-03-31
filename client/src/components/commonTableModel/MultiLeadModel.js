@@ -16,6 +16,7 @@ import { GiClick } from "react-icons/gi";
 import { fetchLeadCustomFiled } from "../../redux/slices/leadCustomFiledSlice";
 import { useDispatch } from "react-redux";
 import { fetchLeadData } from "../../redux/slices/leadSlice";
+import { useTranslation } from "react-i18next";
 
 const MultiLeadModel = (props) => {
   const title = "Leads";
@@ -26,6 +27,8 @@ const MultiLeadModel = (props) => {
   const [isLoding, setIsLoding] = useState(false);
   const [columns, setColumns] = useState([]);
   const [leadData, setLeadData] = useState([]);
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
 
@@ -70,7 +73,7 @@ const MultiLeadModel = (props) => {
     <Modal onClose={onClose} size="full" isOpen={isOpen}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Lead</ModalHeader>
+        <ModalHeader>{isRu ? "Выбрать лид" : "Select Lead"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoding ? (
@@ -84,7 +87,7 @@ const MultiLeadModel = (props) => {
               selectedValues={selectedValues}
               setSelectedValues={setSelectedValues}
               columnsData={columns}
-              title="Lead"
+              title={isRu ? "Лид" : "Lead"}
             />
           )}
         </ModalBody>
@@ -96,9 +99,9 @@ const MultiLeadModel = (props) => {
             leftIcon={<GiClick />}
           >
             {" "}
-            {isLoding ? <Spinner /> : "Select"}
+            {isLoding ? <Spinner /> : isRu ? "Выбрать" : "Select"}
           </Button>
-          <Button onClick={() => onClose()}>Close</Button>
+          <Button onClick={() => onClose()}>{isRu ? "Закрыть" : "Close"}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -37,8 +37,10 @@ import { Link as RouterLink } from "react-router-dom";
 import {
   FiBookmark,
   FiFilter,
+  FiHome,
   FiLink,
-  FiSearch,
+  FiShield,
+  FiTrendingUp,
   FiX,
 } from "react-icons/fi";
 import {
@@ -46,29 +48,41 @@ import {
   MdCompareArrows,
   MdFavoriteBorder,
 } from "react-icons/md";
+import { LuBuilding2, LuTrees } from "react-icons/lu";
 import ModernFooter from "components/ModernFooter";
 import ModernHeader from "components/ModernHeader";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import GuidedFinder from "components/property/AIPropertyMatcher";
+import {
+  COLLECTION_STOREFRONT_SLUGS,
+  PRIMARY_STOREFRONT_SLUGS,
+  getStorefrontPresetMeta,
+} from "utils/storefrontPresets";
 import { publicBrand } from "views/public/publicBrand";
-import { getSeoCollectionCards } from "./seoCollections";
+import {
+  countCatalogProperties,
+  extractPresetFilters,
+} from "./catalogFilters";
+import { getSeoCollectionConfig } from "./seoCollections";
 import { usePublicCatalog } from "./usePublicCatalog";
 
 const shellCopy = {
   ru: {
-    badge: "Signature collection",
+    badge: "Кураторская витрина",
     title: "Каталог домов, квартир, участков и коммерческой недвижимости",
     subtitle:
-      "Плотная витрина с buyer tools, сохраненными поисками и карточками, в которых удобно сравнивать, возвращаться и принимать решение.",
+      "Плотная витрина с инструментами выбора, сохраненными поисками и карточками, в которых удобно сравнивать, возвращаться и принимать решение.",
     filterTitle: "Параметры подбора",
     filterText:
-      "Соберите shortlist по типу, бюджету и наполненности карточек. Состояние фильтров синхронизируется с URL.",
+      "Соберите подборку по типу, бюджету и наполненности карточек. Состояние фильтров синхронизируется с адресной строкой.",
     searchLabel: "Поиск",
     searchPlaceholder: "Адрес, тип, район, описание",
     typeLabel: "Тип объекта",
     statusLabel: "Статус",
     bedroomsLabel: "Спальни от",
     bathroomsLabel: "Санузлы от",
+    verificationLabel: "Проверка",
+    collectionLabel: "Подборка",
     withPhotos: "Только с фото",
     richListings: "Только полные карточки",
     reset: "Сбросить",
@@ -88,7 +102,7 @@ const shellCopy = {
     sortLow: "Цена по возрастанию",
     sortRich: "Лучшее наполнение",
     resultsLabel: "объектов",
-    savedShortlist: "в shortlist",
+    savedShortlist: "в подборке",
     compareLabel: "в сравнении",
     favoritesLabel: "в избранном",
     richLabel: "полных карточек",
@@ -102,6 +116,11 @@ const shellCopy = {
     statusNew: "Новое",
     statusActive: "Активно",
     statusPending: "В резерве",
+    verificationAll: "Любая проверка",
+    verificationVerified: "Проверено",
+    verificationReview: "На проверке",
+    verificationPending: "Ожидает проверки",
+    collectionAll: "Все подборки",
     minBudget: "Бюджет от",
     maxBudget: "Бюджет до",
     applySaved: "Применить",
@@ -109,7 +128,7 @@ const shellCopy = {
     openCollection: "Открыть подборку",
     summaryTitle: "Витрина для уверенного выбора",
     summaryText:
-      "Каталог остается быстрым и прикладным, но теперь визуально соответствует премиальной подаче и buyer journey.",
+      "Каталог остается быстрым и прикладным, но теперь визуально соответствует премиальной подаче и спокойному сценарию выбора.",
   },
   en: {
     badge: "Signature collection",
@@ -125,6 +144,8 @@ const shellCopy = {
     statusLabel: "Status",
     bedroomsLabel: "Bedrooms from",
     bathroomsLabel: "Bathrooms from",
+    verificationLabel: "Verification",
+    collectionLabel: "Collection",
     withPhotos: "Only with photos",
     richListings: "Only rich listings",
     reset: "Reset",
@@ -158,6 +179,11 @@ const shellCopy = {
     statusNew: "New",
     statusActive: "Active",
     statusPending: "Pending",
+    verificationAll: "Any verification",
+    verificationVerified: "Verified",
+    verificationReview: "Under review",
+    verificationPending: "Pending verification",
+    collectionAll: "All collections",
     minBudget: "Budget from",
     maxBudget: "Budget to",
     applySaved: "Apply",
@@ -176,7 +202,7 @@ const optionStyles = {
   h: "54px",
 };
 
-const buildActiveFilterChips = (filters, copy) => {
+const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) => {
   const chips = [];
   if (filters.search) chips.push({ key: "search", label: filters.search });
   if (filters.type !== "all") chips.push({ key: "type", label: filters.type });
@@ -185,6 +211,28 @@ const buildActiveFilterChips = (filters, copy) => {
   if (filters.maxPrice) chips.push({ key: "maxPrice", label: `${copy.maxBudget}: ${filters.maxPrice}` });
   if (filters.bedrooms !== "all") chips.push({ key: "bedrooms", label: `${copy.bedroomsLabel} ${filters.bedrooms}+` });
   if (filters.bathrooms !== "all") chips.push({ key: "bathrooms", label: `${copy.bathroomsLabel} ${filters.bathrooms}+` });
+  if (filters.verificationStatus !== "all") {
+    const verificationLabels = {
+      verified: copy.verificationVerified,
+      review: copy.verificationReview,
+      pending: copy.verificationPending,
+    };
+
+    chips.push({
+      key: "verificationStatus",
+      label: `${copy.verificationLabel}: ${
+        verificationLabels[filters.verificationStatus] || filters.verificationStatus
+      }`,
+    });
+  }
+  if (filters.featuredCollection) {
+    chips.push({
+      key: "featuredCollection",
+      label: `${copy.collectionLabel}: ${
+        collectionLabelMap.get(filters.featuredCollection) || filters.featuredCollection
+      }`,
+    });
+  }
   if (filters.onlyWithPhotos) chips.push({ key: "onlyWithPhotos", label: copy.withPhotos });
   if (filters.onlyRich) chips.push({ key: "onlyRich", label: copy.richListings });
   return chips;
@@ -197,6 +245,7 @@ const CatalogFiltersPanel = ({
   resetFilters,
   saveCurrentSearch,
   activeFilterCount,
+  collectionOptions,
 }) => (
   <Stack
     spacing={5}
@@ -316,6 +365,38 @@ const CatalogFiltersPanel = ({
           <option value="3">3+</option>
         </Select>
       </FormControl>
+      <FormControl>
+        <FormLabel color="whiteAlpha.860">{copy.verificationLabel}</FormLabel>
+        <Select
+          value={filters.verificationStatus}
+          onChange={(event) =>
+            updateFilters({ verificationStatus: event.target.value })
+          }
+          {...optionStyles}
+        >
+          <option value="all">{copy.verificationAll}</option>
+          <option value="verified">{copy.verificationVerified}</option>
+          <option value="review">{copy.verificationReview}</option>
+          <option value="pending">{copy.verificationPending}</option>
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel color="whiteAlpha.860">{copy.collectionLabel}</FormLabel>
+        <Select
+          value={filters.featuredCollection}
+          onChange={(event) =>
+            updateFilters({ featuredCollection: event.target.value })
+          }
+          {...optionStyles}
+        >
+          <option value="">{copy.collectionAll}</option>
+          {collectionOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
     </SimpleGrid>
 
     <Stack spacing={3}>
@@ -364,8 +445,8 @@ export default function PublicCatalogShell({
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const copy = shellCopy[i18n.language?.startsWith("ru") ? "ru" : "en"];
-  const collections = useMemo(() => getSeoCollectionCards(i18n.language), [i18n.language]);
   const {
+    properties,
     loading,
     paginatedProperties,
     featuredProperties,
@@ -386,6 +467,8 @@ export default function PublicCatalogShell({
     stats,
     activeFilterCount,
     collectionConfig,
+    activePresetSlug,
+    storefrontPresets,
   } = usePublicCatalog({
     forcedType,
     collectionSlug,
@@ -393,10 +476,101 @@ export default function PublicCatalogShell({
     language: i18n.language,
   });
 
-  const title = collectionConfig?.title || copy.title;
-  const subtitle = collectionConfig?.description || copy.subtitle;
-  const badgeLabel = collectionConfig?.badge || copy.badge;
-  const activeChips = useMemo(() => buildActiveFilterChips(filters, copy), [copy, filters]);
+  const activePresetMeta = useMemo(
+    () => getStorefrontPresetMeta(activePresetSlug, i18n.language),
+    [activePresetSlug, i18n.language],
+  );
+  const presetMap = useMemo(
+    () => new Map((storefrontPresets || []).map((preset) => [preset.slug, preset])),
+    [storefrontPresets],
+  );
+  const title = collectionConfig?.title || activePresetMeta?.title || copy.title;
+  const subtitle = collectionConfig?.description || activePresetMeta?.description || copy.subtitle;
+  const badgeLabel = collectionConfig?.badge || activePresetMeta?.badge || copy.badge;
+  const collectionOptions = useMemo(
+    () =>
+      COLLECTION_STOREFRONT_SLUGS.map((slug) => {
+        const meta = getStorefrontPresetMeta(slug, i18n.language);
+        return {
+          value: slug,
+          label: meta?.adminLabel || slug,
+        };
+      }),
+    [i18n.language],
+  );
+  const collectionLabelMap = useMemo(
+    () => new Map(collectionOptions.map((option) => [option.value, option.label])),
+    [collectionOptions],
+  );
+  const activeChips = useMemo(
+    () => buildActiveFilterChips(filters, copy, collectionLabelMap),
+    [collectionLabelMap, copy, filters],
+  );
+  const experienceCopy = useMemo(
+    () =>
+      i18n.language?.startsWith("ru")
+        ? {
+            segmentsTitle: "Сегменты каталога",
+            segmentsText: "Сильные входы в основные типы спроса без возврата на главную.",
+            routesTitle: "Высокоинтентные маршруты",
+            routesText:
+              "Собрали ключевые сценарии прямо в каталоге: семейные дома, городские квартиры, проверенные карточки, участки под инвестиции и премиальную коммерцию.",
+            routeOpen: "Открыть маршрут",
+          }
+        : {
+            segmentsTitle: "Catalog segments",
+            segmentsText: "Direct entry points into the main demand types without going back to the homepage.",
+            routesTitle: "High-intent routes",
+            routesText:
+              "The main demand scenarios are available directly in the catalog: family homes, city apartments, verified listings, investment land, and premium commercial property.",
+            routeOpen: "Open route",
+          },
+    [i18n.language],
+  );
+  const segmentLinks = useMemo(
+    () =>
+      PRIMARY_STOREFRONT_SLUGS.map((slug) => {
+        const preset = presetMap.get(slug);
+        const meta = getStorefrontPresetMeta(slug, i18n.language);
+
+        if (!preset?.isActive || !meta) return null;
+
+        return {
+          key: slug,
+          label: meta.adminLabel,
+          href: meta.route,
+          count: countCatalogProperties(properties, extractPresetFilters(preset)),
+        };
+      }).filter(Boolean),
+    [i18n.language, presetMap, properties],
+  );
+  const quickRouteCards = useMemo(() => {
+    const iconMap = {
+      "family-homes": FiHome,
+      "city-apartments": LuBuilding2,
+      verified: FiShield,
+      "investment-plots": LuTrees,
+      "premium-commercial": FiTrendingUp,
+    };
+
+    return COLLECTION_STOREFRONT_SLUGS.map((slug) => {
+      const preset = presetMap.get(slug);
+      const config = getSeoCollectionConfig(slug, i18n.language);
+      const meta = getStorefrontPresetMeta(slug, i18n.language);
+
+      if (!preset?.isActive || !config || !meta) return null;
+
+      return {
+        key: slug,
+        title: config.title,
+        text: config.description,
+        href: meta.route,
+        count: countCatalogProperties(properties, extractPresetFilters(preset)),
+        icon: iconMap[slug] || FiTrendingUp,
+        badge: config.badge,
+      };
+    }).filter(Boolean);
+  }, [i18n.language, presetMap, properties]);
 
   const handleSaveSearch = () => {
     saveCurrentSearch();
@@ -507,6 +681,41 @@ export default function PublicCatalogShell({
                     {favoriteIds.length} {copy.favoritesLabel}
                   </Button>
                 </HStack>
+
+                <Box>
+                  <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                    {experienceCopy.segmentsTitle}
+                  </Text>
+                  <Text mt={2} color="whiteAlpha.760" maxW="720px" lineHeight="1.8">
+                    {experienceCopy.segmentsText}
+                  </Text>
+                  <SimpleGrid columns={{ base: 2, md: 3, xl: 5 }} spacing={3} mt={4}>
+                    {segmentLinks.map((segment) => (
+                      <Box
+                        key={segment.key}
+                        as={RouterLink}
+                        to={segment.href}
+                        borderRadius="22px"
+                        px={4}
+                        py={4}
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.12)"
+                        transition="transform 0.25s ease, border-color 0.25s ease"
+                        _hover={{
+                          transform: "translateY(-3px)",
+                          borderColor: "rgba(245,208,118,0.22)",
+                        }}
+                      >
+                        <Text color="white" fontWeight="700" fontSize="sm">
+                          {segment.label}
+                        </Text>
+                        <Text mt={1.5} color="whiteAlpha.620" fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
+                          {segment.count}
+                        </Text>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </Box>
               </Stack>
             </GridItem>
 
@@ -563,6 +772,7 @@ export default function PublicCatalogShell({
               resetFilters={resetFilters}
               saveCurrentSearch={handleSaveSearch}
               activeFilterCount={activeFilterCount}
+              collectionOptions={collectionOptions}
             />
           </GridItem>
 
@@ -649,6 +859,11 @@ export default function PublicCatalogShell({
                               return;
                             }
 
+                            if (chip.key === "featuredCollection") {
+                              updateFilters({ featuredCollection: "" });
+                              return;
+                            }
+
                             updateFilters({ [chip.key]: "all" });
                           }}
                         />
@@ -656,6 +871,81 @@ export default function PublicCatalogShell({
                     ))}
                   </HStack>
                 ) : null}
+              </Box>
+
+              <Box
+                borderRadius="34px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+                bg="white"
+                border="1px solid rgba(9,18,32,0.08)"
+                boxShadow={publicBrand.shadows.soft}
+              >
+                <Grid templateColumns={{ base: "1fr", xl: "0.42fr 0.58fr" }} gap={6} alignItems="start">
+                  <GridItem>
+                    <Text fontSize="xs" color={publicBrand.colors.copper} letterSpacing="0.16em" textTransform="uppercase">
+                      {experienceCopy.routesTitle}
+                    </Text>
+                    <Heading mt={2} size="lg" color={publicBrand.colors.ink}>
+                      {experienceCopy.routesTitle}
+                    </Heading>
+                    <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                      {experienceCopy.routesText}
+                    </Text>
+                  </GridItem>
+
+                  <GridItem>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                      {quickRouteCards.map((route) => (
+                        <Box
+                          key={route.key}
+                          as={RouterLink}
+                          to={route.href}
+                          borderRadius="26px"
+                          px={5}
+                          py={5}
+                          bg="rgba(244,238,229,0.78)"
+                          border="1px solid rgba(9,18,32,0.08)"
+                          transition="transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease"
+                          _hover={{
+                            transform: "translateY(-4px)",
+                            boxShadow: "0 18px 46px rgba(6,10,16,0.12)",
+                            borderColor: "rgba(185,119,55,0.16)",
+                          }}
+                        >
+                          <HStack justify="space-between" align="start">
+                            <Box
+                              w="46px"
+                              h="46px"
+                              borderRadius="18px"
+                              display="grid"
+                              placeItems="center"
+                              bg="rgba(212,175,55,0.10)"
+                              color={publicBrand.colors.copper}
+                            >
+                              <Icon as={route.icon} boxSize={5} />
+                            </Box>
+                            <Text color={publicBrand.colors.textSoft} fontSize="sm">
+                              {route.count}
+                            </Text>
+                          </HStack>
+                          <Heading mt={4} size="sm" color={publicBrand.colors.ink}>
+                            {route.title}
+                          </Heading>
+                          <Text mt={2.5} color={publicBrand.colors.textSoft} lineHeight="1.8" fontSize="sm">
+                            {route.text}
+                          </Text>
+                          <HStack mt={4} spacing={2} color={publicBrand.colors.copper}>
+                            <Text fontWeight="700" fontSize="sm">
+                              {experienceCopy.routeOpen}
+                            </Text>
+                            <MdArrowForward />
+                          </HStack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </GridItem>
+                </Grid>
               </Box>
 
               {savedSearches.length ? (
@@ -791,30 +1081,36 @@ export default function PublicCatalogShell({
                 </Box>
               ) : null}
 
-              {mode === "landing" ? (
+              {quickRouteCards.length ? (
                 <Box>
                   <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
                     {copy.collectionTitle}
                   </Heading>
                   <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={4}>
-                    {collections.slice(0, 6).map((collection) => (
+                    {quickRouteCards.map((collection) => (
                       <Box
-                        key={collection.slug}
+                        key={collection.key}
                         as={RouterLink}
-                        to={`/collections/${collection.slug}`}
+                        to={collection.href}
                         borderRadius="32px"
                         p={5}
                         bg={publicBrand.gradients.panel}
                         color="white"
                         border="1px solid rgba(227, 211, 184, 0.14)"
                         boxShadow={publicBrand.shadows.deep}
+                        transition="transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease"
+                        _hover={{
+                          transform: "translateY(-4px)",
+                          borderColor: "rgba(245,208,118,0.22)",
+                          boxShadow: "0 26px 70px rgba(4, 8, 14, 0.24)",
+                        }}
                       >
                         <Badge bg="rgba(245,208,118,0.14)" color="#f5d076" mb={4}>
                           {collection.badge}
                         </Badge>
                         <Heading size="md">{collection.title}</Heading>
                         <Text mt={3} color="whiteAlpha.800" noOfLines={3}>
-                          {collection.description}
+                          {collection.text}
                         </Text>
                         <HStack mt={5} color="#f5d076">
                           <Icon as={MdArrowForward} />
@@ -847,6 +1143,7 @@ export default function PublicCatalogShell({
               resetFilters={resetFilters}
               saveCurrentSearch={handleSaveSearch}
               activeFilterCount={activeFilterCount}
+              collectionOptions={collectionOptions}
             />
           </DrawerBody>
         </DrawerContent>
