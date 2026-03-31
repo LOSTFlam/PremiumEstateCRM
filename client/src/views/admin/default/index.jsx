@@ -190,34 +190,37 @@ const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/g, ""))
 
 const PropertyMetric = ({ icon, label, value, iconColor, valueSize = "md" }) => (
   <Box
-    borderRadius="22px"
-    px={{ base: 4, md: 5 }}
-    py={{ base: 3, md: 4 }}
+    borderRadius="24px"
+    px={{ base: 5, md: 6, lg: 7 }}
+    py={{ base: 4, md: 5, lg: 6 }}
     bg="rgba(255,255,255,0.72)"
     border="1px solid rgba(18,55,42,0.08)"
     backdropFilter="blur(8px)"
     minW={0}
+    w="100%"
   >
-    <HStack spacing={3} align="start" wrap="wrap">
-      <Circle size="38px" bg={iconColor} color="white" flexShrink={0}>
-        <Icon as={icon} boxSize={4.5} />
+    <HStack spacing={{ base: 3, md: 4 }} align="start" wrap="wrap">
+      <Circle size={{ base: "42px", md: "48px" }} bg={iconColor} color="white" flexShrink={0}>
+        <Icon as={icon} boxSize={{ base: 5, md: 6 }} />
       </Circle>
       <Box flex={1} minW={0}>
         <Text 
-          fontSize="xs" 
+          fontSize={{ base: "sm", md: "md", lg: "lg" }} 
           textTransform="uppercase" 
           letterSpacing="0.08em" 
           color="gray.500"
           noOfLines={2}
+          lineHeight="1.3"
           sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
         >
           {label}
         </Text>
         <Text 
           fontWeight="800" 
-          fontSize={valueSize} 
+          fontSize={{ base: "xl", md: "2xl", lg: "3xl" }} 
           color="gray.800"
-          mt={1}
+          mt={2}
+          lineHeight="1.2"
           sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
         >
           {value}
@@ -412,64 +415,70 @@ export default function PropertyLandingPage() {
                   {t?.("modules.dashboardHome.heroDescription")}
                 </Text>
 
-                <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 3, md: 4 }}>
-                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
+                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={{ base: 4, md: 5, lg: 6 }}>
+                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "md", md: "lg", lg: "xl" }}
                         noOfLines={2}
+                        lineHeight="1.3"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.totalInventory")}
                       </StatLabel>
-                      <StatNumber fontSize={{ base: "2xl", md: "3xl" }}>{properties.length}</StatNumber>
+                      <StatNumber fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}>{properties.length}</StatNumber>
                       <StatHelpText 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "xs", md: "sm" }}
+                        fontSize={{ base: "sm", md: "md" }}
                         noOfLines={2}
+                        lineHeight="1.4"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.totalInventoryHelp")}
                       </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
+                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "md", md: "lg", lg: "xl" }}
                         noOfLines={2}
+                        lineHeight="1.3"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.openInventory")}
                       </StatLabel>
-                      <StatNumber fontSize={{ base: "2xl", md: "3xl" }}>{availableInventory}</StatNumber>
+                      <StatNumber fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}>{availableInventory}</StatNumber>
                       <StatHelpText 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "xs", md: "sm" }}
+                        fontSize={{ base: "sm", md: "md" }}
                         noOfLines={2}
+                        lineHeight="1.4"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.openInventoryHelp")}
                       </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
+                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "sm", md: "md" }}
+                        fontSize={{ base: "md", md: "lg", lg: "xl" }}
                         noOfLines={2}
+                        lineHeight="1.3"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.averagePrice")}
                       </StatLabel>
-                      <StatNumber fontSize={{ base: "xl", md: "2xl" }} sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{averagePrice}</StatNumber>
+                      <StatNumber fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }} sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{averagePrice}</StatNumber>
                       <StatHelpText 
                         color="whiteAlpha.780" 
-                        fontSize={{ base: "xs", md: "sm" }}
+                        fontSize={{ base: "sm", md: "md" }}
                         noOfLines={2}
+                        lineHeight="1.4"
                         sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
                       >
                         {t?.("modules.dashboardHome.averagePriceHelp")}
@@ -547,11 +556,35 @@ export default function PropertyLandingPage() {
           </Grid>
         </Card>
 
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={4}>
-          <PropertyMetric icon={LuBuilding2} label={t?.("modules.dashboardHome.filteredResults")} value={filteredProperties.length} iconColor="green.500" />
-          <PropertyMetric icon={MdOutlineLocationOn} label={t?.("modules.dashboardHome.propertyTypes")} value={uniqueTypes.length || 0} iconColor="teal.500" />
-          <PropertyMetric icon={LuSparkles} label={t?.("modules.dashboardHome.statusesUsed")} value={uniqueStatuses.length || 0} iconColor="orange.400" />
-          <PropertyMetric icon={LuCalendarClock} label={t?.("modules.dashboardHome.sortMode")} value={sortModeLabel} iconColor="gray.700" valueSize="sm" />
+        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap={{ base: 4, md: 5, lg: 6 }}>
+          <PropertyMetric 
+            icon={LuBuilding2} 
+            label={t?.("modules.dashboardHome.filteredResults")} 
+            value={filteredProperties.length} 
+            iconColor="green.500" 
+            valueSize="lg"
+          />
+          <PropertyMetric 
+            icon={MdOutlineLocationOn} 
+            label={t?.("modules.dashboardHome.propertyTypes")} 
+            value={uniqueTypes.length || 0} 
+            iconColor="teal.500"
+            valueSize="lg"
+          />
+          <PropertyMetric 
+            icon={LuSparkles} 
+            label={t?.("modules.dashboardHome.statusesUsed")} 
+            value={uniqueStatuses.length || 0} 
+            iconColor="orange.400"
+            valueSize="lg"
+          />
+          <PropertyMetric 
+            icon={LuCalendarClock} 
+            label={t?.("modules.dashboardHome.sortMode")} 
+            value={sortModeLabel} 
+            iconColor="gray.700" 
+            valueSize="sm"
+          />
         </SimpleGrid>
 
         <Flex justify="space-between" align={{ base: "start", md: "end" }} direction={{ base: "column", md: "row" }} gap={3}>
@@ -589,7 +622,7 @@ export default function PropertyLandingPage() {
           <Stack spacing={5}>
             {featuredProperty && (
               <Card p={0} overflow="hidden" bg={surfaceBg} border={`1px solid ${borderColor}`} backdropFilter="blur(10px)">
-                <Grid templateColumns={{ base: "1fr", xl: "1.05fr 0.95fr" }}>
+                <Grid templateColumns={{ base: "1fr", xl: "1fr 1fr" }} gap={0}>
                   <GridItem position="relative" minH={{ base: "280px", xl: "100%" }}>
                     <Image
                       src={getPrimaryImage(featuredProperty)}
@@ -606,12 +639,12 @@ export default function PropertyLandingPage() {
                     />
                     <Wrap position="absolute" top={5} left={5} spacing={3}>
                       <WrapItem>
-                        <Badge colorScheme={statusColorMap[getStatusKey(featuredProperty?.listingStatus)] || "gray"} px={3} py={1.5} borderRadius="full">
+                        <Badge colorScheme={statusColorMap[getStatusKey(featuredProperty?.listingStatus)] || "gray"} px={4} py={2} borderRadius="full" fontSize="sm">
                           {normalizeStatus(featuredProperty?.listingStatus, t, i18n.language)}
                         </Badge>
                       </WrapItem>
                       <WrapItem>
-                        <Badge bg="blackAlpha.600" color="white" px={3} py={1.5} borderRadius="full">
+                        <Badge bg="blackAlpha.600" color="white" px={4} py={2} borderRadius="full" fontSize="sm">
                           {getPropertyType(featuredProperty, t, i18n.language)}
                         </Badge>
                       </WrapItem>
@@ -620,17 +653,17 @@ export default function PropertyLandingPage() {
                       <Text fontSize="xs" letterSpacing="0.16em" textTransform="uppercase" mb={2}>
                         {t?.("modules.dashboardHome.spotlight")}
                       </Text>
-                      <Heading size="lg" mb={2}>
+                      <Heading size="lg" mb={2} noOfLines={2} sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
                         {getPropertyName(featuredProperty, t, i18n.language)}
                       </Heading>
-                      <Text color="whiteAlpha.880" noOfLines={2}>
+                      <Text color="whiteAlpha.880" noOfLines={2} sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
                         {featuredProperty?.propertyAddress || t?.("modules.dashboardHome.addressNotSpecified")}
                       </Text>
                     </Box>
                   </GridItem>
 
                   <GridItem>
-                    <Stack spacing={5} p={{ base: 5, md: 6 }}>
+                    <Stack spacing={6} p={{ base: 6, md: 8, lg: 10 }}>
                       <Flex justify="space-between" align="start" gap={4}>
                         <Box>
                           <Text fontSize="sm" textTransform="uppercase" letterSpacing="0.16em" color="gray.500" mb={2}>
