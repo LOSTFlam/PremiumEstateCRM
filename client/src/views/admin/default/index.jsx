@@ -682,11 +682,70 @@ export default function PropertyLandingPage() {
                         {getShortDescription(featuredProperty, t)}
                       </Text>
 
-                      <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
-                        <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.bedrooms")} value={featuredProperty?.numberofBedrooms || "-"} iconColor="green.500" />
-                        <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.bathrooms")} value={featuredProperty?.numberofBathrooms || "-"} iconColor="teal.500" />
-                        <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(featuredProperty, t, i18n.language)} iconColor="orange.400" />
-                      </SimpleGrid>
+                      <HStack spacing={3} wrap="wrap" justify="space-between">
+                        <HStack 
+                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                          spacing={3} 
+                          p={3} 
+                          borderRadius="16px" 
+                          bg="rgba(255,255,255,0.6)"
+                          border="1px solid rgba(0,0,0,0.05)"
+                        >
+                          <Circle size="36px" bg="green.500" color="white" flexShrink={0}>
+                            <Icon as={LuBedDouble} boxSize={4} />
+                          </Circle>
+                          <Box minW={0}>
+                            <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                              {t?.("modules.dashboardHome.bedrooms")}
+                            </Text>
+                            <Text fontWeight="700" color="gray.800" fontSize="lg">
+                              {featuredProperty?.numberofBedrooms || "-"}
+                            </Text>
+                          </Box>
+                        </HStack>
+                        
+                        <HStack 
+                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                          spacing={3} 
+                          p={3} 
+                          borderRadius="16px" 
+                          bg="rgba(255,255,255,0.6)"
+                          border="1px solid rgba(0,0,0,0.05)"
+                        >
+                          <Circle size="36px" bg="teal.500" color="white" flexShrink={0}>
+                            <Icon as={LuBath} boxSize={4} />
+                          </Circle>
+                          <Box minW={0}>
+                            <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                              {t?.("modules.dashboardHome.bathrooms")}
+                            </Text>
+                            <Text fontWeight="700" color="gray.800" fontSize="lg">
+                              {featuredProperty?.numberofBathrooms || "-"}
+                            </Text>
+                          </Box>
+                        </HStack>
+                        
+                        <HStack 
+                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                          spacing={3} 
+                          p={3} 
+                          borderRadius="16px" 
+                          bg="rgba(255,255,255,0.6)"
+                          border="1px solid rgba(0,0,0,0.05)"
+                        >
+                          <Circle size="36px" bg="orange.400" color="white" flexShrink={0}>
+                            <Icon as={MdOutlineSquareFoot} boxSize={4} />
+                          </Circle>
+                          <Box minW={0}>
+                            <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                              {t?.("modules.dashboardHome.area")}
+                            </Text>
+                            <Text fontWeight="700" color="gray.800" fontSize="lg" noOfLines={1}>
+                              {getArea(featuredProperty, t, i18n.language)}
+                            </Text>
+                          </Box>
+                        </HStack>
+                      </HStack>
 
                       <Divider />
 
@@ -779,11 +838,70 @@ export default function PropertyLandingPage() {
                           {getShortDescription(property, t)}
                         </Text>
 
-                        <SimpleGrid columns={3} spacing={3}>
-                          <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.beds")} value={property?.numberofBedrooms || "-"} iconColor="green.500" valueSize="sm" />
-                          <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.baths")} value={property?.numberofBathrooms || "-"} iconColor="teal.500" valueSize="sm" />
-                          <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(property, t, i18n.language)} iconColor="orange.400" valueSize="sm" />
-                        </SimpleGrid>
+                        <HStack spacing={2} wrap="wrap" justify="space-between">
+                          <HStack 
+                            flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                            spacing={2} 
+                            p={2.5} 
+                            borderRadius="14px" 
+                            bg="rgba(255,255,255,0.6)"
+                            border="1px solid rgba(0,0,0,0.05)"
+                          >
+                            <Circle size="32px" bg="green.500" color="white" flexShrink={0}>
+                              <Icon as={LuBedDouble} boxSize={3.5} />
+                            </Circle>
+                            <Box minW={0}>
+                              <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                                {t?.("modules.dashboardHome.beds")}
+                              </Text>
+                              <Text fontWeight="700" color="gray.800" fontSize="md">
+                                {property?.numberofBedrooms || "-"}
+                              </Text>
+                            </Box>
+                          </HStack>
+                          
+                          <HStack 
+                            flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                            spacing={2} 
+                            p={2.5} 
+                            borderRadius="14px" 
+                            bg="rgba(255,255,255,0.6)"
+                            border="1px solid rgba(0,0,0,0.05)"
+                          >
+                            <Circle size="32px" bg="teal.500" color="white" flexShrink={0}>
+                              <Icon as={LuBath} boxSize={3.5} />
+                            </Circle>
+                            <Box minW={0}>
+                              <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                                {t?.("modules.dashboardHome.baths")}
+                              </Text>
+                              <Text fontWeight="700" color="gray.800" fontSize="md">
+                                {property?.numberofBathrooms || "-"}
+                              </Text>
+                            </Box>
+                          </HStack>
+                          
+                          <HStack 
+                            flex={{ base: "1 1 30%", md: "1 1 auto" }} 
+                            spacing={2} 
+                            p={2.5} 
+                            borderRadius="14px" 
+                            bg="rgba(255,255,255,0.6)"
+                            border="1px solid rgba(0,0,0,0.05)"
+                          >
+                            <Circle size="32px" bg="orange.400" color="white" flexShrink={0}>
+                              <Icon as={MdOutlineSquareFoot} boxSize={3.5} />
+                            </Circle>
+                            <Box minW={0}>
+                              <Text fontSize="xs" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+                                {t?.("modules.dashboardHome.area")}
+                              </Text>
+                              <Text fontWeight="700" color="gray.800" fontSize="md" noOfLines={1}>
+                                {getArea(property, t, i18n.language)}
+                              </Text>
+                            </Box>
+                          </HStack>
+                        </HStack>
 
                         <Button
                           size="sm"
