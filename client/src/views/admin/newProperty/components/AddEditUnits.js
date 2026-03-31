@@ -21,16 +21,24 @@ import {
 } from "@chakra-ui/react";
 import Spinner from "components/spinner/Spinner";
 import { useFormik } from "formik";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { postApi } from "services/api";
 import * as yup from "yup";
 import { IoLogoUsd } from "react-icons/io";
 import { putApi } from "services/api";
+import {
+  buildEnterLabel,
+  translateCrmText,
+} from "i18n/crmDictionary";
 
 const AddEditUnits = (props) => {
   const { isOpen, onClose, setAction, selectedUnitType, actionType } = props;
   const param = useParams();
   const [isLoding, setIsLoding] = useState(false);
+  const { t, i18n } = useTranslation();
+  const labelOptions = { t, language: i18n.language };
+  const isRu = i18n.language?.startsWith("ru");
 
   const [initialValues, setInitialValues] = useState({
     name: "",
@@ -40,16 +48,20 @@ const AddEditUnits = (props) => {
   });
 
   const validationSchema = yup.object({
-    name: yup.string().required("Name Is required"),
+    name: yup
+      .string()
+      .required(isRu ? "Название обязательно" : "Name is required"),
     sqm: yup
       .number()
-      .required("Sqm Is required")
-      .typeError("Sqm must be a number"),
+      .required(isRu ? "Площадь обязательна" : "Sqm is required")
+      .typeError(isRu ? "Площадь должна быть числом" : "Sqm must be a number"),
     price: yup
       .number()
-      .required("Price Is required")
-      .typeError("Price must be a number"),
-    executive: yup.string().required("Executive Is required"),
+      .required(isRu ? "Цена обязательна" : "Price is required")
+      .typeError(isRu ? "Цена должна быть числом" : "Price must be a number"),
+    executive: yup
+      .string()
+      .required(isRu ? "Ответственный обязателен" : "Executive is required"),
   });
 
   const formik = useFormik({
@@ -118,7 +130,10 @@ const AddEditUnits = (props) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader justifyContent="space-between" display="flex">
-          {actionType === "Edit" ? "Edit" : "Add"} Unit
+          {translateCrmText(
+            actionType === "Edit" ? "Edit Unit" : "Add Unit",
+            labelOptions,
+          )}
           <IconButton onClick={handelClose} icon={<CloseIcon />} />
         </ModalHeader>
         <ModalBody>
@@ -131,7 +146,8 @@ const AddEditUnits = (props) => {
                 fontWeight="500"
                 mb="8px"
               >
-                Name<Text color={"red"}>*</Text>
+                {t("common.name")}
+                <Text color={"red"}>*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -139,7 +155,7 @@ const AddEditUnits = (props) => {
                 onBlur={handleBlur}
                 value={values?.name}
                 name="name"
-                placeholder="Enter Name"
+                placeholder={buildEnterLabel(t("common.name"), labelOptions)}
                 fontWeight="500"
                 borderColor={errors?.name && touched?.name ? "red.300" : null}
               />
@@ -155,7 +171,8 @@ const AddEditUnits = (props) => {
                 fontWeight="500"
                 mb="8px"
               >
-                Sqm<Text color={"red"}>*</Text>
+                {translateCrmText("Sqm", labelOptions)}
+                <Text color={"red"}>*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -163,7 +180,10 @@ const AddEditUnits = (props) => {
                 onBlur={handleBlur}
                 value={values?.sqm}
                 name="sqm"
-                placeholder="Enter Sqm"
+                placeholder={buildEnterLabel(
+                  translateCrmText("Sqm", labelOptions),
+                  labelOptions,
+                )}
                 fontWeight="500"
                 borderColor={errors?.sqm && touched?.sqm ? "red.300" : null}
               />
@@ -179,7 +199,8 @@ const AddEditUnits = (props) => {
                 fontWeight="500"
                 mb="8px"
               >
-                Executive<Text color={"red"}>*</Text>
+                {translateCrmText("Executive", labelOptions)}
+                <Text color={"red"}>*</Text>
               </FormLabel>
               <Input
                 fontSize="sm"
@@ -187,7 +208,10 @@ const AddEditUnits = (props) => {
                 onBlur={handleBlur}
                 value={values?.executive}
                 name="executive"
-                placeholder="Enter Executive"
+                placeholder={buildEnterLabel(
+                  translateCrmText("Executive", labelOptions),
+                  labelOptions,
+                )}
                 fontWeight="500"
                 borderColor={
                   errors?.executive && touched?.executive ? "red.300" : null
@@ -205,7 +229,8 @@ const AddEditUnits = (props) => {
                 fontWeight="500"
                 mb="8px"
               >
-                Price<Text color={"red"}>*</Text>
+                {translateCrmText("Price", labelOptions)}
+                <Text color={"red"}>*</Text>
               </FormLabel>
               <InputGroup>
                 <Input
@@ -214,7 +239,10 @@ const AddEditUnits = (props) => {
                   onBlur={handleBlur}
                   value={values?.price}
                   name="price"
-                  placeholder="Enter Price"
+                  placeholder={buildEnterLabel(
+                    translateCrmText("Price", labelOptions),
+                    labelOptions,
+                  )}
                   fontWeight="500"
                   borderColor={
                     errors?.price && touched?.price ? "red.300" : null
@@ -238,7 +266,13 @@ const AddEditUnits = (props) => {
             disabled={isLoding ? true : false}
             onClick={handleSubmit}
           >
-            {isLoding ? <Spinner /> : actionType === "Edit" ? "Update" : "Save"}
+            {isLoding ? (
+              <Spinner />
+            ) : actionType === "Edit" ? (
+              isRu ? "Обновить" : "Update"
+            ) : (
+              t("common.save")
+            )}
           </Button>
           <Button
             sx={{
@@ -250,7 +284,7 @@ const AddEditUnits = (props) => {
             size="sm"
             onClick={handelClose}
           >
-            Close
+            {t("common.close")}
           </Button>
         </ModalFooter>
       </ModalContent>

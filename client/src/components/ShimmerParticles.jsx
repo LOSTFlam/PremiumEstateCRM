@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { Box } from "@chakra-ui/react";
-import { usePrefersReducedMotion } from "@chakra-ui/react";
+import { Box, usePrefersReducedMotion } from "@chakra-ui/react";
 
 /**
  * ShimmerParticles - Floating shimmer particles
@@ -60,15 +59,12 @@ export default function ShimmerParticles({ count = 40 }) {
           borderRadius="50%"
           filter="blur(2px)"
           opacity={particle.opacity}
-          animation={!prefersReducedMotion ? "shimmer-float 8s ease-in-out infinite" : "none"}
-          animationDuration={particle.duration}
-          animationDelay={particle.delay}
           pointerEvents="none"
           zIndex={1}
           sx={{
-            animation: !prefersReducedMotion 
+            animation: !prefersReducedMotion
               ? `shimmer-float ${particle.duration} ease-in-out infinite, shimmer-pulse 2s ease-in-out infinite`
-              : "none",
+              : undefined,
             animationDelay: `${particle.delay}, ${particle.delay}`,
           }}
         />
@@ -122,10 +118,14 @@ export function LightRays({ count = 3 }) {
           pointerEvents="none"
           zIndex={0}
           transform={`rotate(${ray.rotation}deg)`}
-          animation={!prefersReducedMotion ? `light-ray ${ray.duration} ease-in-out infinite` : "none"}
-          animationDelay={ray.delay}
+          animation={
+            !prefersReducedMotion
+              ? `light-ray ${ray.duration} ease-in-out infinite`
+              : "none"
+          }
           sx={{
             "--rotation": `${ray.rotation}deg`,
+            animationDelay: ray.delay,
           }}
         />
       ))}

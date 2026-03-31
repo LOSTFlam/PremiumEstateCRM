@@ -13,14 +13,18 @@ import {
 import Spinner from "components/spinner/Spinner";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { translateCrmText } from "i18n/crmDictionary";
 import { getApi, putApi } from "services/api";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
 
 const Edit = (props) => {
+  const { t, i18n } = useTranslation();
   const { data } = props;
+  const labelOptions = { t, language: i18n.language };
   const initialFieldValues = Object.fromEntries(
     (props?.leadData?.fields || [])?.map((field) => [field?.name, ""]),
   );
@@ -109,7 +113,9 @@ const Edit = (props) => {
             justifyContent="space-between"
             display="flex"
           >
-            Edit {values?.name || "Property"}
+            {`${translateCrmText("Edit Property", labelOptions)}${
+              values?.name ? `: ${values.name}` : ""
+            }`}
             <IconButton onClick={handleClose} icon={<CloseIcon />} />
           </DrawerHeader>
           <DrawerBody>
@@ -142,7 +148,7 @@ const Edit = (props) => {
               type="submit"
               onClick={handleSubmit}
             >
-              {isLoding ? <Spinner /> : "Update"}
+              {isLoding ? <Spinner /> : translateCrmText("Update", labelOptions)}
             </Button>
             <Button
               size="sm"
@@ -156,7 +162,7 @@ const Edit = (props) => {
                 props.onClose(false);
               }}
             >
-              Close
+              {t("common.close")}
             </Button>
           </DrawerFooter>
         </DrawerContent>

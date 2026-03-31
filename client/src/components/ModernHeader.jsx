@@ -27,6 +27,7 @@ import useActiveBranding, {
   getActiveBrandRecord,
   getBrandLogoSrc,
 } from "hooks/useActiveBranding";
+import useHideOnScroll from "hooks/useHideOnScroll";
 import {
   getPublicSubline,
   getPublicTagline,
@@ -55,6 +56,7 @@ export default function ModernHeader({ largeLogo = [] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const branding = useActiveBranding(largeLogo);
   const isAuthenticated = Boolean(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  const isHidden = useHideOnScroll({ offset: 140, disabled: isOpen });
   const currentLanguage = i18n.language?.startsWith("ru") ? "ru" : "en";
 
   useEffect(() => {
@@ -127,7 +129,19 @@ export default function ModernHeader({ largeLogo = [] }) {
 
   return (
     <>
-      <Box position="fixed" top="0" left="0" right="0" zIndex="30" px={{ base: 2, md: 3 }} pt={{ base: 2, md: 3 }}>
+      <Box
+        position="fixed"
+        top="0"
+        left="0"
+        right="0"
+        zIndex="30"
+        px={{ base: 2, md: 4, xl: 6 }}
+        pt={{ base: 2, md: 3 }}
+        transform={isHidden ? "translateY(-140%)" : "translateY(0)"}
+        opacity={isHidden ? 0 : 1}
+        pointerEvents={isHidden ? "none" : "auto"}
+        transition="transform 0.28s ease, opacity 0.28s ease"
+      >
         <style>{`
           @keyframes logo-shimmer {
             0%, 100% { opacity: 1; }
@@ -151,11 +165,11 @@ export default function ModernHeader({ largeLogo = [] }) {
             animation: logo-glow 2s ease-in-out infinite;
           }
         `}</style>
-        <Container maxW="8xl" px={{ base: 0, md: 1 }}>
+        <Container maxW="1920px" px={{ base: 0, md: 1 }}>
           <Flex
             align="center"
             justify="space-between"
-            px={{ base: 3, md: 4 }}
+            px={{ base: 3, md: 5, xl: 6 }}
             py={{ base: 2, md: 2.5 }}
             borderRadius={{ base: "20px", md: "24px" }}
             bg={isScrolled || location.pathname !== "/" ? "rgba(7, 12, 20, 0.65)" : "rgba(7, 12, 20, 0.35)"}
@@ -346,7 +360,7 @@ export default function ModernHeader({ largeLogo = [] }) {
                   bg="transparent"
                   _hover={{ bg: "transparent", color: "white" }}
                 >
-                  Sign In
+                  {t("auth.signIn.signInButton")}
                 </Button>
               )}
             </HStack>

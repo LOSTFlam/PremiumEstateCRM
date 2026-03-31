@@ -9,7 +9,6 @@ import {
 import {
   getCompareIds,
   getFavoriteIds,
-  getRecentlyViewedIds,
   getSavedSearches,
   removeSavedSearch,
   saveSearchSnapshot,
@@ -35,7 +34,11 @@ const numberParam = (value, fallback = 1) => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
-const buildFiltersFromParams = (searchParams, forcedType = null, presetFilters = null) => {
+const buildFiltersFromParams = (
+  searchParams,
+  forcedType = null,
+  presetFilters = null,
+) => {
   const preset = extractPresetFilters(presetFilters);
   const hasWithPhotos = searchParams.has("withPhotos");
   const hasRich = searchParams.has("rich");
@@ -52,10 +55,18 @@ const buildFiltersFromParams = (searchParams, forcedType = null, presetFilters =
     maxPrice: searchParams.get("maxPrice") || preset.maxPrice || "",
     bedrooms: searchParams.get("bedrooms") || preset.bedrooms || "all",
     bathrooms: searchParams.get("bathrooms") || preset.bathrooms || "all",
-    onlyWithPhotos: hasWithPhotos ? booleanFromParam(searchParams.get("withPhotos")) : Boolean(preset.onlyWithPhotos),
-    onlyRich: hasRich ? booleanFromParam(searchParams.get("rich")) : Boolean(preset.onlyRich),
-    verificationStatus: searchParams.get("verificationStatus") || preset.verificationStatus || "all",
-    featuredCollection: searchParams.get("collection") || preset.featuredCollection || "",
+    onlyWithPhotos: hasWithPhotos
+      ? booleanFromParam(searchParams.get("withPhotos"))
+      : Boolean(preset.onlyWithPhotos),
+    onlyRich: hasRich
+      ? booleanFromParam(searchParams.get("rich"))
+      : Boolean(preset.onlyRich),
+    verificationStatus:
+      searchParams.get("verificationStatus") ||
+      preset.verificationStatus ||
+      "all",
+    featuredCollection:
+      searchParams.get("collection") || preset.featuredCollection || "",
   };
 };
 
@@ -69,12 +80,16 @@ const applyFiltersToParams = (filters) => {
   if (Number(filters.page) > 1) params.set("page", String(filters.page));
   if (filters.minPrice) params.set("minPrice", String(filters.minPrice));
   if (filters.maxPrice) params.set("maxPrice", String(filters.maxPrice));
-  if (filters.bedrooms !== "all") params.set("bedrooms", String(filters.bedrooms));
-  if (filters.bathrooms !== "all") params.set("bathrooms", String(filters.bathrooms));
+  if (filters.bedrooms !== "all")
+    params.set("bedrooms", String(filters.bedrooms));
+  if (filters.bathrooms !== "all")
+    params.set("bathrooms", String(filters.bathrooms));
   if (filters.onlyWithPhotos) params.set("withPhotos", "1");
   if (filters.onlyRich) params.set("rich", "1");
-  if (filters.verificationStatus !== "all") params.set("verificationStatus", String(filters.verificationStatus));
-  if (filters.featuredCollection) params.set("collection", String(filters.featuredCollection));
+  if (filters.verificationStatus !== "all")
+    params.set("verificationStatus", String(filters.verificationStatus));
+  if (filters.featuredCollection)
+    params.set("collection", String(filters.featuredCollection));
 
   return params;
 };
@@ -85,7 +100,11 @@ const buildSavedSearchLabel = (filters, language = "en") => {
   if (filters.type !== "all") parts.push(filters.type);
   if (filters.status !== "all") parts.push(filters.status);
   if (parts.length === 0) {
-    parts.push(language?.startsWith("ru") ? "Кураторская подборка" : "Signature shortlist");
+    parts.push(
+      language?.startsWith("ru")
+        ? "Кураторская подборка"
+        : "Signature shortlist",
+    );
   }
   return parts.join(" · ");
 };
@@ -104,7 +123,9 @@ export const usePublicCatalog = ({
     () => resolveStorefrontPresetSlug({ forcedType, collectionSlug }),
     [collectionSlug, forcedType],
   );
-  const [storefrontPresets, setStorefrontPresets] = useState(DEFAULT_STOREFRONT_PRESETS);
+  const [storefrontPresets, setStorefrontPresets] = useState(
+    DEFAULT_STOREFRONT_PRESETS,
+  );
   const activePreset = useMemo(
     () => getStorefrontPresetBySlug(storefrontPresets, activePresetSlug),
     [activePresetSlug, storefrontPresets],
@@ -118,7 +139,6 @@ export const usePublicCatalog = ({
   );
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
-  const [recentIds, setRecentIds] = useState([]);
   const [savedSearches, setSavedSearches] = useState([]);
 
   useEffect(() => {
@@ -164,12 +184,12 @@ export const usePublicCatalog = ({
   useEffect(() => {
     setFavoriteIds(getFavoriteIds());
     setCompareIds(getCompareIds());
-    setRecentIds(getRecentlyViewedIds());
     setSavedSearches(getSavedSearches());
   }, []);
 
   const collectionConfig = useMemo(
-    () => (collectionSlug ? getSeoCollectionConfig(collectionSlug, language) : null),
+    () =>
+      collectionSlug ? getSeoCollectionConfig(collectionSlug, language) : null,
     [collectionSlug, language],
   );
 
@@ -178,7 +198,10 @@ export const usePublicCatalog = ({
     [filters, properties],
   );
 
-  const totalPages = Math.max(Math.ceil(filteredProperties.length / pageSize), 1);
+  const totalPages = Math.max(
+    Math.ceil(filteredProperties.length / pageSize),
+    1,
+  );
   const currentPage = Math.min(filters.page || 1, totalPages);
   const paginatedProperties = filteredProperties.slice(
     (currentPage - 1) * pageSize,
@@ -198,16 +221,6 @@ export const usePublicCatalog = ({
     [filteredProperties],
   );
 
-  const recentProperties = useMemo(
-    () => recentIds.map((id) => properties.find((item) => item?._id === id)).filter(Boolean),
-    [properties, recentIds],
-  );
-
-  const savedProperties = useMemo(
-    () => favoriteIds.map((id) => properties.find((item) => item?._id === id)).filter(Boolean),
-    [favoriteIds, properties],
-  );
-
   const stats = useMemo(
     () => ({
       total: properties.length,
@@ -217,14 +230,21 @@ export const usePublicCatalog = ({
       activeShortlist: favoriteIds.length + compareIds.length,
       totalLabel: formatCompactNumber(properties.length),
     }),
-    [compareIds.length, favoriteIds.length, featuredProperties.length, filteredProperties.length, properties],
+    [
+      compareIds.length,
+      favoriteIds.length,
+      featuredProperties.length,
+      filteredProperties.length,
+      properties,
+    ],
   );
 
   const activeFilterCount = useMemo(
     () =>
       Object.entries(filters).reduce((count, [key, value]) => {
         if (key === "page") return count;
-        if (key === "sortBy") return value !== DEFAULT_PUBLIC_FILTERS.sortBy ? count + 1 : count;
+        if (key === "sortBy")
+          return value !== DEFAULT_PUBLIC_FILTERS.sortBy ? count + 1 : count;
         if (typeof value === "boolean") return value ? count + 1 : count;
         return value && value !== "all" ? count + 1 : count;
       }, 0),
@@ -291,8 +311,6 @@ export const usePublicCatalog = ({
     filteredProperties,
     paginatedProperties,
     featuredProperties,
-    savedProperties,
-    recentProperties,
     loading: loading || presetsLoading,
     filters: { ...filters, page: currentPage },
     updateFilters,
@@ -301,7 +319,6 @@ export const usePublicCatalog = ({
     totalPages,
     favoriteIds,
     compareIds,
-    recentIds,
     savedSearches,
     saveCurrentSearch,
     applySavedSearch,
@@ -311,7 +328,6 @@ export const usePublicCatalog = ({
     stats,
     activeFilterCount,
     collectionConfig,
-    activePreset,
     activePresetSlug,
     storefrontPresets,
   };

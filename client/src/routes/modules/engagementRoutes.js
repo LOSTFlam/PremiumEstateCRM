@@ -160,6 +160,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Sign In",
+    i18nKey: "auth.signIn.signInButton",
     layout: "/auth",
     path: "/sign-in",
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,

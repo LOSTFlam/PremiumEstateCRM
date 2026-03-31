@@ -12,13 +12,17 @@ import {
 import Spinner from "components/spinner/Spinner";
 import { useFormik } from "formik";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
 import { postApi } from "services/api";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
 
 const Add = (props) => {
+  const { t, i18n } = useTranslation();
   const [isLoding, setIsLoding] = useState(false);
+  const labelOptions = { t, language: i18n.language };
 
   const initialFieldValues = Object.fromEntries(
     (props?.propertyData?.fields || [])?.map((field) => [field?.name, ""]),
@@ -80,7 +84,7 @@ const Add = (props) => {
             justifyContent="space-between"
             display="flex"
           >
-            Add Property
+            {translateCrmText("Add Property", labelOptions)}
             <IconButton onClick={props?.onClose} icon={<CloseIcon />} />
           </DrawerHeader>
           <DrawerBody>
@@ -104,7 +108,7 @@ const Add = (props) => {
               type="submit"
               onClick={handleSubmit}
             >
-              {isLoding ? <Spinner /> : "Save"}
+              {isLoding ? <Spinner /> : t("common.save")}
             </Button>
             <Button
               size="sm"
@@ -116,7 +120,7 @@ const Add = (props) => {
               }}
               onClick={props?.onClose}
             >
-              Close
+              {t("common.close")}
             </Button>
           </DrawerFooter>
         </DrawerContent>

@@ -1,10 +1,4 @@
-import {
-  Box,
-  Container,
-  Heading,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Container, Heading, Stack, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -15,10 +9,13 @@ import { getSeoCollectionConfig } from "./seoCollections";
 export default function SeoCollectionPage() {
   const { slug } = useParams();
   const { i18n } = useTranslation();
-  const config = useMemo(() => getSeoCollectionConfig(slug, i18n.language), [i18n.language, slug]);
+  const config = useMemo(
+    () => getSeoCollectionConfig(slug, i18n.language),
+    [i18n.language, slug],
+  );
 
   if (!config) {
-    return <PublicCatalogShell mode="catalog" />;
+    return <PublicCatalogShell />;
   }
 
   return (
@@ -29,10 +26,15 @@ export default function SeoCollectionPage() {
         keywords={[config.title, config.badge, slug].join(", ")}
         canonicalPath={`/collections/${slug}`}
       />
-      <PublicCatalogShell mode="catalog" collectionSlug={slug}>
+      <PublicCatalogShell collectionSlug={slug}>
         {config?.faq?.length ? (
           <Container maxW="6xl" p={0}>
-            <Box bg="white" borderRadius="28px" p={6} border="1px solid rgba(17,24,39,0.08)">
+            <Box
+              bg="white"
+              borderRadius="28px"
+              p={6}
+              border="1px solid rgba(17,24,39,0.08)"
+            >
               <Heading size="md" mb={4}>
                 FAQ
               </Heading>

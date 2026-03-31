@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { Box } from "@chakra-ui/react";
-import { usePrefersReducedMotion } from "@chakra-ui/react";
+import { Box, usePrefersReducedMotion } from "@chakra-ui/react";
 
 /**
  * PremiumEtherealBackground - Ultra-premium background with:
@@ -13,53 +12,65 @@ import { usePrefersReducedMotion } from "@chakra-ui/react";
 export default function PremiumEtherealBackground() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const orbConfigs = useMemo(() => [
-    {
-      size: "600px",
-      position: { top: "-10%", right: "-5%" },
-      colors: "radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(245,208,118,0.08) 40%, transparent 70%)",
-      animation: "orb-float-1 25s ease-in-out infinite",
-      blur: "80px",
-    },
-    {
-      size: "500px",
-      position: { bottom: "-15%", left: "-10%" },
-      colors: "radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(212,175,55,0.06) 40%, transparent 70%)",
-      animation: "orb-float-2 30s ease-in-out infinite",
-      blur: "100px",
-    },
-    {
-      size: "400px",
-      position: { top: "40%", left: "50%" },
-      colors: "radial-gradient(circle, rgba(245,208,118,0.1) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)",
-      animation: "orb-float-3 35s ease-in-out infinite",
-      blur: "90px",
-    },
-    {
-      size: "350px",
-      position: { top: "20%", left: "20%" },
-      colors: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.04) 40%, transparent 70%)",
-      animation: "orb-float-1 28s ease-in-out infinite reverse",
-      blur: "70px",
-    },
-    {
-      size: "450px",
-      position: { bottom: "10%", right: "15%" },
-      colors: "radial-gradient(circle, rgba(212,175,55,0.12) 0%, rgba(245,208,118,0.06) 40%, transparent 70%)",
-      animation: "orb-float-2 32s ease-in-out infinite",
-      blur: "85px",
-    },
-  ], []);
+  const orbConfigs = useMemo(
+    () => [
+      {
+        size: "600px",
+        position: { top: "-10%", right: "-5%" },
+        colors:
+          "radial-gradient(circle, rgba(212,175,55,0.15) 0%, rgba(245,208,118,0.08) 40%, transparent 70%)",
+        animation: "orb-float-1 25s ease-in-out infinite",
+        blur: "80px",
+      },
+      {
+        size: "500px",
+        position: { bottom: "-15%", left: "-10%" },
+        colors:
+          "radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(212,175,55,0.06) 40%, transparent 70%)",
+        animation: "orb-float-2 30s ease-in-out infinite",
+        blur: "100px",
+      },
+      {
+        size: "400px",
+        position: { top: "40%", left: "50%" },
+        colors:
+          "radial-gradient(circle, rgba(245,208,118,0.1) 0%, rgba(255,255,255,0.05) 40%, transparent 70%)",
+        animation: "orb-float-3 35s ease-in-out infinite",
+        blur: "90px",
+      },
+      {
+        size: "350px",
+        position: { top: "20%", left: "20%" },
+        colors:
+          "radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.04) 40%, transparent 70%)",
+        animation: "orb-float-1 28s ease-in-out infinite reverse",
+        blur: "70px",
+      },
+      {
+        size: "450px",
+        position: { bottom: "10%", right: "15%" },
+        colors:
+          "radial-gradient(circle, rgba(212,175,55,0.12) 0%, rgba(245,208,118,0.06) 40%, transparent 70%)",
+        animation: "orb-float-2 32s ease-in-out infinite",
+        blur: "85px",
+      },
+    ],
+    [],
+  );
 
-  const sparkleConfigs = useMemo(() => Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    size: `${Math.random() * 3 + 1}px`,
-    delay: `${Math.random() * 5}s`,
-    duration: `${Math.random() * 3 + 2}s`,
-    opacity: Math.random() * 0.5 + 0.3,
-  })), []);
+  const sparkleConfigs = useMemo(
+    () =>
+      Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        size: `${Math.random() * 3 + 1}px`,
+        delay: `${Math.random() * 5}s`,
+        duration: `${Math.random() * 3 + 2}s`,
+        opacity: Math.random() * 0.5 + 0.3,
+      })),
+    [],
+  );
 
   return (
     <>
@@ -181,10 +192,12 @@ export default function PremiumEtherealBackground() {
           borderRadius="50%"
           filter="blur(1px)"
           animation={`sparkle ${sparkle.duration} ease-in-out infinite`}
-          animationDelay={sparkle.delay}
           opacity={sparkle.opacity}
           pointerEvents="none"
           zIndex={1}
+          sx={{
+            animationDelay: sparkle.delay,
+          }}
         />
       ))}
 
@@ -202,11 +215,13 @@ export default function PremiumEtherealBackground() {
             transparent 100%)"
           filter="blur(20px)"
           animation={`light-ray ${8 + i * 2}s ease-in-out infinite`}
-          animationDelay={`${i * 0.5}s`}
           opacity={0.4}
           pointerEvents="none"
           zIndex={0}
           transform={`rotate(${i * 5 - 10}deg)`}
+          sx={{
+            animationDelay: `${i * 0.5}s`,
+          }}
         />
       ))}
 

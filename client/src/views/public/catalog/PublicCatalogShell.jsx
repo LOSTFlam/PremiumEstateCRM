@@ -59,10 +59,7 @@ import {
   getStorefrontPresetMeta,
 } from "utils/storefrontPresets";
 import { publicBrand } from "views/public/publicBrand";
-import {
-  countCatalogProperties,
-  extractPresetFilters,
-} from "./catalogFilters";
+import { countCatalogProperties, extractPresetFilters } from "./catalogFilters";
 import { getSeoCollectionConfig } from "./seoCollections";
 import { usePublicCatalog } from "./usePublicCatalog";
 
@@ -105,7 +102,7 @@ const shellCopy = {
     savedShortlist: "в подборке",
     compareLabel: "в сравнении",
     favoritesLabel: "в избранном",
-    richLabel: "полных карточек",
+    richLabel: "объектов с полной карточкой",
     typeAll: "Все объекты",
     typeHouse: "Дома",
     typeApartment: "Квартиры",
@@ -132,7 +129,8 @@ const shellCopy = {
   },
   en: {
     badge: "Signature collection",
-    title: "A premium catalog of houses, apartments, land, and commercial property",
+    title:
+      "A premium catalog of houses, apartments, land, and commercial property",
     subtitle:
       "A denser storefront built for shortlist building, comparison, saved searches, and faster movement toward the right offer.",
     filterTitle: "Search parameters",
@@ -168,7 +166,7 @@ const shellCopy = {
     savedShortlist: "in shortlist",
     compareLabel: "in compare",
     favoritesLabel: "in favorites",
-    richLabel: "rich listings",
+    richLabel: "full-detail listings",
     typeAll: "All properties",
     typeHouse: "Houses",
     typeApartment: "Apartments",
@@ -202,15 +200,47 @@ const optionStyles = {
   h: "54px",
 };
 
-const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) => {
+const PAGE_MAX_W = "1920px";
+const PROPERTY_GRID_COLUMNS = { base: 1, md: 2, xl: 3, "2xl": 4 };
+const SURFACE_PANEL_PROPS = {
+  borderRadius: "34px",
+  px: { base: 6, md: 7, xl: 8 },
+  py: { base: 6, md: 7, xl: 8 },
+  bg: "white",
+  border: "1px solid rgba(9,18,32,0.08)",
+  boxShadow: publicBrand.shadows.soft,
+};
+
+const buildActiveFilterChips = (
+  filters,
+  copy,
+  collectionLabelMap = new Map(),
+) => {
   const chips = [];
   if (filters.search) chips.push({ key: "search", label: filters.search });
   if (filters.type !== "all") chips.push({ key: "type", label: filters.type });
-  if (filters.status !== "all") chips.push({ key: "status", label: filters.status });
-  if (filters.minPrice) chips.push({ key: "minPrice", label: `${copy.minBudget}: ${filters.minPrice}` });
-  if (filters.maxPrice) chips.push({ key: "maxPrice", label: `${copy.maxBudget}: ${filters.maxPrice}` });
-  if (filters.bedrooms !== "all") chips.push({ key: "bedrooms", label: `${copy.bedroomsLabel} ${filters.bedrooms}+` });
-  if (filters.bathrooms !== "all") chips.push({ key: "bathrooms", label: `${copy.bathroomsLabel} ${filters.bathrooms}+` });
+  if (filters.status !== "all")
+    chips.push({ key: "status", label: filters.status });
+  if (filters.minPrice)
+    chips.push({
+      key: "minPrice",
+      label: `${copy.minBudget}: ${filters.minPrice}`,
+    });
+  if (filters.maxPrice)
+    chips.push({
+      key: "maxPrice",
+      label: `${copy.maxBudget}: ${filters.maxPrice}`,
+    });
+  if (filters.bedrooms !== "all")
+    chips.push({
+      key: "bedrooms",
+      label: `${copy.bedroomsLabel} ${filters.bedrooms}+`,
+    });
+  if (filters.bathrooms !== "all")
+    chips.push({
+      key: "bathrooms",
+      label: `${copy.bathroomsLabel} ${filters.bathrooms}+`,
+    });
   if (filters.verificationStatus !== "all") {
     const verificationLabels = {
       verified: copy.verificationVerified,
@@ -221,7 +251,8 @@ const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) =
     chips.push({
       key: "verificationStatus",
       label: `${copy.verificationLabel}: ${
-        verificationLabels[filters.verificationStatus] || filters.verificationStatus
+        verificationLabels[filters.verificationStatus] ||
+        filters.verificationStatus
       }`,
     });
   }
@@ -229,12 +260,15 @@ const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) =
     chips.push({
       key: "featuredCollection",
       label: `${copy.collectionLabel}: ${
-        collectionLabelMap.get(filters.featuredCollection) || filters.featuredCollection
+        collectionLabelMap.get(filters.featuredCollection) ||
+        filters.featuredCollection
       }`,
     });
   }
-  if (filters.onlyWithPhotos) chips.push({ key: "onlyWithPhotos", label: copy.withPhotos });
-  if (filters.onlyRich) chips.push({ key: "onlyRich", label: copy.richListings });
+  if (filters.onlyWithPhotos)
+    chips.push({ key: "onlyWithPhotos", label: copy.withPhotos });
+  if (filters.onlyRich)
+    chips.push({ key: "onlyRich", label: copy.richListings });
   return chips;
 };
 
@@ -258,7 +292,12 @@ const CatalogFiltersPanel = ({
     <Stack spacing={2}>
       <HStack justify="space-between" align="start">
         <Box>
-          <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.14em" color="#f5d076">
+          <Text
+            fontSize="xs"
+            textTransform="uppercase"
+            letterSpacing="0.14em"
+            color="#f5d076"
+          >
             {copy.filters}
           </Text>
           <Heading size="md" mt={1}>
@@ -266,7 +305,13 @@ const CatalogFiltersPanel = ({
           </Heading>
         </Box>
         {activeFilterCount ? (
-          <Badge borderRadius="full" px={3} py={1.5} bg="rgba(245,208,118,0.14)" color="#f5d076">
+          <Badge
+            borderRadius="full"
+            px={3}
+            py={1.5}
+            bg="rgba(245,208,118,0.14)"
+            color="#f5d076"
+          >
             {activeFilterCount}
           </Badge>
         ) : null}
@@ -405,7 +450,9 @@ const CatalogFiltersPanel = ({
         <Switch
           colorScheme="orange"
           isChecked={filters.onlyWithPhotos}
-          onChange={(event) => updateFilters({ onlyWithPhotos: event.target.checked })}
+          onChange={(event) =>
+            updateFilters({ onlyWithPhotos: event.target.checked })
+          }
         />
       </Flex>
       <Flex justify="space-between" align="center">
@@ -413,13 +460,20 @@ const CatalogFiltersPanel = ({
         <Switch
           colorScheme="orange"
           isChecked={filters.onlyRich}
-          onChange={(event) => updateFilters({ onlyRich: event.target.checked })}
+          onChange={(event) =>
+            updateFilters({ onlyRich: event.target.checked })
+          }
         />
       </Flex>
     </Stack>
 
     <SimpleGrid columns={2} spacing={3}>
-      <Button variant="outline" color="white" borderColor="rgba(227, 211, 184, 0.22)" onClick={resetFilters}>
+      <Button
+        variant="outline"
+        color="white"
+        borderColor="rgba(227, 211, 184, 0.22)"
+        onClick={resetFilters}
+      >
         {copy.reset}
       </Button>
       <Button
@@ -427,7 +481,10 @@ const CatalogFiltersPanel = ({
         color={publicBrand.colors.ink}
         fontWeight="700"
         onClick={saveCurrentSearch}
-        _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+        _hover={{
+          transform: "translateY(-1px)",
+          boxShadow: publicBrand.shadows.glow,
+        }}
       >
         {copy.saveSearch}
       </Button>
@@ -436,7 +493,6 @@ const CatalogFiltersPanel = ({
 );
 
 export default function PublicCatalogShell({
-  mode = "landing",
   forcedType = null,
   collectionSlug = "",
   children,
@@ -450,7 +506,6 @@ export default function PublicCatalogShell({
     loading,
     paginatedProperties,
     featuredProperties,
-    recentProperties,
     savedSearches,
     favoriteIds,
     compareIds,
@@ -472,7 +527,7 @@ export default function PublicCatalogShell({
   } = usePublicCatalog({
     forcedType,
     collectionSlug,
-    pageSize: mode === "landing" ? 6 : 9,
+    pageSize: 9,
     language: i18n.language,
   });
 
@@ -481,12 +536,18 @@ export default function PublicCatalogShell({
     [activePresetSlug, i18n.language],
   );
   const presetMap = useMemo(
-    () => new Map((storefrontPresets || []).map((preset) => [preset.slug, preset])),
+    () =>
+      new Map((storefrontPresets || []).map((preset) => [preset.slug, preset])),
     [storefrontPresets],
   );
-  const title = collectionConfig?.title || activePresetMeta?.title || copy.title;
-  const subtitle = collectionConfig?.description || activePresetMeta?.description || copy.subtitle;
-  const badgeLabel = collectionConfig?.badge || activePresetMeta?.badge || copy.badge;
+  const title =
+    collectionConfig?.title || activePresetMeta?.title || copy.title;
+  const subtitle =
+    collectionConfig?.description ||
+    activePresetMeta?.description ||
+    copy.subtitle;
+  const badgeLabel =
+    collectionConfig?.badge || activePresetMeta?.badge || copy.badge;
   const collectionOptions = useMemo(
     () =>
       COLLECTION_STOREFRONT_SLUGS.map((slug) => {
@@ -499,7 +560,8 @@ export default function PublicCatalogShell({
     [i18n.language],
   );
   const collectionLabelMap = useMemo(
-    () => new Map(collectionOptions.map((option) => [option.value, option.label])),
+    () =>
+      new Map(collectionOptions.map((option) => [option.value, option.label])),
     [collectionOptions],
   );
   const activeChips = useMemo(
@@ -511,7 +573,8 @@ export default function PublicCatalogShell({
       i18n.language?.startsWith("ru")
         ? {
             segmentsTitle: "Сегменты каталога",
-            segmentsText: "Сильные входы в основные типы спроса без возврата на главную.",
+            segmentsText:
+              "Сильные входы в основные типы спроса без возврата на главную.",
             routesTitle: "Высокоинтентные маршруты",
             routesText:
               "Собрали ключевые сценарии прямо в каталоге: семейные дома, городские квартиры, проверенные карточки, участки под инвестиции и премиальную коммерцию.",
@@ -519,7 +582,8 @@ export default function PublicCatalogShell({
           }
         : {
             segmentsTitle: "Catalog segments",
-            segmentsText: "Direct entry points into the main demand types without going back to the homepage.",
+            segmentsText:
+              "Direct entry points into the main demand types without going back to the homepage.",
             routesTitle: "High-intent routes",
             routesText:
               "The main demand scenarios are available directly in the catalog: family homes, city apartments, verified listings, investment land, and premium commercial property.",
@@ -539,7 +603,10 @@ export default function PublicCatalogShell({
           key: slug,
           label: meta.adminLabel,
           href: meta.route,
-          count: countCatalogProperties(properties, extractPresetFilters(preset)),
+          count: countCatalogProperties(
+            properties,
+            extractPresetFilters(preset),
+          ),
         };
       }).filter(Boolean),
     [i18n.language, presetMap, properties],
@@ -600,7 +667,11 @@ export default function PublicCatalogShell({
   };
 
   return (
-    <Box minH="100vh" bg={publicBrand.colors.paper} color={publicBrand.colors.ink}>
+    <Box
+      minH="100vh"
+      bg={publicBrand.colors.paper}
+      color={publicBrand.colors.ink}
+    >
       <Box
         bg={publicBrand.gradients.hero}
         color="white"
@@ -613,10 +684,24 @@ export default function PublicCatalogShell({
           bg="radial-gradient(circle at 18% 22%, rgba(245,208,118,0.16) 0%, rgba(245,208,118,0) 26%), radial-gradient(circle at 82% 18%, rgba(185,119,55,0.18) 0%, rgba(185,119,55,0) 34%)"
         />
         <ModernHeader />
-        <Container maxW="8xl" pt={{ base: 28, md: 32 }} pb={{ base: 14, md: 18 }} position="relative">
-          <Grid templateColumns={{ base: "1fr", xl: "1.02fr 0.98fr" }} gap={10} alignItems="end">
+        <Container
+          maxW={PAGE_MAX_W}
+          pt={{ base: 28, md: 32 }}
+          pb={{ base: 16, md: 20 }}
+          position="relative"
+          px={{ base: 4, md: 6, xl: 8 }}
+        >
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              xl: "minmax(0, 1.12fr) minmax(360px, 0.88fr)",
+              "2xl": "minmax(0, 1.18fr) minmax(420px, 0.82fr)",
+            }}
+            gap={{ base: 8, xl: 12, "2xl": 14 }}
+            alignItems="start"
+          >
             <GridItem>
-              <Stack spacing={6}>
+              <Stack spacing={{ base: 6, xl: 7 }}>
                 <Badge
                   w="fit-content"
                   px={4}
@@ -638,10 +723,15 @@ export default function PublicCatalogShell({
                 >
                   {title}
                 </Heading>
-                <Text maxW="760px" fontSize={{ base: "md", md: "lg" }} color="whiteAlpha.800" lineHeight="1.9">
+                <Text
+                  maxW="760px"
+                  fontSize={{ base: "md", md: "lg" }}
+                  color="whiteAlpha.800"
+                  lineHeight="1.9"
+                >
                   {subtitle}
                 </Text>
-                <HStack spacing={3} flexWrap="wrap">
+                <Flex wrap="wrap" gap={3}>
                   <Button
                     bg={publicBrand.gradients.brass}
                     color={publicBrand.colors.ink}
@@ -680,24 +770,38 @@ export default function PublicCatalogShell({
                   >
                     {favoriteIds.length} {copy.favoritesLabel}
                   </Button>
-                </HStack>
+                </Flex>
 
                 <Box>
-                  <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                  <Text
+                    color="#f5d076"
+                    fontSize="xs"
+                    letterSpacing="0.16em"
+                    textTransform="uppercase"
+                  >
                     {experienceCopy.segmentsTitle}
                   </Text>
-                  <Text mt={2} color="whiteAlpha.760" maxW="720px" lineHeight="1.8">
+                  <Text
+                    mt={2}
+                    color="whiteAlpha.760"
+                    maxW="720px"
+                    lineHeight="1.8"
+                  >
                     {experienceCopy.segmentsText}
                   </Text>
-                  <SimpleGrid columns={{ base: 2, md: 3, xl: 5 }} spacing={3} mt={4}>
+                  <SimpleGrid
+                    columns={{ base: 1, sm: 2, xl: 3, "2xl": 5 }}
+                    spacing={3.5}
+                    mt={4}
+                  >
                     {segmentLinks.map((segment) => (
                       <Box
                         key={segment.key}
                         as={RouterLink}
                         to={segment.href}
-                        borderRadius="22px"
-                        px={4}
-                        py={4}
+                        borderRadius="24px"
+                        px={5}
+                        py={4.5}
                         bg="rgba(255,255,255,0.05)"
                         border="1px solid rgba(227, 211, 184, 0.12)"
                         transition="transform 0.25s ease, border-color 0.25s ease"
@@ -709,7 +813,13 @@ export default function PublicCatalogShell({
                         <Text color="white" fontWeight="700" fontSize="sm">
                           {segment.label}
                         </Text>
-                        <Text mt={1.5} color="whiteAlpha.620" fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
+                        <Text
+                          mt={1.5}
+                          color="whiteAlpha.620"
+                          fontSize="xs"
+                          textTransform="uppercase"
+                          letterSpacing="0.14em"
+                        >
                           {segment.count}
                         </Text>
                       </Box>
@@ -721,11 +831,14 @@ export default function PublicCatalogShell({
 
             <GridItem>
               <Stack spacing={5}>
-                <SimpleGrid columns={{ base: 2, md: 3 }} spacing={4}>
+                <SimpleGrid columns={{ base: 1, sm: 2, xl: 1 }} spacing={4}>
                   {[
                     { label: copy.resultsLabel, value: stats.totalLabel },
                     { label: copy.richLabel, value: String(stats.rich) },
-                    { label: copy.savedShortlist, value: String(stats.activeShortlist) },
+                    {
+                      label: copy.savedShortlist,
+                      value: String(stats.activeShortlist),
+                    },
                   ].map((item) => (
                     <Stat
                       key={item.label}
@@ -736,7 +849,12 @@ export default function PublicCatalogShell({
                       py={5}
                       backdropFilter="blur(12px)"
                     >
-                      <StatLabel color="whiteAlpha.620" fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
+                      <StatLabel
+                        color="whiteAlpha.620"
+                        fontSize="xs"
+                        textTransform="uppercase"
+                        letterSpacing="0.14em"
+                      >
                         {item.label}
                       </StatLabel>
                       <StatNumber mt={2} fontSize={{ base: "2xl", md: "3xl" }}>
@@ -762,9 +880,21 @@ export default function PublicCatalogShell({
         </Container>
       </Box>
 
-      <Container maxW="8xl" py={{ base: 8, md: 12 }}>
-        <Grid templateColumns={{ base: "1fr", lg: "350px minmax(0, 1fr)" }} gap={8} alignItems="start">
-          <GridItem display={{ base: "none", lg: "block" }}>
+      <Container
+        maxW={PAGE_MAX_W}
+        py={{ base: 8, md: 12, xl: 14 }}
+        px={{ base: 4, md: 6, xl: 8 }}
+      >
+        <Grid
+          templateColumns={{
+            base: "1fr",
+            xl: "390px minmax(0, 1fr)",
+            "2xl": "430px minmax(0, 1fr)",
+          }}
+          gap={{ base: 8, xl: 10 }}
+          alignItems="start"
+        >
+          <GridItem display={{ base: "none", xl: "block" }}>
             <CatalogFiltersPanel
               copy={copy}
               filters={filters}
@@ -777,15 +907,8 @@ export default function PublicCatalogShell({
           </GridItem>
 
           <GridItem>
-            <Stack spacing={8}>
-              <Box
-                borderRadius="34px"
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
-                bg="white"
-                border="1px solid rgba(9,18,32,0.08)"
-                boxShadow={publicBrand.shadows.soft}
-              >
+            <Stack spacing={{ base: 8, xl: 9 }}>
+              <Box {...SURFACE_PANEL_PROPS}>
                 <Flex
                   justify="space-between"
                   align={{ base: "stretch", md: "center" }}
@@ -793,7 +916,12 @@ export default function PublicCatalogShell({
                   gap={4}
                 >
                   <Stack spacing={1.5}>
-                    <Text fontSize="xs" color={publicBrand.colors.copper} letterSpacing="0.16em" textTransform="uppercase">
+                    <Text
+                      fontSize="xs"
+                      color={publicBrand.colors.copper}
+                      letterSpacing="0.16em"
+                      textTransform="uppercase"
+                    >
                       {copy.summaryTitle}
                     </Text>
                     <Heading size="lg" color={publicBrand.colors.ink}>
@@ -806,7 +934,7 @@ export default function PublicCatalogShell({
 
                   <HStack spacing={3} flexWrap="wrap">
                     <IconButton
-                      display={{ base: "inline-flex", lg: "none" }}
+                      display={{ base: "inline-flex", xl: "none" }}
                       aria-label={copy.filters}
                       icon={<FiFilter />}
                       onClick={onOpen}
@@ -818,7 +946,9 @@ export default function PublicCatalogShell({
                       borderColor="rgba(9,18,32,0.08)"
                       borderRadius="18px"
                       value={filters.sortBy}
-                      onChange={(event) => updateFilters({ sortBy: event.target.value })}
+                      onChange={(event) =>
+                        updateFilters({ sortBy: event.target.value })
+                      }
                     >
                       <option value="latest">{copy.sortLatest}</option>
                       <option value="priceHigh">{copy.sortHigh}</option>
@@ -849,12 +979,19 @@ export default function PublicCatalogShell({
                           size="xs"
                           variant="ghost"
                           onClick={() => {
-                            if (chip.key === "onlyWithPhotos" || chip.key === "onlyRich") {
+                            if (
+                              chip.key === "onlyWithPhotos" ||
+                              chip.key === "onlyRich"
+                            ) {
                               updateFilters({ [chip.key]: false });
                               return;
                             }
 
-                            if (chip.key === "search" || chip.key === "minPrice" || chip.key === "maxPrice") {
+                            if (
+                              chip.key === "search" ||
+                              chip.key === "minPrice" ||
+                              chip.key === "maxPrice"
+                            ) {
                               updateFilters({ [chip.key]: "" });
                               return;
                             }
@@ -873,46 +1010,57 @@ export default function PublicCatalogShell({
                 ) : null}
               </Box>
 
-              <Box
-                borderRadius="34px"
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
-                bg="white"
-                border="1px solid rgba(9,18,32,0.08)"
-                boxShadow={publicBrand.shadows.soft}
-              >
-                <Grid templateColumns={{ base: "1fr", xl: "0.42fr 0.58fr" }} gap={6} alignItems="start">
-                  <GridItem>
-                    <Text fontSize="xs" color={publicBrand.colors.copper} letterSpacing="0.16em" textTransform="uppercase">
+              <Box {...SURFACE_PANEL_PROPS}>
+                <Stack spacing={6}>
+                  <Box maxW="920px">
+                    <Text
+                      fontSize="xs"
+                      color={publicBrand.colors.copper}
+                      letterSpacing="0.16em"
+                      textTransform="uppercase"
+                    >
                       {experienceCopy.routesTitle}
                     </Text>
                     <Heading mt={2} size="lg" color={publicBrand.colors.ink}>
                       {experienceCopy.routesTitle}
                     </Heading>
-                    <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                    <Text
+                      mt={3}
+                      color={publicBrand.colors.textSoft}
+                      lineHeight="1.8"
+                    >
                       {experienceCopy.routesText}
                     </Text>
-                  </GridItem>
+                  </Box>
 
-                  <GridItem>
-                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                      {quickRouteCards.map((route) => (
-                        <Box
-                          key={route.key}
-                          as={RouterLink}
-                          to={route.href}
-                          borderRadius="26px"
-                          px={5}
-                          py={5}
-                          bg="rgba(244,238,229,0.78)"
-                          border="1px solid rgba(9,18,32,0.08)"
-                          transition="transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease"
-                          _hover={{
-                            transform: "translateY(-4px)",
-                            boxShadow: "0 18px 46px rgba(6,10,16,0.12)",
-                            borderColor: "rgba(185,119,55,0.16)",
-                          }}
-                        >
+                  <SimpleGrid columns={{ base: 1, md: 2, xl: 3, "2xl": 5 }} spacing={4}>
+                    {quickRouteCards.map((route) => (
+                      <Box
+                        key={route.key}
+                        as={RouterLink}
+                        to={route.href}
+                        position="relative"
+                        overflow="hidden"
+                        borderRadius="28px"
+                        px={5}
+                        py={5}
+                        minH={{ base: "auto", xl: "100%" }}
+                        bg="linear-gradient(180deg, rgba(244,238,229,0.92) 0%, rgba(244,238,229,0.72) 100%)"
+                        border="1px solid rgba(9,18,32,0.08)"
+                        transition="transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease"
+                        _before={{
+                          content: '""',
+                          position: "absolute",
+                          inset: 0,
+                          bg: "radial-gradient(circle at top right, rgba(212,175,55,0.14), transparent 36%)",
+                        }}
+                        _hover={{
+                          transform: "translateY(-4px)",
+                          boxShadow: "0 18px 46px rgba(6,10,16,0.12)",
+                          borderColor: "rgba(185,119,55,0.16)",
+                        }}
+                      >
+                        <Stack position="relative" zIndex={1} spacing={4} h="100%">
                           <HStack justify="space-between" align="start">
                             <Box
                               w="46px"
@@ -925,42 +1073,61 @@ export default function PublicCatalogShell({
                             >
                               <Icon as={route.icon} boxSize={5} />
                             </Box>
-                            <Text color={publicBrand.colors.textSoft} fontSize="sm">
+                            <Box
+                              minW="42px"
+                              px={3}
+                              py={1.5}
+                              borderRadius="full"
+                              bg="white"
+                              color={publicBrand.colors.ink}
+                              fontSize="sm"
+                              fontWeight="700"
+                              textAlign="center"
+                            >
                               {route.count}
-                            </Text>
+                            </Box>
                           </HStack>
-                          <Heading mt={4} size="sm" color={publicBrand.colors.ink}>
+                          <Heading
+                            size="sm"
+                            color={publicBrand.colors.ink}
+                            lineHeight="1.35"
+                          >
                             {route.title}
                           </Heading>
-                          <Text mt={2.5} color={publicBrand.colors.textSoft} lineHeight="1.8" fontSize="sm">
+                          <Text
+                            color={publicBrand.colors.textSoft}
+                            lineHeight="1.8"
+                            fontSize="sm"
+                            flex={1}
+                          >
                             {route.text}
                           </Text>
-                          <HStack mt={4} spacing={2} color={publicBrand.colors.copper}>
+                          <HStack
+                            mt="auto"
+                            spacing={2}
+                            color={publicBrand.colors.copper}
+                          >
                             <Text fontWeight="700" fontSize="sm">
                               {experienceCopy.routeOpen}
                             </Text>
                             <MdArrowForward />
                           </HStack>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                  </GridItem>
-                </Grid>
+                        </Stack>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </Stack>
               </Box>
 
               {savedSearches.length ? (
-                <Box
-                  borderRadius="34px"
-                  px={{ base: 5, md: 6 }}
-                  py={{ base: 5, md: 6 }}
-                  bg="white"
-                  border="1px solid rgba(9,18,32,0.08)"
-                  boxShadow={publicBrand.shadows.soft}
-                >
+                <Box {...SURFACE_PANEL_PROPS}>
                   <Heading size="md" mb={4} color={publicBrand.colors.ink}>
                     {copy.savedTitle}
                   </Heading>
-                  <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={4}>
+                  <SimpleGrid
+                    columns={{ base: 1, md: 2, "2xl": 3 }}
+                    spacing={4}
+                  >
                     {savedSearches.slice(0, 6).map((search) => (
                       <Box
                         key={search.id}
@@ -973,7 +1140,12 @@ export default function PublicCatalogShell({
                         <Text fontWeight="700" color={publicBrand.colors.ink}>
                           {search.label}
                         </Text>
-                        <Text fontSize="sm" color={publicBrand.colors.textSoft} mt={1} noOfLines={1}>
+                        <Text
+                          fontSize="sm"
+                          color={publicBrand.colors.textSoft}
+                          mt={1}
+                          noOfLines={1}
+                        >
                           {search.pathname}
                         </Text>
                         <HStack mt={4} spacing={2}>
@@ -986,7 +1158,12 @@ export default function PublicCatalogShell({
                           >
                             {copy.applySaved}
                           </Button>
-                          <Button size="sm" borderRadius="full" variant="ghost" onClick={() => removeSavedSearch(search.id)}>
+                          <Button
+                            size="sm"
+                            borderRadius="full"
+                            variant="ghost"
+                            onClick={() => removeSavedSearch(search.id)}
+                          >
                             {copy.removeSaved}
                           </Button>
                         </HStack>
@@ -997,13 +1174,17 @@ export default function PublicCatalogShell({
               ) : null}
 
               {loading ? (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                <SimpleGrid columns={PROPERTY_GRID_COLUMNS} spacing={6}>
                   {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={`skeleton-${index}`} h="520px" borderRadius="34px" />
+                    <Skeleton
+                      key={`skeleton-${index}`}
+                      h="520px"
+                      borderRadius="34px"
+                    />
                   ))}
                 </SimpleGrid>
               ) : paginatedProperties.length ? (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                <SimpleGrid columns={PROPERTY_GRID_COLUMNS} spacing={6}>
                   {paginatedProperties.map((property) => (
                     <ModernPropertyCard
                       key={property?._id}
@@ -1016,14 +1197,7 @@ export default function PublicCatalogShell({
                   ))}
                 </SimpleGrid>
               ) : (
-                <Box
-                  borderRadius="34px"
-                  px={{ base: 6, md: 8 }}
-                  py={{ base: 8, md: 10 }}
-                  bg="white"
-                  border="1px solid rgba(9,18,32,0.08)"
-                  boxShadow={publicBrand.shadows.soft}
-                >
+                <Box {...SURFACE_PANEL_PROPS}>
                   <Stack spacing={4} align="start">
                     <Heading size="md" color={publicBrand.colors.ink}>
                       {copy.noResults}
@@ -1045,13 +1219,20 @@ export default function PublicCatalogShell({
 
               {totalPages > 1 ? (
                 <HStack spacing={2} justify="center" flexWrap="wrap">
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1,
+                  ).map((page) => (
                     <Button
                       key={`page-${page}`}
                       size="sm"
                       borderRadius="full"
-                      bg={currentPage === page ? publicBrand.colors.ink : "white"}
-                      color={currentPage === page ? "white" : publicBrand.colors.ink}
+                      bg={
+                        currentPage === page ? publicBrand.colors.ink : "white"
+                      }
+                      color={
+                        currentPage === page ? "white" : publicBrand.colors.ink
+                      }
                       border="1px solid rgba(9,18,32,0.08)"
                       onClick={() => updateFilters({ page })}
                     >
@@ -1061,32 +1242,15 @@ export default function PublicCatalogShell({
                 </HStack>
               ) : null}
 
-              {mode === "landing" && recentProperties.length ? (
-                <Box>
-                  <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
-                    {copy.recentTitle}
-                  </Heading>
-                  <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
-                    {recentProperties.slice(0, 3).map((property) => (
-                      <ModernPropertyCard
-                        key={`recent-${property?._id}`}
-                        property={property}
-                        isFavorite={favoriteIds.includes(property?._id)}
-                        isInCompare={compareIds.includes(property?._id)}
-                        onFavoriteToggle={toggleFavorite}
-                        onCompareToggle={toggleCompare}
-                      />
-                    ))}
-                  </SimpleGrid>
-                </Box>
-              ) : null}
-
               {quickRouteCards.length ? (
                 <Box>
                   <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
                     {copy.collectionTitle}
                   </Heading>
-                  <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={4}>
+                  <SimpleGrid
+                    columns={{ base: 1, md: 2, "2xl": 3 }}
+                    spacing={4}
+                  >
                     {quickRouteCards.map((collection) => (
                       <Box
                         key={collection.key}
@@ -1105,7 +1269,11 @@ export default function PublicCatalogShell({
                           boxShadow: "0 26px 70px rgba(4, 8, 14, 0.24)",
                         }}
                       >
-                        <Badge bg="rgba(245,208,118,0.14)" color="#f5d076" mb={4}>
+                        <Badge
+                          bg="rgba(245,208,118,0.14)"
+                          color="#f5d076"
+                          mb={4}
+                        >
                           {collection.badge}
                         </Badge>
                         <Heading size="md">{collection.title}</Heading>

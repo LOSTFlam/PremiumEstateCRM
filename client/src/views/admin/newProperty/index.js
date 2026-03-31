@@ -43,8 +43,9 @@ import { BsColumnsGap } from "react-icons/bs";
 import CustomSearchInput from "components/search/search";
 
 const Index = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user"));
+  const labelOptions = { t, language: i18n.language };
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [permission] = HasAccess(["Properties"]);
@@ -81,10 +82,10 @@ const Index = () => {
     if (result?.payload?.status === 200) {
       setPropertyData(result?.payload?.data);
     } else {
-      toast.error("Failed to fetch data", "error");
+      toast.error(translateCrmText("Failed to fetch data", labelOptions), "error");
     }
     const actionHeader = {
-      Header: "Action",
+      Header: translateCrmText("Action", labelOptions),
       accessor: "action",
       isSortable: false,
       center: true,
@@ -107,7 +108,7 @@ const Index = () => {
                     setSelectedId(row?.values?._id);
                   }}
                 >
-                  Edit
+                  {translateCrmText("Edit", labelOptions)}
                 </MenuItem>
               )}
               {permission?.view && (
@@ -119,7 +120,7 @@ const Index = () => {
                     navigate(`/propertyView/${row?.values?._id}`);
                   }}
                 >
-                  View
+                  {translateCrmText("View", labelOptions)}
                 </MenuItem>
               )}
               {permission?.delete && (
@@ -133,7 +134,7 @@ const Index = () => {
                     setSelectedId(row?.values?._id);
                   }}
                 >
-                  Delete
+                  {translateCrmText("Delete", labelOptions)}
                 </MenuItem>
               )}
             </MenuList>
@@ -363,7 +364,7 @@ const Index = () => {
             }}
             size="sm"
           >
-            Delete
+            {translateCrmText("Delete", labelOptions)}
           </Button>
         )}
         <Menu isLazy>
@@ -376,7 +377,7 @@ const Index = () => {
             zIndex={2}
           >
             <MenuItem width="165px" onClick={() => setIsImportProperty(true)}>
-              Import Properties
+              {translateCrmText("Import Properties", labelOptions)}
             </MenuItem>
             <MenuDivider />
             <MenuItem
@@ -384,16 +385,16 @@ const Index = () => {
               onClick={() => handleExportNewProperties("csv")}
             >
               {selectedValues && selectedValues?.length > 0
-                ? "Export Selected Data as CSV"
-                : "Export as CSV"}
+                ? translateCrmText("Export Selected Data as CSV", labelOptions)
+                : translateCrmText("Export as CSV", labelOptions)}
             </MenuItem>
             <MenuItem
               width="165px"
               onClick={() => handleExportNewProperties("xlsx")}
             >
               {selectedValues && selectedValues?.length > 0
-                ? "Export Selected Data as Excel"
-                : "Export as Excel"}
+                ? translateCrmText("Export Selected Data as Excel", labelOptions)
+                : translateCrmText("Export as Excel", labelOptions)}
             </MenuItem>
           </MenuList>
         </Menu>
@@ -415,7 +416,7 @@ const Index = () => {
           onClick={() => handleStatusChange("Available")}
         >
           <Card className="light-green" style={{ padding: "15px" }}>
-            Available
+            {translateCrmText("Available", labelOptions)}
           </Card>
         </GridItem>
         <GridItem
@@ -425,7 +426,7 @@ const Index = () => {
           onClick={() => handleStatusChange("Booked")}
         >
           <Card className="light-yellow" style={{ padding: "15px" }}>
-            Booked
+            {translateCrmText("Booked", labelOptions)}
           </Card>
         </GridItem>
         <GridItem
@@ -435,7 +436,7 @@ const Index = () => {
           onClick={() => handleStatusChange("Sold")}
         >
           <Card className="light-blue" style={{ padding: "15px" }}>
-            Sold
+            {translateCrmText("Sold", labelOptions)}
           </Card>
         </GridItem>
         <GridItem
@@ -445,7 +446,7 @@ const Index = () => {
           onClick={() => handleStatusChange("Blocked")}
         >
           <Card className="light-red" style={{ padding: "15px" }}>
-            Blocked
+            {translateCrmText("Blocked", labelOptions)}
           </Card>
         </GridItem>
       </Grid>
@@ -459,7 +460,7 @@ const Index = () => {
             variant="solid"
             colorScheme="gray"
           >
-            <TagLabel>{item}</TagLabel>
+            <TagLabel>{translateCrmText(item, labelOptions)}</TagLabel>
             <TagCloseButton onClick={() => handleRemoveTag(item)} />
           </Tag>
         ))}
@@ -548,7 +549,7 @@ const Index = () => {
                             setSelectedId(item?._id);
                           }}
                         >
-                          Edit
+                          {translateCrmText("Edit", labelOptions)}
                         </MenuItem>
                       )}
                       {permission?.view && (
@@ -560,7 +561,7 @@ const Index = () => {
                             navigate(`/propertyView/${item?._id}`);
                           }}
                         >
-                          View
+                          {translateCrmText("View", labelOptions)}
                         </MenuItem>
                       )}
                       {permission?.delete && (
@@ -573,7 +574,7 @@ const Index = () => {
                             setDelete(true);
                           }}
                         >
-                          Delete
+                          {translateCrmText("Delete", labelOptions)}
                         </MenuItem>
                       )}
                     </MenuList>
@@ -635,14 +636,14 @@ const Index = () => {
         <CommonDeleteModel
           isOpen={deleteModel}
           onClose={() => setDelete(false)}
-          type="Properties"
+          type={translateCrmText("Properties", labelOptions)}
           handleDeleteData={handleDeleteProperties}
           ids={selectedValues}
         />
       )}
       {isImportProperty && (
         <ImportModal
-          text="Property file"
+          text={translateCrmText("Property file", labelOptions)}
           isOpen={isImportProperty}
           onClose={setIsImportProperty}
           customFields={propertyData?.[0]?.fields || []}
