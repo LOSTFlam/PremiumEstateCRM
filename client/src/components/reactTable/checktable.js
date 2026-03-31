@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { isValidElement, useMemo, useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -139,6 +139,8 @@ const CommonCheckTable = (props) => {
   const [gopageValue, setGopageValue] = useState();
 
   const dispatch = useDispatch();
+  const getColumnKey = (column, index = 0) =>
+    String(column?.accessor || column?.id || column?.Header || `column-${index}`);
 
   const tableInstance = useTable(
     {
@@ -168,13 +170,11 @@ const CommonCheckTable = (props) => {
     state: { pageIndex, pageSize },
   } = tableInstance;
 
-  if (
-    pageOptions &&
-    pageOptions?.length > 0 &&
-    pageOptions?.length < gopageValue
-  ) {
-    setGopageValue(pageOptions?.length);
-  }
+  useEffect(() => {
+    if (pageOptions?.length > 0 && gopageValue && pageOptions.length < gopageValue) {
+      setGopageValue(pageOptions.length);
+    }
+  }, [gopageValue, pageOptions]);
 
   const handleSearch = (results) => {
     AdvanceSearch &&
@@ -305,20 +305,25 @@ const CommonCheckTable = (props) => {
   const toggleColumnVisibility = (columnKey) => {
     let updatedColumns;
 
-    if (tempSelectedColumns?.some((column) => column?.accessor === columnKey)) {
+    if (
+      tempSelectedColumns?.some(
+        (column, index) => getColumnKey(column, index) === columnKey
+      )
+    ) {
       updatedColumns = tempSelectedColumns?.filter(
-        (column) => column?.accessor !== columnKey
+        (column, index) => getColumnKey(column, index) !== columnKey
       );
     } else {
       const columnToAdd = columnData?.find(
-        (column) => column?.accessor === columnKey
+        (column, index) => getColumnKey(column, index) === columnKey
       );
       updatedColumns = [...tempSelectedColumns, columnToAdd];
     }
 
     const orderedColumns = columnData?.filter((column) =>
       updatedColumns.some(
-        (updatedColumn) => updatedColumn?.accessor === column?.accessor
+        (updatedColumn, index) =>
+          getColumnKey(updatedColumn, index) === getColumnKey(column, index)
       )
     );
     setTempSelectedColumns(orderedColumns);
@@ -610,11 +615,11 @@ const CommonCheckTable = (props) => {
             {BackButton && BackButton}
           </GridItem>
           <HStack spacing={4} mb={2}>
-            {(getTagValues || [])?.map((item) => (
+            {(getTagValues || [])?.map((item, index) => (
               <Tag
                 size={"md"}
                 p={2}
-                key={item?.value}
+                key={`${Array.isArray(item?.name) ? item.name.join("-") : item?.name || "tag"}-${item?.value || index}`}
                 borderRadius="full"
                 variant="solid"
                 colorScheme="gray"
@@ -636,16 +641,23 @@ const CommonCheckTable = (props) => {
             mb="24px"
           >
             <Thead zIndex={1}>
-              {headerGroups?.map((headerGroup, index) => (
-                <Tr {...headerGroup?.getHeaderGroupProps()} key={index}>
-                  {headerGroup?.headers?.map((column, index) => (
+              {headerGroups?.map((headerGroup, index) => {
+                const headerGroupProps = headerGroup?.getHeaderGroupProps();
+                return (
+                <Tr
+                  {...headerGroupProps}
+                  key={headerGroup?.id || headerGroupProps?.key || `header-group-${index}`}
+                >
+                  {headerGroup?.headers?.map((column, index) => {
+                    const headerProps = column?.getHeaderProps(
+                      column?.isSortable !== false &&
+                        column?.getSortByToggleProps()
+                    );
+                    return (
                     <Th
-                      {...column?.getHeaderProps(
-                        column?.isSortable !== false &&
-                          column?.getSortByToggleProps()
-                      )}
+                      {...headerProps}
                       pe="10px"
-                      key={index}
+                      key={column?.id || headerProps?.key || `header-${index}`}
                       borderColor={borderColor}
                     >
                       <Flex
@@ -677,9 +689,9 @@ const CommonCheckTable = (props) => {
                         )}
                       </Flex>
                     </Th>
-                  ))}
+                  )})}
                 </Tr>
-              ))}
+              )})}
             </Thead>
             <Tbody {...getTableBodyProps()}>
               {isLoding ? (
@@ -706,8 +718,12 @@ const CommonCheckTable = (props) => {
               ) : (
                 page?.map((row, i) => {
                   prepareRow(row);
+                  const rowProps = row?.getRowProps();
                   return (
-                    <Tr {...row?.getRowProps()}>
+                    <Tr
+                      {...rowProps}
+                      key={row?.id || rowProps?.key || `row-${i}`}
+                    >
                       {row?.cells?.map((cell, index) => {
                         let data = "";
                         columnData?.forEach((item) => {
@@ -716,23 +732,37 @@ const CommonCheckTable = (props) => {
                               item?.cell &&
                               typeof item?.cell === "function"
                             ) {
+                              const renderedValue = item?.cell(cell);
+                              const normalizedValue =
+                                renderedValue === " " ||
+                                renderedValue === "" ||
+                                renderedValue === null ||
+                                renderedValue === undefined
+                                  ? "-"
+                                  : renderedValue;
+                              const wrapWithText =
+                                !isValidElement(normalizedValue) &&
+                                !Array.isArray(normalizedValue) &&
+                                typeof normalizedValue !== "object";
+
                               data = (
                                 <Flex
-                                  Flex
                                   align="center"
                                   justifyContent={
-                                    item?.Header === "Action" && "center"
+                                    item?.Header === "Action" ? "center" : "start"
                                   }
                                 >
-                                  <Text
-                                    color={textColor}
-                                    fontSize="sm"
-                                    fontWeight="700"
-                                  >
-                                    {item?.cell(cell) === " "
-                                      ? "-"
-                                      : item?.cell(cell)}
-                                  </Text>
+                                  {wrapWithText ? (
+                                    <Text
+                                      color={textColor}
+                                      fontSize="sm"
+                                      fontWeight="700"
+                                    >
+                                      {normalizedValue}
+                                    </Text>
+                                  ) : (
+                                    normalizedValue
+                                  )}
                                 </Flex>
                               );
                             } else {
@@ -772,10 +802,15 @@ const CommonCheckTable = (props) => {
                             }
                           }
                         });
+                        const cellProps = cell?.getCellProps();
                         return (
                           <Td
-                            {...cell?.getCellProps()}
-                            key={index}
+                            {...cellProps}
+                            key={
+                              cell?.column?.id ||
+                              cellProps?.key ||
+                              `${row?.id || i}-${index}`
+                            }
                             fontSize={{ sm: "14px" }}
                             minW={{ sm: "150px", md: "200px", lg: "auto" }}
                             borderColor="transparent"
@@ -827,18 +862,21 @@ const CommonCheckTable = (props) => {
             />
             <ModalBody>
               <div>
-                {columnData?.map((column) => (
-                  <Text display={"flex"} key={column?.accessor} py={2}>
+                {columnData?.map((column, index) => {
+                  const columnKey = getColumnKey(column, index);
+                  return (
+                  <Text display={"flex"} key={columnKey} py={2}>
                     <Checkbox
                       defaultChecked={columns?.some(
-                        (item) => item?.accessor === column?.accessor
+                        (item, itemIndex) =>
+                          getColumnKey(item, itemIndex) === columnKey
                       )}
-                      onChange={() => toggleColumnVisibility(column?.accessor)}
+                      onChange={() => toggleColumnVisibility(columnKey)}
                       pe={2}
                     />
                     {column?.Header}
                   </Text>
-                ))}
+                )})}
               </div>
             </ModalBody>
             <ModalFooter>

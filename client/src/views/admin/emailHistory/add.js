@@ -104,41 +104,76 @@ const AddEmailHistory = (props) => {
       setIsLoding(false);
     }
   };
-  useEffect(async () => {
-    values.start = props?.date;
-    try {
-      let result;
-      if (values?.category === "Contact" && assignToContactData?.length <= 0) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/contact/"
-            : `api/contact/?createBy=${user?._id}`
-        );
-        setAssignToContactData(result?.data);
-      } else if (values?.category === "Lead" && assignToLeadData <= 0) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/lead/"
-            : `api/lead/?createBy=${user?._id}`
-        );
-        setAssignToLeadData(result?.data);
-      } else if (
-        (values?.category === "property" && console.log(""),
-        assignToProperyData.length <= 0)
-      ) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/property"
-            : `api/property/?createBy=${user?._id}`
-        );
-        setAssignToPropertyData(result?.data);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }, [props, values?.category]);
 
-  const fetchRecipientData = async () => {
+  useEffect(() => {
+    let isActive = true;
+    const category = String(values?.category || "").toLowerCase();
+
+    if (props?.date && values?.startDate !== props?.date) {
+      setFieldValue("startDate", props.date);
+    }
+
+    const loadCategoryData = async () => {
+      try {
+        let result;
+
+        if (category === "contact" && assignToContactData?.length <= 0) {
+          result = await getApi(
+            user?.role === "superAdmin"
+              ? "api/contact/"
+              : `api/contact/?createBy=${user?._id}`,
+          );
+          if (isActive) {
+            setAssignToContactData(result?.data || []);
+          }
+          return;
+        }
+
+        if (category === "lead" && assignToLeadData?.length <= 0) {
+          result = await getApi(
+            user?.role === "superAdmin"
+              ? "api/lead/"
+              : `api/lead/?createBy=${user?._id}`,
+          );
+          if (isActive) {
+            setAssignToLeadData(result?.data || []);
+          }
+          return;
+        }
+
+        if (category === "property" && assignToProperyData?.length <= 0) {
+          result = await getApi(
+            user?.role === "superAdmin"
+              ? "api/property"
+              : `api/property/?createBy=${user?._id}`,
+          );
+          if (isActive) {
+            setAssignToPropertyData(result?.data || []);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadCategoryData();
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    assignToContactData?.length,
+    assignToLeadData?.length,
+    assignToProperyData?.length,
+    props?.date,
+    setFieldValue,
+    user?._id,
+    user?.role,
+    values?.category,
+    values?.startDate,
+  ]);
+
+  const fetchRecipientData = () => {
     if (values?.createByContact) {
       let findEmail = assignToContactData?.find(
         (item) => item?._id === values?.createByContact
@@ -158,44 +193,75 @@ const AddEmailHistory = (props) => {
     }
   };
 
-  const fetchData = async () => {
-    setIsLoding(true);
-    const result = await dispatch(fetchEmailTempData());
-    if (result?.payload?.status === 200) {
-      setData(result?.payload?.data);
-    } else {
-      toast.error("Failed to fetch data", "error");
-    }
-    setIsLoding(false);
-  };
-
-  const fetchUsersData = async () => {
-    setIsLoding(true);
-    try {
-      let result = await getApi("api/user/");
-
-      let salesPersons =
-        result?.data?.user?.filter((userData) =>
-          userData?.roles?.some((role) => role?.roleName === "Sales")
-        ) || [];
-      setAssignToSalesData(salesPersons);
-    } catch (error) {
-      console.error("Failed to fetch users data:", error);
-    } finally {
-      setIsLoding(false);
-    }
-  };
-
   useEffect(() => {
-    if (values?.type === "template") fetchData();
-  }, [values?.type]);
+    let isActive = true;
+
+    const loadTemplates = async () => {
+      if (values?.type !== "template") return;
+
+      setIsLoding(true);
+      try {
+        const result = await dispatch(fetchEmailTempData());
+        if (!isActive) return;
+
+        if (result?.payload?.status === 200) {
+          setData(result?.payload?.data || []);
+        } else {
+          toast.error("Failed to fetch data", "error");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoding(false);
+        }
+      }
+    };
+
+    loadTemplates();
+
+    return () => {
+      isActive = false;
+    };
+  }, [dispatch, values?.type]);
 
   useEffect(() => {
     fetchRecipientData();
-  }, [values?.createByContact, values?.createByLead]);
+  }, [
+    assignToContactData,
+    assignToLeadData,
+    values?.createByContact,
+    values?.createByLead,
+  ]);
 
   useEffect(() => {
+    let isActive = true;
+
+    const fetchUsersData = async () => {
+      setIsLoding(true);
+      try {
+        let result = await getApi("api/user/");
+
+        let salesPersons =
+          result?.data?.user?.filter((userData) =>
+            userData?.roles?.some((role) => role?.roleName === "Sales")
+          ) || [];
+
+        if (isActive) {
+          setAssignToSalesData(salesPersons);
+        }
+      } catch (error) {
+        console.error("Failed to fetch users data:", error);
+      } finally {
+        if (isActive) {
+          setIsLoding(false);
+        }
+      }
+    };
+
     fetchUsersData();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
   const getPropertyOptions = assignToProperyData?.map((item) => ({
     ...item,

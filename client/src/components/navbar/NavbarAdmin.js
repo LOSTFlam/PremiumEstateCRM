@@ -12,22 +12,47 @@ import AdminNavbarLinks from "components/navbar/NavbarLinksAdmin";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import i18next from "i18next";
+import useHideOnScroll from "hooks/useHideOnScroll";
 
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { AiOutlineMenuFold } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchImage } from "../../redux/slices/imageSlice";
 
 export default function AdminNavbar(props) {
   const [scrolled, setScrolled] = useState(false);
+  const isHidden = useHideOnScroll({
+    offset: 104,
+    delta: 10,
+    targetId: props?.scrollTargetId,
+  });
 
   useEffect(() => {
-    window.addEventListener("scroll", changeNavbar);
+    const scrollContainer =
+      typeof document !== "undefined" && props?.scrollTargetId
+        ? document.getElementById(props.scrollTargetId)
+        : null;
+    const scrollTargets =
+      scrollContainer && scrollContainer !== window
+        ? [window, scrollContainer]
+        : [window];
+
+    const readScrollPosition = () =>
+      Math.max(window?.scrollY || 0, scrollContainer?.scrollTop || 0);
+
+    const changeNavbar = () => {
+      setScrolled(readScrollPosition() > 1);
+    };
+
+    changeNavbar();
+    scrollTargets.forEach((target) => {
+      target.addEventListener("scroll", changeNavbar, { passive: true });
+    });
 
     return () => {
-      window.removeEventListener("scroll", changeNavbar);
+      scrollTargets.forEach((target) => {
+        target.removeEventListener("scroll", changeNavbar);
+      });
     };
-  });
+  }, [props?.scrollTargetId]);
 
   const {
     secondary,
@@ -54,13 +79,6 @@ export default function AdminNavbar(props) {
   let paddingX = "15px";
   let gap = "0px";
   let size = "sm";
-  const changeNavbar = () => {
-    if (window?.scrollY > 1) {
-      setScrolled(true);
-    } else {
-      setScrolled(false);
-    }
-  };
   return (
     <Box
       position={navbarPosition}
@@ -77,7 +95,7 @@ export default function AdminNavbar(props) {
       zIndex={1}
       transitionDelay="0s, 0s, 0s, 0s"
       transitionDuration=" 0.25s, 0.25s, 0.25s, 0s"
-      transition-property="box-shadow, background-color, filter, border"
+      transitionProperty="box-shadow, background-color, filter, border, transform, opacity"
       transitionTimingFunction="linear, linear, linear, linear"
       alignItems={{ xl: "center" }}
       display={secondary ? "block" : "flex"}
@@ -106,6 +124,10 @@ export default function AdminNavbar(props) {
         // xl: openSidebar === true ? 'calc(100vw - 286px)' : 'calc(100vw - 80px)',
         // '2xl': openSidebar === true ? 'calc(100vw - 286px)' : 'calc(100vw - 80px)'
       }}
+      opacity={isHidden ? 0 : 1}
+      pointerEvents={isHidden ? "none" : "auto"}
+      transform={isHidden ? "translateY(calc(-100% - 12px))" : "translateY(0)"}
+      willChange="transform, opacity"
       sx={{ boxShadow: "14px 17px 40px 4px rgba(112, 144, 176, 0.08)" }}
     >
       <Flex
@@ -259,4 +281,5 @@ AdminNavbar.propTypes = {
   secondary: PropTypes?.bool,
   fixed: PropTypes?.bool,
   onOpen: PropTypes?.func,
+  scrollTargetId: PropTypes?.string,
 };

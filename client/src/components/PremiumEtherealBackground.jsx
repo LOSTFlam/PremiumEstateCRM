@@ -185,19 +185,16 @@ export default function PremiumEtherealBackground() {
           top={sparkle.top}
           width={sparkle.size}
           height={sparkle.size}
-          background="radial-gradient(circle, 
-            rgba(255, 255, 255, 0.9) 0%, 
-            rgba(212, 175, 55, 0.6) 50%, 
+          background="radial-gradient(circle,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(212, 175, 55, 0.6) 50%,
             transparent 70%)"
           borderRadius="50%"
           filter="blur(1px)"
-          animation={`sparkle ${sparkle.duration} ease-in-out infinite`}
+          animation={`sparkle ${sparkle.duration} ease-in-out ${sparkle.delay} infinite`}
           opacity={sparkle.opacity}
           pointerEvents="none"
           zIndex={1}
-          sx={{
-            animationDelay: sparkle.delay,
-          }}
         />
       ))}
 
@@ -210,18 +207,15 @@ export default function PremiumEtherealBackground() {
           left={`${i * 25}%`}
           width="200px"
           height="300px"
-          background="linear-gradient(180deg, 
-            rgba(255, 255, 255, 0.03) 0%, 
+          background="linear-gradient(180deg,
+            rgba(255, 255, 255, 0.03) 0%,
             transparent 100%)"
           filter="blur(20px)"
-          animation={`light-ray ${8 + i * 2}s ease-in-out infinite`}
+          animation={`light-ray ${8 + i * 2}s ease-in-out ${i * 0.5}s infinite`}
           opacity={0.4}
           pointerEvents="none"
           zIndex={0}
           transform={`rotate(${i * 5 - 10}deg)`}
-          sx={{
-            animationDelay: `${i * 0.5}s`,
-          }}
         />
       ))}
 

@@ -507,9 +507,16 @@ export default function ModernLandingPage() {
         >
           <Container maxW="8xl">
             <Stack spacing={10}>
-              <Grid templateColumns={{ base: "1fr", xl: "0.95fr 1.05fr" }} gap={8} alignItems="start">
-                <GridItem>
-                  <Stack spacing={5} maxW="640px">
+              <Box
+                borderRadius="32px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+                bg="white"
+                border="1px solid rgba(9,18,32,0.08)"
+                boxShadow={publicBrand.shadows.soft}
+              >
+                <Stack spacing={8}>
+                  <Box>
                     <Badge
                       w="fit-content"
                       px={4}
@@ -523,91 +530,89 @@ export default function ModernLandingPage() {
                     >
                       {copy.marketBadge}
                     </Badge>
-                    <Heading color={publicBrand.colors.ink} fontSize={{ base: "3xl", md: "5xl" }} lineHeight="1.05">
+                    <Heading color={publicBrand.colors.ink} fontSize={{ base: "3xl", md: "5xl" }} lineHeight="1.05" mt={4}>
                       {copy.marketTitle}
                     </Heading>
-                    <Text color={publicBrand.colors.textSoft} fontSize={{ base: "md", md: "lg" }} lineHeight="1.9">
+                    <Text color={publicBrand.colors.textSoft} fontSize={{ base: "md", md: "lg" }} lineHeight="1.9" mt={4}>
                       {copy.marketText}
                     </Text>
-                    <Text color={publicBrand.colors.copper} fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                    <Text color={publicBrand.colors.copper} fontSize="xs" letterSpacing="0.16em" textTransform="uppercase" mt={6}>
                       {copy.marketStats}
                     </Text>
-                    <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
-                      {marketStats.map((item) => (
-                        <Box
-                          key={item.key}
-                          borderRadius="26px"
-                          px={4}
-                          py={4}
-                          bg="white"
-                          border="1px solid rgba(9,18,32,0.08)"
-                          boxShadow={publicBrand.shadows.soft}
-                        >
-                          <Text color={publicBrand.colors.textSoft} fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
-                            {item.label}
-                          </Text>
-                          <Text mt={2} color={publicBrand.colors.ink} fontWeight="700" fontSize={{ base: "xl", md: "2xl" }}>
-                            {item.value}
-                          </Text>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                  </Stack>
-                </GridItem>
-
-                <GridItem>
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
-                    {marketRoutes.map((route) => (
+                  </Box>
+                  
+                  <SimpleGrid columns={{ base: 2, md: 4 }} spacing={5}>
+                    {marketStats.map((item) => (
                       <Box
-                        key={route.key}
-                        as={RouterLink}
-                        to={route.href}
-                        borderRadius="32px"
-                        px={{ base: 5, md: 6 }}
-                        py={{ base: 5, md: 6 }}
-                        bg="white"
-                        border="1px solid rgba(9,18,32,0.08)"
-                        boxShadow={publicBrand.shadows.soft}
-                        transition="transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
-                        _hover={{
-                          transform: "translateY(-6px)",
-                          boxShadow: "0 24px 70px rgba(6, 10, 16, 0.16)",
-                          borderColor: "rgba(185,119,55,0.20)",
-                        }}
+                        key={item.key}
+                        borderRadius="26px"
+                        px={4}
+                        py={4}
+                        bg="rgba(212,175,55,0.04)"
+                        border="1px solid rgba(212,175,55,0.12)"
                       >
-                        <HStack justify="space-between" align="start">
-                          <Box
-                            w="48px"
-                            h="48px"
-                            borderRadius="18px"
-                            display="grid"
-                            placeItems="center"
-                            bg="rgba(212,175,55,0.10)"
-                            color={publicBrand.colors.copper}
-                          >
-                            <Icon as={route.icon} boxSize={5} />
-                          </Box>
-                          <Text color={publicBrand.colors.textSoft} fontSize="sm">
-                            {route.count}
-                          </Text>
-                        </HStack>
-                        <Heading mt={5} size="md" color={publicBrand.colors.ink}>
-                          {route.title}
-                        </Heading>
-                        <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
-                          {route.text}
+                        <Text color={publicBrand.colors.textSoft} fontSize="xs" textTransform="uppercase" letterSpacing="0.14em">
+                          {item.label}
                         </Text>
-                        <HStack mt={5} spacing={2} color={publicBrand.colors.copper}>
-                          <Text fontWeight="700" fontSize="sm">
-                            {copy.marketOpen}
-                          </Text>
-                          <FiArrowRight />
-                        </HStack>
+                        <Text mt={2} color={publicBrand.colors.ink} fontWeight="700" fontSize={{ base: "xl", md: "2xl" }}>
+                          {item.value}
+                        </Text>
                       </Box>
                     ))}
                   </SimpleGrid>
-                </GridItem>
-              </Grid>
+                </Stack>
+              </Box>
+
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={5}>
+                {marketRoutes.map((route) => (
+                  <Box
+                    key={route.key}
+                    as={RouterLink}
+                    to={route.href}
+                    borderRadius="32px"
+                    px={{ base: 5, md: 6 }}
+                    py={{ base: 5, md: 6 }}
+                    bg="white"
+                    border="1px solid rgba(9,18,32,0.08)"
+                    boxShadow={publicBrand.shadows.soft}
+                    transition="transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
+                    _hover={{
+                      transform: "translateY(-6px)",
+                      boxShadow: "0 24px 70px rgba(6, 10, 16, 0.16)",
+                      borderColor: "rgba(185,119,55,0.20)",
+                    }}
+                  >
+                    <HStack justify="space-between" align="start">
+                      <Box
+                        w="48px"
+                        h="48px"
+                        borderRadius="18px"
+                        display="grid"
+                        placeItems="center"
+                        bg="rgba(212,175,55,0.10)"
+                        color={publicBrand.colors.copper}
+                      >
+                        <Icon as={route.icon} boxSize={5} />
+                      </Box>
+                      <Text color={publicBrand.colors.textSoft} fontSize="sm">
+                        {route.count}
+                      </Text>
+                    </HStack>
+                    <Heading mt={5} size="md" color={publicBrand.colors.ink}>
+                      {route.title}
+                    </Heading>
+                    <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                      {route.text}
+                    </Text>
+                    <HStack mt={5} spacing={2} color={publicBrand.colors.copper}>
+                      <Text fontWeight="700" fontSize="sm">
+                        {copy.marketOpen}
+                      </Text>
+                      <FiArrowRight />
+                    </HStack>
+                  </Box>
+                ))}
+              </SimpleGrid>
             </Stack>
           </Container>
         </Box>

@@ -5,6 +5,7 @@ import {
   Grid,
   GridItem,
   Icon,
+  Stack,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -37,17 +38,17 @@ export default function Upload(props) {
                   {t?.("fields.uploadFiles")}
                 </Text>
               </Flex>
-              <Text fontSize="sm" fontWeight="500" color="secondaryGray.500">
+              <Stack spacing={1}>
                 {count > 0 && (
                   <Text
                     fontSize="sm"
                     fontWeight="500"
                     color="secondaryGray.500"
                   >
-                    Selected Files : {count}
+                    Selected Files: {count}
                   </Text>
                 )}
-              </Text>
+              </Stack>
             </Box>
           }
         />

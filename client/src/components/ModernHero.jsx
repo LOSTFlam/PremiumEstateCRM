@@ -383,45 +383,45 @@ export default function ModernHero({
                     </Text>
                   </Stack>
 
-                  <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={3}>
+                  <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={5}>
                     {segmentEntries.map((category) => (
                       <Box
                         key={category.key}
                         as={RouterLink}
                         to={category.href}
-                        borderRadius="24px"
-                        px={4}
-                        py={4}
-                        bg="rgba(255,255,255,0.04)"
-                        border="1px solid rgba(227, 211, 184, 0.10)"
+                        borderRadius="32px"
+                        px={6}
+                        py={6}
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.12)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
                         _hover={{
-                          transform: "translateY(-4px)",
-                          borderColor: "rgba(245,208,118,0.26)",
-                          boxShadow: "0 18px 44px rgba(0, 0, 0, 0.18)",
+                          transform: "translateY(-6px)",
+                          borderColor: "rgba(245,208,118,0.30)",
+                          boxShadow: "0 24px 56px rgba(0, 0, 0, 0.22)",
                         }}
                       >
                         <HStack justify="space-between" align="start">
                           <Box
-                            w="44px"
-                            h="44px"
-                            borderRadius="18px"
+                            w="56px"
+                            h="56px"
+                            borderRadius="22px"
                             display="grid"
                             placeItems="center"
-                            bg="rgba(245,208,118,0.10)"
+                            bg="rgba(245,208,118,0.12)"
                             color="#f5d076"
                           >
-                            <Icon as={category.icon} boxSize={4.5} />
+                            <Icon as={category.icon} boxSize={6} />
                           </Box>
                           <Text color="whiteAlpha.620" fontSize="sm">
                             {category.count || 0}
                           </Text>
                         </HStack>
-                        <Stack mt={4} spacing={1}>
-                          <Text color="white" fontWeight="700">
+                        <Stack mt={5} spacing={2}>
+                          <Text color="white" fontWeight="700" fontSize="lg">
                             {category.title}
                           </Text>
-                          <Text color="whiteAlpha.680" fontSize="sm" noOfLines={2}>
+                          <Text color="whiteAlpha.680" fontSize="md" noOfLines={2} lineHeight="1.7">
                             {category.text}
                           </Text>
                         </Stack>
@@ -543,13 +543,18 @@ export default function ModernHero({
 
               <Box
                 ref={routesRef}
+                borderRadius="32px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+                bg="rgba(255,255,255,0.04)"
+                border="1px solid rgba(227, 211, 184, 0.10)"
                 style={{
                   transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: routesRevealed ? 1 : 0,
                   transform: routesRevealed ? "translateY(0)" : "translateY(36px)",
                 }}
               >
-                <Grid templateColumns={{ base: "1fr", xl: "0.42fr 0.58fr" }} gap={5} alignItems="start">
+                <Stack spacing={6}>
                   <Box>
                     <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
                       {copy.routesTitle}
@@ -562,7 +567,7 @@ export default function ModernHero({
                     </Text>
                   </Box>
 
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                  <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={5}>
                     {routeCards.map((route) => (
                       <Box
                         key={route.key}
@@ -571,35 +576,35 @@ export default function ModernHero({
                         borderRadius="28px"
                         px={5}
                         py={5}
-                        bg="rgba(255,255,255,0.04)"
-                        border="1px solid rgba(227, 211, 184, 0.10)"
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.12)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
                         _hover={{
-                          transform: "translateY(-4px)",
-                          borderColor: "rgba(245,208,118,0.24)",
-                          boxShadow: "0 20px 50px rgba(0,0,0,0.18)",
+                          transform: "translateY(-6px)",
+                          borderColor: "rgba(245,208,118,0.30)",
+                          boxShadow: "0 24px 56px rgba(0,0,0,0.22)",
                         }}
                       >
                         <HStack justify="space-between" align="start">
                           <Box
-                            w="44px"
-                            h="44px"
-                            borderRadius="18px"
+                            w="48px"
+                            h="48px"
+                            borderRadius="20px"
                             display="grid"
                             placeItems="center"
-                            bg="rgba(245,208,118,0.10)"
+                            bg="rgba(245,208,118,0.12)"
                             color="#f5d076"
                           >
-                            <Icon as={route.icon} />
+                            <Icon as={route.icon} boxSize={5} />
                           </Box>
                           <Text color="whiteAlpha.620" fontSize="sm">
                             {route.count}
                           </Text>
                         </HStack>
-                        <Heading mt={4} size="sm" color="white">
+                        <Heading mt={4} size="md" color="white">
                           {route.title}
                         </Heading>
-                        <Text mt={2} color="whiteAlpha.720" fontSize="sm" lineHeight="1.8">
+                        <Text mt={2} color="whiteAlpha.720" fontSize="md" lineHeight="1.7">
                           {route.text}
                         </Text>
                         <HStack mt={5} spacing={2} color="#f5d076">
@@ -611,7 +616,7 @@ export default function ModernHero({
                       </Box>
                     ))}
                   </SimpleGrid>
-                </Grid>
+                </Stack>
               </Box>
             </Stack>
           </GridItem>

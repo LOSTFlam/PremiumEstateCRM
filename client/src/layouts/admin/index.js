@@ -69,6 +69,7 @@ const defaultBrandLabel = () =>
 // Custom Chakra theme
 export default function Dashboard(props) {
   const { ...rest } = props;
+  const scrollContainerId = "admin-layout-scroll";
   // states and functions
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
@@ -251,13 +252,17 @@ export default function Dashboard(props) {
     dynamicRoute();
   }, [route, modules]);
 
-  useEffect(async () => {
-    if (window.location.pathname === "/dashboard") {
-      await dispatch(fetchRouteData());
-      await dispatch(fetchImage());
-    }
-    await dispatch(fetchModules());
-  }, []);
+  useEffect(() => {
+    const loadAdminShellData = async () => {
+      if (window.location.pathname === "/dashboard") {
+        await dispatch(fetchRouteData());
+        await dispatch(fetchImage());
+      }
+      await dispatch(fetchModules());
+    };
+
+    loadAdminShellData();
+  }, [dispatch]);
 
   const largeLogo = useSelector((state) =>
     state?.images?.images?.filter((item) => item?.isActive === true),
@@ -382,6 +387,7 @@ export default function Dashboard(props) {
             setOpenSidebar={setOpenSidebar}
           />
           <Box
+            id={scrollContainerId}
             float="right"
             minHeight="100vh"
             height="100%"
@@ -422,6 +428,7 @@ export default function Dashboard(props) {
                   largeLogo={largeLogo}
                   openSidebar={openSidebar}
                   setOpenSidebar={setOpenSidebar}
+                  scrollTargetId={scrollContainerId}
                   {...rest}
                 />
               </Box>

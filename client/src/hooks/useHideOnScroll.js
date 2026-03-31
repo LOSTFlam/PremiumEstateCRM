@@ -4,6 +4,7 @@ export default function useHideOnScroll({
   offset = 96,
   delta = 12,
   disabled = false,
+  targetId,
 } = {}) {
   const [isHidden, setIsHidden] = useState(false);
 
@@ -13,10 +14,22 @@ export default function useHideOnScroll({
       return undefined;
     }
 
-    let lastScrollY = window.scrollY || 0;
+    const scrollContainer =
+      typeof document !== "undefined" && targetId
+        ? document.getElementById(targetId)
+        : null;
+    const scrollTargets =
+      scrollContainer && scrollContainer !== window
+        ? [window, scrollContainer]
+        : [window];
+
+    const readScrollPosition = () =>
+      Math.max(window.scrollY || 0, scrollContainer?.scrollTop || 0);
+
+    let lastScrollY = readScrollPosition();
 
     const handleScroll = () => {
-      const nextScrollY = window.scrollY || 0;
+      const nextScrollY = readScrollPosition();
       const scrollDelta = nextScrollY - lastScrollY;
 
       if (nextScrollY <= offset) {
@@ -33,12 +46,18 @@ export default function useHideOnScroll({
       lastScrollY = nextScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    scrollTargets.forEach((target) => {
+      target.addEventListener("scroll", handleScroll, { passive: true });
+    });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      scrollTargets.forEach((target) => {
+        target.removeEventListener("scroll", handleScroll);
+      });
     };
-  }, [delta, disabled, offset]);
+  }, [delta, disabled, offset, targetId]);
 
   return isHidden;
 }

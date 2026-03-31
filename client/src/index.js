@@ -47,6 +47,11 @@ const ReactQueryDevtools =
       )
     : null;
 
+const ROUTER_FUTURE_FLAGS = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 const getStoredUser = () => {
   const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user");
 
@@ -146,35 +151,115 @@ function LegacyRuTextGuard() {
   useEffect(() => {
     if (resolveLocale() !== "ru" || typeof document === "undefined") return undefined;
 
-    const applyReplacements = () => {
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      let currentNode = walker.nextNode();
+    const replaceElementAttributes = (element) => {
+      ["placeholder", "aria-label", "title"].forEach((attribute) => {
+        const value = element.getAttribute(attribute);
+        const replaced = replaceLegacyRuText(value);
+        if (value && replaced !== value) {
+          element.setAttribute(attribute, replaced);
+        }
+      });
+    };
 
-      while (currentNode) {
-        const parentTag = currentNode.parentElement?.tagName;
+    const replaceTree = (rootNode) => {
+      if (!rootNode?.isConnected && rootNode !== document.body) return;
+
+      if (rootNode.nodeType === Node.TEXT_NODE) {
+        const parentTag = rootNode.parentElement?.tagName;
         if (parentTag !== "SCRIPT" && parentTag !== "STYLE") {
+          const replaced = replaceLegacyRuText(rootNode.textContent || "");
+          if (replaced !== rootNode.textContent) {
+            rootNode.textContent = replaced;
+          }
+        }
+        return;
+      }
+
+      if (rootNode.nodeType !== Node.ELEMENT_NODE) {
+        return;
+      }
+
+      const walker = document.createTreeWalker(
+        rootNode,
+        NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const tagName = node.tagName;
+              return tagName === "SCRIPT" || tagName === "STYLE"
+                ? NodeFilter.FILTER_REJECT
+                : NodeFilter.FILTER_ACCEPT;
+            }
+
+            const parentTag = node.parentElement?.tagName;
+            return parentTag === "SCRIPT" || parentTag === "STYLE"
+              ? NodeFilter.FILTER_REJECT
+              : NodeFilter.FILTER_ACCEPT;
+          },
+        },
+      );
+
+      replaceElementAttributes(rootNode);
+
+      let currentNode = walker.nextNode();
+      while (currentNode) {
+        if (currentNode.nodeType === Node.TEXT_NODE) {
           const replaced = replaceLegacyRuText(currentNode.textContent || "");
           if (replaced !== currentNode.textContent) {
             currentNode.textContent = replaced;
           }
+        } else if (currentNode.nodeType === Node.ELEMENT_NODE) {
+          replaceElementAttributes(currentNode);
         }
         currentNode = walker.nextNode();
       }
-
-      document.querySelectorAll("*").forEach((element) => {
-        ["placeholder", "aria-label", "title"].forEach((attribute) => {
-          const value = element.getAttribute(attribute);
-          const replaced = replaceLegacyRuText(value);
-          if (value && replaced !== value) {
-            element.setAttribute(attribute, replaced);
-          }
-        });
-      });
     };
 
-    const rafId = window.requestAnimationFrame(applyReplacements);
-    const observer = new MutationObserver(() => {
-      window.requestAnimationFrame(applyReplacements);
+    const pendingNodes = new Set();
+    let frameId = 0;
+
+    const flushPendingNodes = () => {
+      frameId = 0;
+      const nodes = Array.from(pendingNodes).filter(
+        (node) =>
+          !Array.from(pendingNodes).some(
+            (candidate) =>
+              candidate !== node &&
+              candidate?.nodeType === Node.ELEMENT_NODE &&
+              candidate.contains?.(node),
+          ),
+      );
+
+      pendingNodes.clear();
+      nodes.forEach((node) => replaceTree(node));
+    };
+
+    const scheduleReplacement = (node = document.body) => {
+      pendingNodes.add(node);
+
+      if (!frameId) {
+        frameId = window.requestAnimationFrame(flushPendingNodes);
+      }
+    };
+
+    scheduleReplacement();
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "characterData") {
+          scheduleReplacement(mutation.target);
+          return;
+        }
+
+        if (mutation.type === "attributes") {
+          scheduleReplacement(mutation.target);
+          return;
+        }
+
+        mutation.addedNodes.forEach((node) => {
+          scheduleReplacement(node);
+        });
+      });
     });
 
     observer.observe(document.body, {
@@ -186,7 +271,9 @@ function LegacyRuTextGuard() {
     });
 
     return () => {
-      window.cancelAnimationFrame(rafId);
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
       observer.disconnect();
     };
   }, []);
@@ -296,7 +383,7 @@ ReactDOM.render(
         `}</style>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <Router>
+            <Router future={ROUTER_FUTURE_FLAGS}>
               <ChakraProvider theme={theme}>
                 <ToastContainer />
                 <LegacyRuTextGuard />

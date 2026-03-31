@@ -205,7 +205,6 @@ export default function PropertyLandingPage() {
             ? "api/property/"
             : `api/property/?createBy=${user?._id}`;
         const response = await getApi(endpoint);
-        console.log('Dashboard properties response:', response);
         // API returns array directly, handle different structures
         const propertiesData = Array.isArray(response?.data) 
           ? response.data 

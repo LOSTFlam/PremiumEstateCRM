@@ -78,6 +78,7 @@ const defaultBrandLabel = () =>
 // Custom Chakra theme
 export default function User(props) {
   const { ...rest } = props;
+  const scrollContainerId = "user-layout-scroll";
   // states and functions
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
@@ -377,6 +378,7 @@ export default function User(props) {
             largeLogo={largeLogo}
           />
           <Box
+            id={scrollContainerId}
             float="right"
             minHeight="100vh"
             height="100%"
@@ -417,6 +419,7 @@ export default function User(props) {
                   largeLogo={largeLogo}
                   openSidebar={openSidebar}
                   setOpenSidebar={setOpenSidebar}
+                  scrollTargetId={scrollContainerId}
                   {...rest}
                 />
               </Box>

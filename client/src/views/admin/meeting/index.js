@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DeleteIcon, ViewIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Flex,
   Menu,
   MenuButton,
   MenuItem,
@@ -48,7 +49,7 @@ const Index = () => {
     isSortable: false,
     center: true,
     cell: ({ row }) => (
-      <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+      <Flex justify="center">
         <Menu isLazy>
           <MenuButton>
             <CiMenuKebab />
@@ -82,7 +83,7 @@ const Index = () => {
             )}
           </MenuList>
         </Menu>
-      </Text>
+      </Flex>
     ),
   };
   const tableColumns = [

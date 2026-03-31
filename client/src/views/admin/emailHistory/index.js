@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ViewIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Flex,
   Menu,
   MenuButton,
   MenuItem,
@@ -10,7 +11,6 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { getApi } from "services/api";
 import { HasAccess } from "../../../redux/accessUtils";
 import CommonCheckTable from "../../../components/reactTable/checktable";
 import { SearchIcon } from "@chakra-ui/icons";
@@ -35,7 +35,6 @@ const Index = (props) => {
   const [advanceSearch, setAdvanceSearch] = useState(false);
   const [getTagValuesOutSide, setGetTagValuesOutside] = useState([]);
   const [searchboxOutside, setSearchboxOutside] = useState("");
-  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoding, setIsLoding] = useState(false);
@@ -53,7 +52,7 @@ const Index = (props) => {
     isSortable: false,
     center: true,
     cell: ({ row }) => (
-      <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+      <Flex justify="center">
         <Menu isLazy>
           <MenuButton>
             <CiMenuKebab />
@@ -122,7 +121,7 @@ const Index = (props) => {
             )}
           </MenuList>
         </Menu>
-      </Text>
+      </Flex>
     ),
   };
   const tableColumns = [
@@ -151,7 +150,7 @@ const Index = (props) => {
       Header: t?.("fields.realtedTo") || "Related To",
       accessor: "realeted",
       cell: ({ row }) => (
-        <Text>
+        <Flex direction="column" align="start">
           {row?.original?.createByContact && contactAccess?.view ? (
             <Link to={`/contactView/${row?.original?.createByContact}`}>
               <Text
@@ -191,7 +190,7 @@ const Index = (props) => {
               {row?.original?.createByLead && "Lead"}
             </Text>
           )}
-        </Text>
+        </Flex>
       ),
     },
     { Header: t?.("fields.timestamp") || "Timestamp", accessor: "timestamp" },
@@ -209,54 +208,50 @@ const Index = (props) => {
       : []),
   ];
 
-  const fetchData = async () => {
-    setIsLoding(true);
-    try {
-      const result = await dispatch(fetchEmailsData());
-      let response = Array.isArray(result?.payload) 
-        ? result.payload 
-        : Array.isArray(result?.payload?.data) 
-          ? result.payload.data 
-          : [];
-
-      response?.forEach((element) => {
-        if (Object.isExtensible(element)) {
-          if (element.createByLead) {
-            element.realeted = "Lead";
-          }
-          if (element.createBy) {
-            element.realeted = "Contact";
-          }
-        } else {
-          const modifiedElement = { ...element };
-          if (element?.createByLead) {
-            modifiedElement.realeted = "Lead";
-          }
-          if (element?.createBy) {
-            modifiedElement.realeted = "Contact";
-          }
-          element = modifiedElement;
-        }
-      });
-      
-      if (response.length > 0) {
-        setData(response);
-      }
-    } catch (error) {
-      console.error('Error fetching emails:', error);
-      toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
-    } finally {
-      setIsLoding(false);
-    }
-  };
-
-  // const [columns, setColumns] = useState([...tableColumns]);
-  // const [selectedColumns, setSelectedColumns] = useState([...tableColumns]);
-  // const dataColumn = tableColumns?.filter(item => selectedColumns?.find(colum => colum?.Header === item.Header))
-
   useEffect(() => {
-    fetchData();
-  }, [action]);
+    let isActive = true;
+
+    const loadEmails = async () => {
+      setIsLoding(true);
+
+      try {
+        const result = await dispatch(fetchEmailsData());
+        const response = (
+          Array.isArray(result?.payload)
+            ? result.payload
+            : Array.isArray(result?.payload?.data)
+              ? result.payload.data
+              : []
+        ).map((item) => ({
+          ...item,
+          realeted: item?.createByLead
+            ? "Lead"
+            : item?.createByContact || item?.createBy
+              ? "Contact"
+              : item?.realeted,
+        }));
+
+        if (isActive) {
+          setData(response);
+        }
+      } catch (error) {
+        console.error("Error fetching emails:", error);
+        if (isActive) {
+          toast.error(t?.("messages.errorOccurred") || "Error occurred", "error");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoding(false);
+        }
+      }
+    };
+
+    loadEmails();
+
+    return () => {
+      isActive = false;
+    };
+  }, [action, dispatch, t]);
 
   return (
     <div>

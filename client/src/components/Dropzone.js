@@ -5,21 +5,28 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 
 function Dropzone(props) {
-  const { content, ...rest } = props;
+  const {
+    content,
+    csv,
+    img,
+    isMultipleAllow,
+    onFileSelect,
+    ...rest
+  } = props;
   const { getRootProps, getInputProps } = useDropzone({
     // multiple: true, // Set to false if you only want to allow selecting one file
     multiple: props?.hasOwnProperty("isMultipleAllow")
-      ? props?.isMultipleAllow
+      ? isMultipleAllow
       : true, // assign false in props.isMultipleAllow if you only want to allow selecting one file
     onDrop: (acceptedFiles) => {
-      if (props?.img === "img") {
+      if (img === "img") {
         const imageFiles = acceptedFiles?.filter((file) => {
           return file?.type?.startsWith("image/");
         });
         if (imageFiles?.length > 0) {
-          props?.onFileSelect(imageFiles);
+          onFileSelect?.(imageFiles);
         }
-      } else if (props?.csv === "csv") {
+      } else if (csv === "csv") {
         const excelFiles = acceptedFiles?.filter((file) => {
           return [
             "text/csv",
@@ -27,10 +34,10 @@ function Dropzone(props) {
           ]?.includes(file?.type);
         });
         if (excelFiles?.length > 0) {
-          props?.onFileSelect(excelFiles);
+          onFileSelect?.(excelFiles);
         }
       } else if (acceptedFiles?.length > 0) {
-        props?.onFileSelect(acceptedFiles);
+        onFileSelect?.(acceptedFiles);
       }
     },
   });
