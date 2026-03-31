@@ -191,21 +191,35 @@ const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/g, ""))
 const PropertyMetric = ({ icon, label, value, iconColor, valueSize = "md" }) => (
   <Box
     borderRadius="22px"
-    px={4}
-    py={3}
+    px={{ base: 4, md: 5 }}
+    py={{ base: 3, md: 4 }}
     bg="rgba(255,255,255,0.72)"
     border="1px solid rgba(18,55,42,0.08)"
     backdropFilter="blur(8px)"
+    minW={0}
   >
-    <HStack spacing={3} align="start">
-      <Circle size="38px" bg={iconColor} color="white">
+    <HStack spacing={3} align="start" wrap="wrap">
+      <Circle size="38px" bg={iconColor} color="white" flexShrink={0}>
         <Icon as={icon} boxSize={4.5} />
       </Circle>
-      <Box>
-        <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" color="gray.500">
+      <Box flex={1} minW={0}>
+        <Text 
+          fontSize="xs" 
+          textTransform="uppercase" 
+          letterSpacing="0.08em" 
+          color="gray.500"
+          noOfLines={2}
+          sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+        >
           {label}
         </Text>
-        <Text fontWeight="800" fontSize={valueSize} color="gray.800">
+        <Text 
+          fontWeight="800" 
+          fontSize={valueSize} 
+          color="gray.800"
+          mt={1}
+          sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+        >
           {value}
         </Text>
       </Box>
@@ -398,26 +412,68 @@ export default function PropertyLandingPage() {
                   {t?.("modules.dashboardHome.heroDescription")}
                 </Text>
 
-                <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
-                  <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
+                <SimpleGrid columns={{ base: 1, md: 3 }} gap={{ base: 3, md: 4 }}>
+                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.totalInventory")}</StatLabel>
-                      <StatNumber>{properties.length}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.totalInventoryHelp")}</StatHelpText>
+                      <StatLabel 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "sm", md: "md" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.totalInventory")}
+                      </StatLabel>
+                      <StatNumber fontSize={{ base: "2xl", md: "3xl" }}>{properties.length}</StatNumber>
+                      <StatHelpText 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "xs", md: "sm" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.totalInventoryHelp")}
+                      </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
+                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.openInventory")}</StatLabel>
-                      <StatNumber>{availableInventory}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.openInventoryHelp")}</StatHelpText>
+                      <StatLabel 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "sm", md: "md" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.openInventory")}
+                      </StatLabel>
+                      <StatNumber fontSize={{ base: "2xl", md: "3xl" }}>{availableInventory}</StatNumber>
+                      <StatHelpText 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "xs", md: "sm" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.openInventoryHelp")}
+                      </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="28px" bg={subtlePanel} p={4} backdropFilter="blur(10px)">
+                  <Box borderRadius="28px" bg={subtlePanel} p={{ base: 4, md: 5 }} backdropFilter="blur(10px)" minW={0}>
                     <Stat>
-                      <StatLabel color="whiteAlpha.780">{t?.("modules.dashboardHome.averagePrice")}</StatLabel>
-                      <StatNumber fontSize="2xl">{averagePrice}</StatNumber>
-                      <StatHelpText color="whiteAlpha.780">{t?.("modules.dashboardHome.averagePriceHelp")}</StatHelpText>
+                      <StatLabel 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "sm", md: "md" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.averagePrice")}
+                      </StatLabel>
+                      <StatNumber fontSize={{ base: "xl", md: "2xl" }} sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}>{averagePrice}</StatNumber>
+                      <StatHelpText 
+                        color="whiteAlpha.780" 
+                        fontSize={{ base: "xs", md: "sm" }}
+                        noOfLines={2}
+                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                      >
+                        {t?.("modules.dashboardHome.averagePriceHelp")}
+                      </StatHelpText>
                     </Stat>
                   </Box>
                 </SimpleGrid>
