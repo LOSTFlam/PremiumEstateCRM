@@ -27,6 +27,7 @@ import { fetchOpportunityData } from "../../../redux/slices/opportunitySlice";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import ImportModal from "./components/ImportModel";
 import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = (props) => {
   const { t } = useTranslation();
@@ -63,10 +64,7 @@ const Index = (props) => {
           <MenuButton>
             <CiMenuKebab />
           </MenuButton>
-          <MenuList
-            minW={"fit-content"}
-            transform={"translate(1520px, 173px);"}
-          >
+          <MenuList minW={"fit-content"}>
             {permission?.update && (
               <MenuItem
                 py={2.5}
@@ -586,7 +584,7 @@ const Index = (props) => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

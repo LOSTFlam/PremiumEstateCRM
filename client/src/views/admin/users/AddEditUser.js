@@ -170,14 +170,18 @@ const AddEditUser = (props) => {
     };
   }, []);
   return (
-    <Modal isOpen={isOpen} isCentered>
+    <Modal isOpen={isOpen} isCentered scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader justifyContent="space-between" display="flex">
+      <ModalContent className="admin-density-shell">
+        <ModalHeader
+          className="admin-density-shell__header"
+          justifyContent="space-between"
+          display="flex"
+        >
           {userAction === "add" ? "Add" : "Edit"} User
           <IconButton onClick={onClose} icon={<CloseIcon />} />
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className="admin-density-shell__body">
           <Grid templateColumns="repeat(12, 1fr)" gap={3}>
             <GridItem colSpan={{ base: 12 }}>
               <FormLabel
@@ -397,7 +401,7 @@ const AddEditUser = (props) => {
           // columnsData={columns ?? []}
           />
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className="admin-density-shell__footer">
           <Button
             variant="brand"
             size="sm"

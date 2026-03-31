@@ -23,6 +23,7 @@ import {
   setSearchValue,
 } from "../../../../redux/slices/advanceSearchSlice";
 import { useDispatch } from "react-redux";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const UserAdvanceSearch = (props) => {
   const {
@@ -97,17 +98,20 @@ const UserAdvanceSearch = (props) => {
         }}
         isOpen={advanceSearch}
         isCentered
+        scrollBehavior="inside"
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Advance Search</ModalHeader>
+        <ModalContent className="admin-density-shell">
+          <ModalHeader className="admin-density-shell__header">
+            {translateCrmText("Advance Search")}
+          </ModalHeader>
           <ModalCloseButton
             onClick={() => {
               setAdvanceSearch(false);
               resetForm();
             }}
           />
-          <ModalBody>
+          <ModalBody className="admin-density-shell__body">
             <Grid templateColumns="repeat(12, 1fr)" mb={3} gap={2}>
               <GridItem colSpan={{ base: 12 }}>
                 <FormLabel
@@ -189,7 +193,7 @@ const UserAdvanceSearch = (props) => {
               </GridItem>
             </Grid>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="admin-density-shell__footer">
             <Button
               size="sm"
               variant="brand"

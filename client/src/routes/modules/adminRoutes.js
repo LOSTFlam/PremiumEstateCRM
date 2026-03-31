@@ -21,6 +21,7 @@ const ModuleName = React.lazy(() => import("views/admin/moduleName"));
 export const adminRoutes = [
   createRoute({
     name: "Admin Setting",
+    i18nKey: "navigation.adminSettings",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "admin",
     path: "/admin-setting",
@@ -28,6 +29,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Storefront Filters",
+    i18nKey: "navigation.storefrontFilters",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/storefront-filters",
     icon: <Icon as={FiSliders} width="20px" height="20px" color="inherit" />,
@@ -35,6 +37,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Roles",
+    i18nKey: "navigation.roles",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/role",
     under: "role",
@@ -43,6 +46,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Custom Fields",
+    i18nKey: "navigation.customFields",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/custom-Fields",
     under: "customField",
@@ -51,6 +55,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Change Images",
+    i18nKey: "navigation.changeImages",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/change-images",
     under: "image",
@@ -59,6 +64,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Validation",
+    i18nKey: "navigation.validations",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/validations",
     under: "Validation",
@@ -67,6 +73,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Table Fields",
+    i18nKey: "navigation.tableFields",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/table-field",
     under: "tableField",
@@ -75,6 +82,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Active Deactive Module",
+    i18nKey: "navigation.activeModules",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/active-deactive-module",
     under: "activeDeactiveModule",
@@ -83,6 +91,7 @@ export const adminRoutes = [
   }),
   createRoute({
     name: "Module",
+    i18nKey: "navigation.modules",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/module",
     under: "module",

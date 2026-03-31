@@ -4,6 +4,13 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslations from './locales/en.json';
 import ruTranslations from './locales/ru.json';
 
+const syncDocumentLanguage = (lng) => {
+  if (typeof document === 'undefined') return;
+
+  const resolved = String(lng || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+  document.documentElement.lang = resolved;
+};
+
 i18next
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -24,5 +31,8 @@ i18next
       useSuspense: false
     }
   });
+
+syncDocumentLanguage(i18next.resolvedLanguage || i18next.language);
+i18next.on('languageChanged', syncDocumentLanguage);
 
 export default i18next;

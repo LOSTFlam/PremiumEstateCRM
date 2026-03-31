@@ -11,68 +11,27 @@ import {
   Text,
   Tooltip,
   useColorModeValue,
-  useDisclosure,
 } from "@chakra-ui/react";
+import { translateCrmText, translateRouteLabel } from "i18n/crmDictionary";
 
 export function SidebarLinks(props) {
   //   Chakra color mode
   let location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { textColor } = props;
-  let activeColor = useColorModeValue("brand.600", "white");
+  let activeColor = useColorModeValue("gray.900", "white");
   let inactiveColor = useColorModeValue("secondaryGray.600", "secondaryGray.600");
   let activeIcon = useColorModeValue("brand.600", "white");
   let textColorDefault = useColorModeValue("gray.700", "white");
   let brandColor = useColorModeValue("brand.500", "brand.400");
-  let sidebarBgColor = useColorModeValue("gray.200", "brand.200");
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  let sidebarBgColor = useColorModeValue("rgba(10, 132, 255, 0.12)", "brand.200");
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   const { routes, setOpenSidebar, openSidebar } = props;
 
-  const routeNameToI18nKey = {
-    Dashboard: "navigation.dashboard",
-    Properties: "navigation.properties",
-    Leads: "navigation.leads",
-    Contacts: "navigation.contacts",
-    Invoices: "navigation.invoices",
-    Quotes: "navigation.quotes",
-    "Offer Letter": "navigation.offerLetters",
-    Opportunities: "navigation.opportunities",
-    Account: "navigation.account",
-    Tasks: "navigation.tasks",
-    Meetings: "navigation.meetings",
-    Calls: "navigation.phoneCall",
-    Emails: "navigation.emails",
-    "Email Template": "navigation.emailTemplate",
-    Calender: "navigation.calendar",
-    Payments: "navigation.payments",
-    Documents: "navigation.documents",
-    Calls: "navigation.phoneCall",
-    "Reporting and Analytics": "navigation.reports",
-    Reports: "navigation.reports",
-    "Admin Setting": "navigation.adminSettings",
-    "Storefront Filters": "navigation.storefrontFilters",
-    Settings: "navigation.settings",
-    Users: "navigation.users",
-    Roles: "navigation.roles",
-    "Custom Fields": "navigation.customFields",
-    "Table Fields": "navigation.tableFields",
-    "Active Deactive Module": "navigation.activeModules",
-    Module: "navigation.modules",
-    Documents: "navigation.documents",
-    Validation: "navigation.validations",
-    "Change Images": "navigation.changeImages",
-    "Bank Details": "navigation.bankDetails",
-  };
-
   const getRouteLabel = (route) => {
-    if (route?.i18nKey) return t(route.i18nKey);
-    const rawName = route?.name;
-    const name = typeof rawName === "string" ? rawName.trim() : rawName;
-    const i18nKey = routeNameToI18nKey[name];
-    return i18nKey ? t(i18nKey) : rawName;
+    return translateRouteLabel(route, { t, language: i18n.language });
   };
 
   // verifies if routeName is the one active (in browser input)
@@ -121,7 +80,10 @@ export function SidebarLinks(props) {
                   padding="0 10px"
                   textAlign={"center"}
                 >
-                  {route?.separator}
+                  {translateCrmText(route?.separator, {
+                    t,
+                    language: i18n.language,
+                  })}
                 </AbsoluteCenter>
               </Box>
             )}
@@ -130,16 +92,20 @@ export function SidebarLinks(props) {
                 backgroundColor={
                   activeRoute(route?.path?.toLowerCase()) ? sidebarBgColor : ""
                 }
-                ps={"25px"}
-                pb={"6px"}
-                pt={"10px"}
+                borderRadius="24px"
+                mx="10px"
+                ps={"20px"}
+                pe="12px"
+                pb={"8px"}
+                pt={"12px"}
+                boxShadow={
+                  activeRoute(route?.path?.toLowerCase())
+                    ? "0 18px 40px rgba(10, 132, 255, 0.08)"
+                    : "none"
+                }
+                backdropFilter="blur(14px)"
               >
-                <HStack
-                  spacing={
-                    activeRoute(route?.path?.toLowerCase()) ? "22px" : "26px"
-                  }
-                  py="5px"
-                >
+                <HStack spacing="18px" py="6px">
                   {openSidebar === true ? (
                     <Flex
                       w="100%"
@@ -159,12 +125,18 @@ export function SidebarLinks(props) {
                       </Box>
                       <Text
                         me="auto"
-                        pb={"3px"}
-                        textOverflow={"ellipsis"}
+                        pb={"2px"}
                         textTransform={"capitalize"}
                         overflowX="hidden"
-                        whiteSpace="nowrap"
-                        width="190px"
+                        width="204px"
+                        minH="48px"
+                        display="-webkit-box"
+                        sx={{
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                        }}
+                        lineHeight="1.35"
+                        fontSize="sm"
                         color={
                           activeRoute(route?.path?.toLowerCase())
                             ? activeColor
@@ -172,8 +144,8 @@ export function SidebarLinks(props) {
                         }
                         fontWeight={
                           activeRoute(route?.path?.toLowerCase())
-                            ? "bold"
-                            : "normal"
+                            ? "semibold"
+                            : "medium"
                         }
                       >
                         <Tooltip hasArrow label={getRouteLabel(route)}>
@@ -206,7 +178,7 @@ export function SidebarLinks(props) {
                     bg={
                       activeRoute(route?.path?.toLowerCase())
                         ? brandColor
-                        : brandColor
+                        : "transparent"
                     }
                     borderRadius="5px"
                   />
@@ -218,11 +190,13 @@ export function SidebarLinks(props) {
                   spacing={
                     activeRoute(route?.path?.toLowerCase()) ? "22px" : "26px"
                   }
-                  py="5px"
-                  ps="10px"
+                  py="8px"
+                  ps="16px"
                 >
                   <Text
                     me="auto"
+                    fontSize="sm"
+                    lineHeight="1.4"
                     color={
                       activeRoute(route?.path?.toLowerCase())
                         ? activeColor
@@ -230,8 +204,8 @@ export function SidebarLinks(props) {
                     }
                     fontWeight={
                       activeRoute(route?.path?.toLowerCase())
-                        ? "bold"
-                        : "normal"
+                        ? "semibold"
+                        : "medium"
                     }
                   >
                     {getRouteLabel(route)}

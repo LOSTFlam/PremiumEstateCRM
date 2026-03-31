@@ -27,6 +27,7 @@ import CommonDeleteModel from "components/commonDeleteModel";
 import { useDispatch } from "react-redux";
 import { deleteApi } from "services/api";
 import { fetchModules } from "../../../redux/slices/moduleSlice";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -158,7 +159,7 @@ const Index = () => {
           onClick={() => handleAddOpen()}
           leftIcon={<AddIcon />}
         >
-          Add New
+          {translateCrmText("Add New")}
         </Button>
         <Button
           size="sm"

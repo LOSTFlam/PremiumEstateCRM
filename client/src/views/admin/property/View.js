@@ -38,6 +38,7 @@ import { HSeparator } from "components/separator/Separator";
 import Spinner from "components/spinner/Spinner";
 import { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
+import { translateCrmText } from "i18n/crmDictionary";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getApi } from "services/api";
 import Add from "./Add";
@@ -70,6 +71,7 @@ import EmailModel from "components/commonTableModel/EmailModel";
 import PhoneModel from "components/commonTableModel/PhoneModel";
 import ListingVerificationPanel from "./components/ListingVerificationPanel";
 import PropertyPhotoManager from "components/property/PropertyPhotoManager";
+import PropertyPriceSummary from "components/property/PropertyPriceSummary";
 import { useTranslation } from "react-i18next";
 
 const View = () => {
@@ -497,6 +499,7 @@ const View = () => {
 
             <TabPanels>
               <TabPanel pt={4} p={0}>
+                <PropertyPriceSummary property={data} />
                 <CustomView
                   data={propertyData?.[0]}
                   fieldData={data}
@@ -621,7 +624,7 @@ const View = () => {
                                 onClick={() => setPropertyPhoto(true)}
                                 variant="brand"
                               >
-                                Add New
+                                {translateCrmText("Add New")}
                               </Button>
                               <PropertyPhoto
                                 text="Property Photos"
@@ -668,7 +671,7 @@ const View = () => {
                                 onClick={() => setVirtualToursorVideos(true)}
                                 variant="brand"
                               >
-                                Add New
+                                {translateCrmText("Add New")}
                               </Button>
                               <PropertyPhoto
                                 text="Virtual Tours or Videos"
@@ -736,7 +739,7 @@ const View = () => {
                                 onClick={() => setFloorPlans(true)}
                                 variant="brand"
                               >
-                                Add New
+                                {translateCrmText("Add New")}
                               </Button>
                               <PropertyPhoto
                                 text="Floor Plans"
@@ -818,7 +821,7 @@ const View = () => {
                                 leftIcon={<AddIcon />}
                                 onClick={() => setPropertyDocuments(true)}
                               >
-                                Add New
+                                {translateCrmText("Add New")}
                               </Button>
                               <PropertyPhoto
                                 text="Property Documents"

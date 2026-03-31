@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { getUsdRubRate, roundAmount } = require("../currency/exchangeRate.service");
 
 const slugify = (value = "") =>
   String(value)
@@ -111,6 +112,87 @@ const buildUniqueFilename = (uploadDir, originalname) => {
   return `${name}-${timestamp}.${ext}`;
 };
 
+const parseAmount = (value) => {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const normalized = String(value)
+    .replace(/\s/g, "")
+    .replace(/,/g, ".")
+    .replace(/[^\d.-]/g, "");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const normalizePropertyPricing = async (payload = {}) => {
+  const nextPayload = { ...payload };
+  const priceCurrency =
+    String(
+      nextPayload.priceCurrency ||
+        nextPayload.listingPriceCurrency ||
+        "USD",
+    ).toUpperCase() === "RUB"
+      ? "RUB"
+      : "USD";
+
+  const providedUsd = parseAmount(nextPayload.listingPrice);
+  const providedRub = parseAmount(nextPayload.listingPriceRub);
+
+  if (providedUsd === null && providedRub === null) {
+    return nextPayload;
+  }
+
+  let rate = parseAmount(nextPayload.priceExchangeRate);
+
+  if (!rate) {
+    try {
+      const liveRate = await getUsdRubRate();
+      rate = parseAmount(liveRate?.rate);
+      if (!nextPayload.priceExchangeUpdatedAt && liveRate?.fetchedAt) {
+        nextPayload.priceExchangeUpdatedAt = liveRate.fetchedAt;
+      }
+    } catch (error) {
+      console.error("Failed to refresh exchange rate for property pricing:", error);
+    }
+  }
+
+  let usdAmount = providedUsd;
+  let rubAmount = providedRub;
+
+  if (priceCurrency === "RUB") {
+    rubAmount = providedRub ?? providedUsd;
+    if (rubAmount !== null && rate) {
+      usdAmount = roundAmount(rubAmount / rate, 2);
+    }
+  } else {
+    usdAmount = providedUsd ?? providedRub;
+    if (usdAmount !== null && rate) {
+      rubAmount = roundAmount(usdAmount * rate, 0);
+    }
+  }
+
+  if (usdAmount !== null) {
+    nextPayload.listingPrice = usdAmount;
+  }
+
+  if (rubAmount !== null) {
+    nextPayload.listingPriceRub = rubAmount;
+  }
+
+  nextPayload.priceCurrency = priceCurrency;
+
+  if (rate) {
+    nextPayload.priceExchangeRate = roundAmount(rate, 4);
+  }
+
+  if (!nextPayload.priceExchangeUpdatedAt) {
+    nextPayload.priceExchangeUpdatedAt = new Date();
+  }
+
+  return nextPayload;
+};
+
 module.exports = {
   slugify,
   buildVerificationChecklist,
@@ -121,4 +203,5 @@ module.exports = {
   getOrdinalSuffix,
   ensureUploadDir,
   buildUniqueFilename,
+  normalizePropertyPricing,
 };

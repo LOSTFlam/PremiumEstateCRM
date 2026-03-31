@@ -1,4 +1,10 @@
 import { t } from 'i18next';
+import {
+  convertUsdToRub,
+  formatCurrencyAmount,
+  formatPropertyPrice,
+  getPreferredCurrency,
+} from "utils/pricing";
 
 // Helper to create photo sets
 export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
@@ -571,14 +577,31 @@ const sampleStorefrontMeta = {
 
 export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/g, "")) || 0;
 
-export const formatPrice = (value, t, language = runtimeLanguage()) => {
+export const formatPrice = (
+  value,
+  t,
+  language = runtimeLanguage(),
+  rateData,
+) => {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return formatPropertyPrice(value, { language, t, rateData });
+  }
+
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
-  return new Intl.NumberFormat(runtimeLocale(language), {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
+  const preferredCurrency = getPreferredCurrency(language);
+  const displayAmount =
+    preferredCurrency === "RUB"
+      ? convertUsdToRub(amount, rateData) ?? amount
+      : amount;
+
+  return (
+    formatCurrencyAmount(displayAmount, {
+      currency: preferredCurrency,
+      language,
+    }) ||
+    (t?.("publicListing.priceOnRequest") || "Price on request")
+  );
 };
 
 export const formatDate = (value, language = runtimeLanguage()) => {

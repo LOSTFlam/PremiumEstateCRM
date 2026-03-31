@@ -18,28 +18,51 @@ import {
   Td,
   Select,
   Button,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FiTrendingUp,
   FiTrendingDown,
   FiUsers,
   FiEye,
-  FiDollarSign,
   FiHome,
-  FiCalendar,
   FiDownload,
 } from "react-icons/fi";
 import { MdCompareArrows, MdFavorite } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import { publicBrand } from "views/public/publicBrand";
-import { getApi } from "services/api";
 import GlassCard from "components/GlassCard";
 
 const AnalyticsDashboard = () => {
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
+  const copy = {
+    title: isRu ? "Аналитика" : "Analytics Dashboard",
+    description: isRu
+      ? "Отслеживайте эффективность объектов и вовлеченность клиентов"
+      : "Track your property performance and user engagement",
+    export: isRu ? "Экспорт" : "Export",
+    last7Days: isRu ? "Последние 7 дней" : "Last 7 days",
+    last30Days: isRu ? "Последние 30 дней" : "Last 30 days",
+    last90Days: isRu ? "Последние 90 дней" : "Last 90 days",
+    lastYear: isRu ? "Последний год" : "Last year",
+    totalViews: isRu ? "Всего просмотров" : "Total Views",
+    totalLeads: isRu ? "Всего лидов" : "Total Leads",
+    favorites: isRu ? "Избранное" : "Favorites",
+    comparisons: isRu ? "Сравнения" : "Comparisons",
+    conversionRate: isRu ? "Конверсия" : "Conversion Rate",
+    properties: isRu ? "Объекты" : "Properties",
+    viewsByType: isRu ? "Просмотры по типам" : "Views by Property Type",
+    recentActivity: isRu ? "Последняя активность" : "Recent Activity",
+    popularProperties: isRu ? "Популярные объекты" : "Popular Properties",
+    propertyName: isRu ? "Название объекта" : "Property Name",
+    views: isRu ? "Просмотры" : "Views",
+    leads: isRu ? "Лиды" : "Leads",
+    conversion: isRu ? "Конверсия" : "Conversion",
+    view: isRu ? "Просмотр" : "View",
+    lead: isRu ? "Лид" : "Lead",
+    favorite: isRu ? "Избранное" : "Favorite",
+    compare: isRu ? "Сравнение" : "Compare",
+  };
   const [timeRange, setTimeRange] = useState("30d");
-  const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState({
     totalViews: 0,
     totalLeads: 0,
@@ -57,7 +80,6 @@ const AnalyticsDashboard = () => {
 
   const fetchAnalytics = async () => {
     try {
-      setLoading(true);
       // Mock data - replace with actual API call
       const mockData = {
         totalViews: 15420,
@@ -66,11 +88,11 @@ const AnalyticsDashboard = () => {
         totalComparisons: 480,
         conversionRate: 2.2,
         popularProperties: [
-          { id: 1, name: "Luxury Villa", views: 2340, leads: 45 },
-          { id: 2, name: "Modern Apartment", views: 1890, leads: 38 },
-          { id: 3, name: "Beach House", views: 1560, leads: 32 },
-          { id: 4, name: "City Penthouse", views: 1420, leads: 28 },
-          { id: 5, name: "Country Estate", views: 1280, leads: 25 },
+          { id: 1, name: isRu ? "Роскошная вилла" : "Luxury Villa", views: 2340, leads: 45 },
+          { id: 2, name: isRu ? "Современные апартаменты" : "Modern Apartment", views: 1890, leads: 38 },
+          { id: 3, name: isRu ? "Дом у побережья" : "Beach House", views: 1560, leads: 32 },
+          { id: 4, name: isRu ? "Городской пентхаус" : "City Penthouse", views: 1420, leads: 28 },
+          { id: 5, name: isRu ? "Загородная усадьба" : "Country Estate", views: 1280, leads: 25 },
         ],
         viewsByType: {
           houses: 45,
@@ -79,23 +101,22 @@ const AnalyticsDashboard = () => {
           commercial: 10,
         },
         recentActivity: [
-          { type: "view", property: "Luxury Villa", time: "2 min ago" },
-          { type: "lead", property: "Modern Apartment", time: "5 min ago" },
-          { type: "favorite", property: "Beach House", time: "10 min ago" },
-          { type: "compare", property: "City Penthouse", time: "15 min ago" },
+          { type: "view", property: isRu ? "Роскошная вилла" : "Luxury Villa", time: isRu ? "2 мин назад" : "2 min ago" },
+          { type: "lead", property: isRu ? "Современные апартаменты" : "Modern Apartment", time: isRu ? "5 мин назад" : "5 min ago" },
+          { type: "favorite", property: isRu ? "Дом у побережья" : "Beach House", time: isRu ? "10 мин назад" : "10 min ago" },
+          { type: "compare", property: isRu ? "Городской пентхаус" : "City Penthouse", time: isRu ? "15 мин назад" : "15 min ago" },
         ],
       };
       setAnalytics(mockData);
     } catch (error) {
       console.error("Error fetching analytics:", error);
     } finally {
-      setLoading(false);
     }
   };
 
   const statCards = [
     {
-      title: "Total Views",
+      title: copy.totalViews,
       value: analytics.totalViews.toLocaleString(),
       change: "+12.5%",
       isPositive: true,
@@ -103,7 +124,7 @@ const AnalyticsDashboard = () => {
       color: "#F5D076",
     },
     {
-      title: "Total Leads",
+      title: copy.totalLeads,
       value: analytics.totalLeads.toLocaleString(),
       change: "+8.3%",
       isPositive: true,
@@ -111,7 +132,7 @@ const AnalyticsDashboard = () => {
       color: "#48BB78",
     },
     {
-      title: "Favorites",
+      title: copy.favorites,
       value: analytics.totalFavorites.toLocaleString(),
       change: "+15.2%",
       isPositive: true,
@@ -119,7 +140,7 @@ const AnalyticsDashboard = () => {
       color: "#F56565",
     },
     {
-      title: "Comparisons",
+      title: copy.comparisons,
       value: analytics.totalComparisons.toLocaleString(),
       change: "+5.7%",
       isPositive: true,
@@ -127,7 +148,7 @@ const AnalyticsDashboard = () => {
       color: "#4299E1",
     },
     {
-      title: "Conversion Rate",
+      title: copy.conversionRate,
       value: `${analytics.conversionRate}%`,
       change: "+0.3%",
       isPositive: true,
@@ -135,7 +156,7 @@ const AnalyticsDashboard = () => {
       color: "#9F7AEA",
     },
     {
-      title: "Properties",
+      title: copy.properties,
       value: "248",
       change: "+12",
       isPositive: true,
@@ -144,17 +165,14 @@ const AnalyticsDashboard = () => {
     },
   ];
 
-  const bgColor = useColorModeValue("gray.50", "gray.900");
-  const cardBg = useColorModeValue("white", "gray.800");
-
   return (
     <Container maxW="8xl" py={8}>
       <Stack spacing={8}>
         {/* Header */}
         <HStack justify="space-between" flexWrap="wrap" gap={4}>
           <Stack spacing={1}>
-            <Heading size="xl">Analytics Dashboard</Heading>
-            <Text color="gray.500">Track your property performance and user engagement</Text>
+            <Heading size="xl">{copy.title}</Heading>
+            <Text color="gray.500">{copy.description}</Text>
           </Stack>
           <HStack spacing={3}>
             <Select
@@ -163,10 +181,10 @@ const AnalyticsDashboard = () => {
               maxW="150px"
               borderRadius="12px"
             >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
-              <option value="1y">Last year</option>
+              <option value="7d">{copy.last7Days}</option>
+              <option value="30d">{copy.last30Days}</option>
+              <option value="90d">{copy.last90Days}</option>
+              <option value="1y">{copy.lastYear}</option>
             </Select>
             <Button
               leftIcon={<FiDownload />}
@@ -174,7 +192,7 @@ const AnalyticsDashboard = () => {
               borderRadius="12px"
               onClick={() => window.print()}
             >
-              Export
+              {copy.export}
             </Button>
           </HStack>
         </HStack>
@@ -229,13 +247,20 @@ const AnalyticsDashboard = () => {
           {/* Views by Property Type */}
           <GlassCard p={6} borderRadius="20px">
             <Stack spacing={4}>
-              <Heading size="md">Views by Property Type</Heading>
+              <Heading size="md">{copy.viewsByType}</Heading>
               <Stack spacing={3}>
                 {Object.entries(analytics.viewsByType).map(([type, percentage]) => (
                   <Stack key={type} spacing={2}>
                     <HStack justify="space-between">
                       <Text textTransform="capitalize" fontWeight="500">
-                        {type}
+                        {isRu
+                          ? {
+                              houses: "Дома",
+                              apartments: "Квартиры",
+                              plots: "Участки",
+                              commercial: "Коммерция",
+                            }[type] || type
+                          : type}
                       </Text>
                       <Text fontWeight="600">{percentage}%</Text>
                     </HStack>
@@ -255,7 +280,7 @@ const AnalyticsDashboard = () => {
           {/* Recent Activity */}
           <GlassCard p={6} borderRadius="20px">
             <Stack spacing={4}>
-              <Heading size="md">Recent Activity</Heading>
+              <Heading size="md">{copy.recentActivity}</Heading>
               <Stack spacing={3}>
                 {analytics.recentActivity.map((activity, index) => (
                   <HStack key={index} spacing={3}>
@@ -302,7 +327,7 @@ const AnalyticsDashboard = () => {
                         {activity.property}
                       </Text>
                       <Text color="gray.500" fontSize="xs">
-                        {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                        {copy[activity.type] || activity.type}
                       </Text>
                     </Stack>
                     <Text color="gray.400" fontSize="xs">
@@ -318,15 +343,15 @@ const AnalyticsDashboard = () => {
         {/* Popular Properties Table */}
         <GlassCard p={6} borderRadius="20px">
           <Stack spacing={4}>
-            <Heading size="md">Popular Properties</Heading>
+            <Heading size="md">{copy.popularProperties}</Heading>
             <Table variant="simple">
               <Thead>
                 <Tr>
                   <Th>#</Th>
-                  <Th>Property Name</Th>
-                  <Th isNumeric>Views</Th>
-                  <Th isNumeric>Leads</Th>
-                  <Th isNumeric>Conversion</Th>
+                  <Th>{copy.propertyName}</Th>
+                  <Th isNumeric>{copy.views}</Th>
+                  <Th isNumeric>{copy.leads}</Th>
+                  <Th isNumeric>{copy.conversion}</Th>
                 </Tr>
               </Thead>
               <Tbody>

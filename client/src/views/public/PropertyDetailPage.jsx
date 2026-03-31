@@ -47,6 +47,11 @@ import LeadCaptureForm from "components/property/LeadCaptureForm";
 import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
 import { publicBrand } from "views/public/publicBrand";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
+import {
+  formatPropertyPrice,
+  formatPropertyPriceSecondary,
+} from "utils/pricing";
 
 const detailCopy = {
   ru: {
@@ -107,6 +112,7 @@ const PropertyDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const toast = useToast();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -125,9 +131,17 @@ const PropertyDetailPage = () => {
   const fetchProperty = async () => {
     try {
       setLoading(true);
-      const response = await getApi(`api/property/public/${slug}`);
-      if (response && response.data) {
-        setProperty(response.data);
+      let response;
+
+      try {
+        response = await getApi(`api/property/public/slug/${slug}`);
+      } catch (slugError) {
+        response = await getApi(`api/property/public/${slug}`);
+      }
+
+      const payload = response?.data || response;
+      if (payload) {
+        setProperty(payload.property || payload);
       }
     } catch (error) {
       console.error("Error fetching property:", error);
@@ -207,7 +221,15 @@ const PropertyDetailPage = () => {
     { icon: MdMeetingRoom, label: copy.bedrooms, value: property.numberofBedrooms || "—" },
     { icon: MdBathtub, label: copy.bathrooms, value: property.numberofBathrooms || "—" },
     { icon: MdOutlineSquareFoot, label: copy.area, value: `${property.squareFootage || "—"} m²` },
-    { icon: FiDollarSign, label: copy.price, value: `$${property.listingPrice?.toLocaleString() || copy.onRequest}` },
+    {
+      icon: FiDollarSign,
+      label: copy.price,
+      value: formatPropertyPrice(property, {
+        language: i18n.language,
+        t,
+        rateData,
+      }),
+    },
   ];
 
   return (
@@ -328,8 +350,18 @@ const PropertyDetailPage = () => {
                 <Stack spacing={1}>
                   <Text color="gray.400" fontSize="sm">{copy.price}</Text>
                   <Heading size="xl" color="#F5D076">
-                    ${property.listingPrice?.toLocaleString() || copy.onRequest}
+                    {formatPropertyPrice(property, {
+                      language: i18n.language,
+                      t,
+                      rateData,
+                    })}
                   </Heading>
+                  <Text color="gray.400" fontSize="sm">
+                    {formatPropertyPriceSecondary(property, {
+                      language: i18n.language,
+                      rateData,
+                    })}
+                  </Text>
                 </Stack>
                 {property.pricePerSqm && (
                   <Text color="gray.400" fontSize="sm">

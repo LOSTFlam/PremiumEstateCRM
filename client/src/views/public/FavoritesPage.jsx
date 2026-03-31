@@ -22,6 +22,8 @@ import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import { useUsdRubRate } from "hooks/useUsdRubRate";
+import { formatPropertyPrice } from "utils/pricing";
 
 const pageCopy = {
   ru: {
@@ -90,6 +92,7 @@ const pageCopy = {
 
 const FavoritesPage = () => {
   const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const toast = useToast();
   const [favorites, setFavorites] = useState([]);
   const [favoriteIds, setFavoriteIds] = useState([]);
@@ -216,7 +219,11 @@ const FavoritesPage = () => {
     const tableData = favorites.map((property, index) => [
       index + 1,
       property.name || property.propertyAddress || copy.propertyFallback,
-      `$${property.listingPrice?.toLocaleString() || copy.onRequest}`,
+      formatPropertyPrice(property, {
+        language: i18n.language,
+        t,
+        rateData,
+      }),
       `${property.squareFootage || "—"} m²`,
       `${property.numberofBedrooms || "—"} ${copy.bedroomsShort}`,
       `${property.numberofBathrooms || "—"} ${copy.bathroomsShort}`,

@@ -27,6 +27,7 @@ import DataNotFound from "components/notFoundData";
 import CommonDeleteModel from "components/commonDeleteModel";
 import { deleteApi } from "services/api";
 import { deleteManyApi } from "services/api";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -149,7 +150,7 @@ const Index = () => {
           onClick={() => handleAddOpen()}
           leftIcon={<AddIcon />}
         >
-          Add New
+          {translateCrmText("Add New")}
         </Button>
         <Button
           size="sm"
@@ -189,10 +190,7 @@ const Index = () => {
                     <MenuButton>
                       <CiMenuKebab />
                     </MenuButton>
-                    <MenuList
-                      minW={"fit-content"}
-                      transform={"translate(-71px, 0px) !important;"}
-                    >
+                    <MenuList minW={"fit-content"}>
                       <MenuItem
                         py={2.5}
                         alignItems={"start"}

@@ -1,7 +1,7 @@
 const typography = {
   letterSpacing: {
-    tighter: "-0.05em",
-    tight: "-0.025em",
+    tighter: "-0.03em",
+    tight: "-0.015em",
     normal: "0",
     wide: "0.025em",
     wider: "0.05em",
@@ -18,10 +18,10 @@ const typography = {
     10: "2.5rem",
     normal: "normal",
     none: "1",
-    shorter: "1.25",
-    short: "1.375",
-    base: "1.5",
-    tall: "1.625",
+    shorter: "1.3",
+    short: "1.45",
+    base: "1.6",
+    tall: "1.72",
     taller: "2",
   },
   fontWeights: {
@@ -36,8 +36,9 @@ const typography = {
     black: "900",
   },
   fonts: {
-    heading: '"Playfair Display", Georgia, serif',
-    body: '"DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    heading:
+      '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    body: '"SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     mono: 'SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace',
   },
   fontSizes: {

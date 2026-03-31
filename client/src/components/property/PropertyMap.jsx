@@ -15,9 +15,14 @@ import { FiMapPin, FiList, FiMaximize } from 'react-icons/fi';
 import { getPrimaryImage, formatPrice } from 'views/public/catalog/catalogData';
 import ModernPropertyCard from 'components/ModernPropertyCard';
 import MortgageCalculator from './MortgageCalculator';
+import { useUsdRubRate } from 'hooks/useUsdRubRate';
+import { getPreferredCurrency, getPropertyRubAmount, getPropertyUsdAmount } from 'utils/pricing';
+import { useTranslation } from 'react-i18next';
 
 // Simple interactive map component (can be replaced with Google Maps/Mapbox)
 const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
+  const { i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const bgColor = useColorModeValue('gray.100', 'gray.700');
   
   // Generate pseudo-random positions for demo (replace with real coordinates)
@@ -50,6 +55,11 @@ const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
       {properties.map((property, index) => {
         const position = getPropertyPosition(property, index);
         const isSelected = selectedProperty?._id === property._id;
+        const displayCurrency = getPreferredCurrency(i18n.language);
+        const markerAmount =
+          displayCurrency === "RUB"
+            ? getPropertyRubAmount(property, rateData)
+            : getPropertyUsdAmount(property, rateData);
 
         return (
           <Tooltip
@@ -57,7 +67,7 @@ const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
             label={
               <Box>
                 <Text fontWeight="bold">{property.name}</Text>
-                <Text fontSize="sm">{formatPrice(property.listingPrice)}</Text>
+                <Text fontSize="sm">{formatPrice(property, null, i18n.language, rateData)}</Text>
               </Box>
             }
             placement="top"
@@ -98,7 +108,7 @@ const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
                   fontSize="sm"
                   zIndex={1}
                 >
-                  ${Math.round(property.listingPrice / 1000)}K
+                  {Math.round((markerAmount || 0) / 1000)}K
                 </Box>
               </Box>
             </Box>
@@ -111,9 +121,12 @@ const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
 
 // Map View with Property Details
 export const PropertyMapView = ({ properties }) => {
+  const { i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const [selectedProperty, setSelectedProperty] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [showCalculator, setShowCalculator] = useState(false);
+  const panelBg = useColorModeValue('white', 'gray.800');
 
   const handlePropertySelect = (property) => {
     setSelectedProperty(property);
@@ -149,7 +162,7 @@ export const PropertyMapView = ({ properties }) => {
         <Box
           mt={4}
           p={6}
-          bg={useColorModeValue('white', 'gray.800')}
+          bg={panelBg}
           borderRadius="xl"
           boxShadow="xl"
         >
@@ -167,7 +180,7 @@ export const PropertyMapView = ({ properties }) => {
             <Box flex={1}>
               <Heading size="lg" mb={2}>{selectedProperty.name}</Heading>
               <Text fontSize="xl" color="blue.500" fontWeight="bold" mb={2}>
-                {formatPrice(selectedProperty.listingPrice)}
+                {formatPrice(selectedProperty, null, i18n.language, rateData)}
               </Text>
               <Flex gap={2} mb={4}>
                 <Badge colorScheme="blue">{selectedProperty.propertyType}</Badge>

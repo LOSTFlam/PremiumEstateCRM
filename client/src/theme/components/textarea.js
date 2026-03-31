@@ -5,48 +5,50 @@ export const textareaStyles = {
       baseStyle: {
         field: {
           fontWeight: 400,
-          borderRadius: "8px",
+          borderRadius: "18px",
         },
       },
 
       variants: {
         main: (props) => ({
           field: {
-            bg: mode("transparent", "navy.800")(props),
+            bg: mode("rgba(255, 255, 255, 0.9)", "navy.800")(props),
             border: "1px solid !important",
-            color: mode("secondaryGray.900", "white")(props),
-            borderColor: mode("secondaryGray.100", "whiteAlpha.100")(props),
-            borderRadius: "16px",
+            color: mode("gray.800", "white")(props),
+            borderColor: mode("secondaryGray.300", "whiteAlpha.100")(props),
+            borderRadius: "18px",
             fontSize: "sm",
             p: "20px",
-            _placeholder: { color: "secondaryGray.400" },
+            _placeholder: { color: "secondaryGray.500" },
           },
         }),
-        auth: (props) => ({
+        auth: () => ({
           field: {
-            bg: "white",
+            bg: "rgba(255, 255, 255, 0.88)",
             border: "1px solid",
-            borderColor: "secondaryGray.100",
-            borderRadius: "16px",
-            _placeholder: { color: "secondaryGray.600" },
+            borderColor: "secondaryGray.300",
+            color: "gray.800",
+            borderRadius: "18px",
+            _placeholder: { color: "secondaryGray.500" },
           },
         }),
-        authSecondary: (props) => ({
+        authSecondary: () => ({
           field: {
-            bg: "white",
+            bg: "rgba(255, 255, 255, 0.88)",
             border: "1px solid",
-
-            borderColor: "secondaryGray.100",
-            borderRadius: "16px",
-            _placeholder: { color: "secondaryGray.600" },
+            borderColor: "secondaryGray.300",
+            color: "gray.800",
+            borderRadius: "18px",
+            _placeholder: { color: "secondaryGray.500" },
           },
         }),
-        search: (props) => ({
+        search: () => ({
           field: {
             border: "none",
             py: "11px",
             borderRadius: "inherit",
-            _placeholder: { color: "secondaryGray.600" },
+            color: "gray.800",
+            _placeholder: { color: "secondaryGray.500" },
           },
         }),
       },

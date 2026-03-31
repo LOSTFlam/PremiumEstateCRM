@@ -162,13 +162,13 @@ const Edit = (props) => {
   } = formik;
   return (
     <div>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered size="2xl">
+      <Modal onClose={onClose} isOpen={isOpen} isCentered size="2xl" scrollBehavior="inside">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit </ModalHeader>
+        <ModalContent className="admin-density-shell">
+          <ModalHeader className="admin-density-shell__header">Edit </ModalHeader>
           <ModalCloseButton />
           <HSeparator />
-          <ModalBody>
+          <ModalBody className="admin-density-shell__body">
             <>
               <Grid templateColumns="repeat(12, 1fr)" gap={3}>
                 <GridItem colSpan={{ base: 12, sm: 6 }}>
@@ -684,7 +684,7 @@ const Edit = (props) => {
               </Grid>
             </>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="admin-density-shell__footer">
             <Button
               colorScheme="brand"
               size="sm"

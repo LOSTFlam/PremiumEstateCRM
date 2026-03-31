@@ -10,9 +10,11 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner/Spinner";
+import PropertyPriceEditor from "components/property/PropertyPriceEditor";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { postApi } from "services/api";
+import { getPreferredCurrency } from "utils/pricing";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
@@ -27,6 +29,10 @@ const Add = (props) => {
   const initialValues = {
     ...initialFieldValues,
     createBy: JSON.parse(localStorage.getItem("user"))._id,
+    priceCurrency: getPreferredCurrency(localStorage.getItem("i18nextLng") || "en"),
+    listingPriceRub: "",
+    priceExchangeRate: "",
+    priceExchangeUpdatedAt: "",
   };
 
   const formik = useFormik({
@@ -54,10 +60,7 @@ const Add = (props) => {
   const AddData = async () => {
     try {
       setIsLoding(true);
-      let response = await postApi("api/form/add", {
-        ...values,
-        moduleId: props?.propertyData?._id,
-      });
+      let response = await postApi("api/property/add", values);
       if (response?.status === 200) {
         props.onClose();
         formik.resetForm();
@@ -74,8 +77,9 @@ const Add = (props) => {
     <div>
       <Drawer isOpen={props?.isOpen} size={props?.size}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent className="admin-density-shell">
           <DrawerHeader
+            className="admin-density-shell__header"
             alignItems={"center"}
             justifyContent="space-between"
             display="flex"
@@ -83,7 +87,7 @@ const Add = (props) => {
             Add Property
             <IconButton onClick={props?.onClose} icon={<CloseIcon />} />
           </DrawerHeader>
-          <DrawerBody>
+          <DrawerBody className="admin-density-shell__body">
             <CustomForm
               moduleData={props?.propertyData}
               values={values}
@@ -92,10 +96,18 @@ const Add = (props) => {
               handleBlur={handleBlur}
               errors={errors}
               touched={touched}
+              excludeFieldNames={[
+                "listingPrice",
+                "listingPriceRub",
+                "priceCurrency",
+                "priceExchangeRate",
+                "priceExchangeUpdatedAt",
+              ]}
             />
+            <PropertyPriceEditor values={values} setFieldValue={setFieldValue} />
           </DrawerBody>
 
-          <DrawerFooter>
+          <DrawerFooter className="admin-density-shell__footer">
             <Button
               size="sm"
               sx={{ textTransform: "capitalize" }}

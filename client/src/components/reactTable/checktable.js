@@ -44,6 +44,7 @@ import Card from "components/card/Card";
 import CountUpComponent from "components/countUpComponent/countUpComponent";
 import Pagination from "components/pagination/Pagination";
 import Spinner from "components/spinner/Spinner";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
 import CustomSearchInput from "../search/search";
 import AdvanceSearchUsingCustomFields from "../search/advanceSearch";
 import DataNotFound from "../notFoundData";
@@ -56,6 +57,12 @@ import {
 } from "../../redux/slices/advanceSearchSlice";
 import { commonUtils } from "utils/utils";
 import { useTranslation } from "react-i18next";
+import {
+  buildDateRangeSummary,
+  buildImportLabel,
+  translateCrmText,
+} from "i18n/crmDictionary";
+import { formatPropertyPrice } from "utils/pricing";
 
 const CommonCheckTable = (props) => {
   const {
@@ -93,8 +100,17 @@ const CommonCheckTable = (props) => {
   } = props;
   const { dataLength } = props;
   const { handleSearchType } = props;
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const isRu = i18n.language?.startsWith("ru");
+  const textOptions = { t, language: i18n.language };
+  const selectedItems = Array.isArray(selectedValues)
+    ? selectedValues
+    : selectedValues
+      ? [selectedValues]
+      : [];
+  const hasSelectedItems = selectedItems.length > 0;
+  const totalRecords = dataLength || allData?.length || 0;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -102,8 +118,27 @@ const CommonCheckTable = (props) => {
   const [displaySearchData, setDisplaySearchData] = useState(false);
   const [searchedData, setSearchedData] = useState([]);
 
-  const [columns, setColumns] = useState(columnData || []);
+  const translatedColumnData = useMemo(
+    () =>
+      (columnData || []).map((column) => ({
+        ...column,
+        Header: translateCrmText(column?.Header, textOptions),
+      })),
+    [columnData, t, i18n.language],
+  );
+
+  const [columns, setColumns] = useState(translatedColumnData || []);
   const [tempSelectedColumns, setTempSelectedColumns] = useState(columns || []);
+  const displayTitle = translateCrmText(title, textOptions);
+  const columnConfigByAccessor = useMemo(
+    () =>
+      Object.fromEntries(
+        (columnData || [])
+          .filter((column) => column?.accessor)
+          .map((column) => [column.accessor, column]),
+      ),
+    [columnData],
+  );
 
   const searchedDataOut = useSelector(
     (state) => state?.advanceSearchData?.searchResult
@@ -130,6 +165,8 @@ const CommonCheckTable = (props) => {
       allData,
     ]
   );
+  const visibleRecords = Array.isArray(data) ? data.length : 0;
+  const activeFilterCount = Array.isArray(getTagValues) ? getTagValues.length : 0;
 
   const [manageColumnsModel, setManageColumnsModel] = useState(false);
   const [csvColumns, setCsvColumns] = useState([]);
@@ -238,7 +275,11 @@ const CommonCheckTable = (props) => {
         if (fromDate || toDate) {
           result?.push({
             name: [`from${field?.name}`, `to${field?.name}`],
-            value: `From: ${fromDate} To: ${toDate}`,
+            value: buildDateRangeSummary({
+              from: fromDate,
+              to: toDate,
+              language: i18n.language,
+            }),
           });
         }
       } else if (values[field?.name]) {
@@ -350,8 +391,8 @@ const CommonCheckTable = (props) => {
   };
 
   const handleExportLeads = (extension) => {
-    selectedValues && selectedValues?.length > 0
-      ? downloadCsvOrExcel(extension, selectedValues)
+    hasSelectedItems
+      ? downloadCsvOrExcel(extension, selectedItems)
       : downloadCsvOrExcel(extension);
   };
 
@@ -370,7 +411,7 @@ const CommonCheckTable = (props) => {
         commonUtils?.convertJsonToCsvOrExcel({
           jsonArray: selectedRecordsWithSpecificFileds,
           csvColumns: csvColumns,
-          fileName: title || "data",
+          fileName: displayTitle || title || "data",
           extension: extension,
         });
       } else {
@@ -384,11 +425,13 @@ const CommonCheckTable = (props) => {
         commonUtils?.convertJsonToCsvOrExcel({
           jsonArray: AllRecordsWithSpecificFileds,
           csvColumns: csvColumns,
-          fileName: title || "data",
+          fileName: displayTitle || title || "data",
           extension: extension,
         });
       }
-      setSelectedValues([]);
+      if (typeof setSelectedValues === "function") {
+        setSelectedValues(selectType === "single" ? undefined : []);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -428,108 +471,149 @@ const CommonCheckTable = (props) => {
   }, []);
 
   useEffect(() => {
-    setColumns(columnData);
-  }, [columnData]);
+    setColumns(translatedColumnData);
+    setTempSelectedColumns(translatedColumnData);
+  }, [translatedColumnData]);
 
   useEffect(() => {
     if (columns) {
       let tempCsvColumns = columns
-        ?.filter((col) => col?.Header !== "#" && col?.Header !== "Action")
+        ?.filter(
+          (col) =>
+            col?.Header !== "#" &&
+            col?.Header !== translateCrmText("Action", textOptions),
+        )
         ?.map((field) => ({
           Header: field?.Header,
           accessor: field?.accessor,
         }));
       setCsvColumns([...tempCsvColumns]);
     }
-  }, [columns]);
+  }, [columns, t, i18n.language]);
 
   return (
     <>
       <Card
         direction="column"
         w="100%"
-        overflowX={{ sm: "scroll", lg: "hidden" }}
+        overflow="hidden"
+        px={{ base: 4, md: 5 }}
+        py={{ base: 4, md: 5 }}
+        className="admin-check-table"
       >
-        <Grid templateColumns="repeat(12, 1fr)" gap={2}>
+        <Grid
+          templateColumns="repeat(12, 1fr)"
+          gap={4}
+          className="admin-check-table__toolbar"
+        >
           <GridItem
             colSpan={{ base: 12, md: 8 }}
             display={"flex"}
             alignItems={"center"}
           >
-            <Flex alignItems={"center"} flexWrap={"wrap"}>
+            <Flex direction="column" alignItems="flex-start" width="100%" gap={4}>
               {title && (
-                <Text
-                  color={"secondaryGray.900"}
-                  fontSize="22px"
-                  fontWeight="700"
-                  lineHeight="100%"
-                  textTransform={"capitalize"}
-                >
-                  {title} (
-                  <CountUpComponent
-                    key={data?.length}
-                    targetNumber={dataLength || data?.length}
+                <Flex direction="column" gap={2}>
+                  <Text
+                    color="secondaryGray.900"
+                    fontSize={{ base: "xl", md: "2xl" }}
+                    fontWeight="700"
+                    lineHeight="1.15"
+                    className="admin-check-table__title"
+                  >
+                    {displayTitle} (
+                    <CountUpComponent
+                      key={visibleRecords}
+                      targetNumber={totalRecords}
+                    />
+                    )
+                  </Text>
+                  <Flex className="admin-check-table__meta">
+                    <Tag size="md" className="admin-check-table__summary">
+                      <TagLabel>
+                        {translateCrmText("Visible", textOptions)}: {visibleRecords}
+                      </TagLabel>
+                    </Tag>
+                    {activeFilterCount > 0 && (
+                      <Tag size="md" className="admin-check-table__summary">
+                        <TagLabel>
+                          {translateCrmText("Filters", textOptions)}: {activeFilterCount}
+                        </TagLabel>
+                      </Tag>
+                    )}
+                    {hasSelectedItems && (
+                      <Tag size="md" className="admin-check-table__summary">
+                        <TagLabel>
+                          {translateCrmText("Selected", textOptions)}: {selectedItems.length}
+                        </TagLabel>
+                      </Tag>
+                    )}
+                  </Flex>
+                </Flex>
+              )}
+              <Flex
+                alignItems="center"
+                flexWrap="wrap"
+                gap={2}
+                className="admin-check-table__filters"
+              >
+                {customSearch !== false && (
+                  <CustomSearchInput
+                    setSearchbox={
+                      setSearchboxOutside ? setSearchboxOutside : setSearchbox
+                    }
+                    setDisplaySearchData={
+                      setSearchboxOutside
+                        ? props?.setSearchDisplay
+                        : setDisplaySearchData
+                    }
+                    searchbox={searchboxOutside ? searchboxOutside : searchbox}
+                    allData={allData}
+                    dataColumn={columns}
+                    onSearch={handleSearch}
+                    setGetTagValues={
+                      props?.setGetTagValuesOutside
+                        ? props?.setGetTagValuesOutside
+                        : setGetTagValues
+                    }
+                    setGopageValue={setGopageValue}
                   />
-                  )
-                </Text>
-              )}
-              {customSearch !== false && (
-                <CustomSearchInput
-                  setSearchbox={
-                    setSearchboxOutside ? setSearchboxOutside : setSearchbox
-                  }
-                  setDisplaySearchData={
-                    setSearchboxOutside
-                      ? props?.setSearchDisplay
-                      : setDisplaySearchData
-                  }
-                  searchbox={searchboxOutside ? searchboxOutside : searchbox}
-                  allData={allData}
-                  dataColumn={columns}
-                  onSearch={handleSearch}
-                  setGetTagValues={
-                    props?.setGetTagValuesOutside
-                      ? props?.setGetTagValuesOutside
-                      : setGetTagValues
-                  }
-                  setGopageValue={setGopageValue}
-                />
-              )}
-              {AdvanceSearch
-                ? AdvanceSearch
-                : AdvanceSearch !== false && (
-                    <Button
-                      variant="outline"
-                      colorScheme="brand"
-                      leftIcon={<SearchIcon />}
-                      mt={{ sm: "5px", md: "0" }}
-                      size="sm"
-                      onClick={() => setAdvaceSearch(true)}
-                    >
-                      Advance Search
-                    </Button>
-                  )}
-              {searchDisplay || displaySearchData ? (
-                <Button
-                  variant="outline"
-                  colorScheme="red"
-                  size="sm"
-                  ms={2}
-                  onClick={() => handleClear()}
-                >
-                  Clear
-                </Button>
-              ) : (
-                ""
-              )}
-              {selectedValues?.length > 0 && access?.delete && !deleteMany && (
-                <DeleteIcon
-                  cursor={"pointer"}
-                  onClick={() => setDelete(true)}
-                  color={"red"}
-                  ms={2}
-                />
-              )}
+                )}
+                {AdvanceSearch
+                  ? AdvanceSearch
+                  : AdvanceSearch !== false && (
+                      <Button
+                        variant="light"
+                        leftIcon={<SearchIcon />}
+                        mt={{ sm: "5px", md: "0" }}
+                        size="sm"
+                        onClick={() => setAdvaceSearch(true)}
+                      >
+                        {translateCrmText("Advance Search", textOptions)}
+                      </Button>
+                    )}
+                {searchDisplay || displaySearchData ? (
+                  <Button
+                    variant="outline"
+                    colorScheme="red"
+                    size="sm"
+                    onClick={() => handleClear()}
+                  >
+                    {t("common.clear")}
+                  </Button>
+                ) : null}
+                {hasSelectedItems && access?.delete && !deleteMany && (
+                  <Button
+                    variant="outline"
+                    colorScheme="red"
+                    size="sm"
+                    leftIcon={<DeleteIcon />}
+                    onClick={() => setDelete(true)}
+                  >
+                    {translateCrmText("Delete Selected", textOptions)}
+                  </Button>
+                )}
+              </Flex>
             </Flex>
           </GridItem>
           {/* Advance filter */}
@@ -552,72 +636,85 @@ const CommonCheckTable = (props) => {
             alignItems={"center"}
             textAlign={"right"}
           >
-            {ManageGrid !== false && (
-              <Menu isLazy>
-                <MenuButton p={4}>
-                  <BsColumnsGap />
-                </MenuButton>
-                <MenuList
-                  minW={"fit-content"}
-                  transform={"translate(1670px, 60px)"}
-                  zIndex={2}
-                >
-                  <MenuItem
-                    onClick={() => setManageColumnsModel(true)}
-                    width={"165px"}
+            <Flex
+              alignItems="center"
+              justifyContent="flex-end"
+              gap={2}
+              flexWrap="wrap"
+              className="admin-check-table__actions"
+            >
+              {ManageGrid !== false && (
+                <Menu isLazy>
+                  <MenuButton
+                    as={Button}
+                    size="sm"
+                    variant="light"
+                    leftIcon={<BsColumnsGap />}
                   >
-                    {isRu ? "Настроить колонки" : "Manage Columns"}
-                  </MenuItem>
-                  {typeof setIsImport === "function" && (
-                    <MenuItem width={"165px"} onClick={() => setIsImport(true)}>
-                      {isRu ? "Импорт данных" : `Import ${title}`}
+                    {translateCrmText("Table Tools", textOptions)}
+                  </MenuButton>
+                  <MenuList minW="fit-content" zIndex={2}>
+                    <MenuItem
+                      onClick={() => setManageColumnsModel(true)}
+                      width={"185px"}
+                    >
+                      {translateCrmText("Manage Columns", textOptions)}
                     </MenuItem>
-                  )}
-                  {exportColumn !== false && allData && allData?.length > 0 && (
-                    <>
-                      <MenuDivider />
-                      <MenuItem
-                        width={"165px"}
-                        onClick={() => handleExportLeads("csv")}
-                      >
-                        {selectedValues && selectedValues?.length > 0
-                          ? (isRu ? "Экспорт выбранного в таблицу CSV" : "Export Selected Data as CSV")
-                          : (isRu ? "Экспорт в таблицу CSV" : "Export as CSV")}
+                    {typeof setIsImport === "function" && (
+                      <MenuItem width={"185px"} onClick={() => setIsImport(true)}>
+                        {buildImportLabel(displayTitle || title, textOptions)}
                       </MenuItem>
-                      <MenuItem
-                        width={"165px"}
-                        onClick={() => handleExportLeads("xlsx")}
-                      >
-                        {selectedValues && selectedValues?.length > 0
-                          ? (isRu ? "Экспорт выбранного в таблицу Excel" : "Export Selected Data as Excel")
-                          : (isRu ? "Экспорт в таблицу Excel" : "Export as Excel")}
-                      </MenuItem>
-                    </>
-                  )}
-                </MenuList>
-              </Menu>
-            )}
-            {addBtn !== false && (access?.create || access === true) && (
-              <Button
-                onClick={() => handleClick()}
-                size="sm"
-                variant="brand"
-                leftIcon={<AddIcon />}
-              >
-                {isRu ? "Добавить" : "Add New"}
-              </Button>
-            )}
-            {BackButton && BackButton}
+                    )}
+                    {exportColumn !== false && allData && allData?.length > 0 && (
+                      <>
+                        <MenuDivider />
+                        <MenuItem
+                          width={"185px"}
+                          onClick={() => handleExportLeads("csv")}
+                        >
+                          {hasSelectedItems
+                            ? (isRu
+                                ? "Экспорт выбранных данных в CSV"
+                                : "Export selected data as CSV")
+                            : (isRu ? "Экспорт в CSV" : "Export as CSV")}
+                        </MenuItem>
+                        <MenuItem
+                          width={"185px"}
+                          onClick={() => handleExportLeads("xlsx")}
+                        >
+                          {hasSelectedItems
+                            ? (isRu
+                                ? "Экспорт выбранных данных в Excel"
+                                : "Export selected data as Excel")
+                            : (isRu ? "Экспорт в Excel" : "Export as Excel")}
+                        </MenuItem>
+                      </>
+                    )}
+                  </MenuList>
+                </Menu>
+              )}
+              {addBtn !== false && (access?.create || access === true) && (
+                <Button
+                  onClick={() => handleClick()}
+                  size="sm"
+                  variant="brand"
+                  leftIcon={<AddIcon />}
+                >
+                  {t("common.addNew")}
+                </Button>
+              )}
+              {BackButton && BackButton}
+            </Flex>
           </GridItem>
-          <HStack spacing={4} mb={2}>
+          <HStack spacing={3} mb={2} className="admin-check-table__chips">
             {(getTagValues || [])?.map((item) => (
               <Tag
                 size={"md"}
                 p={2}
                 key={item?.value}
                 borderRadius="full"
-                variant="solid"
-                colorScheme="gray"
+                variant="subtle"
+                colorScheme="blue"
               >
                 <TagLabel>{item?.value}</TagLabel>
                 <TagCloseButton onClick={() => handleRemoveFromTag(item)} />
@@ -627,13 +724,16 @@ const CommonCheckTable = (props) => {
         </Grid>
         <Box
           overflowY={"auto"}
-          className={size ? `small-table-fix-container` : `table-fix-container`}
+          className={`admin-check-table__scroll ${
+            size ? "small-table-fix-container" : "table-fix-container"
+          }`}
         >
           <Table
             {...getTableProps()}
             variant="simple"
             color="gray.500"
             mb="24px"
+            className="admin-check-table__table"
           >
             <Thead zIndex={1}>
               {headerGroups?.map((headerGroup, index) => (
@@ -647,16 +747,23 @@ const CommonCheckTable = (props) => {
                       pe="10px"
                       key={index}
                       borderColor={borderColor}
+                      bg="rgba(248, 250, 252, 0.94)"
+                      position="sticky"
+                      top={0}
+                      zIndex={1}
+                      py={4}
                     >
                       <Flex
                         align="center"
                         justifyContent={column?.center ? "center" : "start"}
-                        fontSize={{ sm: "14px", lg: "16px" }}
-                        color="secondaryGray.900"
+                        fontSize={{ base: "11px", md: "12px" }}
+                        color="secondaryGray.700"
+                        textTransform="uppercase"
+                        letterSpacing="0.08em"
+                        fontWeight="700"
                       >
                         <span
                           style={{
-                            textTransform: "capitalize",
                             marginRight: "8px",
                           }}
                         >
@@ -707,78 +814,93 @@ const CommonCheckTable = (props) => {
                 page?.map((row, i) => {
                   prepareRow(row);
                   return (
-                    <Tr {...row?.getRowProps()}>
+                    <Tr
+                      {...row?.getRowProps()}
+                      key={row.id}
+                      bg={i % 2 === 0 ? "rgba(255, 255, 255, 0.92)" : "rgba(248, 250, 252, 0.72)"}
+                      _hover={{ bg: "rgba(10, 132, 255, 0.06)" }}
+                      className="admin-check-table__row"
+                    >
                       {row?.cells?.map((cell, index) => {
                         let data = "";
-                        columnData?.forEach((item) => {
-                          if (cell?.column?.Header === item?.Header) {
-                            if (
-                              item?.cell &&
-                              typeof item?.cell === "function"
-                            ) {
-                              data = (
-                                <Flex
-                                  Flex
-                                  align="center"
-                                  justifyContent={
-                                    item?.Header === "Action" && "center"
-                                  }
-                                >
-                                  <Text
-                                    color={textColor}
-                                    fontSize="sm"
-                                    fontWeight="700"
-                                  >
-                                    {item?.cell(cell) === " "
-                                      ? "-"
-                                      : item?.cell(cell)}
-                                  </Text>
-                                </Flex>
-                              );
-                            } else {
-                              data = (
-                                <Flex align="center">
-                                  {item?.Header === "#" &&
-                                    (checkBox || checkBox === undefined) && (
-                                      <Checkbox
-                                        colorScheme="brandScheme"
-                                        value={selectedValues}
-                                        isChecked={selectedValues?.includes(
-                                          cell?.value
-                                        )}
-                                        onChange={(event) =>
-                                          handleCheckboxChange(
-                                            event,
-                                            cell?.value
-                                          )
-                                        }
-                                        me="10px"
-                                      />
-                                    )}
+                        const item =
+                          columnConfigByAccessor[cell?.column?.accessor] ||
+                          columnData?.find(
+                            (column) =>
+                              translateCrmText(column?.Header, textOptions) ===
+                              cell?.column?.Header,
+                          );
 
-                                  <Text
-                                    color={textColor}
-                                    fontSize="sm"
-                                    fontWeight="700"
-                                  >
-                                    {item?.Header === "#"
-                                      ? cell?.row?.index + 1
-                                      : cell?.value
-                                        ? cell?.value
-                                        : "-"}
-                                  </Text>
-                                </Flex>
-                              );
-                            }
-                          }
-                        });
+                        if (item?.cell && typeof item?.cell === "function") {
+                          data = (
+                            <Flex
+                              align="center"
+                              justifyContent={item?.accessor === "action" && "center"}
+                            >
+                              <Text
+                                color={textColor}
+                                fontSize="sm"
+                                fontWeight="600"
+                              >
+                                {item?.cell(cell) === " " ? "-" : item?.cell(cell)}
+                              </Text>
+                            </Flex>
+                          );
+                        } else {
+                          const displayValue =
+                            item?.accessor === "listingPrice"
+                              ? formatPropertyPrice(cell?.row?.original, {
+                                  language: i18n.language,
+                                  t,
+                                  rateData,
+                                })
+                              : item?.accessor === "listingPriceRub"
+                                ? formatPropertyPrice(cell?.row?.original, {
+                                    language: i18n.language,
+                                    t,
+                                    rateData,
+                                    preferredCurrency: "RUB",
+                                  })
+                                : cell?.value;
+
+                          data = (
+                            <Flex align="center">
+                              {item?.Header === "#" &&
+                                (checkBox || checkBox === undefined) && (
+                                  <Checkbox
+                                    colorScheme="brandScheme"
+                                    value={selectedValues}
+                                    isChecked={selectedItems.includes(cell?.value)}
+                                    onChange={(event) =>
+                                      handleCheckboxChange(event, cell?.value)
+                                    }
+                                    me="10px"
+                                  />
+                                )}
+
+                              <Text
+                                color={textColor}
+                                fontSize="sm"
+                                fontWeight="600"
+                              >
+                                {item?.Header === "#"
+                                  ? cell?.row?.index + 1
+                                  : displayValue
+                                    ? displayValue
+                                    : "-"}
+                              </Text>
+                            </Flex>
+                          );
+                        }
                         return (
                           <Td
                             {...cell?.getCellProps()}
                             key={index}
                             fontSize={{ sm: "14px" }}
                             minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                            borderColor="transparent"
+                            borderColor="rgba(226, 232, 240, 0.72)"
+                            py={4}
+                            px={4}
                           >
                             {data}
                           </Td>
@@ -818,14 +940,16 @@ const CommonCheckTable = (props) => {
           isCentered
         >
           <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>{isRu ? "Настроить колонки" : "Manage Columns"}</ModalHeader>
+          <ModalContent className="admin-density-shell">
+            <ModalHeader className="admin-density-shell__header">
+              {translateCrmText("Manage Columns", textOptions)}
+            </ModalHeader>
             <ModalCloseButton
               onClick={() => {
                 setManageColumnsModel(false);
               }}
             />
-            <ModalBody>
+            <ModalBody className="admin-density-shell__body">
               <div>
                 {columnData?.map((column) => (
                   <Text display={"flex"} key={column?.accessor} py={2}>
@@ -836,14 +960,14 @@ const CommonCheckTable = (props) => {
                       onChange={() => toggleColumnVisibility(column?.accessor)}
                       pe={2}
                     />
-                    {column?.Header}
+                    {translateCrmText(column?.Header, textOptions)}
                   </Text>
                 ))}
               </div>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="admin-density-shell__footer">
               <Button
-                colorScheme="brand"
+                variant="brand"
                 mr={2}
                 onClick={() => {
                   setColumns([...tempSelectedColumns]);
@@ -852,7 +976,7 @@ const CommonCheckTable = (props) => {
                 disabled={isLoding ? true : false}
                 size="sm"
               >
-                {isLoding ? <Spinner /> : isRu ? "Сохранить" : "Save"}
+                {isLoding ? <Spinner /> : t("common.save")}
               </Button>
               <Button
                 variant="outline"
@@ -860,7 +984,7 @@ const CommonCheckTable = (props) => {
                 size="sm"
                 onClick={() => handleColumnClose()}
               >
-                {isRu ? "Закрыть" : "Close"}
+                {t("common.close")}
               </Button>
             </ModalFooter>
           </ModalContent>

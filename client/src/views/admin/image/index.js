@@ -28,6 +28,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import DataNotFound from "components/notFoundData";
 import { deleteApi } from "services/api";
 import Spinner from "components/spinner/Spinner";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const ChangeImage = () => {
   const [imageModal, setImageModal] = useState(false);
@@ -115,7 +116,7 @@ const ChangeImage = () => {
             onClick={() => setImageModal(true)}
             leftIcon={<AddIcon />}
           >
-            Add New
+            {translateCrmText("Add New")}
           </Button>
           <Button
             onClick={() => navigate("/admin-setting")}

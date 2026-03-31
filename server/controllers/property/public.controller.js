@@ -38,6 +38,32 @@ const publicIndex = async (req, res) => {
   }
 };
 
+const publicByIds = async (req, res) => {
+  try {
+    const ids = String(req.query.ids || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    if (!ids.length) {
+      return res.status(200).json({ data: [] });
+    }
+
+    const properties = await Property.find({
+      _id: { $in: ids },
+      deleted: false,
+    })
+      .populate(populatePublicCreator)
+      .lean();
+
+    const normalized = properties.map(normalizePublicProperty);
+    res.status(200).json({ data: normalized });
+  } catch (err) {
+    console.error("Failed to fetch public properties by ids:", err);
+    res.status(500).json({ error: "Failed to fetch public properties by ids" });
+  }
+};
+
 const publicView = async (req, res) => {
   try {
     if (!isValidObjectId(req.params.id)) {
@@ -89,6 +115,7 @@ const publicViewBySlug = async (req, res) => {
 
 module.exports = {
   publicIndex,
+  publicByIds,
   publicView,
   publicViewBySlug,
 };

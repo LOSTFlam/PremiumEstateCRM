@@ -40,6 +40,7 @@ const InvoicesImport = React.lazy(
 export const businessRoutes = [
   createRoute({
     name: "Dashboard",
+    i18nKey: "navigation.dashboard",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/dashboard",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
@@ -47,6 +48,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Leads",
+    i18nKey: "navigation.leads",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/lead",
     icon: <Icon as={MdLeaderboard} width="20px" height="20px" color="inherit" />,
@@ -54,6 +56,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Leads",
+    i18nKey: "navigation.leads",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "lead",
     parentName: "Leads",
@@ -70,6 +73,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Contacts",
+    i18nKey: "navigation.contacts",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/contacts",
     icon: <Icon as={MdContacts} width="20px" height="20px" color="inherit" />,
@@ -77,6 +81,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Contacts",
+    i18nKey: "navigation.contacts",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "contacts",
     parentName: "Contacts",
@@ -94,6 +99,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Properties",
+    i18nKey: "navigation.properties",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/properties",
     icon: <Icon as={LuBuilding2} width="20px" height="20px" color="inherit" />,
@@ -101,6 +107,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Properties",
+    i18nKey: "navigation.properties",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     parentName: "Properties",
     under: "properties",
@@ -118,6 +125,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Property Photos",
+    i18nKey: "navigation.propertyPhotos",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     both: true,
     under: "properties",
@@ -128,6 +136,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Opportunities",
+    i18nKey: "navigation.opportunities",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/opportunities",
     icon: <Icon as={TbBulb} width="20px" height="20px" color="inherit" />,
@@ -135,6 +144,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Opportunities",
+    i18nKey: "navigation.opportunities",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/opportunitiesView/:id",
     under: "opportunities",
@@ -144,6 +154,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Opportunities",
+    i18nKey: "navigation.opportunities",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/opprotunitiesImport",
     under: "opportunities",
@@ -153,6 +164,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Account",
+    i18nKey: "navigation.account",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/account",
     icon: <Icon as={RiAccountCircleFill} width="20px" height="20px" color="inherit" />,
@@ -160,6 +172,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Account",
+    i18nKey: "navigation.account",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/accountView/:id",
     under: "account",
@@ -178,6 +191,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Invoices",
+    i18nKey: "navigation.invoices",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/invoices",
     icon: <Icon as={TbFileInvoice} width="20px" height="20px" color="inherit" />,
@@ -185,6 +199,7 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Invoices",
+    i18nKey: "navigation.invoices",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "invoices",
     parentName: "Invoices",

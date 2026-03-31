@@ -3,27 +3,29 @@ export const badgeStyles = {
   components: {
     Badge: {
       baseStyle: {
-        borderRadius: "10px",
+        borderRadius: "9999px",
         lineHeight: "100%",
-        padding: "7px",
-        paddingLeft: "12px",
-        paddingRight: "12px",
+        padding: "8px",
+        paddingLeft: "14px",
+        paddingRight: "14px",
+        fontWeight: "600",
+        letterSpacing: "-0.01em",
       },
       variants: {
         outline: () => ({
-          borderRadius: "16px",
+          borderRadius: "9999px",
         }),
         brand: (props) => ({
-          bg: mode("brand.500", "brand.400")(props),
-          color: "white",
+          bg: mode("brand.100", "brand.400")(props),
+          color: mode("brand.700", "white")(props),
           _focus: {
-            bg: mode("brand.500", "brand.400")(props),
+            bg: mode("brand.100", "brand.400")(props),
           },
           _active: {
-            bg: mode("brand.500", "brand.400")(props),
+            bg: mode("brand.200", "brand.400")(props),
           },
           _hover: {
-            bg: mode("brand.600", "brand.400")(props),
+            bg: mode("brand.200", "brand.400")(props),
           },
         }),
       },

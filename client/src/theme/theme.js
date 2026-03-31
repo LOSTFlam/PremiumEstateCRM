@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import baseTheme from "./index";
 import { CardComponent } from "./additions/card/card";
 import { buttonStyles } from "./components/button";
 import { badgeStyles } from "./components/badge";
@@ -11,6 +12,7 @@ import { linkStyles } from "./components/link";
 import { globalStyles } from "./styles";
 
 export default extendTheme(
+  baseTheme,
   globalStyles,
   badgeStyles, // badge styles
   buttonStyles, // button styles

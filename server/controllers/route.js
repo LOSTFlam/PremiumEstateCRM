@@ -31,6 +31,7 @@ const invoicesRoute = require("./invoices/_routes")
 const opportunitiesproject = require("./opportunityproject/_router")
 const bankDetailsRoute = require("./bankDetails/_routes")
 const storefrontSettingsRoute = require("./storefrontSettings/_routes")
+const currencyRoute = require("./currency/_routes");
 
 //Api`s
 router.use('/contact', contactRoute);
@@ -66,4 +67,5 @@ router.use("/invoices", invoicesRoute);
 router.use("/account", accountRoute);
 router.use("/opportunityproject",opportunitiesproject)
 router.use("/storefront-settings", storefrontSettingsRoute);
+router.use("/currency", currencyRoute);
 module.exports = router;

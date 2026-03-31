@@ -46,6 +46,7 @@ import {
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { getApi } from "services/api";
+import { isRussianLocale, translateCrmText } from "i18n/crmDictionary";
 
 const statusColorMap = {
   available: "green",
@@ -58,45 +59,83 @@ const statusColorMap = {
   inactive: "gray",
 };
 
+const getStatusKey = (value) =>
+  ({
+    available: "available",
+    "доступно": "available",
+    active: "active",
+    "активно": "active",
+    new: "new",
+    "новое": "new",
+    "новый": "new",
+    pending: "pending",
+    "в ожидании": "pending",
+    booked: "booked",
+    reserved: "reserved",
+    "зарезервировано": "reserved",
+    sold: "sold",
+    "продано": "sold",
+    inactive: "inactive",
+  }[
+    String(value ?? "")
+      .toLowerCase()
+      .replace(/[-_]+/g, " ")
+      .trim()
+  ] || "gray");
+
 const placeholderImage =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%2312372a'/%3E%3Cstop offset='0.55' stop-color='%23436850'/%3E%3Cstop offset='1' stop-color='%23d7e7c3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1200' height='800' fill='url(%23g)'/%3E%3Cpath d='M120 560L330 370l150 125 165-215 270 280H120Z' fill='rgba(255,255,255,0.22)'/%3E%3Ccircle cx='920' cy='180' r='72' fill='rgba(255,255,255,0.18)'/%3E%3C/svg%3E";
 
-const formatPrice = (value, t) => {
+const formatPrice = (value, t, language) => {
   const amount = Number(String(value ?? "").replace(/[^\d.]/g, ""));
 
   if (!Number.isFinite(amount) || amount <= 0) {
     return t?.("modules.dashboardHome.priceOnRequest");
   }
 
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(
+    isRussianLocale(language) ? "ru-RU" : "en-US",
+    {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
-  }).format(amount);
+    },
+  ).format(amount);
 };
 
-const normalizeStatus = (value, t) => {
+const normalizeStatus = (value, t, language) => {
   if (!value) {
     return t?.("modules.dashboardHome.statusAvailable");
   }
 
-  return String(value)
+  const normalized = String(value)
     .replace(/[-_]+/g, " ")
     .replace(/\s+/g, " ")
     .trim()
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  return translateCrmText(normalized, { t, language });
 };
 
-const getPropertyType = (property, t) =>
-  property?.propertyType || t?.("modules.dashboardHome.propertyFallback");
+const getPropertyType = (property, t, language) =>
+  property?.propertyType
+    ? translateCrmText(
+        String(property.propertyType).replace(/\b\w/g, (letter) =>
+          letter.toUpperCase(),
+        ),
+        { t, language },
+      )
+    : t?.("modules.dashboardHome.propertyFallback");
 
-const getPropertyName = (property, t) => {
+const getPropertyName = (property, t, language) => {
   if (property?.name) {
     return property.name;
   }
 
   if (property?.propertyType && property?.propertyAddress) {
-    return `${property.propertyType} in ${property.propertyAddress}`;
+    return isRussianLocale(language)
+      ? `${getPropertyType(property, t, language)}: ${property.propertyAddress}`
+      : `${getPropertyType(property, t, language)} in ${property.propertyAddress}`;
   }
 
   return property?.propertyAddress || t?.("modules.dashboardHome.untitledProperty");
@@ -124,12 +163,14 @@ const getPrimaryImage = (property) => {
   return placeholderImage;
 };
 
-const getArea = (property, t) => {
+const getArea = (property, t, language) => {
   if (!property?.squareFootage) {
     return t?.("modules.dashboardHome.notSet");
   }
 
-  return `${property.squareFootage} sq ft`;
+  return isRussianLocale(language)
+    ? `${property.squareFootage} кв. футов`
+    : `${property.squareFootage} sq ft`;
 };
 
 const toSearchableValue = (property) =>
@@ -174,7 +215,7 @@ const PropertyMetric = ({ icon, label, value, iconColor, valueSize = "md" }) => 
 
 export default function PropertyLandingPage() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [properties, setProperties] = useState([]);
@@ -225,23 +266,40 @@ export default function PropertyLandingPage() {
   }, [user?._id, user?.role]);
 
   const uniqueStatuses = useMemo(
-    () => Array.from(new Set(properties.map((property) => normalizeStatus(property?.listingStatus, t)))).filter(Boolean),
-    [properties, t],
+    () =>
+      Array.from(
+        new Set(
+          properties.map((property) =>
+            normalizeStatus(property?.listingStatus, t, i18n.language),
+          ),
+        ),
+      ).filter(Boolean),
+    [properties, t, i18n.language],
   );
 
   const uniqueTypes = useMemo(
-    () => Array.from(new Set(properties.map((property) => getPropertyType(property, t)))).filter(Boolean),
-    [properties, t],
+    () =>
+      Array.from(
+        new Set(
+          properties.map((property) =>
+            getPropertyType(property, t, i18n.language),
+          ),
+        ),
+      ).filter(Boolean),
+    [properties, t, i18n.language],
   );
 
   const filteredProperties = useMemo(() => {
     const query = search.trim().toLowerCase();
 
-    const list = properties.filter((property) => {
-      const matchesSearch = !query || toSearchableValue(property).includes(query);
-      const matchesStatus =
-        statusFilter === "all" || normalizeStatus(property?.listingStatus, t) === statusFilter;
-      const matchesType = typeFilter === "all" || getPropertyType(property, t) === typeFilter;
+      const list = properties.filter((property) => {
+        const matchesSearch = !query || toSearchableValue(property).includes(query);
+        const matchesStatus =
+        statusFilter === "all" ||
+        normalizeStatus(property?.listingStatus, t, i18n.language) === statusFilter;
+      const matchesType =
+        typeFilter === "all" ||
+        getPropertyType(property, t, i18n.language) === typeFilter;
 
       return matchesSearch && matchesStatus && matchesType;
     });
@@ -257,20 +315,14 @@ export default function PropertyLandingPage() {
 
       return new Date(right?.createdAt || right?.updatedAt || 0) - new Date(left?.createdAt || left?.updatedAt || 0);
     });
-  }, [properties, search, sortBy, statusFilter, typeFilter, t]);
+  }, [properties, search, sortBy, statusFilter, typeFilter, t, i18n.language]);
 
   const featuredProperty = filteredProperties[0];
   const remainingProperties = featuredProperty ? filteredProperties.slice(1) : [];
 
   const availableInventory = properties.filter((property) => {
-    const status = normalizeStatus(property?.listingStatus, t).toLowerCase();
-    return [
-      t?.("modules.dashboardHome.statusAvailable").toLowerCase(),
-      "active",
-      "new",
-      "активный",
-      "новый",
-    ].includes(status);
+    const status = String(property?.listingStatus || "available").toLowerCase();
+    return ["available", "active", "new", "доступно", "активно", "новый", "новое"].includes(status);
   }).length;
 
   const averagePrice = useMemo(() => {
@@ -280,8 +332,19 @@ export default function PropertyLandingPage() {
       return t?.("modules.dashboardHome.priceOnRequest");
     }
 
-    return formatPrice(values.reduce((sum, current) => sum + current, 0) / values.length, t);
-  }, [properties, t]);
+    return formatPrice(
+      values.reduce((sum, current) => sum + current, 0) / values.length,
+      t,
+      i18n.language,
+    );
+  }, [properties, t, i18n.language]);
+
+  const sortModeLabel =
+    {
+      latest: t?.("modules.dashboardHome.newestFirst"),
+      "price-high": t?.("modules.dashboardHome.highestPrice"),
+      "price-low": t?.("modules.dashboardHome.lowestPrice"),
+    }[sortBy] || sortBy;
 
   const resetFilters = () => {
     setSearch("");
@@ -432,7 +495,7 @@ export default function PropertyLandingPage() {
           <PropertyMetric icon={LuBuilding2} label={t?.("modules.dashboardHome.filteredResults")} value={filteredProperties.length} iconColor="green.500" />
           <PropertyMetric icon={MdOutlineLocationOn} label={t?.("modules.dashboardHome.propertyTypes")} value={uniqueTypes.length || 0} iconColor="teal.500" />
           <PropertyMetric icon={LuSparkles} label={t?.("modules.dashboardHome.statusesUsed")} value={uniqueStatuses.length || 0} iconColor="orange.400" />
-          <PropertyMetric icon={LuCalendarClock} label={t?.("modules.dashboardHome.sortMode")} value={sortBy.replace("-", " ")} iconColor="gray.700" valueSize="sm" />
+          <PropertyMetric icon={LuCalendarClock} label={t?.("modules.dashboardHome.sortMode")} value={sortModeLabel} iconColor="gray.700" valueSize="sm" />
         </SimpleGrid>
 
         <Flex justify="space-between" align={{ base: "start", md: "end" }} direction={{ base: "column", md: "row" }} gap={3}>
@@ -445,7 +508,7 @@ export default function PropertyLandingPage() {
           <Wrap spacing={2}>
             {uniqueStatuses.slice(0, 6).map((status) => (
               <WrapItem key={status}>
-                <Badge borderRadius="full" px={3} py={1.5} colorScheme={statusColorMap[status.toLowerCase()] || "gray"}>
+                <Badge borderRadius="full" px={3} py={1.5} colorScheme={statusColorMap[getStatusKey(status)] || "gray"}>
                   {status}
                 </Badge>
               </WrapItem>
@@ -474,7 +537,7 @@ export default function PropertyLandingPage() {
                   <GridItem position="relative" minH={{ base: "280px", xl: "100%" }}>
                     <Image
                       src={getPrimaryImage(featuredProperty)}
-                      alt={getPropertyName(featuredProperty, t)}
+                      alt={getPropertyName(featuredProperty, t, i18n.language)}
                       h="100%"
                       w="100%"
                       minH={{ base: "280px", xl: "100%" }}
@@ -487,13 +550,13 @@ export default function PropertyLandingPage() {
                     />
                     <Wrap position="absolute" top={5} left={5} spacing={3}>
                       <WrapItem>
-                        <Badge colorScheme={statusColorMap[normalizeStatus(featuredProperty?.listingStatus, t).toLowerCase()] || "gray"} px={3} py={1.5} borderRadius="full">
-                          {normalizeStatus(featuredProperty?.listingStatus, t)}
+                        <Badge colorScheme={statusColorMap[getStatusKey(featuredProperty?.listingStatus)] || "gray"} px={3} py={1.5} borderRadius="full">
+                          {normalizeStatus(featuredProperty?.listingStatus, t, i18n.language)}
                         </Badge>
                       </WrapItem>
                       <WrapItem>
                         <Badge bg="blackAlpha.600" color="white" px={3} py={1.5} borderRadius="full">
-                          {getPropertyType(featuredProperty, t)}
+                          {getPropertyType(featuredProperty, t, i18n.language)}
                         </Badge>
                       </WrapItem>
                     </Wrap>
@@ -502,7 +565,7 @@ export default function PropertyLandingPage() {
                         {t?.("modules.dashboardHome.spotlight")}
                       </Text>
                       <Heading size="lg" mb={2}>
-                        {getPropertyName(featuredProperty, t)}
+                        {getPropertyName(featuredProperty, t, i18n.language)}
                       </Heading>
                       <Text color="whiteAlpha.880" noOfLines={2}>
                         {featuredProperty?.propertyAddress || t?.("modules.dashboardHome.addressNotSpecified")}
@@ -518,7 +581,7 @@ export default function PropertyLandingPage() {
                             {t?.("modules.dashboardHome.flagship")}
                           </Text>
                           <Heading size="xl" color="gray.800">
-                            {formatPrice(featuredProperty?.listingPrice, t)}
+                            {formatPrice(featuredProperty?.listingPrice, t, i18n.language)}
                           </Heading>
                         </Box>
                         <Circle size="52px" bg="green.50" color="green.700">
@@ -533,7 +596,7 @@ export default function PropertyLandingPage() {
                       <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
                         <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.bedrooms")} value={featuredProperty?.numberofBedrooms || "-"} iconColor="green.500" />
                         <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.bathrooms")} value={featuredProperty?.numberofBathrooms || "-"} iconColor="teal.500" />
-                        <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(featuredProperty, t)} iconColor="orange.400" />
+                        <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(featuredProperty, t, i18n.language)} iconColor="orange.400" />
                       </SimpleGrid>
 
                       <Divider />
@@ -544,7 +607,7 @@ export default function PropertyLandingPage() {
                             {t?.("modules.dashboardHome.propertyType")}
                           </Text>
                           <Text fontWeight="700" color="gray.800">
-                            {getPropertyType(featuredProperty, t)}
+                            {getPropertyType(featuredProperty, t, i18n.language)}
                           </Text>
                         </Box>
                         <Box>
@@ -552,7 +615,7 @@ export default function PropertyLandingPage() {
                             {t?.("modules.dashboardHome.currentStatus")}
                           </Text>
                           <Text fontWeight="700" color="gray.800">
-                            {normalizeStatus(featuredProperty?.listingStatus, t)}
+                            {normalizeStatus(featuredProperty?.listingStatus, t, i18n.language)}
                           </Text>
                         </Box>
                       </SimpleGrid>
@@ -579,8 +642,8 @@ export default function PropertyLandingPage() {
             {remainingProperties.length > 0 && (
               <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} gap={5}>
                 {remainingProperties.map((property) => {
-                  const statusLabel = normalizeStatus(property?.listingStatus, t);
-                  const statusColor = statusColorMap[statusLabel.toLowerCase()] || "gray";
+                  const statusLabel = normalizeStatus(property?.listingStatus, t, i18n.language);
+                  const statusColor = statusColorMap[getStatusKey(property?.listingStatus)] || "gray";
 
                   return (
                     <Card
@@ -594,7 +657,7 @@ export default function PropertyLandingPage() {
                       _hover={{ transform: "translateY(-4px)", boxShadow: "0 20px 60px rgba(15,47,36,0.12)" }}
                     >
                       <Box position="relative">
-                        <Image src={getPrimaryImage(property)} alt={getPropertyName(property, t)} h="236px" w="100%" objectFit="cover" />
+                        <Image src={getPrimaryImage(property)} alt={getPropertyName(property, t, i18n.language)} h="236px" w="100%" objectFit="cover" />
                         <Box position="absolute" inset="0" bg="linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.42))" />
                         <Wrap position="absolute" top={4} left={4} spacing={2}>
                           <WrapItem>
@@ -604,19 +667,19 @@ export default function PropertyLandingPage() {
                           </WrapItem>
                           <WrapItem>
                             <Badge bg="blackAlpha.650" color="white" px={3} py={1} borderRadius="full">
-                              {getPropertyType(property, t)}
+                              {getPropertyType(property, t, i18n.language)}
                             </Badge>
                           </WrapItem>
                         </Wrap>
                         <Text position="absolute" left={4} bottom={4} color="white" fontWeight="800" fontSize="xl">
-                          {formatPrice(property?.listingPrice, t)}
+                          {formatPrice(property?.listingPrice, t, i18n.language)}
                         </Text>
                       </Box>
 
                       <Stack spacing={4} p={5}>
                         <Box>
                           <Heading size="md" noOfLines={2} color="gray.800">
-                            {getPropertyName(property, t)}
+                            {getPropertyName(property, t, i18n.language)}
                           </Heading>
                           <Text color={mutedText} mt={2} noOfLines={1}>
                             {property?.propertyAddress || t?.("modules.dashboardHome.addressNotSpecified")}
@@ -630,7 +693,7 @@ export default function PropertyLandingPage() {
                         <SimpleGrid columns={3} spacing={3}>
                           <PropertyMetric icon={LuBedDouble} label={t?.("modules.dashboardHome.beds")} value={property?.numberofBedrooms || "-"} iconColor="green.500" valueSize="sm" />
                           <PropertyMetric icon={LuBath} label={t?.("modules.dashboardHome.baths")} value={property?.numberofBathrooms || "-"} iconColor="teal.500" valueSize="sm" />
-                          <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(property, t)} iconColor="orange.400" valueSize="sm" />
+                          <PropertyMetric icon={MdOutlineSquareFoot} label={t?.("modules.dashboardHome.area")} value={getArea(property, t, i18n.language)} iconColor="orange.400" valueSize="sm" />
                         </SimpleGrid>
 
                         <Button

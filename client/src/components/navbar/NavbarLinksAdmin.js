@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   Icon,
-  Image,
   Menu,
   MenuButton,
   MenuItem,
@@ -12,45 +11,42 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-// Custom Components
-import { ItemContent } from "components/menu/ItemContent";
-import { SearchBar } from "components/navbar/searchBar/SearchBar";
 import { SidebarResponsive } from "components/sidebar/Sidebar";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 // Assets
-import { MdInfoOutline, MdNotificationsNone } from "react-icons/md";
-import { FaEthereum } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { getApi } from "services/api";
+import { MdNotificationsNone } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import jwtDecode from "jwt-decode";
-import FixedPlugin from "components/fixedPlugin/FixedPlugin";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18n/i18n.config";
 import { setLanguage } from "../../redux/slices/languageSlice";
+import {
+  getBrandLabel,
+  isRussianLocale,
+  translateCrmText,
+} from "i18n/crmDictionary";
 export default function HeaderLinks(props) {
   const { secondary, setOpenSidebar, openSidebar, routes } = props;
   // Chakra Color Mode
-  const navbarIcon = useColorModeValue("gray.400", "white");
-  let menuBg = useColorModeValue("white", "navy.800");
-  const textColor = useColorModeValue("secondaryGray.900", "white");
+  const navbarIcon = useColorModeValue("gray.600", "white");
+  let menuBg = useColorModeValue("rgba(255, 255, 255, 0.78)", "navy.800");
+  const textColor = useColorModeValue("gray.800", "white");
   const textColorBrand = useColorModeValue("brand.700", "brand.400");
-  const ethColor = useColorModeValue("gray.700", "white");
-  const borderColor = useColorModeValue("#E6ECFA", "rgba(135, 140, 189, 0.3)");
-  const ethBg = useColorModeValue("secondaryGray.300", "navy.900");
-  const ethBox = useColorModeValue("white", "navy.800");
+  const borderColor = useColorModeValue("rgba(148, 163, 184, 0.18)", "rgba(135, 140, 189, 0.3)");
   const shadow = useColorModeValue(
-    "14px 17px 40px 4px rgba(112, 144, 176, 0.18)",
-    "14px 17px 40px 4px rgba(112, 144, 176, 0.06)",
+    "0 18px 44px rgba(15, 23, 42, 0.08)",
+    "0 18px 44px rgba(15, 23, 42, 0.18)",
   );
   // const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200');
 
   // const [loginUser, setLoginUser] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRu = isRussianLocale(i18n.language);
   const currentLanguage = useSelector(
     (state) => state?.language?.currentLanguage || "en",
   );
@@ -63,8 +59,7 @@ export default function HeaderLinks(props) {
   const userData = useSelector((state) => state?.user?.user);
 
   const data = typeof userData === "string" ? JSON.parse(userData) : userData;
-  const user = data?.firstName + " " + data?.lastName;
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
+  const user = [data?.firstName, data?.lastName].filter(Boolean).join(" ");
   const loginUser = useSelector((state) => state?.user?.user);
 
   const [isLogoutScheduled, setIsLogoutScheduled] = useState(false);
@@ -77,7 +72,12 @@ export default function HeaderLinks(props) {
     if (message) {
       toast.error(message);
     } else {
-      toast.success("Log out Successfully");
+      toast.success(
+        translateCrmText("Logged out successfully", {
+          t,
+          language: i18n.language,
+        }),
+      );
     }
     
     // Navigate to offers page after logout
@@ -96,14 +96,24 @@ export default function HeaderLinks(props) {
         const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
         if (decodedToken?.exp < currentTime) {
           if (!isLogoutScheduled) {
-            logOut("Token has expired");
+            logOut(
+              translateCrmText("Token has expired", {
+                t,
+                language: i18n.language,
+              }),
+            );
           }
         } else {
           // Schedule automatic logout when the token expires
           const timeToExpire = (decodedToken?.exp - currentTime) * 1000; // Convert seconds to milliseconds
           setTimeout(() => {
             if (!isLogoutScheduled) {
-              logOut("Token has expired");
+              logOut(
+                translateCrmText("Token has expired", {
+                  t,
+                  language: i18n.language,
+                }),
+              );
             }
           }, timeToExpire);
         }
@@ -121,51 +131,20 @@ export default function HeaderLinks(props) {
       flexDirection="row"
       bg={menuBg}
       flexWrap={secondary ? { base: "wrap", md: "nowrap" } : "unset"}
-      p="6px"
+      p="10px"
       mt={2.5}
-      borderRadius="30px"
+      gap={{ base: "6px", md: "8px" }}
+      borderRadius="32px"
       boxShadow={shadow}
+      backdropFilter="blur(24px)"
+      border="1px solid"
+      borderColor={borderColor}
     >
       {/* <SearchBar
 				mb={secondary ? { base: "10px", md: "unset" } : "unset"}
 				me="10px"
 				borderRadius="30px"
 			/> */}
-
-      <Flex
-        bg={ethBg}
-        display={secondary ? "flex" : "none"}
-        borderRadius="30px"
-        ms="auto"
-        p="6px"
-        align="center"
-        me="6px"
-      >
-        <Flex
-          align="center"
-          justify="center"
-          bg={ethBox}
-          h="29px"
-          w="29px"
-          borderRadius="30px"
-          me="7px"
-        >
-          <Icon color={ethColor} w="9px" h="14px" as={FaEthereum} />
-        </Flex>
-        <Text
-          w="max-content"
-          color={ethColor}
-          fontSize="sm"
-          fontWeight="700"
-          me="6px"
-        >
-          1,924
-          <Text as="span" display={{ base: "none", md: "unset" }}>
-            {" "}
-            ETH
-          </Text>
-        </Text>
-      </Flex>
 
       <SidebarResponsive
         routes={routes}
@@ -177,30 +156,33 @@ export default function HeaderLinks(props) {
         <MenuButton
           as={Button}
           variant="ghost"
-          p="0px"
+          px="12px"
+          py="10px"
           minW="unset"
-          height="auto"
+          minH="44px"
           color={textColor}
           fontSize="sm"
-          fontWeight="700"
+          fontWeight="600"
           _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
         >
           {currentLanguage.toUpperCase()}
         </MenuButton>
         <MenuList
           boxShadow={shadow}
-          p="6px"
-          borderRadius="12px"
-          bg={useColorModeValue("white", "navy.900")}
-          border={`1px solid ${useColorModeValue("gray.200", "whiteAlpha.200")}`}
+          p="10px"
+          borderRadius="22px"
+          bg={useColorModeValue("rgba(255, 255, 255, 0.9)", "navy.900")}
+          backdropFilter="blur(24px)"
+          border={`1px solid ${useColorModeValue("rgba(148, 163, 184, 0.18)", "whiteAlpha.200")}`}
           mt="10px"
           minW="90px"
         >
           <MenuItem
             _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
             _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-            px="10px"
-            borderRadius="8px"
+            px="12px"
+            py="8px"
+            borderRadius="14px"
             onClick={() => handleChangeLanguage("en")}
           >
             <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.800", "white")}>
@@ -210,8 +192,9 @@ export default function HeaderLinks(props) {
           <MenuItem
             _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
             _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-            px="10px"
-            borderRadius="8px"
+            px="12px"
+            py="8px"
+            borderRadius="14px"
             onClick={() => handleChangeLanguage("ru")}
           >
             <Text fontSize="sm" fontWeight="600" color={useColorModeValue("gray.800", "white")}>
@@ -224,20 +207,21 @@ export default function HeaderLinks(props) {
       <Menu>
         <MenuButton p="0px">
           <Icon
-            mt="6px"
+            mt="2px"
             as={MdNotificationsNone}
             color={navbarIcon}
-            w="18px"
-            h="18px"
-            me="10px"
+            w="20px"
+            h="20px"
+            me="8px"
           />
         </MenuButton>
         <MenuList
           boxShadow={shadow}
-          p="20px"
-          borderRadius="20px"
+          p="24px"
+          borderRadius="26px"
           bg={menuBg}
-          border="none"
+          backdropFilter="blur(24px)"
+          border={`1px solid ${borderColor}`}
           mt="22px"
           me={{ base: "30px", md: "unset" }}
           minW={{ base: "unset", md: "400px", xl: "450px" }}
@@ -257,77 +241,80 @@ export default function HeaderLinks(props) {
               {t?.("navigation.markAllRead")}
             </Text>
           </Flex>
-          <Flex flexDirection="column">
-            <MenuItem
-              _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              px="0"
-              borderRadius="8px"
-              mb="10px"
-            >
-              <ItemContent info="Horizon UI Dashboard PRO" aName="Alicia" textColor={textColor} />
-            </MenuItem>
-            <MenuItem
-              _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              px="0"
-              borderRadius="8px"
-              mb="10px"
-            >
-              <ItemContent
-                info="Horizon Design System Free"
-                aName="Josh Henry"
-                textColor={textColor}
-              />
-            </MenuItem>
+          <Flex
+            minH="120px"
+            px={2}
+            py={4}
+            direction="column"
+            align="center"
+            justify="center"
+            textAlign="center"
+            gap={2}
+          >
+            <Text fontWeight="700" color={textColor}>
+              {translateCrmText("No new notifications", {
+                t,
+                language: i18n.language,
+              })}
+            </Text>
+            <Text color="gray.500" fontSize="sm" maxW="320px" lineHeight="1.7">
+              {translateCrmText(
+                "System notifications will appear here when leads, tasks, or clients need attention.",
+                {
+                  t,
+                  language: i18n.language,
+                },
+              )}
+            </Text>
           </Flex>
         </MenuList>
       </Menu>
-      {/* <FixedPlugin /> */}
 
       <Menu style={{ zIndex: 1500 }}>
         <MenuButton p="0px">
           <Avatar
             _hover={{ cursor: "pointer" }}
             color="white"
-            name={user || "PremiumEstate"}
-            bg="#11047A"
+            name={user || getBrandLabel(i18n.language)}
+            bg="brand.500"
             size="sm"
-            w="40px"
-            h="40px"
+            w="42px"
+            h="42px"
           />
         </MenuButton>
         <MenuList
           boxShadow={shadow}
-          p="0px"
+          p="8px"
           mt="10px"
-          borderRadius="20px"
+          borderRadius="26px"
           bg={menuBg}
-          border="none"
+          backdropFilter="blur(24px)"
+          border={`1px solid ${borderColor}`}
         >
           <Flex w="100%" mb="0px">
             <Text
               ps="20px"
               pt="16px"
-              pb="10px"
+              pb="14px"
               w="100%"
               borderBottom="1px solid"
               borderColor={borderColor}
               fontSize="sm"
               fontWeight="700"
-              textTransform={"capitalize"}
               color={textColor}
+              lineHeight="1.6"
             >
-              👋&nbsp; Hey, {user}
+              {isRu ? "Профиль" : "Profile"}: {user || getBrandLabel(i18n.language)}
             </Text>
           </Flex>
 
-          <Flex flexDirection="column" p="10px">
+          <Flex flexDirection="column" p="8px" gap="4px">
             <MenuItem
               _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
               _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              borderRadius="8px"
+              borderRadius="14px"
               px="14px"
+              py="10px"
             >
               <Text fontSize="sm" onClick={() => navigate(`/admin/`)} color={textColor}>
                 {t?.("navigation.dashboard")}
@@ -338,8 +325,9 @@ export default function HeaderLinks(props) {
               <MenuItem
                 _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
                 _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-                borderRadius="8px"
+                borderRadius="14px"
                 px="14px"
+                py="10px"
               >
                 <Text fontSize="sm" onClick={() => navigate("/admin-setting")} color={textColor}>
                   {t?.("navigation.adminSettings")}
@@ -349,8 +337,9 @@ export default function HeaderLinks(props) {
             <MenuItem
               _hover={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
               _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
-              borderRadius="8px"
+              borderRadius="14px"
               px="14px"
+              py="10px"
             >
               <Text
                 fontSize="sm"
@@ -372,8 +361,9 @@ export default function HeaderLinks(props) {
               onClick={logOut}
               _focus={{ bg: useColorModeValue("gray.100", "whiteAlpha.100") }}
               color="red.400"
-              borderRadius="8px"
+              borderRadius="14px"
               px="14px"
+              py="10px"
             >
               <Text fontSize="sm" color={textColor}>{t?.("navigation.logout")}</Text>
             </MenuItem>

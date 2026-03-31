@@ -29,6 +29,7 @@ import ImportModal from "./components/ImportModel";
 import { fetchQuotesData } from "../../../redux/slices/quotesSlice";
 import { TbFileInvoice } from "react-icons/tb";
 import { postApi } from "services/api";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = (props) => {
   const { t } = useTranslation();
@@ -759,7 +760,7 @@ const Index = (props) => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

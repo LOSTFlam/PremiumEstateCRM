@@ -11,10 +11,12 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner/Spinner";
+import PropertyPriceEditor from "components/property/PropertyPriceEditor";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getApi, putApi } from "services/api";
+import { getPreferredCurrency } from "utils/pricing";
 import { generateValidationSchema } from "utils";
 import CustomForm from "utils/customForm";
 import * as yup from "yup";
@@ -27,6 +29,10 @@ const Edit = (props) => {
   const [initialValues, setInitialValues] = useState({
     ...initialFieldValues,
     createBy: JSON.parse(localStorage.getItem("user"))._id,
+    priceCurrency: getPreferredCurrency(localStorage.getItem("i18nextLng") || "en"),
+    listingPriceRub: "",
+    priceExchangeRate: "",
+    priceExchangeUpdatedAt: "",
   });
 
   const param = useParams();
@@ -103,8 +109,9 @@ const Edit = (props) => {
     <div>
       <Drawer isOpen={props?.isOpen} size={props?.size}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent className="admin-density-shell">
           <DrawerHeader
+            className="admin-density-shell__header"
             alignItems={"center"}
             justifyContent="space-between"
             display="flex"
@@ -112,7 +119,7 @@ const Edit = (props) => {
             Edit {values?.name || "Property"}
             <IconButton onClick={handleClose} icon={<CloseIcon />} />
           </DrawerHeader>
-          <DrawerBody>
+          <DrawerBody className="admin-density-shell__body">
             {isLoding ? (
               <Flex
                 justifyContent={"center"}
@@ -122,18 +129,28 @@ const Edit = (props) => {
                 <Spinner />
               </Flex>
             ) : (
-              <CustomForm
-                moduleData={props?.propertyData}
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                errors={errors}
-                touched={touched}
-              />
+              <>
+                <CustomForm
+                  moduleData={props?.propertyData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  errors={errors}
+                  touched={touched}
+                  excludeFieldNames={[
+                    "listingPrice",
+                    "listingPriceRub",
+                    "priceCurrency",
+                    "priceExchangeRate",
+                    "priceExchangeUpdatedAt",
+                  ]}
+                />
+                <PropertyPriceEditor values={values} setFieldValue={setFieldValue} />
+              </>
             )}
           </DrawerBody>
-          <DrawerFooter>
+          <DrawerFooter className="admin-density-shell__footer">
             <Button
               size="sm"
               sx={{ textTransform: "capitalize" }}

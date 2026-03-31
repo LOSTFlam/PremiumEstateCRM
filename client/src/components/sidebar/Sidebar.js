@@ -30,11 +30,11 @@ function Sidebar(props) {
 
   let variantChange = "0.2s linear";
   let shadow = useColorModeValue(
-    "14px 17px 40px 4px rgba(112, 144, 176, 0.08)",
+    "0 22px 54px rgba(15, 23, 42, 0.08)",
     "unset",
   );
   // Chakra Color Mode
-  let sidebarBg = useColorModeValue("white", "navy.800");
+  let sidebarBg = useColorModeValue("rgba(255, 255, 255, 0.8)", "navy.800");
   let sidebarMargins = "0px";
   const { isOpen, onOpen, onClose } = useDisclosure();
   // SIDEBAR
@@ -55,6 +55,8 @@ function Sidebar(props) {
         minH="100%"
         overflowX="hidden"
         boxShadow={shadow}
+        borderRight="1px solid rgba(148, 163, 184, 0.14)"
+        backdropFilter="blur(24px)"
       >
         <Scrollbars
           autoHide
@@ -76,7 +78,7 @@ function Sidebar(props) {
 
 // FUNCTIONS
 export function SidebarResponsive(props) {
-  let sidebarBackgroundColor = useColorModeValue("white", "navy.900");
+  let sidebarBackgroundColor = useColorModeValue("rgba(255, 255, 255, 0.88)", "navy.900");
   let menuColor = useColorModeValue("gray.700", "white");
   // // SIDEBAR
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -122,6 +124,8 @@ export function SidebarResponsive(props) {
           w="285px"
           maxW="285px"
           bg={sidebarBackgroundColor}
+          backdropFilter="blur(24px)"
+          borderRight="1px solid rgba(148, 163, 184, 0.14)"
         >
           <DrawerCloseButton
             zIndex="3"

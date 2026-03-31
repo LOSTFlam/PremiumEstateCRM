@@ -252,6 +252,7 @@
 
 import React, { useState } from "react";
 import {
+  Box,
   Grid,
   GridItem,
   Heading,
@@ -270,6 +271,55 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { generateValidationSchema } from "utils";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
+import {
+  formatPropertyPrice,
+  formatPropertyPriceSecondary,
+} from "utils/pricing";
+
+const renderReadonlyValue = (field, fieldData, language, t, rateData) => {
+  const rawValue =
+    fieldData && fieldData[field?.name] !== undefined
+      ? fieldData[field?.name]
+      : "N/A";
+
+  if (field?.name === "listingPrice") {
+    const primary = formatPropertyPrice(fieldData, { language, t, rateData });
+    const secondary = formatPropertyPriceSecondary(fieldData, {
+      language,
+      rateData,
+    });
+
+    return (
+      <>
+        <Text color={"blackAlpha.900"} fontSize="sm" fontWeight="700">
+          {primary}
+        </Text>
+        {secondary ? (
+          <Text color={"blackAlpha.700"} fontSize="xs" mt={1}>
+            {secondary}
+          </Text>
+        ) : null}
+      </>
+    );
+  }
+
+  if (field?.name === "listingPriceRub") {
+    return (
+      <Text color={"blackAlpha.900"} fontSize="sm" fontWeight="700">
+        {formatPropertyPrice(fieldData, {
+          language,
+          t,
+          rateData,
+          preferredCurrency: "RUB",
+        })}
+      </Text>
+    );
+  }
+
+  return rawValue || "N/A";
+};
 
 const CustomView = ({
   data,
@@ -281,6 +331,8 @@ const CustomView = ({
   id,
 }) => {
   const param = useParams();
+  const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const [editableField, setEditableField] = useState(null);
   const [editableFieldName, setEditableFieldName] = useState(null);
 
@@ -514,9 +566,7 @@ const CustomView = ({
                               />
                             )
                           ) : (
-                            <Text
-                              color={"blackAlpha.900"}
-                              fontSize="sm"
+                            <Box
                               onDoubleClick={() =>
                                 handleDoubleClick(
                                   field?.name,
@@ -528,12 +578,14 @@ const CustomView = ({
                                 )
                               }
                             >
-                              {(fieldData &&
-                                (fieldData[field?.name] !== undefined
-                                  ? fieldData[field?.name]
-                                  : "N/A")) ||
-                                "N/A"}
-                            </Text>
+                              {renderReadonlyValue(
+                                field,
+                                fieldData,
+                                i18n.language,
+                                t,
+                                rateData,
+                              )}
+                            </Box>
                           )}
                           <FormErrorMessage>
                             {formik?.errors[field?.name]}
@@ -700,9 +752,7 @@ const CustomView = ({
                           />
                         )
                       ) : (
-                        <Text
-                          color={"blackAlpha.900"}
-                          fontSize="sm"
+                        <Box
                           onDoubleClick={() =>
                             handleDoubleClick(
                               field?.name,
@@ -714,12 +764,14 @@ const CustomView = ({
                             )
                           }
                         >
-                          {(fieldData &&
-                            (fieldData[field?.name] !== undefined
-                              ? fieldData[field?.name]
-                              : "N/A")) ||
-                            "N/A"}
-                        </Text>
+                          {renderReadonlyValue(
+                            field,
+                            fieldData,
+                            i18n.language,
+                            t,
+                            rateData,
+                          )}
+                        </Box>
                       )}
                       <FormErrorMessage>
                         {formik?.errors[field?.name]}

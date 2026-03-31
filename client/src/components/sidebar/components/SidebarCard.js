@@ -8,8 +8,11 @@ import {
 } from "@chakra-ui/react";
 import logoWhite from "assets/img/layout/logoWhite.png";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function SidebarDocs() {
+  const { i18n } = useTranslation();
+  const isRu = i18n.language?.startsWith("ru");
   const bgColor = "linear-gradient(135deg, #868CFF 0%, #4318FF 100%)";
   const borderColor = useColorModeValue("white", "navy.800");
   return (
@@ -56,7 +59,7 @@ export default function SidebarDocs() {
           mt="10px"
           mb="6px"
         >
-          Upgrade to PRO
+          {isRu ? "Нужна помощь?" : "Need support?"}
         </Text>
         <Text
           fontSize="14px"
@@ -66,11 +69,12 @@ export default function SidebarDocs() {
           mb="6px"
           textAlign="center"
         >
-          Improve your development process and start doing more with Horizon UI
-          PRO!
+          {isRu
+            ? "Откройте справку по CRM и быстро найдите ответы по настройке системы."
+            : "Open the CRM help center to quickly find setup and workflow guidance."}
         </Text>
       </Flex>
-      <Link href="https://horizon-ui.com/pro?ref=horizon-chakra-free">
+      <Link href="/offers">
         <Button
           bg="whiteAlpha.300"
           _hover={{ bg: "whiteAlpha.200" }}
@@ -82,7 +86,7 @@ export default function SidebarDocs() {
           minW="185px"
           mx="auto"
         >
-          Upgrade to PRO
+          {isRu ? "Открыть витрину" : "Open storefront"}
         </Button>
       </Link>
     </Flex>

@@ -13,11 +13,15 @@ import Card from "components/card/Card.js";
 import CountUpComponent from "components/countUpComponent/countUpComponent";
 // Custom icons
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { isRussianLocale, translateCrmText } from "i18n/crmDictionary";
 
 export default function Default(props) {
   const { startContent, endContent, name, growth, value } = props;
+  const { t, i18n } = useTranslation();
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const textColorSecondary = "secondaryGray.600";
+  const displayName = translateCrmText(name, { t, language: i18n.language });
 
   return (
     <Card cursor={"pointer"} py="15px" onClick={props?.onClick}>
@@ -36,8 +40,9 @@ export default function Default(props) {
             fontSize={{
               base: props.fontsize ? props.fontsize : "sm",
             }}
+            lineHeight="1.35"
           >
-            {name}
+            {displayName}
           </StatLabel>
           <StatNumber
             color={textColor}
@@ -54,7 +59,9 @@ export default function Default(props) {
                 {growth}
               </Text>
               <Text color="secondaryGray.600" fontSize="xs" fontWeight="400">
-                since last month
+                {isRussianLocale(i18n.language)
+                  ? "К прошлому месяцу"
+                  : "Since last month"}
               </Text>
             </Flex>
           ) : null}

@@ -32,6 +32,20 @@ const propertyValidation = {
       .optional()
       .isNumeric().withMessage('Price must be a number')
       .toFloat(),
+
+    body('listingPriceRub')
+      .optional()
+      .isNumeric().withMessage('Ruble price must be a number')
+      .toFloat(),
+
+    body('priceExchangeRate')
+      .optional()
+      .isNumeric().withMessage('Exchange rate must be a number')
+      .toFloat(),
+
+    body('priceCurrency')
+      .optional()
+      .isIn(['USD', 'RUB']).withMessage('Price currency must be USD or RUB'),
     
     body('numberofBedrooms')
       .optional()
@@ -81,6 +95,20 @@ const propertyValidation = {
       .optional()
       .isNumeric().withMessage('Price must be a number')
       .toFloat(),
+
+    body('listingPriceRub')
+      .optional()
+      .isNumeric().withMessage('Ruble price must be a number')
+      .toFloat(),
+
+    body('priceExchangeRate')
+      .optional()
+      .isNumeric().withMessage('Exchange rate must be a number')
+      .toFloat(),
+
+    body('priceCurrency')
+      .optional()
+      .isIn(['USD', 'RUB']).withMessage('Price currency must be USD or RUB'),
     
     validate
   ],

@@ -22,6 +22,7 @@ import UserAdvanceSearch from "./components/userAdvanceSearch";
 import { deleteManyApi } from "services/api";
 import CommonDeleteModel from "components/commonDeleteModel";
 import AddEditUser from "./AddEditUser";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -76,10 +77,7 @@ const Index = () => {
             <MenuButton>
               <CiMenuKebab />
             </MenuButton>
-            <MenuList
-              minW={"fit-content"}
-              transform={"translate(1520px, 173px);"}
-            >
+            <MenuList minW={"fit-content"}>
               <MenuItem
                 py={2.5}
                 onClick={() => {
@@ -211,7 +209,7 @@ const Index = () => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

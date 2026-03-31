@@ -54,7 +54,7 @@ export default function Footer() {
             href="https://premiumestate.com/"
           >
             {" "}
-            {isRu ? "Премиум Эстейт." : "PremiumEstate."}
+            {isRu ? "Премиум Эстейт." : "Premium Estate."}
           </Link>{" "}
           {isRu
             ? "Нужна помощь, доработка или поддержка? Напишите нам:"

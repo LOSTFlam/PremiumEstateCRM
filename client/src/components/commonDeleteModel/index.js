@@ -9,16 +9,19 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import Spinner from "components/spinner/Spinner";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import {
+  buildDeleteQuestion,
+  buildDeleteTitle,
+  translateCrmText,
+} from "i18n/crmDictionary";
 
 const CommonDeleteModel = (props) => {
   const { isOpen, onClose, type, handleDeleteData, ids, selectedValues } =
     props;
-  const [isLoding, setIsLoding] = useState(false);
-  const { i18n } = useTranslation();
-  const isRu = i18n.language?.startsWith("ru");
+  const { t, i18n } = useTranslation();
+  const translatedType = translateCrmText(type, { t, language: i18n.language });
+  const isLoding = false;
 
   const handleDelete = () => {
     handleDeleteData(ids, selectedValues);
@@ -30,15 +33,25 @@ const CommonDeleteModel = (props) => {
 
   return (
     <div>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered>
+      <Modal onClose={onClose} isOpen={isOpen} isCentered scrollBehavior="inside">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{isRu ? "Удалить запись" : `Delete ${`${type}`}`}</ModalHeader>
+        <ModalContent className="admin-density-shell">
+          <ModalHeader className="admin-density-shell__header">
+            {buildDeleteTitle(translatedType || type, {
+              t,
+              language: i18n.language,
+            })}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            {isRu ? "Вы уверены, что хотите удалить выбранную запись?" : `Are You Sure To Delete selected ${`${type}`} ?`}
+          <ModalBody className="admin-density-shell__body">
+            {Array.isArray(ids) && ids.length > 1
+              ? t("common.deleteConfirmation")
+              : buildDeleteQuestion(translatedType || type || "record", {
+                  t,
+                  language: i18n.language,
+                })}
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="admin-density-shell__footer">
             <Button
               colorScheme="red"
               size="sm"
@@ -46,10 +59,10 @@ const CommonDeleteModel = (props) => {
               onClick={handleDelete}
               disabled={isLoding ? true : false}
             >
-              {isLoding ? <Spinner /> : isRu ? "Да" : "Yes"}
+              {isLoding ? <Spinner /> : t("common.confirm")}
             </Button>
             <Button variant="outline" size="sm" onClick={handleClose}>
-              {isRu ? "Нет" : "No"}
+              {t("common.cancel")}
             </Button>
           </ModalFooter>
         </ModalContent>

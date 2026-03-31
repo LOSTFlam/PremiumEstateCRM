@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { fetchMeetingData } from "../../../redux/slices/meetingSlice";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -189,7 +190,7 @@ const Index = () => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

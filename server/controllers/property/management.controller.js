@@ -1,5 +1,5 @@
 const { Property } = require("../../model/schema/property");
-const { slugify } = require("./utils");
+const { slugify, normalizePropertyPricing } = require("./utils");
 const {
   getPropertyContacts,
   getPropertyPhoneCalls,
@@ -45,6 +45,7 @@ const index = async (req, res) => {
 
 const add = async (req, res) => {
   try {
+    req.body = await normalizePropertyPricing(req.body);
     req.body.createdDate = new Date();
 
     const slugSource = req.body.publicSlug || req.body.name || req.body.propertyAddress || "property";
@@ -76,6 +77,34 @@ const edit = async (req, res) => {
     if (!property) {
       return res.status(404).json({ message: "no Data Found." });
     }
+
+    const normalizedPricing = await normalizePropertyPricing({
+      listingPrice:
+        req.body.listingPrice !== undefined ? req.body.listingPrice : property.listingPrice,
+      listingPriceRub:
+        req.body.listingPriceRub !== undefined
+          ? req.body.listingPriceRub
+          : property.listingPriceRub,
+      priceCurrency:
+        req.body.priceCurrency !== undefined ? req.body.priceCurrency : property.priceCurrency,
+      priceExchangeRate:
+        req.body.priceExchangeRate !== undefined
+          ? req.body.priceExchangeRate
+          : property.priceExchangeRate,
+      priceExchangeUpdatedAt:
+        req.body.priceExchangeUpdatedAt !== undefined
+          ? req.body.priceExchangeUpdatedAt
+          : property.priceExchangeUpdatedAt,
+    });
+
+    req.body = {
+      ...req.body,
+      listingPrice: normalizedPricing.listingPrice,
+      listingPriceRub: normalizedPricing.listingPriceRub,
+      priceCurrency: normalizedPricing.priceCurrency,
+      priceExchangeRate: normalizedPricing.priceExchangeRate,
+      priceExchangeUpdatedAt: normalizedPricing.priceExchangeUpdatedAt,
+    };
 
     if (req.body.publicSlug || req.body.name || req.body.propertyAddress) {
       const slugSource =

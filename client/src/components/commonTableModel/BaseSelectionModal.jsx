@@ -14,6 +14,7 @@ import { GiClick } from "react-icons/gi";
 import { useTranslation } from "react-i18next";
 import CommonCheckTable from "components/reactTable/checktable";
 import Spinner from "components/spinner/Spinner";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const BaseSelectionModal = ({
   isOpen,
@@ -26,8 +27,12 @@ const BaseSelectionModal = ({
   isLoading = false,
   selectType = "single",
 }) => {
-  const { t: i18nT } = useTranslation();
+  const { t: i18nT, i18n } = useTranslation();
   const [selectedValues, setSelectedValues] = useState([]);
+  const modalTitle = translateCrmText(title, {
+    t: i18nT,
+    language: i18n.language,
+  });
 
   const labels = useMemo(
     () => ({
@@ -47,19 +52,19 @@ const BaseSelectionModal = ({
   };
 
   return (
-    <Modal onClose={onClose} size="full" isOpen={isOpen}>
+    <Modal onClose={onClose} size="6xl" isOpen={isOpen} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
+      <ModalContent className="admin-density-shell">
+        <ModalHeader className="admin-density-shell__header">{modalTitle}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody className="admin-density-shell__body">
           {isLoading ? (
             <Flex justifyContent="center" alignItems="center" width="100%">
               <Spinner />
             </Flex>
           ) : (
             <CommonCheckTable
-              title={title}
+              title={modalTitle}
               isLoding={isLoading}
               columnData={columns}
               allData={data}
@@ -74,7 +79,7 @@ const BaseSelectionModal = ({
             />
           )}
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className="admin-density-shell__footer">
           <Button
             variant="brand"
             size="sm"

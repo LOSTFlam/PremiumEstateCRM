@@ -145,13 +145,13 @@ const Add = (props) => {
 
   return (
     <div>
-      <Modal onClose={onClose} isOpen={isOpen} isCentered size="2xl">
+      <Modal onClose={onClose} isOpen={isOpen} isCentered size="2xl" scrollBehavior="inside">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add Validation</ModalHeader>
+        <ModalContent className="admin-density-shell">
+          <ModalHeader className="admin-density-shell__header">Add Validation</ModalHeader>
           <ModalCloseButton />
           {/* <HSeparator /> */}
-          <ModalBody>
+          <ModalBody className="admin-density-shell__body">
             <>
               <Grid templateColumns="repeat(12, 1fr)" gap={3}>
                 <GridItem colSpan={{ base: 12, sm: 6 }}>
@@ -676,7 +676,7 @@ const Add = (props) => {
               </Grid>
             </>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className="admin-density-shell__footer">
             <Button
               colorScheme="brand"
               size="sm"

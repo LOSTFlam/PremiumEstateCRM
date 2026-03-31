@@ -361,8 +361,9 @@ const AddEdit = (props) => {
 
       <Drawer isOpen={isOpen} size={size}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent className="admin-density-shell">
           <DrawerHeader
+            className="admin-density-shell__header"
             alignItems={"center"}
             justifyContent="space-between"
             display="flex"
@@ -378,7 +379,7 @@ const AddEdit = (props) => {
             <IconButton onClick={() => handleCancel()} icon={<CloseIcon />} />
           </DrawerHeader>
           {!isOpenPreview ? (
-            <DrawerBody>
+            <DrawerBody className="admin-density-shell__body">
               <Grid templateColumns="repeat(12, 1fr)" gap={3}>
                 <GridItem colSpan={{ base: 12 }}>
                   <Heading as="h1" size="md" mt="10px">
@@ -1523,7 +1524,7 @@ const AddEdit = (props) => {
               </Grid>
             </DrawerBody>
           ) : (
-            <DrawerBody>
+            <DrawerBody className="admin-density-shell__body">
               <div className="invoice-container">
                 <div className="invoice-header">
                   <div className="">
@@ -1684,7 +1685,7 @@ const AddEdit = (props) => {
               </div>
             </DrawerBody>
           )}
-          <DrawerFooter>
+          <DrawerFooter className="admin-density-shell__footer">
             <Button
               size="sm"
               sx={{

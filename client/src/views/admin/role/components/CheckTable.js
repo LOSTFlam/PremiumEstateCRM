@@ -32,6 +32,7 @@ import RoleModal from "./roleModal";
 import AddRole from "../Add";
 import { IoIosArrowBack } from "react-icons/io";
 import DataNotFound from "components/notFoundData";
+import { translateCrmText } from "i18n/crmDictionary";
 
 export default function CheckTable(props) {
   const { columnsData, tableData, fetchData, isLoding, setAction } = props;
@@ -142,7 +143,7 @@ export default function CheckTable(props) {
               size="sm"
               leftIcon={<AddIcon />}
             >
-              Add New
+              {translateCrmText("Add New")}
             </Button>
             <Button
               onClick={() => navigate("/admin-setting")}

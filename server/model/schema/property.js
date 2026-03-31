@@ -111,6 +111,23 @@ const propertySchema = new mongoose.Schema({
         ref: "User",
         default: null,
     },
+    listingPriceRub: {
+        type: Number,
+        default: null,
+    },
+    priceCurrency: {
+        type: String,
+        enum: ["USD", "RUB"],
+        default: "USD",
+    },
+    priceExchangeRate: {
+        type: Number,
+        default: null,
+    },
+    priceExchangeUpdatedAt: {
+        type: Date,
+        default: null,
+    },
     seoTitle: {
         type: String,
         default: "",

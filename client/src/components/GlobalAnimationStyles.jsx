@@ -21,6 +21,33 @@ export default function GlobalAnimationStyles() {
     }
 
     return `
+      :root {
+        --motion-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+        --motion-soft: cubic-bezier(0.16, 1, 0.3, 1);
+        --highlight-blur: 0 18px 42px rgba(10, 132, 255, 0.1);
+      }
+
+      button,
+      a,
+      input,
+      textarea,
+      select,
+      [role="button"],
+      .public-brand-panel,
+      .public-brand-panel-light,
+      .chakra-menu__menu-list,
+      .chakra-modal__content {
+        transition:
+          background-color 280ms var(--motion-smooth),
+          border-color 280ms var(--motion-smooth),
+          color 280ms var(--motion-smooth),
+          opacity 280ms var(--motion-smooth),
+          box-shadow 360ms var(--motion-smooth),
+          transform 360ms var(--motion-smooth),
+          filter 360ms var(--motion-smooth),
+          backdrop-filter 360ms var(--motion-smooth);
+      }
+
       /* ============================================
          GLOBAL ANIMATIONS - Premium Estate CRM
          ============================================ */
@@ -34,7 +61,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-up {
         from {
           opacity: 0;
-          transform: translateY(40px);
+          transform: translateY(22px);
         }
         to {
           opacity: 1;
@@ -45,7 +72,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-down {
         from {
           opacity: 0;
-          transform: translateY(-40px);
+          transform: translateY(-22px);
         }
         to {
           opacity: 1;
@@ -56,7 +83,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-left {
         from {
           opacity: 0;
-          transform: translateX(-50px);
+          transform: translateX(-24px);
         }
         to {
           opacity: 1;
@@ -67,7 +94,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-right {
         from {
           opacity: 0;
-          transform: translateX(50px);
+          transform: translateX(24px);
         }
         to {
           opacity: 1;
@@ -78,7 +105,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-scale {
         from {
           opacity: 0;
-          transform: scale(0.9);
+          transform: scale(0.975);
         }
         to {
           opacity: 1;
@@ -89,7 +116,7 @@ export default function GlobalAnimationStyles() {
       @keyframes fade-in-zoom {
         from {
           opacity: 0;
-          transform: scale(0.8);
+          transform: scale(0.965);
         }
         to {
           opacity: 1;
@@ -100,7 +127,7 @@ export default function GlobalAnimationStyles() {
       /* --- Slide Animations --- */
       @keyframes slide-up {
         from {
-          transform: translateY(60px);
+          transform: translateY(24px);
         }
         to {
           transform: translateY(0);
@@ -109,7 +136,7 @@ export default function GlobalAnimationStyles() {
 
       @keyframes slide-down {
         from {
-          transform: translateY(-60px);
+          transform: translateY(-24px);
         }
         to {
           transform: translateY(0);
@@ -118,7 +145,7 @@ export default function GlobalAnimationStyles() {
 
       @keyframes slide-left {
         from {
-          transform: translateX(60px);
+          transform: translateX(24px);
         }
         to {
           transform: translateX(0);
@@ -127,7 +154,7 @@ export default function GlobalAnimationStyles() {
 
       @keyframes slide-right {
         from {
-          transform: translateX(-60px);
+          transform: translateX(-24px);
         }
         to {
           transform: translateX(0);
@@ -137,7 +164,7 @@ export default function GlobalAnimationStyles() {
       /* --- Scale Animations --- */
       @keyframes scale-up {
         from {
-          transform: scale(0.95);
+          transform: scale(0.98);
         }
         to {
           transform: scale(1);
@@ -146,7 +173,7 @@ export default function GlobalAnimationStyles() {
 
       @keyframes scale-down {
         from {
-          transform: scale(1.05);
+          transform: scale(1.02);
         }
         to {
           transform: scale(1);
@@ -158,7 +185,7 @@ export default function GlobalAnimationStyles() {
           transform: scale(1);
         }
         50% {
-          transform: scale(1.05);
+          transform: scale(1.02);
         }
       }
 
@@ -167,7 +194,7 @@ export default function GlobalAnimationStyles() {
           transform: scale(1);
         }
         50% {
-          transform: scale(1.02);
+          transform: scale(1.012);
         }
       }
 
@@ -177,7 +204,7 @@ export default function GlobalAnimationStyles() {
           transform: translateY(0);
         }
         50% {
-          transform: translateY(-20px);
+          transform: translateY(-10px);
         }
       }
 
@@ -186,20 +213,20 @@ export default function GlobalAnimationStyles() {
           transform: translateY(0);
         }
         50% {
-          transform: translateY(-10px);
+          transform: translateY(-6px);
         }
       }
 
       @keyframes bounce-in {
         0% {
-          transform: scale(0.3);
+          transform: scale(0.88);
           opacity: 0;
         }
         50% {
-          transform: scale(1.05);
+          transform: scale(1.015);
         }
         70% {
-          transform: scale(0.9);
+          transform: scale(0.992);
         }
         100% {
           transform: scale(1);
@@ -231,31 +258,33 @@ export default function GlobalAnimationStyles() {
           transform: rotate(0deg);
         }
         25% {
-          transform: rotate(-3deg);
+          transform: rotate(-1.5deg);
         }
         75% {
-          transform: rotate(3deg);
+          transform: rotate(1.5deg);
         }
       }
 
       /* --- Glow Animations --- */
       @keyframes glow {
         0%, 100% {
-          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3),
-                      0 0 40px rgba(212, 175, 55, 0.1);
+          box-shadow:
+            0 12px 32px rgba(10, 132, 255, 0.08),
+            0 0 0 1px rgba(10, 132, 255, 0.06);
         }
         50% {
-          box-shadow: 0 0 40px rgba(212, 175, 55, 0.6),
-                      0 0 80px rgba(212, 175, 55, 0.3);
+          box-shadow:
+            0 22px 56px rgba(10, 132, 255, 0.14),
+            0 0 0 1px rgba(10, 132, 255, 0.09);
         }
       }
 
       @keyframes glow-soft {
         0%, 100% {
-          box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+          box-shadow: 0 10px 26px rgba(10, 132, 255, 0.07);
         }
         50% {
-          box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+          box-shadow: 0 16px 38px rgba(10, 132, 255, 0.12);
         }
       }
 

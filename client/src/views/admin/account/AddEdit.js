@@ -209,8 +209,9 @@ const AddEdit = (props) => {
 
       <Drawer isOpen={isOpen} size={size}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent className="admin-density-shell">
           <DrawerHeader
+            className="admin-density-shell__header"
             alignItems={"center"}
             justifyContent="space-between"
             display="flex"
@@ -218,7 +219,7 @@ const AddEdit = (props) => {
             {type === "add" ? "Add" : "Edit"} Account
             <IconButton onClick={() => handleCancel()} icon={<CloseIcon />} />
           </DrawerHeader>
-          <DrawerBody>
+          <DrawerBody className="admin-density-shell__body">
             <Grid templateColumns="repeat(12, 1fr)" gap={3}>
               <GridItem colSpan={{ base: 12, md: 6 }}>
                 <FormLabel
@@ -1280,7 +1281,7 @@ const AddEdit = (props) => {
               </GridItem>
             </Grid>
           </DrawerBody>
-          <DrawerFooter>
+          <DrawerFooter className="admin-density-shell__footer">
             <Button
               sx={{ textTransform: "capitalize" }}
               size="sm"

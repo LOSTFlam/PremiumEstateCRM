@@ -29,6 +29,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import AddPhoneCall from "../../phoneCall/components/AddPhoneCall";
 import { AddIcon } from "@chakra-ui/icons";
 import DataNotFound from "components/notFoundData";
+import { translateCrmText } from "i18n/crmDictionary";
 
 export default function PhoneCall(props) {
   const { columnsData, tableData, title, fetchData, callAccess } = props;
@@ -97,7 +98,7 @@ export default function PhoneCall(props) {
               colorScheme="gray"
               bg={buttonbg}
             >
-              Add New
+              {translateCrmText("Add New")}
             </Button>
           )
         ) : (

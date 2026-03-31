@@ -31,6 +31,7 @@ const SignInCentered = React.lazy(() => import("views/auth/signIn"));
 export const engagementRoutes = [
   createRoute({
     name: "Tasks",
+    i18nKey: "navigation.tasks",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/task",
     icon: <Icon as={FaTasks} width="20px" height="20px" color="inherit" />,
@@ -38,6 +39,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Tasks",
+    i18nKey: "navigation.tasks",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "task",
     parentName: "Tasks",
@@ -46,6 +48,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Meetings",
+    i18nKey: "navigation.meetings",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/metting",
     icon: <Icon as={SiGooglemeet} width="20px" height="20px" color="inherit" />,
@@ -53,6 +56,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Meetings",
+    i18nKey: "navigation.meetings",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "Meetings",
     parentName: "Meetings",
@@ -61,6 +65,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Calls",
+    i18nKey: "navigation.phoneCall",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/phone-call",
     icon: <Icon as={PiPhoneCallBold} width="20px" height="20px" color="inherit" />,
@@ -68,6 +73,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Calls",
+    i18nKey: "navigation.phoneCall",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "phone-call",
     parentName: "Calls",
@@ -76,6 +82,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Emails",
+    i18nKey: "navigation.emails",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/email",
     icon: <Icon as={AiOutlineMail} width="20px" height="20px" color="inherit" />,
@@ -83,6 +90,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Emails",
+    i18nKey: "navigation.emails",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "Emails",
     parentName: "Emails",
@@ -91,6 +99,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Email Template",
+    i18nKey: "navigation.emailTemplate",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/email-template",
     icon: <Icon as={HiTemplate} width="20px" height="20px" color="inherit" />,
@@ -107,6 +116,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Email Template",
+    i18nKey: "navigation.emailTemplate",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     under: "email-template",
     parentName: "Email Template",
@@ -116,6 +126,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Calender",
+    i18nKey: "navigation.calendar",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/calender",
     icon: <Icon as={FaCalendarAlt} width="20px" height="20px" color="inherit" />,
@@ -123,6 +134,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Payments",
+    i18nKey: "navigation.payments",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/payments",
     icon: <Icon as={FaRupeeSign} width="20px" height="20px" color="inherit" />,
@@ -130,6 +142,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Documents",
+    i18nKey: "navigation.documents",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/documents",
     icon: <Icon as={AiFillFolderOpen} width="20px" height="20px" color="inherit" />,
@@ -137,6 +150,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Reporting and Analytics",
+    i18nKey: "navigation.reports",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/reporting-analytics",
     icon: <Icon as={MdInsertChartOutlined} width="20px" height="20px" color="inherit" />,
@@ -144,6 +158,7 @@ export const engagementRoutes = [
   }),
   createRoute({
     name: "Users",
+    i18nKey: "navigation.users",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/user",
     under: "user",

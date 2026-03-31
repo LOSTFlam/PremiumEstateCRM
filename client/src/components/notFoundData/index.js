@@ -1,9 +1,9 @@
 import { Text } from "@chakra-ui/react";
 import React from "react";
-import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 
 const DataNotFound = ({ message }) => {
-  const isRu = i18next.language?.startsWith("ru");
+  const { t } = useTranslation();
   return (
     <Text 
       textAlign="center" 
@@ -12,7 +12,7 @@ const DataNotFound = ({ message }) => {
       color="gray.500"
       py={4}
     >
-      {message || (isRu ? "-- Данные не найдены --" : "-- No Data Found --")}
+      {message || `-- ${t("common.noData")} --`}
     </Text>
   );
 };

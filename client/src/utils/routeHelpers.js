@@ -4,6 +4,7 @@ export const lazyView = (path) => React.lazy(() => import(`../${path}`));
 
 export const createRoute = ({
   name,
+  i18nKey,
   layout,
   path,
   component,
@@ -13,6 +14,7 @@ export const createRoute = ({
   both,
 }) => ({
   name,
+  ...(i18nKey ? { i18nKey } : {}),
   layout,
   path,
   component,

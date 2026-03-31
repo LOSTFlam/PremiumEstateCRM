@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import { fetchTaskData } from "../../../redux/slices/taskSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Task = () => {
   const { t } = useTranslation();
@@ -300,7 +301,7 @@ const Task = () => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

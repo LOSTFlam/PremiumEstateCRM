@@ -24,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { fetchEmailsData } from "../../../redux/slices/emailsSlice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const Index = (props) => {
   const { t } = useTranslation();
@@ -293,7 +294,7 @@ const Index = (props) => {
             size="sm"
             onClick={() => setAdvanceSearch(true)}
           >
-            Advance Search
+            {translateCrmText("Advance Search")}
           </Button>
         }
         getTagValuesOutSide={getTagValuesOutSide}

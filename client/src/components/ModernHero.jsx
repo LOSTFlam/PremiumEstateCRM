@@ -33,6 +33,7 @@ import {
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 import { useScrollReveal } from "hooks/useScrollReveal";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
 
 const heroCopy = {
   ru: {
@@ -168,6 +169,7 @@ export default function ModernHero({
   marketRouteCards = [],
 }) {
   const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const prefersReducedMotion = usePrefersReducedMotion();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = heroCopy[locale];
@@ -241,7 +243,11 @@ export default function ModernHero({
   const highlightStats = [
     { label: copy.statsCatalog, value: String(properties?.length || 0), icon: FiTrendingUp },
     { label: copy.statsRich, value: String(richCount || 0), icon: FiShield },
-    { label: copy.statsAverage, value: formatPrice(averagePrice, t), icon: LuSparkles },
+    {
+      label: copy.statsAverage,
+      value: formatPrice(averagePrice, t, i18n.language, rateData),
+      icon: LuSparkles,
+    },
   ];
 
   const routeCards = useMemo(
@@ -681,7 +687,7 @@ export default function ModernHero({
                       backdropFilter="blur(12px)"
                     >
                       <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="700" lineHeight="1">
-                        {formatPrice(heroProperty?.listingPrice, t)}
+                        {formatPrice(heroProperty, t, i18n.language, rateData)}
                       </Text>
                     </Box>
 

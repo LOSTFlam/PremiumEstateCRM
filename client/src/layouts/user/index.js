@@ -15,7 +15,6 @@ import Navbar from "components/navbar/NavbarAdmin.js";
 import Sidebar from "components/sidebar/Sidebar.js";
 import { SidebarContext } from "contexts/SidebarContext";
 import React, { Suspense, useEffect, useState } from "react";
-import i18next from "i18next";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ROLE_PATH } from "../../roles";
 import newRoute from "routes.js";
@@ -28,52 +27,18 @@ import DynamicPage from "views/admin/dynamicPage";
 import { LuChevronRightCircle } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
 import { fetchModules } from "../../redux/slices/moduleSlice";
+import {
+  getActiveCrmNavbarValue,
+  getActiveCrmRoute,
+  getActiveCrmRouteLabel,
+  renderCrmRoutes,
+} from "../shared/crmLayoutUtils";
+import { getBrandLabel } from "i18n/crmDictionary";
 
 const MainDashboard = React.lazy(() => import("views/admin/default"));
 const SignInCentered = React.lazy(() => import("views/auth/signIn"));
 const Calender = React.lazy(() => import("views/admin/calender"));
 const UserView = React.lazy(() => import("views/admin/users/View"));
-
-const routeNameToI18nKey = {
-  Dashboard: "navigation.dashboard",
-  Properties: "navigation.properties",
-  Leads: "navigation.leads",
-  Contacts: "navigation.contacts",
-  Invoices: "navigation.invoices",
-  Quotes: "navigation.quotes",
-  "Offer Letter": "navigation.offerLetters",
-  Opportunities: "navigation.opportunities",
-  Account: "navigation.account",
-  Tasks: "navigation.tasks",
-  Meetings: "navigation.meetings",
-  Calls: "navigation.phoneCall",
-  Emails: "navigation.emails",
-  "Email Template": "navigation.emailTemplate",
-  Calender: "navigation.calendar",
-  Payments: "navigation.payments",
-  Documents: "navigation.documents",
-  "Reporting and Analytics": "navigation.reports",
-  Reports: "navigation.reports",
-  "Admin Setting": "navigation.adminSettings",
-  "Storefront Filters": "navigation.storefrontFilters",
-  Users: "navigation.users",
-  Roles: "navigation.roles",
-  "Custom Fields": "navigation.customFields",
-  "Table Fields": "navigation.tableFields",
-  "Active Deactive Module": "navigation.activeModules",
-  Module: "navigation.modules",
-  Validation: "navigation.validations",
-  "Change Images": "navigation.changeImages",
-  "Bank Details": "navigation.bankDetails",
-};
-
-const translateRouteName = (name) => {
-  const key = routeNameToI18nKey[name];
-  return key ? i18next.t(key) : name;
-};
-
-const defaultBrandLabel = () =>
-  i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";
 
 // Custom Chakra theme
 export default function User(props) {
@@ -220,129 +185,6 @@ export default function User(props) {
   );
   routes.push(...activeRoutes);
 
-  const getActiveRoute = (routes) => {
-    let activeRoute = defaultBrandLabel();
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveRoute = getActiveRoute(routes[i].items);
-        if (collapseActiveRoute !== activeRoute) {
-          return collapseActiveRoute;
-        }
-      } else if (routes[i].category) {
-        let categoryActiveRoute = getActiveRoute(routes[i].items);
-        if (categoryActiveRoute !== activeRoute) {
-          return categoryActiveRoute;
-        }
-      } else {
-        if (
-          window.location.href.indexOf(routes[i].path.replace("/:id", "")) !==
-          -1
-        ) {
-          return translateRouteName(routes[i].name);
-        }
-      }
-    }
-    return activeRoute;
-  };
-  const under = (routes) => {
-    let activeRoute = false;
-    for (let i = 0; i < routes?.length; i++) {
-      if (routes[i]?.collapse) {
-        let collapseActiveRoute = getActiveRoute(routes[i]?.items);
-        if (collapseActiveRoute !== activeRoute) {
-          return collapseActiveRoute;
-        }
-      } else if (routes[i]?.category) {
-        let categoryActiveRoute = getActiveRoute(routes[i]?.items);
-        if (categoryActiveRoute !== activeRoute) {
-          return categoryActiveRoute;
-        }
-      } else {
-        if (
-          window.location.href?.indexOf(
-            routes[i]?.path?.replace("/:id", ""),
-          ) !== -1
-        ) {
-          return routes[i];
-        }
-      }
-    }
-    return activeRoute;
-  };
-
-  const getActiveNavbar = (routes) => {
-    let activeNavbar = false;
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveNavbar = getActiveNavbar(routes[i].items);
-        if (collapseActiveNavbar !== activeNavbar) {
-          return collapseActiveNavbar;
-        }
-      } else if (routes[i].category) {
-        let categoryActiveNavbar = getActiveNavbar(routes[i].items);
-        if (categoryActiveNavbar !== activeNavbar) {
-          return categoryActiveNavbar;
-        }
-      } else {
-        if (window.location.href.indexOf(routes[i].path) !== -1) {
-          return routes[i].secondary;
-        }
-      }
-    }
-    return activeNavbar;
-  };
-  const getActiveNavbarText = (routes) => {
-    let activeNavbar = false;
-    for (let i = 0; i < routes.length; i++) {
-      if (routes[i].collapse) {
-        let collapseActiveNavbar = getActiveNavbarText(routes[i].items);
-        if (collapseActiveNavbar !== activeNavbar) {
-          return collapseActiveNavbar;
-        }
-      } else if (routes[i].category) {
-        let categoryActiveNavbar = getActiveNavbarText(routes[i].items);
-        if (categoryActiveNavbar !== activeNavbar) {
-          return categoryActiveNavbar;
-        }
-      } else {
-        if (window.location.href.indexOf(routes[i].path) !== -1) {
-          return routes[i].messageNavbar;
-        }
-      }
-    }
-    return activeNavbar;
-  };
-
-  const getRoutes = (routes) => {
-    return routes?.map((prop, key) => {
-      // if (!prop.under && prop.layout === '/admin') {
-      if (!prop?.under && prop?.layout !== "/auth") {
-        return (
-          <Route
-            path={prop?.path}
-            element={prop && <prop.component />}
-            key={key}
-          />
-        );
-      } else if (prop?.under) {
-        return (
-          <Route
-            path={prop?.path}
-            element={prop && <prop.component />}
-            key={key}
-          />
-        );
-      }
-      if (prop?.collapse) {
-        return getRoutes(prop?.items);
-      }
-      if (prop?.category) {
-        return getRoutes(prop?.items);
-      } else {
-        return null;
-      }
-    });
-  };
   document.documentElement.dir = "ltr";
   const { onOpen } = useDisclosure();
   document.documentElement.dir = "ltr";
@@ -407,13 +249,13 @@ export default function User(props) {
               <Box className="header">
                 <Navbar
                   onOpen={onOpen}
-                  logoText={"Horizon UI Dashboard PRO"}
-                  brandText={getActiveRoute(routes)}
-                  secondary={getActiveNavbar(routes)}
-                  message={getActiveNavbarText(routes)}
+                  logoText={getBrandLabel()}
+                  brandText={getActiveCrmRouteLabel(routes)}
+                  secondary={getActiveCrmNavbarValue(routes, "secondary")}
+                  message={getActiveCrmNavbarValue(routes, "messageNavbar")}
                   fixed={fixed}
                   routes={routes}
-                  under={under(routes)}
+                  under={getActiveCrmRoute(routes)}
                   largeLogo={largeLogo}
                   openSidebar={openSidebar}
                   setOpenSidebar={setOpenSidebar}
@@ -444,7 +286,7 @@ export default function User(props) {
                     }
                   >
                     <Routes>
-                      {getRoutes(routes)}
+                      {renderCrmRoutes(routes, (route) => route?.layout !== "/auth")}
                       <Route path="/*" element={<Navigate to="/default" />} />
                     </Routes>
                   </Suspense>

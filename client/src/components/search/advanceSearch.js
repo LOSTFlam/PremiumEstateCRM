@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import { useFormik } from "formik";
 import {
   Box,
@@ -10,7 +9,6 @@ import {
   GridItem,
   Input,
   InputGroup,
-  InputLeftElement,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,8 +18,13 @@ import {
   ModalOverlay,
   Select,
   Spinner,
-  Text,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import {
+  buildEnterLabel,
+  buildSelectLabel,
+  translateCrmText,
+} from "i18n/crmDictionary";
 
 const AdvanceSearch = ({
   handleAdvanceSearch,
@@ -37,6 +40,8 @@ const AdvanceSearch = ({
   tableCustomFields,
   setSearchbox,
 }) => {
+  const { t, i18n } = useTranslation();
+  const labelOptions = { t, language: i18n.language };
   const initialFieldValues = Object?.fromEntries(
     (tableCustomFields || [])?.flatMap((field) => {
       if (field?.type === "date") {
@@ -138,13 +143,10 @@ const AdvanceSearch = ({
   // })
 
   const {
-    errors,
-    touched,
     values,
     handleBlur,
     handleChange,
     handleSubmit,
-    setFieldValue,
     resetForm,
   } = formik;
 
@@ -156,18 +158,22 @@ const AdvanceSearch = ({
       }}
       isOpen={advaceSearch}
       isCentered
+      size="4xl"
+      scrollBehavior="inside"
     >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Advance Search</ModalHeader>
+      <ModalContent className="admin-density-shell">
+        <ModalHeader className="admin-density-shell__header">
+          {translateCrmText("Advance Search", labelOptions)}
+        </ModalHeader>
         <ModalCloseButton
           onClick={() => {
             setAdvaceSearch(false);
             resetForm();
           }}
         />
-        <ModalBody>
-          <Grid templateColumns="repeat(12, 1fr)" mb={3} gap={2}>
+        <ModalBody className="admin-density-shell__body">
+          <Grid templateColumns="repeat(12, 1fr)" mb={1} gap={4}>
             {tableCustomFields?.map((field) => (
               <GridItem
                 colSpan={{ base: 12, sm: field?.type === "date" ? 12 : 6 }}
@@ -183,10 +189,11 @@ const AdvanceSearch = ({
                   mt={2}
                   htmlFor={field?.name}
                 >
-                  {field?.label}
+                  {translateCrmText(field?.label, labelOptions)}
                 </FormLabel>
                 {field?.type === "select" ? (
                   <Select
+                    variant="main"
                     fontSize="sm"
                     id={field?.name}
                     name={field?.name}
@@ -196,17 +203,22 @@ const AdvanceSearch = ({
                     fontWeight="500"
                     // borderColor={errors?.[field?.name] && touched?.[field?.name] ? "red.300" : null}
                   >
-                    <option value="">Select {field?.label}</option>
+                    <option value="">
+                      {buildSelectLabel(field?.label || "value", labelOptions)}
+                    </option>
                     {field.options?.map((option) => (
                       <option key={option?._id} value={option?.value}>
-                        {option?.name}
+                        {translateCrmText(
+                          option?.name || option?.label || option?.value,
+                          labelOptions,
+                        )}
                       </option>
                     ))}
                   </Select>
                 ) : field?.type === "date" ? (
                   <>
-                    <Flex justifyContent="space-between">
-                      <Box w="49%">
+                    <Flex justifyContent="space-between" gap={3}>
+                      <Box flex="1 1 0">
                         <FormLabel
                           display="flex"
                           ms="4px"
@@ -215,9 +227,10 @@ const AdvanceSearch = ({
                           color={"#000"}
                           mb="0"
                         >
-                          From
+                          {t("common.from")}
                         </FormLabel>
                         <Input
+                          variant="main"
                           fontSize="sm"
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -227,7 +240,7 @@ const AdvanceSearch = ({
                           fontWeight="500"
                         />
                       </Box>
-                      <Box w="49%">
+                      <Box flex="1 1 0">
                         <FormLabel
                           display="flex"
                           ms="4px"
@@ -236,9 +249,10 @@ const AdvanceSearch = ({
                           color={"#000"}
                           mb="0"
                         >
-                          To
+                          {t("common.to")}
                         </FormLabel>
                         <Input
+                          variant="main"
                           fontSize="sm"
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -259,6 +273,7 @@ const AdvanceSearch = ({
                                                 children={<PhoneIcon color="gray.300" borderRadius="16px" />}
                                             />} */}
                     <Input
+                      variant="main"
                       fontSize="sm"
                       type={field?.type}
                       id={field?.name}
@@ -267,7 +282,7 @@ const AdvanceSearch = ({
                       onBlur={handleBlur}
                       value={values[field?.name]}
                       fontWeight="500"
-                      placeholder={`Enter ${field?.label}`}
+                      placeholder={buildEnterLabel(field?.label || field?.name, labelOptions)}
                       // borderColor={errors?.[field?.name] && touched?.[field?.name] ? "red.300" : null}
                     />
                   </InputGroup>
@@ -276,19 +291,18 @@ const AdvanceSearch = ({
             ))}
           </Grid>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className="admin-density-shell__footer">
           <Button
-            variant="outline"
-            colorScheme="green"
+            variant="brand"
             size="sm"
             mr={2}
             onClick={handleSubmit}
             disabled={isLoding ? true : false}
           >
-            {isLoding ? <Spinner /> : "Search"}
+            {isLoding ? <Spinner /> : t("common.search")}
           </Button>
           <Button colorScheme="red" size="sm" onClick={() => resetForm()}>
-            Clear
+            {t("common.clear")}
           </Button>
         </ModalFooter>
       </ModalContent>

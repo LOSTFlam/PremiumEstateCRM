@@ -60,6 +60,8 @@ import {
   toggleFavoriteId,
 } from "./catalog/catalogStorage";
 import { publicBrand } from "./publicBrand";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
+import { convertUsdToRub, getPreferredCurrency } from "utils/pricing";
 
 const MemoizedModernFeatures = memo(ModernFeatures);
 const MemoizedModernHero = memo(ModernHero);
@@ -169,16 +171,21 @@ const landingCopy = {
   },
 };
 
-const compactCurrency = (value, language, t) => {
+const compactCurrency = (value, language, t, rateData) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
   const locale = language?.startsWith("ru") ? "ru-RU" : "en-US";
+  const preferredCurrency = getPreferredCurrency(language);
+  const displayAmount =
+    preferredCurrency === "RUB"
+      ? convertUsdToRub(amount, rateData) ?? amount
+      : amount;
   return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "USD",
+    currency: preferredCurrency,
     notation: "compact",
     maximumFractionDigits: 1,
-  }).format(amount);
+  }).format(displayAmount);
 };
 
 const resolveLocationLabel = (address, language) => {
@@ -196,6 +203,7 @@ const resolveLocationLabel = (address, language) => {
 
 export default function ModernLandingPage() {
   const { t, i18n } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const toast = useToast();
   const prefersReducedMotion = usePrefersReducedMotion();
   const [isDesktop] = useMediaQuery("(min-width: 62em)");
@@ -344,7 +352,7 @@ export default function ModernLandingPage() {
       {
         key: "average",
         label: locale === "ru" ? "Средний бюджет" : "Average ticket",
-        value: formatPrice(averagePrice, t),
+        value: formatPrice(averagePrice, t, i18n.language, rateData),
       },
     ],
     [averagePrice, locale, newCount, properties.length, richCount, t],
@@ -805,7 +813,7 @@ export default function ModernLandingPage() {
                               </Box>
                             </HStack>
                             <Text color="#f5d076" fontWeight="700" fontSize="sm">
-                              {copy.fromLabel} {compactCurrency(location.price, i18n.language, t)}
+                              {copy.fromLabel} {compactCurrency(location.price, i18n.language, t, rateData)}
                             </Text>
                           </HStack>
                         ))}

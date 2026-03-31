@@ -24,6 +24,7 @@ import {
   getSearchData,
 } from "../../../../redux/slices/advanceSearchSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const TaskAdvanceSearch = (props) => {
   const {
@@ -135,7 +136,7 @@ const TaskAdvanceSearch = (props) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Advance Search</ModalHeader>
+          <ModalHeader>{translateCrmText("Advance Search")}</ModalHeader>
           <ModalCloseButton
             onClick={() => {
               setAdvanceSearch(false);

@@ -12,6 +12,7 @@ import AdminNavbarLinks from "components/navbar/NavbarLinksAdmin";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import i18next from "i18next";
+import { getBrandLabel, getBrandMark } from "i18n/crmDictionary";
 
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import { AiOutlineMenuFold } from "react-icons/ai";
@@ -21,13 +22,21 @@ import { fetchImage } from "../../redux/slices/imageSlice";
 export default function AdminNavbar(props) {
   const [scrolled, setScrolled] = useState(false);
 
+  const changeNavbar = () => {
+    if (window?.scrollY > 1) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("scroll", changeNavbar);
 
     return () => {
       window.removeEventListener("scroll", changeNavbar);
     };
-  });
+  }, []);
 
   const {
     secondary,
@@ -39,28 +48,21 @@ export default function AdminNavbar(props) {
     largeLogo,
     routes,
   } = props;
-  const brandName = i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";
-  const brandMark = i18next.language?.startsWith("ru") ? "ПЭ" : "PE";
+  const brandName = getBrandLabel(i18next.language);
+  const brandMark = getBrandMark(i18next.language);
   // Here are all the props that may change depending on navbar's type or state.(secondary, variant, scrolled)
   let mainText = useColorModeValue("navy.700", "white");
   let secondaryText = useColorModeValue("gray.700", "white");
   let navbarPosition = "fixed";
   let navbarFilter = "none";
-  let navbarBackdrop = "blur(20px)";
+  let navbarBackdrop = "blur(24px)";
   let navbarShadow = "none";
-  let navbarBg = useColorModeValue("#fff", "rgba(11,20,55,0.5)");
-  let navbarBorder = "transparent";
+  let navbarBg = useColorModeValue("rgba(255, 255, 255, 0.78)", "rgba(11,20,55,0.5)");
+  let navbarBorder = useColorModeValue("rgba(148, 163, 184, 0.16)", "transparent");
   let secondaryMargin = "-9px";
   let paddingX = "15px";
   let gap = "0px";
   let size = "sm";
-  const changeNavbar = () => {
-    if (window?.scrollY > 1) {
-      setScrolled(true);
-    } else {
-      setScrolled(false);
-    }
-  };
   return (
     <Box
       position={navbarPosition}
@@ -71,7 +73,7 @@ export default function AdminNavbar(props) {
       backdropFilter={navbarBackdrop}
       backgroundPosition="center"
       backgroundSize="cover"
-      // borderRadius='16px'
+      borderRadius="24px"
       borderWidth="1.5px"
       borderStyle="solid"
       zIndex={1}
@@ -85,7 +87,7 @@ export default function AdminNavbar(props) {
       justifyContent={{ xl: "center" }}
       lineHeight="25.6px"
       mx="auto"
-      mt={secondaryMargin}
+      mt="12px"
       pb="6px"
       right={{ base: "0px" }}
       // right={{ base: '12px', md: '30px', lg: '30px', xl: '30px' }}
@@ -106,7 +108,7 @@ export default function AdminNavbar(props) {
         // xl: openSidebar === true ? 'calc(100vw - 286px)' : 'calc(100vw - 80px)',
         // '2xl': openSidebar === true ? 'calc(100vw - 286px)' : 'calc(100vw - 80px)'
       }}
-      sx={{ boxShadow: "14px 17px 40px 4px rgba(112, 144, 176, 0.08)" }}
+      sx={{ boxShadow: "0 18px 44px rgba(15, 23, 42, 0.08)" }}
     >
       <Flex
         w="100%"
@@ -220,9 +222,11 @@ export default function AdminNavbar(props) {
             display={{ sm: "none", xl: "flex" }}
             borderRadius="inherit"
             fontWeight="bold"
-            fontSize="34px"
-            textTransform={"capitalize"}
-            _hover={{ color: { mainText } }}
+            fontSize={{ sm: "2xl", xl: "2xl" }}
+            lineHeight="1.1"
+            maxW={{ xl: "min(42vw, 680px)" }}
+            whiteSpace="normal"
+            _hover={{ color: mainText }}
             _active={{
               bg: "inherit",
               transform: "none",

@@ -24,6 +24,7 @@ import {
   setGetTagValues,
 } from "../../../../redux/slices/advanceSearchSlice";
 import { useDispatch } from "react-redux";
+import { translateCrmText } from "i18n/crmDictionary";
 
 const EmailAdvanceSearch = (props) => {
   const {
@@ -110,7 +111,7 @@ const EmailAdvanceSearch = (props) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Advance Search</ModalHeader>
+          <ModalHeader>{translateCrmText("Advance Search")}</ModalHeader>
           <ModalCloseButton
             onClick={() => {
               setAdvanceSearch(false);

@@ -38,6 +38,7 @@ import Add from "./Add";
 import ImportModal from "./components/ImportModal";
 import Edit from "./Edit";
 import * as XLSX from "xlsx";
+import { translateCrmText } from "i18n/crmDictionary";
 import PaginationProperty from "./PaginationProperty";
 import { BsColumnsGap } from "react-icons/bs";
 import CustomSearchInput from "components/search/search";
@@ -404,7 +405,7 @@ const Index = () => {
           onClick={() => onOpen()}
           leftIcon={<AddIcon />}
         >
-          Add New
+          {translateCrmText("Add New")}
         </Button>
       </Flex>
       <Grid templateColumns="repeat(12, 1fr)" gap={3} my={3}>

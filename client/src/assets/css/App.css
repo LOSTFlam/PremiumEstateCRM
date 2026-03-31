@@ -48,8 +48,12 @@
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
-  background: var(--modern-dark);
+  font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f7;
+  color: #1d2939;
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
 }
 
 .public-brand-shell {
@@ -127,8 +131,30 @@ option {
 }
 
 * {
-  letter-spacing: 0.3px;
   outline: none;
+}
+
+html[lang="ru"] body,
+html[lang="ru"] button,
+html[lang="ru"] input,
+html[lang="ru"] textarea,
+html[lang="ru"] select,
+html[lang="ru"] p,
+html[lang="ru"] span,
+html[lang="ru"] td,
+html[lang="ru"] th {
+  letter-spacing: 0;
+  line-height: 1.68;
+}
+
+html[lang="ru"] h1,
+html[lang="ru"] h2,
+html[lang="ru"] h3,
+html[lang="ru"] h4,
+html[lang="ru"] h5,
+html[lang="ru"] h6 {
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 ::-webkit-scrollbar {
@@ -194,21 +220,216 @@ option {
   min-height: 63vh;
   max-height: 63vh;
   overflow-y: auto;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .small-table-fix-container {
   min-height: 15vh;
   max-height: 63vh;
   overflow-y: auto;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .table-fix-container thead {
-  border-bottom: 1px solid black;
-  box-shadow: -2px 0px 4px -2px #5c5d5efa;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
   position: sticky;
   top: 0;
   height: 25px;
-  background: #ffffff;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.small-table-fix-container thead {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  position: sticky;
+  top: 0;
+  height: 25px;
+  background: rgba(248, 250, 252, 0.94);
+}
+
+.table-fix-container::-webkit-scrollbar,
+.small-table-fix-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-fix-container::-webkit-scrollbar-thumb,
+.small-table-fix-container::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  background-color: rgba(148, 163, 184, 0.62);
+}
+
+.table-fix-container::-webkit-scrollbar-track,
+.small-table-fix-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-check-table {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 247, 251, 0.94) 100%);
+  box-shadow: 0 28px 68px rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.admin-check-table__toolbar {
+  row-gap: 18px !important;
+}
+
+.admin-check-table__title {
+  letter-spacing: -0.02em;
+}
+
+.admin-check-table__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-check-table__summary {
+  border: 1px solid rgba(10, 132, 255, 0.14);
+  background: rgba(10, 132, 255, 0.08) !important;
+  color: #0a4ea4;
+}
+
+.admin-check-table__chips {
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.admin-check-table__table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-check-table__table tbody td {
+  vertical-align: middle;
+}
+
+.admin-check-table__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-pagination {
+  padding-top: 18px;
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.admin-density-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(243, 246, 250, 0.95) 100%);
+  box-shadow: 0 30px 72px rgba(15, 23, 42, 0.16);
+}
+
+.admin-density-shell__header {
+  padding: 24px 28px 18px !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.88);
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(255, 255, 255, 0.96) 68%);
+}
+
+.admin-density-shell__body {
+  padding: 24px 28px 28px !important;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.94) 100%);
+}
+
+.admin-density-shell__footer {
+  padding: 18px 28px 24px !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.88);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.admin-density-shell__body input:not([type="checkbox"]):not([type="radio"]),
+.admin-density-shell__body select,
+.admin-density-shell__body textarea {
+  min-height: 46px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82), 0 10px 24px rgba(15, 23, 42, 0.03);
+}
+
+.admin-density-shell__body textarea {
+  min-height: 128px;
+  resize: vertical;
+}
+
+.admin-density-shell__body label {
+  margin-bottom: 8px;
+  color: #475467;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.admin-density-shell__body h1,
+.admin-density-shell__body h2,
+.admin-density-shell__body h3,
+.admin-density-shell__body h4,
+.admin-density-shell__body h5,
+.admin-density-shell__body h6 {
+  margin-bottom: 12px;
+  color: #182230;
+}
+
+.admin-module-form {
+  row-gap: 18px !important;
+}
+
+.admin-module-form__field {
+  height: 100%;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.9) 100%);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.05);
+}
+
+.admin-module-form__sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border: 1px solid rgba(95, 160, 255, 0.16);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.1) 0%, rgba(255, 255, 255, 0.96) 72%);
+}
+
+.admin-module-form__sectionHeading {
+  margin: 0 !important;
+}
+
+.admin-module-form__control {
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .admin-density-shell__header,
+  .admin-density-shell__body,
+  .admin-density-shell__footer {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .table-fix-container,
+  .small-table-fix-container {
+    max-height: 58vh;
+  }
 }
 
 .importTable {

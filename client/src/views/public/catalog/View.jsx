@@ -75,6 +75,7 @@ import LeadCaptureCard from "./LeadCaptureCard";
 import SeoMeta from "./SeoMeta";
 import i18n from "i18n/i18n.config";
 import { publicBrand } from "../publicBrand";
+import { useUsdRubRate } from "hooks/useUsdRubRate";
 
 const splitFeatures = (...values) =>
   values
@@ -109,6 +110,7 @@ const buildHighlights = (property, t) => [
 export default function PublicOfferView() {
   const { id } = useParams();
   const { t } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const toast = useToast();
   const [property, setProperty] = useState(null);
   const [allProperties, setAllProperties] = useState([]);
@@ -350,7 +352,7 @@ export default function PublicOfferView() {
                   <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
                     {t?.("publicListing.detailsTitle")}
                   </Text>
-                  <Heading size="xl">{formatPrice(property?.listingPrice, t)}</Heading>
+                  <Heading size="xl">{formatPrice(property, t, i18n.language, rateData)}</Heading>
                   <SimpleGrid columns={3} spacing={3}>
                     <Box
                       px={4}
@@ -523,7 +525,7 @@ export default function PublicOfferView() {
                       <Text>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
                     </HStack>
                     <Heading size="2xl" color="orange.500">
-                      {formatPrice(property?.listingPrice, t)}
+                      {formatPrice(property, t, i18n.language, rateData)}
                     </Heading>
                     <SimpleGrid columns={2} gap={4}>
                       <Box>
@@ -689,18 +691,18 @@ export default function PublicOfferView() {
                     <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.downPaymentAmount")}</Text>
-                        <Text fontWeight="700">{formatPrice(mortgage.downPaymentAmount, t)}</Text>
+                        <Text fontWeight="700">{formatPrice(mortgage.downPaymentAmount, t, i18n.language, rateData)}</Text>
                       </Box>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.loanAmount")}</Text>
-                        <Text fontWeight="700">{formatPrice(mortgage.loanAmount, t)}</Text>
+                        <Text fontWeight="700">{formatPrice(mortgage.loanAmount, t, i18n.language, rateData)}</Text>
                       </Box>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <HStack mb={2}>
                           <Icon as={MdOutlinePayments} />
                           <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.monthlyPayment")}</Text>
                         </HStack>
-                        <Text fontWeight="700">{formatPrice(mortgage.monthlyPayment, t)}</Text>
+                        <Text fontWeight="700">{formatPrice(mortgage.monthlyPayment, t, i18n.language, rateData)}</Text>
                       </Box>
                     </SimpleGrid>
                     <Text fontSize="sm" color={mutedColor}>{t?.("publicListing.mortgageDisclaimer")}</Text>
@@ -835,7 +837,7 @@ export default function PublicOfferView() {
                           <SimpleGrid columns={{ base: 1, md: 3 }} gap={3}>
                             <Box><Text fontSize="sm" color={mutedColor}>{t?.("publicListing.type")}</Text><Text fontWeight="700">{unit?.name || t?.("publicListing.notSpecified")}</Text></Box>
                             <Box><Text fontSize="sm" color={mutedColor}>{t?.("publicListing.area")}</Text><Text fontWeight="700">{unit?.sqm || t?.("publicListing.notSpecified")}</Text></Box>
-                            <Box><Text fontSize="sm" color={mutedColor}>{t?.("publicListing.priceLabel")}</Text><Text fontWeight="700">{formatPrice(unit?.price, t)}</Text></Box>
+                            <Box><Text fontSize="sm" color={mutedColor}>{t?.("publicListing.priceLabel")}</Text><Text fontWeight="700">{formatPrice(unit?.price, t, i18n.language, rateData)}</Text></Box>
                           </SimpleGrid>
                         </Box>
                       ))}

@@ -29,6 +29,8 @@ import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import { useUsdRubRate } from "hooks/useUsdRubRate";
+import { formatPropertyPrice } from "utils/pricing";
 
 const compareCopy = {
   ru: {
@@ -123,7 +125,8 @@ const compareCopy = {
 
 const ComparePage = () => {
   const [searchParams] = useSearchParams();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const { data: rateData } = useUsdRubRate();
   const toast = useToast();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -194,7 +197,16 @@ const ComparePage = () => {
     // Property names
     const headers = [copy.feature, ...properties.map((p, i) => copy.property(i))];
     const rows = [
-      [copy.price, ...properties.map((p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}`)],
+      [
+        copy.price,
+        ...properties.map((p) =>
+          formatPropertyPrice(p, {
+            language: i18n.language,
+            t,
+            rateData,
+          }),
+        ),
+      ],
       [copy.area, ...properties.map((p) => p.squareFootage || "—")],
       [copy.bedrooms, ...properties.map((p) => p.numberofBedrooms || "—")],
       [copy.bathrooms, ...properties.map((p) => p.numberofBathrooms || "—")],
@@ -227,7 +239,16 @@ const ComparePage = () => {
       category: copy.basicInfo,
       features: [
         { key: "name", label: copy.name, getValue: (p) => p.name || p.propertyAddress },
-        { key: "price", label: copy.price, getValue: (p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}` },
+        {
+          key: "price",
+          label: copy.price,
+          getValue: (p) =>
+            formatPropertyPrice(p, {
+              language: i18n.language,
+              t,
+              rateData,
+            }),
+        },
         { key: "type", label: copy.propertyType, getValue: (p) => p.propertyTypeKey || "—" },
       ],
     },
@@ -390,7 +411,11 @@ const ComparePage = () => {
                       {property.name || property.propertyAddress}
                     </Heading>
                     <Text color="#F5D076" fontWeight="bold" fontSize="xl">
-                      ${property.listingPrice?.toLocaleString() || copy.onRequest}
+                      {formatPropertyPrice(property, {
+                        language: i18n.language,
+                        t,
+                        rateData,
+                      })}
                     </Text>
                     <HStack color="gray.400" fontSize="sm">
                       <Icon as={LuMapPin} />
