@@ -4,8 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Flex,
   Menu,
   MenuButton,
+  Flex,
   MenuItem,
   MenuList,
   Text,
@@ -58,7 +60,7 @@ const Index = () => {
             fontWeight="700"
           >
             {cell?.value}
-          </Text>
+          </Flex>
         </Link>
       ),
     },
@@ -71,7 +73,7 @@ const Index = () => {
       isSortable: false,
       center: true,
       cell: ({ row }) => (
-        <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+        <Flex fontSize="md" fontWeight="900" justifyContent="center">
           <Menu isLazy>
             <MenuButton>
               <CiMenuKebab />

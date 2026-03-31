@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  Flex,
   Grid,
   GridItem,
   Text,
@@ -94,7 +95,7 @@ const Index = () => {
       isSortable: false,
       center: true,
       cell: ({ row }) => (
-        <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+        <Flex fontSize="md" fontWeight="900" justifyContent="center">
           <Menu isLazy>
             <MenuButton>
               <CiMenuKebab />
@@ -169,7 +170,7 @@ const Index = () => {
               )}
             </MenuList>
           </Menu>
-        </Text>
+        </Flex>
       ),
     };
 
