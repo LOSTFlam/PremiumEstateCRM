@@ -118,7 +118,7 @@ const Index = () => {
               )}
             </MenuList>
           </Menu>
-        </Text>
+        </Flex>
       ),
     },
   ];
