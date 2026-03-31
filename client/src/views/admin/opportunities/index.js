@@ -58,7 +58,7 @@ const Index = (props) => {
     isSortable: false,
     center: true,
     cell: ({ row, i }) => (
-      <Text fontSize="md" fontWeight="900" textAlign={"center"}>
+      <Flex fontSize="md" fontWeight="900" justifyContent="center">
         <Menu isLazy>
           <MenuButton>
             <CiMenuKebab />
@@ -107,7 +107,7 @@ const Index = (props) => {
             )}
           </MenuList>
         </Menu>
-      </Text>
+      </Flex>
     ),
   };
   const tableColumns = [

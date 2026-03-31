@@ -463,20 +463,16 @@ const CommonCheckTable = (props) => {
           >
             <Flex alignItems={"center"} flexWrap={"wrap"}>
               {title && (
-                <Text
+                <Flex
                   color={"secondaryGray.900"}
                   fontSize="22px"
                   fontWeight="700"
                   lineHeight="100%"
                   textTransform={"capitalize"}
+                  alignItems="center"
                 >
-                  {title} (
-                  <CountUpComponent
-                    key={data?.length}
-                    targetNumber={dataLength || data?.length}
-                  />
-                  )
-                </Text>
+                  {title} ({dataLength || data?.length})
+                </Flex>
               )}
               {customSearch !== false && (
                 <CustomSearchInput
