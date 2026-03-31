@@ -413,6 +413,7 @@ const CustomView = ({
                               </Select>
                             ) : field?.type === "text" ? (
                               <Input
+                                id={field?.name}
                                 value={formik?.values[field?.name] || ""}
                                 onChange={formik?.handleChange}
                                 onBlur={handleBlur}
@@ -427,6 +428,7 @@ const CustomView = ({
                               />
                             ) : field?.type === "tel" ? (
                               <Input
+                                id={field?.name}
                                 value={formik?.values[field?.name] || ""}
                                 onChange={formik?.handleChange}
                                 onBlur={handleBlur}
@@ -599,6 +601,7 @@ const CustomView = ({
                           </Select>
                         ) : field?.type === "text" ? (
                           <Input
+                            id={field?.name}
                             value={formik?.values[field?.name] || ""}
                             onChange={formik?.handleChange}
                             onBlur={handleBlur}
@@ -613,6 +616,7 @@ const CustomView = ({
                           />
                         ) : field?.type === "tel" ? (
                           <Input
+                            id={field?.name}
                             value={formik.values[field?.name] || ""}
                             onChange={formik.handleChange}
                             onBlur={handleBlur}
