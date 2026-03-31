@@ -253,6 +253,11 @@ export default function PropertyLandingPage() {
   const subtlePanel = useColorModeValue("rgba(102, 126, 234, 0.08)", "rgba(102, 126, 234, 0.12)");
   const softShadow = useColorModeValue("0 10px 40px rgba(102, 126, 234, 0.15)", "0 10px 40px rgba(0,0,0,0.4)");
 
+  // Wide layout constants
+  const wideCardPadding = { base: 6, md: 8, lg: 10 };
+  const wideGap = { base: 6, md: 8, lg: 10 };
+  const extraWideBorderRadius = { base: "24px", md: "32px", lg: "40px" };
+
   useEffect(() => {
     const fetchProperties = async () => {
       setIsLoading(true);
