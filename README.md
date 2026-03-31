@@ -11,8 +11,14 @@ A modern, premium real estate management system with advanced property listings,
 
 ## 🌍 Language / Язык
 
-- [🇬🇧 English](#-premium-estate-crm)
-- [🇷🇺 Русский](#--premium-estate-crm-1)
+<div align="center">
+
+| [🇬🇧 English](#-premium-estate-crm) | [🇷🇺 Русский](#-premium-estate-crm-1) |
+|---|---|
+
+</div>
+
+> 💡 **Tip:** Click on the language flag above to jump to that section instantly.
 
 ---
 
@@ -421,7 +427,20 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 ---
 
+<div align="center">
+
+### 🌍 Выберите язык / Select Language
+
+| [🇬🇧 English (вверху)](#-premium-estate-crm) | [🇷🇺 Русский (ниже)](#-premium-estate-crm-1) |
+|---|---|
+
+</div>
+
+---
+
 # 🏠 Premium Estate CRM (Русский)
+
+[⬆️ Вернуться к English version](#-premium-estate-crm)
 
 Современная система управления недвижимостью премиум-класса с расширенными возможностями для агентств и частных брокеров.
 
@@ -857,3 +876,16 @@ PremiumEstateCRM/
 **Сделано с ❤️ для профессионалов рынка недвижимости**
 
 ⭐ Добавьте звезду репозиторию, если он оказался полезным!
+
+---
+
+<div align="center">
+
+### 🌍 Выберите язык / Select Language
+
+| [🇬🇧 English (вверху)](#-premium-estate-crm) | [🇷🇺 Русский (выше)](#-premium-estate-crm-1) |
+|---|---|
+
+[⬆️ Вернуться к началу](#-premium-estate-crm)
+
+</div>
