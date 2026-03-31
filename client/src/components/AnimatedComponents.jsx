@@ -6,7 +6,6 @@
 import { motion } from "framer-motion";
 import {
   Box,
-  Card,
   Heading,
   Text,
   Stack,
@@ -19,6 +18,7 @@ import {
   Badge,
   Wrap,
 } from "@chakra-ui/react";
+import Card from "components/card/Card";
 
 // Animation Variants
 export const animations = {
