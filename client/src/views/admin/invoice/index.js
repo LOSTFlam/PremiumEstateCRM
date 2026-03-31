@@ -4,7 +4,6 @@ import {
   Flex,
   Menu,
   MenuButton,
-  Flex,
   MenuItem,
   MenuList,
   Text,

@@ -5,7 +5,6 @@ import {
   Flex,
   Menu,
   MenuButton,
-  Flex,
   MenuItem,
   MenuList,
   Select,
