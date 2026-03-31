@@ -323,74 +323,131 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         </Stack>
       </Box>
 
-      <Stack p={6} spacing={5}>
-        <Stack spacing={3}>
-          <Text fontSize="xl" fontWeight="700" lineHeight="1.15" color={publicBrand.colors.ink} noOfLines={2}>
+      <Stack p={{ base: 5, md: 6, lg: 7 }} spacing={{ base: 4, md: 5, lg: 6 }}>
+        <Stack spacing={{ base: 2.5, md: 3 }}>
+          <Text 
+            fontSize={{ base: "lg", md: "xl", lg: "2xl" }} 
+            fontWeight="700" 
+            lineHeight="1.2" 
+            color={publicBrand.colors.ink} 
+            noOfLines={2}
+            sx={{
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+            }}
+          >
             {property?.name || property?.propertyAddress}
           </Text>
           <HStack spacing={2} color={publicBrand.colors.textSoft}>
-            <Icon as={LuMapPin} />
-            <Text fontSize="sm" noOfLines={1}>
+            <Icon as={LuMapPin} boxSize={4} />
+            <Text 
+              fontSize={{ base: "sm", md: "md" }} 
+              noOfLines={1}
+              sx={{
+                wordWrap: "break-word",
+                overflowWrap: "break-word",
+              }}
+            >
               {property?.propertyAddress || (t?.("publicListing.notSpecified") || "Location on request")}
             </Text>
           </HStack>
-          <Text color={publicBrand.colors.textSoft} noOfLines={3} lineHeight="1.8">
+          <Text 
+            color={publicBrand.colors.textSoft} 
+            noOfLines={3} 
+            lineHeight="1.8"
+            fontSize={{ base: "sm", md: "md" }}
+            sx={{
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+            }}
+          >
             {property?.marketingDescription ||
               property?.propertyDescription ||
               "A structured premium listing with clear facts, direct inquiry, and stronger buyer confidence."}
           </Text>
         </Stack>
 
-        <SimpleGrid columns={3} spacing={3}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 2.5, md: 3 }}>
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
-              borderRadius="22px"
-              px={4}
-              py={4}
+              borderRadius="20px"
+              px={{ base: 3, md: 4 }}
+              py={{ base: 3, md: 4 }}
               bg="rgba(9,18,32,0.04)"
               border="1px solid rgba(9,18,32,0.06)"
+              transition="all 0.3s ease"
+              _hover={{
+                bg: "rgba(9,18,32,0.06)",
+                transform: "translateY(-2px)",
+                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
+              }}
             >
               <HStack spacing={2} color={publicBrand.colors.textSoft}>
-                <Icon as={metric.icon} />
-                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+                <Icon as={metric.icon} boxSize={4} />
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  textTransform="uppercase" 
+                  letterSpacing="0.12em"
+                  noOfLines={1}
+                >
                   {metric.label}
                 </Text>
               </HStack>
-              <Text mt={2} fontWeight="700" color={publicBrand.colors.ink}>
+              <Text 
+                mt={2} 
+                fontWeight="700" 
+                color={publicBrand.colors.ink}
+                fontSize={{ base: "lg", md: "xl" }}
+              >
                 {metric.value}
               </Text>
             </Box>
           ))}
         </SimpleGrid>
 
-        <SimpleGrid columns={3} spacing={3}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 2.5, md: 3 }}>
           {assetBlocks(property, t).map((asset) => (
             <HStack
               key={asset.label}
               spacing={3}
               borderRadius="20px"
-              px={3.5}
-              py={3}
+              px={{ base: 3, md: 3.5 }}
+              py={{ base: 2.5, md: 3 }}
               bg="rgba(245,239,228,0.75)"
               border="1px solid rgba(9,18,32,0.06)"
+              transition="all 0.3s ease"
+              _hover={{
+                bg: "rgba(245,239,228,0.9)",
+                transform: "translateY(-2px)",
+                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
+              }}
             >
               <Box
-                w="34px"
-                h="34px"
+                w={{ base: "32px", md: "34px" }}
+                h={{ base: "32px", md: "34px" }}
                 borderRadius="14px"
                 display="grid"
                 placeItems="center"
                 bg="rgba(245,208,118,0.12)"
                 color={publicBrand.colors.copper}
+                flexShrink={0}
               >
-                <Icon as={asset.icon} />
+                <Icon as={asset.icon} boxSize={{ base: 4, md: 5 }} />
               </Box>
-              <Box minW="0">
-                <Text fontSize="xs" color={publicBrand.colors.textSoft} noOfLines={1}>
+              <Box minW="0" flex={1}>
+                <Text 
+                  fontSize={{ base: "xs", md: "sm" }} 
+                  color={publicBrand.colors.textSoft} 
+                  noOfLines={1}
+                >
                   {asset.label}
                 </Text>
-                <Text fontWeight="700" color={publicBrand.colors.ink}>
+                <Text 
+                  fontWeight="700" 
+                  color={publicBrand.colors.ink}
+                  fontSize={{ base: "sm", md: "md" }}
+                >
                   {asset.value}
                 </Text>
               </Box>
@@ -398,8 +455,19 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           ))}
         </SimpleGrid>
 
-        <HStack justify="space-between" align="center" pt={1}>
-          <Text color={publicBrand.colors.copper} fontSize="sm" fontWeight="700">
+        <HStack 
+          justify="space-between" 
+          align="center" 
+          pt={{ base: 2, md: 3 }}
+          spacing={{ base: 3, md: 4 }}
+        >
+          <Text 
+            color={publicBrand.colors.copper} 
+            fontSize={{ base: "sm", md: "md" }} 
+            fontWeight="700"
+            noOfLines={2}
+            flex="1"
+          >
             {richListing
               ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
               : t?.("publicListing.openOffer") || "Open offer"}
@@ -409,7 +477,16 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
             borderRadius="full"
             bg={publicBrand.colors.ink}
             color="white"
-            _hover={{ bg: publicBrand.colors.inkElevated }}
+            px={{ base: 5, md: 6 }}
+            h={{ base: "44px", md: "48px" }}
+            fontSize={{ base: "sm", md: "md" }}
+            fontWeight="600"
+            _hover={{ 
+              bg: publicBrand.colors.inkElevated,
+              transform: "translateX(2px)",
+              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
+            }}
+            transition="all 0.3s ease"
           >
             {t?.("publicListing.viewOffer") || "View offer"}
           </Button>
