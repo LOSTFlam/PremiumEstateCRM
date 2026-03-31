@@ -242,21 +242,16 @@ export default function PropertyLandingPage() {
   const [typeFilter, setTypeFilter] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
 
-  const pageBg = useColorModeValue("#f8f9fa", "#0f1419");
-  const surfaceBg = useColorModeValue("white", "#1a1f2e");
-  const borderColor = useColorModeValue("rgba(0,0,0,0.08)", "rgba(255,255,255,0.1)");
-  const mutedText = useColorModeValue("gray.500", "gray.400");
+  const pageBg = useColorModeValue("#f5f1e8", "gray.900");
+  const surfaceBg = useColorModeValue("rgba(255,255,255,0.82)", "whiteAlpha.120");
+  const borderColor = useColorModeValue("rgba(18,55,42,0.08)", "whiteAlpha.180");
+  const mutedText = useColorModeValue("gray.600", "gray.300");
   const heroGradient = useColorModeValue(
-    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)",
-    "linear-gradient(135deg, #1a1c2e 0%, #2d1b4e 50%, #4a1c6e 100%)",
+    "linear-gradient(135deg, #0f2f24 0%, #204c3f 34%, #8fa57b 100%)",
+    "linear-gradient(135deg, #10241d 0%, #22443b 40%, #6f8f7b 100%)",
   );
-  const subtlePanel = useColorModeValue("rgba(102, 126, 234, 0.08)", "rgba(102, 126, 234, 0.12)");
-  const softShadow = useColorModeValue("0 10px 40px rgba(102, 126, 234, 0.15)", "0 10px 40px rgba(0,0,0,0.4)");
-
-  // Wide layout constants
-  const wideCardPadding = { base: 6, md: 8, lg: 10 };
-  const wideGap = { base: 6, md: 8, lg: 10 };
-  const extraWideBorderRadius = { base: "24px", md: "32px", lg: "40px" };
+  const subtlePanel = useColorModeValue("rgba(255,255,255,0.16)", "rgba(255,255,255,0.08)");
+  const softShadow = useColorModeValue("0 28px 80px rgba(15,47,36,0.18)", "0 28px 80px rgba(0,0,0,0.35)");
 
   useEffect(() => {
     const fetchProperties = async () => {
