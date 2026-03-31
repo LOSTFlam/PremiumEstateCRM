@@ -95,6 +95,7 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
             {currentValue || 0}
           </Text>
           <Slider
+            id={name}
             ml={2}
             aria-label={`${name}-slider`}
             colorScheme="yellow"
