@@ -415,8 +415,15 @@ export default function PropertyLandingPage() {
                   {t?.("modules.dashboardHome.heroDescription")}
                 </Text>
 
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={{ base: 4, md: 5, lg: 6 }}>
-                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
+                <HStack spacing={{ base: 4, md: 5, lg: 6 }} wrap="wrap" justify="space-between" w="100%">
+                  <Box 
+                    flex={{ base: "1 1 100%", md: "1 1 30%", lg: "1 1 30%" }} 
+                    borderRadius="30px" 
+                    bg={subtlePanel} 
+                    p={{ base: 5, md: 6, lg: 7 }} 
+                    backdropFilter="blur(10px)" 
+                    minW={0}
+                  >
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
@@ -439,7 +446,14 @@ export default function PropertyLandingPage() {
                       </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
+                  <Box 
+                    flex={{ base: "1 1 100%", md: "1 1 30%", lg: "1 1 30%" }} 
+                    borderRadius="30px" 
+                    bg={subtlePanel} 
+                    p={{ base: 5, md: 6, lg: 7 }} 
+                    backdropFilter="blur(10px)" 
+                    minW={0}
+                  >
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
@@ -462,7 +476,14 @@ export default function PropertyLandingPage() {
                       </StatHelpText>
                     </Stat>
                   </Box>
-                  <Box borderRadius="30px" bg={subtlePanel} p={{ base: 5, md: 6, lg: 7 }} backdropFilter="blur(10px)" minW={0}>
+                  <Box 
+                    flex={{ base: "1 1 100%", md: "1 1 30%", lg: "1 1 30%" }} 
+                    borderRadius="30px" 
+                    bg={subtlePanel} 
+                    p={{ base: 5, md: 6, lg: 7 }} 
+                    backdropFilter="blur(10px)" 
+                    minW={0}
+                  >
                     <Stat>
                       <StatLabel 
                         color="whiteAlpha.780" 
@@ -485,7 +506,7 @@ export default function PropertyLandingPage() {
                       </StatHelpText>
                     </Stat>
                   </Box>
-                </SimpleGrid>
+                </HStack>
               </Stack>
             </GridItem>
 
@@ -542,14 +563,28 @@ export default function PropertyLandingPage() {
                     <option value="price-low">{t?.("modules.dashboardHome.lowestPrice")}</option>
                   </Select>
 
-                  <SimpleGrid columns={2} gap={3}>
-                    <Button colorScheme="green" borderRadius="18px" onClick={() => navigate("/properties")}>
+                  <HStack spacing={3} w="100%">
+                    <Button 
+                      flex={1} 
+                      colorScheme="green" 
+                      borderRadius="18px" 
+                      onClick={() => navigate("/properties")}
+                      h="48px"
+                      fontSize="md"
+                    >
                       {t?.("modules.dashboardHome.fullTable")}
                     </Button>
-                    <Button variant="outline" borderRadius="18px" onClick={resetFilters}>
+                    <Button 
+                      flex={1} 
+                      variant="outline" 
+                      borderRadius="18px" 
+                      onClick={resetFilters}
+                      h="48px"
+                      fontSize="md"
+                    >
                       {t?.("common.reset")}
                     </Button>
-                  </SimpleGrid>
+                  </HStack>
                 </Stack>
               </Card>
             </GridItem>
@@ -682,12 +717,12 @@ export default function PropertyLandingPage() {
                         {getShortDescription(featuredProperty, t)}
                       </Text>
 
-                      <HStack spacing={3} wrap="wrap" justify="space-between">
-                        <HStack 
-                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
-                          spacing={3} 
-                          p={3} 
-                          borderRadius="16px" 
+                      <HStack spacing={{ base: 2, md: 3, lg: 4 }} wrap="wrap" justify="space-between" w="100%">
+                        <HStack
+                          flex={{ base: "1 1 28%", md: "1 1 auto" }}
+                          spacing={3}
+                          p={3}
+                          borderRadius="16px"
                           bg="rgba(255,255,255,0.6)"
                           border="1px solid rgba(0,0,0,0.05)"
                         >
@@ -703,12 +738,12 @@ export default function PropertyLandingPage() {
                             </Text>
                           </Box>
                         </HStack>
-                        
-                        <HStack 
-                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
-                          spacing={3} 
-                          p={3} 
-                          borderRadius="16px" 
+
+                        <HStack
+                          flex={{ base: "1 1 28%", md: "1 1 auto" }}
+                          spacing={3}
+                          p={3}
+                          borderRadius="16px"
                           bg="rgba(255,255,255,0.6)"
                           border="1px solid rgba(0,0,0,0.05)"
                         >
@@ -724,14 +759,15 @@ export default function PropertyLandingPage() {
                             </Text>
                           </Box>
                         </HStack>
-                        
-                        <HStack 
-                          flex={{ base: "1 1 30%", md: "1 1 auto" }} 
-                          spacing={3} 
-                          p={3} 
-                          borderRadius="16px" 
+
+                        <HStack
+                          flex={{ base: "1 1 28%", md: "1 1 auto" }}
+                          spacing={4}
+                          p={3}
+                          borderRadius="16px"
                           bg="rgba(255,255,255,0.6)"
-                          border="1px solid rgba(0,0,0,0.05)"
+                          border="1px solid rgba(0,0,0,0.08)"
+                          boxShadow="0 4px 12px rgba(0,0,0,0.08)"
                         >
                           <Circle size="36px" bg="orange.400" color="white" flexShrink={0}>
                             <Icon as={MdOutlineSquareFoot} boxSize={4} />
