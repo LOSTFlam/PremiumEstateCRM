@@ -119,8 +119,8 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
           onChange={(nextValue) => setFieldValue?.(name, nextValue)}
         >
           <HStack spacing="24px" flexWrap="wrap">
-            {options.map((option) => (
-              <Radio key={`${name}-${option.value}`} value={String(option.value)}>
+            {options.map((option, index) => (
+              <Radio key={`${name}-${option.value}-${index}`} value={String(option.value)}>
                 {option.label}
               </Radio>
             ))}
@@ -129,8 +129,8 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
       ) : field?.type === "select" ? (
         <Select {...sharedInputProps}>
           <option value="">{`Select ${field?.label || "value"}`}</option>
-          {options.map((option) => (
-            <option key={`${name}-${option.value}`} value={option.value}>
+          {options.map((option, index) => (
+            <option key={`${name}-${option.value}-${index}`} value={option.value}>
               {option.label}
             </option>
           ))}

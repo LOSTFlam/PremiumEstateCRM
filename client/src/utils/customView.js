@@ -402,9 +402,9 @@ const CustomView = ({
                                     : null
                                 }
                               >
-                                {field?.options?.map((option) => (
+                                {field?.options?.map((option, index) => (
                                   <option
-                                    key={option?._id}
+                                    key={`${option?._id || option?.value}-${index}`}
                                     value={option?.value}
                                   >
                                     {option?.name}
@@ -591,8 +591,8 @@ const CustomView = ({
                                 : null
                             }
                           >
-                            {field?.options?.map((option) => (
-                              <option key={option?._id} value={option?.value}>
+                            {field?.options?.map((option, index) => (
+                              <option key={`${option?._id || option?.value}-${index}`} value={option?.value}>
                                 {option?.name}
                               </option>
                             ))}
