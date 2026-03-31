@@ -168,6 +168,7 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
           ) : null}
           <Input
             {...sharedInputProps}
+            id={name}
             type={field?.type || "text"}
             placeholder={`Enter ${field?.label || name}`}
           />
