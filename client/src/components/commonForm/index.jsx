@@ -115,6 +115,7 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
         </Box>
       ) : field?.type === "radio" ? (
         <RadioGroup
+          id={name}
           name={name}
           value={String(currentValue ?? "")}
           onChange={(nextValue) => setFieldValue?.(name, nextValue)}
@@ -151,6 +152,7 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
         />
       ) : field?.type === "check" ? (
         <Checkbox
+          id={name}
           isChecked={Boolean(currentValue)}
           onChange={() => setFieldValue?.(name, !currentValue)}
         >
