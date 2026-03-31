@@ -214,11 +214,13 @@ const AdvanceSearch = ({
                           fontWeight="600"
                           color={"#000"}
                           mb="0"
+                          htmlFor={`from${field?.name}`}
                         >
                           From
                         </FormLabel>
                         <Input
                           fontSize="sm"
+                          id={`from${field?.name}`}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           value={values[`from${field?.name}`]}
@@ -235,11 +237,13 @@ const AdvanceSearch = ({
                           fontWeight="600"
                           color={"#000"}
                           mb="0"
+                          htmlFor={`to${field?.name}`}
                         >
                           To
                         </FormLabel>
                         <Input
                           fontSize="sm"
+                          id={`to${field?.name}`}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           value={values[`to${field?.name}`]}
