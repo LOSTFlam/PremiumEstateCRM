@@ -138,6 +138,7 @@ const ModuleFieldControl = memo(function ModuleFieldControl({
       ) : field?.type === "textarea" ? (
         <Textarea
           {...sharedInputProps}
+          id={name}
           placeholder={`Enter ${field?.label || name}`}
           rows={4}
         />
