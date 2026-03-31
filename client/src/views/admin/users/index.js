@@ -59,7 +59,7 @@ const Index = () => {
             fontWeight="700"
           >
             {cell?.value}
-          </Flex>
+          </Text>
         </Link>
       ),
     },
