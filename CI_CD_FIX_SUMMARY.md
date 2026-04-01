@@ -88,6 +88,11 @@ GitHub Actions CI/CD pipeline was failing with 4 errors:
    - Properly exclude .env.example files
    - Added helpful error messages
 
+6. **ci: Disable npm cache and add --legacy-peer-deps** (23946cc)
+   - Disabled cache since we don't commit package-lock.json
+   - Added --legacy-peer-deps flag to handle peer dependencies
+   - Fixed 'Dependencies lock file is not found' error
+
 ## Current Status
 
 ### ✅ Fixed
