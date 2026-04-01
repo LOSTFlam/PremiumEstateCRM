@@ -105,12 +105,15 @@ jobs:
 
       - name: Check for sensitive files
         run: |
-          echo "Checking for sensitive files..."
-          if find . -name ".env" -not -path "*/node_modules/*" | grep -v ".env.example" | grep -q .; then
-            echo "Found .env files that should not be committed!"
+          echo "Checking for sensitive .env files..."
+          # Check for actual .env files (not .env.example)
+          if git ls-files | grep -E "^.*\.env$" | grep -v "\.env\.example" | grep -q .; then
+            echo "❌ Found tracked .env files that should not be committed!"
+            git ls-files | grep -E "^.*\.env$" | grep -v "\.env\.example"
+            echo "Please remove them with: git rm --cached <file>"
             exit 1
           fi
-          echo "No sensitive .env files found"
+          echo "✅ No sensitive .env files found in repository"
         continue-on-error: false
 
       - name: Check package.json consistency
