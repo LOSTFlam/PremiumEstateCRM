@@ -1,0 +1,41 @@
+# Add 'frontend' label to any changes within the 'client' directory
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: client/**/*
+
+# Add 'backend' label to any changes within the 'server' directory
+backend:
+  - changed-files:
+      - any-glob-to-any-file: server/**/*
+
+# Add 'documentation' label to any changes to markdown files
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md
+          - docs/**/*
+
+# Add 'dependencies' label to any changes in package.json files
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/package.json
+          - '**/package-lock.json
+
+# Add 'configuration' label to any changes to config files
+configuration:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.yml
+          - '**/*.yaml
+          - '**/*.json
+          - '**/.env*
+          - .github/**/*
+
+# Add 'translation' label to any changes in i18n files
+translation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/i18n/**/*
+          - '**/locales/**/*
+          - '**/*.json
