@@ -17,7 +17,7 @@ First off, thank you for considering contributing to Premium Estate CRM! It's pe
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to support@premiumestate.com.
+This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to **Александр Авдеев (LOSTFlam)** at support@premiumestate.com.
 
 ---
 
@@ -373,7 +373,7 @@ We use the following labels to categorize issues:
 
 - **GitHub Issues** - For bug reports and feature requests
 - **GitHub Discussions** - For questions and general discussions
-- **Email** - support@premiumestate.com for private matters
+- **Contact:** Александр Авдеев (LOSTFlam) - support@premiumestate.com for private matters
 
 ### Recognition
 

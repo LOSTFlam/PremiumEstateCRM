@@ -392,9 +392,11 @@ PremiumEstateCRM/
 
 ## 📞 Поддержка
 
+- **Контакт:** Александр Авдеев (LOSTFlam)
 - **Email:** support@premiumestate.com
 - **Документация:** смотрите папку `/docs`
-- **Issues:** GitHub Issues
+- **Issues:** [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
 
 ---
 
@@ -406,9 +408,10 @@ PremiumEstateCRM/
 
 ## 👨‍💻 Автор
 
-**LOSTFlam**
+**Александр Авдеев (LOSTFlam)**
 - GitHub: [@LOSTFlam](https://github.com/LOSTFlam)
 - Проект: [Premium Estate CRM](https://github.com/LOSTFlam/PremiumEstateCRM)
+- Email: support@premiumestate.com
 
 ---
 

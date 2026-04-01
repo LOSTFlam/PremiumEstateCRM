@@ -211,6 +211,7 @@ SETUP.ru.md
 
 ### Каналы Связи
 
+- **Контакт:** Александр Авдеев (LOSTFlam)
 - **Email:** support@premiumestate.com
 - **GitHub Issues:** [Создать задачу](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
 - **GitHub Discussions:** [Начать обсуждение](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)

@@ -402,7 +402,7 @@ If you encounter issues:
 2. **Search issues** - [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
 3. **Create an issue** - Use our [issue template](.github/ISSUE_TEMPLATE/bug_report.md)
 4. **Join discussions** - [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
-5. **Email support** - support@premiumestate.com
+5. **Contact:** Александр Авдеев (LOSTFlam) - support@premiumestate.com
 
 ---
 

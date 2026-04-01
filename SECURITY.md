@@ -18,7 +18,10 @@ We take the security of Premium Estate CRM seriously. If you believe you've foun
 
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to: **support@premiumestate.com**
+Instead, please report them via email to:
+
+**Александр Авдеев (LOSTFlam)**  
+**Email:** support@premiumestate.com
 
 ### What to Include
 
@@ -159,6 +162,7 @@ Thank you to these security researchers for their contributions:
 
 For any security-related questions or concerns:
 
+- **Contact Person:** Александр Авдеев (LOSTFlam)
 - **Email:** support@premiumestate.com
 - **PGP Key:** Available upon request
 - **Response Time:** Within 48 hours

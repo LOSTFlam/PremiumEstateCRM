@@ -403,7 +403,7 @@ db.dropDatabase()
 2. **Поиск задач** - [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
 3. **Создайте задачу** - Используйте [шаблон задачи](.github/ISSUE_TEMPLATE/bug_report.md)
 4. **Присоединяйтесь к обсуждениям** - [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
-5. **Email поддержка** - support@premiumestate.com
+5. **Контакт:** Александр Авдеев (LOSTFlam) - support@premiumestate.com
 
 ---
 

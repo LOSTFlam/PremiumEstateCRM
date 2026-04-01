@@ -1,11 +1,34 @@
 # 🏠 Premium Estate CRM
 
-A modern, premium real estate management system with advanced property listings, lead management, and analytics.
+> A modern, premium real estate management system with advanced property listings, lead management, and analytics.
 
-![Premium Estate CRM](https://img.shields.io/badge/version-0.4.1.26-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![React](https://img.shields.io/badge/React-17.0.2-blue)
-![Node](https://img.shields.io/badge/Node-14+-green)
+<div align="center">
+
+![Premium Estate CRM Banner](https://img.shields.io/badge/Premium-Estate_CRM-1a2332?style=for-the-badge&logo=react&logoColor=F5D076)
+
+[![Version](https://img.shields.io/badge/version-0.4.1.26-blue?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/releases)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/network)
+[![GitHub issues](https://img.shields.io/github/issues/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
+[![Contributors](https://img.shields.io/github/contributors/LOSTFlam/PremiumEstateCRM?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors)
+[![Last commit](https://img.shields.io/github/last-commit/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=git)](https://github.com/LOSTFlam/PremiumEstateCRM/commits)
+
+[![React](https://img.shields.io/badge/React-17.0.2-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
+[![Node](https://img.shields.io/badge/Node-14+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express)](https://expressjs.com/)
+
+[![CI/CD](https://img.shields.io/github/actions/workflow/status/LOSTFlam/PremiumEstateCRM/ci-cd.yml?style=flat-square&logo=github-actions)](https://github.com/LOSTFlam/PremiumEstateCRM/actions)
+[![Code Quality](https://img.shields.io/badge/code%20quality-A-orange?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/actions)
+[![Security](https://img.shields.io/badge/security-audited-brightgreen?style=flat-square)](SECURITY.md)
+
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
+[![Documentation Status](https://img.shields.io/badge/docs-well--documented-success?style=flat-square)](README.md)
+
+</div>
 
 ---
 
@@ -19,6 +42,30 @@ A modern, premium real estate management system with advanced property listings,
 </div>
 
 > 💡 **Tip:** Click on the language flag above to jump to that section instantly.
+
+---
+
+## 📖 Table of Contents
+
+<details>
+<summary>Click to expand</summary>
+
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Design Features](#-design-features)
+- [Tech Stack](#-tech-stack)
+- [Key Routes](#-key-routes)
+- [User Guide](#-user-guide)
+- [Security Features](#-security-features)
+- [Performance](#-performance)
+- [Contributing](#-contributing)
+- [Community](#-community)
+- [Changelog](#-changelog)
+- [Support](#-support)
+- [License](#-license)
+
+</details>
 
 ---
 
@@ -340,11 +387,82 @@ Currently supported:
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
+We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
+
+### Quick Start for Contributors
+
+```bash
+# Fork the repository
+git clone https://github.com/YOUR_USERNAME/PremiumEstateCRM.git
+cd PremiumEstateCRM
+
+# Install all dependencies
+npm run install-all
+
+# Start development servers
+npm run dev
+```
+
+### Ways to Contribute
+
+- 🐛 **Report bugs** - Found a bug? [Create an issue](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=bug_report.md)
+- 🔧 **Fix bugs** - Submit a PR with a fix
+- ✨ **New features** - Propose and implement new functionality
+- 📝 **Documentation** - Improve or add documentation
+- 🌍 **Translations** - Help translate the project
+- 🧪 **Testing** - Add tests or improve test coverage
+- 💡 **Ideas** - Share your ideas via [feature requests](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=feature_request.md)
+- 🎨 **Design** - Suggest UI/UX improvements
+
+### Good First Issues
+
+If you're new to the project, look for issues labeled:
+- [`good first issue`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/good%20first%20issue) - Perfect for beginners
+- [`help wanted`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/help%20wanted) - We need your help!
+- [`bug`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/bug) - Bug fixes are always welcome
+
+### Pull Request Process
+
+1. Create feature branch (`git checkout -b feature/AmazingFeature`)
+2. Make your changes
+3. Run tests and linting
+4. Commit changes (`git commit -m 'Add AmazingFeature'`)
+5. Push to branch (`git push origin feature/AmazingFeature`)
+6. Open a [Pull Request](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
+
+For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## 🌟 Community
+
+### Connect with Us
+
+- 💬 [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions) - General discussions
+- 🐛 [Issue Tracker](https://github.com/LOSTFlam/PremiumEstateCRM/issues) - Bug reports and feature requests
+- 📧 **Contact:** Александр Авдеев (LOSTFlam) - support@premiumestate.com
+- 📚 [Documentation](README.md) - Project documentation
+
+### Show Your Support
+
+If you find this project helpful, please consider:
+
+- ⭐ **Starring the repository** - It helps others discover the project!
+- 🍴 **Forking** - Create your own version and experiment
+- 📢 **Sharing** - Share with colleagues and on social media
+- 💰 **Sponsoring** - (Coming soon) Support development financially
+
+### Contributors
+
+This project exists thanks to all the people who contribute.
+
+<a href="https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LOSTFlam/PremiumEstateCRM" alt="Contributors" />
+</a>
+
+### Backers and Sponsors
+
+_Sponsorship opportunities coming soon!_
 
 ---
 
@@ -409,23 +527,27 @@ Currently supported:
 
 ## 📞 Support
 
+- **Contact:** Александр Авдеев (LOSTFlam)
 - **Email:** support@premiumestate.com
 - **Documentation:** See `/docs` folder
-- **Issues:** GitHub Issues
+- **Issues:** [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
+- **Security:** See [SECURITY.md](SECURITY.md) for reporting vulnerabilities
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see LICENSE file for details.
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
 ## 👨‍💻 Author
 
-**LOSTFlam**
+**Александр Авдеев (LOSTFlam)**
 - GitHub: [@LOSTFlam](https://github.com/LOSTFlam)
 - Project: [Premium Estate CRM](https://github.com/LOSTFlam/PremiumEstateCRM)
+- Email: support@premiumestate.com
 
 ---
 
@@ -796,11 +918,82 @@ PremiumEstateCRM/
 
 ## 🤝 Вклад в проект
 
-1. Создайте форк репозитория
-2. Создайте ветку (`git checkout -b feature/AmazingFeature`)
-3. Закоммитьте изменения (`git commit -m 'Add AmazingFeature'`)
-4. Отправьте в ветку (`git push origin feature/AmazingFeature`)
-5. Откройте Pull Request
+Мы приветствуем вклады от сообщества! Пожалуйста, ознакомьтесь с нашими [Руководством по внесению вклада](CONTRIBUTING.md) и [Кодексом поведения](CODE_OF_CONDUCT.md) перед началом работы.
+
+### Быстрый старт для контрибьюторов
+
+```bash
+# Форкнуть репозиторий
+git clone https://github.com/ВАШ_НИК/PremiumEstateCRM.git
+cd PremiumEstateCRM
+
+# Установить все зависимости
+npm run install-all
+
+# Запустить серверы разработки
+npm run dev
+```
+
+### Способы внести вклад
+
+- 🐛 **Сообщить об ошибке** - [Создать issue](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=bug_report.md)
+- 🔧 **Исправить ошибки** - Отправить PR с исправлением
+- ✨ **Новые функции** - Предложить и реализовать новую функциональность
+- 📝 **Документация** - Улучшить или добавить документацию
+- 🌍 **Переводы** - Помочь с переводом проекта
+- 🧪 **Тестирование** - Добавить тесты или улучшить покрытие
+- 💡 **Идеи** - Поделиться идеями через [запросы функций](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=feature_request.md)
+- 🎨 **Дизайн** - Предложить улучшения UI/UX
+
+### Задачи для начинающих
+
+Если вы новичок в проекте, ищите issues с метками:
+- [`good first issue`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/good%20first%20issue) - Идеально для начинающих
+- [`help wanted`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/help%20wanted) - Нам нужна ваша помощь!
+- [`bug`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/bug) - Исправления ошибок всегда приветствуются
+
+### Процесс Pull Request
+
+1. Создайте ветку функции (`git checkout -b feature/AmazingFeature`)
+2. Внесите изменения
+3. Запустите тесты и линтинг
+4. Закоммитьте изменения (`git commit -m 'Add AmazingFeature'`)
+5. Отправьте в ветку (`git push origin feature/AmazingFeature`)
+6. Откройте [Pull Request](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
+
+Подробные инструкции см. в [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## 🌟 Сообщество
+
+### Связь с нами
+
+- 💬 [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions) - Общие обсуждения
+- 🐛 [Issue Tracker](https://github.com/LOSTFlam/PremiumEstateCRM/issues) - Отчеты об ошибках и запросы функций
+- 📧 **Email:** support@premiumestate.com
+- 📚 [Документация](README.md) - Документация проекта
+
+### Поддержите проект
+
+Если вы находите этот проект полезным, пожалуйста:
+
+- ⭐ **Добавьте звезду** - Это поможет другим открыть проект!
+- 🍴 **Форкните** - Создайте свою версию и экспериментируйте
+- 📢 **Поделитесь** - Расскажите коллегам и в соцсетях
+- 💰 **Спонсорство** - (Скоро) Поддержите разработку финансово
+
+### Контрибьюторы
+
+Этот проект существует благодаря всем людям, которые вносят свой вклад.
+
+<a href="https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LOSTFlam/PremiumEstateCRM" alt="Контрибьюторы" />
+</a>
+
+### Бэкеры и спонсоры
+
+_Возможности спонсорства скоро появятся!_
 
 ---
 
@@ -890,13 +1083,14 @@ PremiumEstateCRM/
 
 - **Email:** support@premiumestate.com
 - **Документация:** смотрите папку `/docs`
-- **Issues:** GitHub Issues
+- **Issues:** [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
 
 ---
 
 ## 📄 Лицензия
 
-Этот проект лицензирован под лицензией MIT - смотрите файл LICENSE для деталей.
+Этот проект лицензирован под лицензией MIT - смотрите файл [LICENSE](LICENSE) для деталей.
 
 ---
 

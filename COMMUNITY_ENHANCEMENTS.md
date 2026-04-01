@@ -15,7 +15,7 @@ Your Premium Estate CRM repository has been enhanced with comprehensive communit
   - Pledge to create a harassment-free environment
   - Examples of acceptable and unacceptable behavior
   - Enforcement responsibilities and guidelines
-  - Reporting mechanism (support@premiumestate.com)
+  - Reporting mechanism (**Александр Авдеев (LOSTFlam)**)
   - Four-level enforcement system (Correction → Warning → Temporary Ban → Permanent Ban)
 
 ### 2. **CONTRIBUTING.md** ✅
@@ -193,7 +193,7 @@ Contributor Covenant | PRs Welcome | Documentation
 
 ### Immediate Actions:
 1. **Review all files** - Ensure they match your preferences
-2. **Update contact email** - Replace support@premiumestate.com if needed
+2. **Update contact email** - Replace support@premiumestate.com with your email if needed
 3. **Add PGP key** - For encrypted security communications (optional)
 4. **Enable GitHub Discussions** - In repository settings
 5. **Configure branch protection** - Require PR reviews for main branch
