@@ -76,6 +76,18 @@ GitHub Actions CI/CD pipeline was failing with 4 errors:
    - Added .env.example file rules
    - Clarified environment file handling
 
+3. **docs: Add CI/CD fix summary documentation** (f73646a)
+   - Added comprehensive fix documentation
+
+4. **chore: Remove .env files from git tracking** (88ca6bb)
+   - Removed client/.env from repository
+   - Ensured .env files are only local
+
+5. **ci: Improve sensitive file check in workflow** (c935c47)
+   - Changed from `find` to `git ls-files`
+   - Properly exclude .env.example files
+   - Added helpful error messages
+
 ## Current Status
 
 ### ✅ Fixed
