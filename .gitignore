@@ -10,6 +10,10 @@ server/uploads
 server/.env
 Client/.env
 
+# Keep .env.example files but ignore actual .env files
+!.env.example
+!.env.example.ru
+
 /.pnp
 .pnp.js
 
