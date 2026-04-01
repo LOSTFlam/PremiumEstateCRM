@@ -23,21 +23,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          # Disable cache since we don't commit package-lock.json
+          cache: ''
 
       - name: Install root dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
         continue-on-error: true
 
       - name: Install server dependencies
         run: |
           cd server
-          npm install
+          npm install --legacy-peer-deps
         continue-on-error: true
 
       - name: Install client dependencies
         run: |
           cd client
-          npm install
+          npm install --legacy-peer-deps
         continue-on-error: true
 
       - name: Lint client code
@@ -70,17 +72,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18.x'
+          # Disable cache since we don't commit package-lock.json
+          cache: ''
 
       - name: Install server dependencies
         run: |
           cd server
-          npm install
+          npm install --legacy-peer-deps
         continue-on-error: true
 
       - name: Install client dependencies
         run: |
           cd client
-          npm install
+          npm install --legacy-peer-deps
         continue-on-error: true
 
       - name: Run npm audit (client)
