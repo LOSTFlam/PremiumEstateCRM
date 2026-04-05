@@ -1,6 +1,6 @@
 const express = require('express');
 const quotes = require('./quotes');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 
 const router = express.Router();
 

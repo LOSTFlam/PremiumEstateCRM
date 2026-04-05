@@ -5,6 +5,7 @@ const {
   getPropertyPhoneCalls,
   getPropertyEmails,
 } = require("./query.service");
+const { cleanupPropertyFiles } = require("../../services/mediaService");
 
 const resolveUniqueSlug = async (input, excludedId = null) => {
   const baseSlug = slugify(input || "property");
@@ -130,24 +131,96 @@ const view = async (req, res) => {
 };
 
 const deleteData = async (req, res) => {
+  const session = await Property.startSession();
+  session.startTransaction();
+  
   try {
-    const property = await Property.findByIdAndUpdate(req.params.id, {
+    // First, get the property data needed for cleanup
+    const property = await Property.findById(req.params.id).session(session).lean();
+    
+    if (!property) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: "Property not found" });
+    }
+    
+    // Soft-delete the property within the transaction
+    await Property.findByIdAndUpdate(req.params.id, {
       deleted: true,
+    }, { session });
+    
+    // Commit the transaction first - file cleanup is non-critical for soft-delete
+    await session.commitTransaction();
+    session.endSession();
+    
+    // Clean up files after transaction commits
+    // This ensures DB consistency even if file cleanup fails
+    let cleanupResult;
+    try {
+      cleanupResult = await cleanupPropertyFiles(property);
+    } catch (cleanupError) {
+      console.error("File cleanup failed for deleted property:", cleanupError);
+      // Don't fail the request - files can be cleaned up later by orphaned file cleanup
+      cleanupResult = { error: "File cleanup failed, will be handled by periodic cleanup" };
+    }
+    
+    res.status(200).json({
+      message: "Property deleted successfully",
+      cleanup: cleanupResult,
     });
-    res.status(200).json({ message: "done", property });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Failed to delete property:", err);
     res.status(404).json({ message: "error", err });
   }
 };
 
 const deleteMany = async (req, res) => {
+  const session = await Property.startSession();
+  session.startTransaction();
+  
   try {
-    const property = await Property.updateMany(
-      { _id: { $in: req.body } },
+    const propertyIds = req.body;
+    
+    // Get all properties to clean up associated files
+    const properties = await Property.find({ _id: { $in: propertyIds } }).session(session).lean();
+    
+    // Soft-delete all properties within the transaction
+    const result = await Property.updateMany(
+      { _id: { $in: propertyIds } },
       { $set: { deleted: true } },
-    );
-    res.status(200).json({ message: "done", property });
+    ).session(session);
+    
+    // Commit the transaction first - file cleanup is non-critical for soft-delete
+    await session.commitTransaction();
+    session.endSession();
+    
+    // Clean up files after transaction commits
+    // This ensures DB consistency even if file cleanup fails
+    const cleanupResults = [];
+    for (const property of properties) {
+      try {
+        const cleanupResult = await cleanupPropertyFiles(property);
+        cleanupResults.push({ id: property._id, cleanup: cleanupResult });
+      } catch (cleanupError) {
+        console.error(`File cleanup failed for property ${property._id}:`, cleanupError);
+        cleanupResults.push({
+          id: property._id,
+          cleanup: { error: "File cleanup failed, will be handled by periodic cleanup" }
+        });
+      }
+    }
+    
+    res.status(200).json({
+      message: "Properties deleted successfully",
+      deletedCount: result.modifiedCount,
+      cleanup: cleanupResults,
+    });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Failed to delete properties:", err);
     res.status(404).json({ message: "error", err });
   }
 };

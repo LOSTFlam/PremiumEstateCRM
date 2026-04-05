@@ -1,5 +1,8 @@
 import * as yup from "yup";
+export { default as formatters } from "./formatters";
+export { default as validators } from "./validators";
 
+// @deprecated - use validators instead
 // export const generateValidationSchema = (fields) => {
 //     return fields.reduce((acc, field) => {
 //         acc[field.name] = field.validation.reduce((fieldAcc, rule) => {

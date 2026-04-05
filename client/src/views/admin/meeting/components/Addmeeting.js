@@ -19,7 +19,7 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import MultiContactModel from "components/commonTableModel/MultiContactModel";
 import MultiLeadModel from "components/commonTableModel/MultiLeadModel";
 import Spinner from "components/spinner/Spinner";

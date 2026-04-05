@@ -23,9 +23,9 @@ import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import { LiaMousePointerSolid } from "react-icons/lia";
 import { postApi, getApi, putApi } from "services/api";
-import { generateValidationSchema } from "utils";
-import CustomForm from "utils/customForm";
-import * as yup from "yup";
+// // import { generateValidationSchema } from "utils"; // unused // unused
+// // import CustomForm from "utils/customForm"; // unused // unused
+// // import * as yup from "yup"; // unused // unused
 import { opprtunitiesSchema } from "../../../schema/opprtunitiesSchema";
 import UserModel from "../../../components/commonTableModel/UserModel";
 import { toast } from "react-toastify";
@@ -127,7 +127,6 @@ const AddEdit = (props) => {
     handleSubmit,
     setFieldValue,
   } = formik;
-  console.log(errors);
   const fetchData = async () => {
     setIsLoding(true);
     let result = await getApi("api/user/");

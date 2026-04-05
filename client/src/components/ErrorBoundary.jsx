@@ -1,6 +1,56 @@
-import React, { Component } from 'react';
-import { Box, Text, Button, Heading, VStack, Icon } from '@chakra-ui/react';
-import { WarningIcon } from '@chakra-ui/icons';
+import { Box, Text, Button, Heading, VStack, Icon, useColorModeValue } from "@chakra-ui/react";
+import { WarningIcon, RepeatIcon } from "@chakra-ui/icons";
+import { Component } from "react";
+
+const ErrorBoundaryFallback = ({ error, componentStack, resetError }) => {
+  const bg = useColorModeValue("gray.50", "gray.800");
+  const errorBg = useColorModeValue("red.50", "red.900");
+  const errorColor = useColorModeValue("red.700", "red.200");
+
+  return (
+    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg={bg} p={4}>
+      <VStack spacing={6} maxW="md" textAlign="center">
+        <Icon as={WarningIcon} boxSize={16} color="red.500" />
+        <Heading size="lg">Что-то пошло не так</Heading>
+        <Text color="gray.600">
+          Произошла непредвиденная ошибка. Попробуйте обновить страницу.
+        </Text>
+        <Button
+          leftIcon={<RepeatIcon />}
+          colorScheme="blue"
+          onClick={resetError}
+          size="lg"
+        >
+          Обновить страницу
+        </Button>
+        {process.env.NODE_ENV === "development" && error && (
+          <Box
+            bg={errorBg}
+            p={4}
+            borderRadius="md"
+            textAlign="left"
+            w="full"
+            fontSize="sm"
+            color={errorColor}
+          >
+            <Text fontWeight="bold" mb={2}>
+              Details:
+            </Text>
+            <Text>{error.toString()}</Text>
+            {componentStack && (
+              <Text mt={2} fontSize="xs">
+                Stack:
+                <Text as="pre" whiteSpace="pre-wrap" mt={1}>
+                  {componentStack}
+                </Text>
+              </Text>
+            )}
+          </Box>
+        )}
+      </VStack>
+    </Box>
+  );
+};
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -17,72 +67,35 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    console.error("Error caught by boundary:", error, errorInfo);
     this.setState({ error, errorInfo });
-
-    // Log to error reporting service (e.g., Sentry)
-    // if (window.Sentry) {
-    //   window.Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
-    // }
   }
 
   handleRetry = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
-    window.location.reload();
+    if (this.props.onReset) {
+      this.props.onReset();
+    } else {
+      window.location.reload();
+    }
   };
 
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback({
+          error: this.state.error,
+          componentStack: this.state.errorInfo?.componentStack,
+          resetError: this.handleRetry,
+        });
+      }
+
       return (
-        <Box
-          minH="100vh"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          bg="gray.50"
-          p={4}
-        >
-          <VStack spacing={6} maxW="md" textAlign="center">
-            <Icon as={WarningIcon} boxSize={16} color="red.500" />
-            <Heading size="lg" color="gray.800">
-              Oops! Something went wrong
-            </Heading>
-            <Text color="gray.600">
-              We're sorry for the inconvenience. Please try refreshing the page.
-            </Text>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <Box
-                bg="red.50"
-                p={4}
-                borderRadius="md"
-                textAlign="left"
-                w="full"
-                fontSize="sm"
-                color="red.700"
-              >
-                <Text fontWeight="bold" mb={2}>
-                  Error Details:
-                </Text>
-                <Text>{this.state.error.toString()}</Text>
-                {this.state.errorInfo?.componentStack && (
-                  <Text mt={2} fontSize="xs">
-                    Component Stack:
-                    <Text as="pre" whiteSpace="pre-wrap" mt={1}>
-                      {this.state.errorInfo.componentStack}
-                    </Text>
-                  </Text>
-                )}
-              </Box>
-            )}
-            <Button
-              colorScheme="blue"
-              onClick={this.handleRetry}
-              size="lg"
-            >
-              Refresh Page
-            </Button>
-          </VStack>
-        </Box>
+        <ErrorBoundaryFallback
+          error={this.state.error}
+          componentStack={this.state.errorInfo?.componentStack}
+          resetError={this.handleRetry}
+        />
       );
     }
 

@@ -80,8 +80,11 @@ export const FirstStepper = (props) => {
     }
   };
 
-  useEffect(async () => {
-    getAllAPi();
+  useEffect(() => {
+    const loadData = async () => {
+      getAllAPi();
+    };
+    loadData();
   }, [values?.category]);
 
   return (

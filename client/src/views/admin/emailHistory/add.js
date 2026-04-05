@@ -33,7 +33,7 @@ import dayjs from "dayjs";
 import { fetchEmailTempData } from "../../../redux/slices/emailTempSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import MultiPropertyModel from "components/commonTableModel/MultiPropertyModel";
 import { FirstStepper } from "../newProperty/components/bookedStepperForm/FirstStepper";
 

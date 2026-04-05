@@ -32,7 +32,7 @@ import { LiaMousePointerSolid } from "react-icons/lia";
 import { phoneCallSchema } from "schema";
 import { getApi, postApi } from "services/api";
 import MultiPropertyModel from "components/commonTableModel/MultiPropertyModel";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import { useParams } from "react-router-dom";
 import * as yup from "yup";
 

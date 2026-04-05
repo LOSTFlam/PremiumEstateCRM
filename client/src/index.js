@@ -1,25 +1,32 @@
-import React, { Suspense, lazy, useEffect } from "react";
-import ReactDOM from "react-dom";
+import React, { Suspense, lazy, useEffect, useState, useCallback } from "react";
+import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorBoundary from "components/ErrorBoundary";
 import SEO from "components/SEO";
 import GlobalAnimationStyles from "components/GlobalAnimationStyles";
+import ScrollToTop from "components/ScrollToTop";
+import CommandPalette from "components/CommandPalette";
 import "assets/css/App.css";
 import "assets/css/tailwind.css";
+import "styles/premium-effects.css";
+import "styles/premium-effects.css";
 import {
   BrowserRouter as Router,
   Navigate,
   Route,
   Routes,
+  useLocation,
 } from "react-router-dom";
 import { Box, ChakraProvider, Container, Spinner, Stack, Text } from "@chakra-ui/react";
 import theme from "theme/theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Provider } from "react-redux";
-import { store, persistor } from "./redux/store";
+import { store, persistor } from "./redux/store.ts";
 import { PersistGate } from "redux-persist/integration/react";
 import "./i18n/i18n.config";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "components/PageTransition";
 
 const AuthLayout = lazy(() => import("./layouts/auth"));
 const AdminLayout = lazy(() => import("layouts/admin"));
@@ -302,70 +309,96 @@ function RouteFallback() {
   );
 }
 
-function App() {
-  const token =
-    localStorage.getItem("token") || sessionStorage.getItem("token");
+function AnimatedRoutes() {
+  const location = useLocation();
+  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const user = getStoredUser();
   const isAuthenticated = Boolean(token && user?.role);
 
   return (
-    <Suspense fallback={<RouteFallback />}>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <ModernLandingPage />
-          }
-        />
-        <Route path="/offers" element={<PublicCatalog />} />
-        <Route path="/offers/houses" element={<PublicCatalog forcedType="house" />} />
-        <Route path="/offers/apartments" element={<PublicCatalog forcedType="apartment" />} />
-        <Route path="/offers/plots" element={<PublicCatalog forcedType="land" />} />
-        <Route path="/offers/commercial" element={<PublicCatalog forcedType="commercial" />} />
-        <Route path="/property/:slug" element={<PropertyDetailPage />} />
-        <Route path="/collections/:slug" element={<SeoCollectionPage />} />
-        <Route path="/offers/compare" element={<PublicCompareView />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
-        <Route path="/compare" element={<Navigate to="/offers/compare" replace />} />
-        <Route path="/offers/:id" element={<PublicOfferView />} />
-        <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
-        <Route path="/propertyView/:slug" element={<PropertyViewBySlug />} />
-        <Route path="/auth/sign-up" element={<SignUp />} />
-        <Route path="/auth/sign-in" element={<SignIn />} />
-        <Route path="/auth/*" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthLayout />} />
+    <AnimatePresence mode="wait">
+      <PageTransition key={location.pathname}>
+        <Routes location={location}>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <ModernLandingPage />
+            }
+          />
+          <Route path="/offers" element={<PublicCatalog />} />
+          <Route path="/offers/houses" element={<PublicCatalog forcedType="house" />} />
+          <Route path="/offers/apartments" element={<PublicCatalog forcedType="apartment" />} />
+          <Route path="/offers/plots" element={<PublicCatalog forcedType="land" />} />
+          <Route path="/offers/commercial" element={<PublicCatalog forcedType="commercial" />} />
+          <Route path="/property/:slug" element={<PropertyDetailPage />} />
+          <Route path="/collections/:slug" element={<SeoCollectionPage />} />
+          <Route path="/offers/compare" element={<PublicCompareView />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/compare" element={<Navigate to="/offers/compare" replace />} />
+          <Route path="/offers/:id" element={<PublicOfferView />} />
+          <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
+          <Route path="/propertyView/:slug" element={<PropertyViewBySlug />} />
+          <Route path="/auth/sign-up" element={<SignUp />} />
+          <Route path="/auth/sign-in" element={<SignIn />} />
+          <Route path="/auth/*" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthLayout />} />
 
-        {isAuthenticated ? (
-          user?.role === "user" ? (
-            <Route path="/*" element={<UserLayout />} />
-          ) : user?.role === "superAdmin" ? (
-            <>
-              <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
-              <Route path="/admin/leads" element={<LeadKanban />} />
-              <Route path="/*" element={<AdminLayout />} />
-            </>
+          {isAuthenticated ? (
+            user?.role === "user" ? (
+              <Route path="/*" element={<UserLayout />} />
+            ) : user?.role === "superAdmin" ? (
+              <>
+                <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+                <Route path="/admin/leads" element={<LeadKanban />} />
+                <Route path="/*" element={<AdminLayout />} />
+              </>
+            ) : (
+              <Route path="/*" element={<Navigate to="/" replace />} />
+            )
           ) : (
             <Route path="/*" element={<Navigate to="/" replace />} />
-          )
-        ) : (
-          <Route path="/*" element={<Navigate to="/" replace />} />
-        )}
-      </Routes>
+          )}
+        </Routes>
+      </PageTransition>
+    </AnimatePresence>
+  );
+}
+
+function App() {
+  const [commandOpen, setCommandOpen] = useState(false);
+
+  const handleKeyDown = useCallback((e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      setCommandOpen((prev) => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  return (
+    <Suspense fallback={<RouteFallback />}>
+      <AnimatedRoutes />
+      <ScrollToTop />
+      <CommandPalette isOpen={commandOpen} onClose={() => setCommandOpen(false)} />
     </Suspense>
   );
 }
 
-// Create React Query client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root"));
+root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
@@ -400,5 +433,4 @@ ReactDOM.render(
       </ErrorBoundary>
     </QueryClientProvider>
   </React.StrictMode>,
-  document.getElementById("root"),
 );

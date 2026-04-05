@@ -36,3 +36,5 @@ export const renderView = ({ style, ...props }) => {
     />
   );
 };
+
+export default { renderThumb, renderTrack, renderView };

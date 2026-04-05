@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 const textMsg = require('./textMsg')
 
 const router = express.Router();

@@ -31,7 +31,7 @@ import { emailSchema } from "schema";
 import { postApi, getApi } from "services/api";
 import { fetchEmailTempData } from "../../redux/slices/emailTempSlice";
 import UserModel from "components/commonTableModel/UserModel";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import ContactModel from "./ContactModel";
 import LeadModel from "components/commonTableModel/LeadModel";
 import MultiPropertyModel from "components/commonTableModel/MultiPropertyModel";

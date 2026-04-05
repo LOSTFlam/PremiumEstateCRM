@@ -214,6 +214,7 @@ const renderModuleFields = ({
   });
 
 const ModuleDrivenForm = memo(function ModuleDrivenForm(props) {
+  const { t, i18n } = useTranslation();
   const { moduleData = {} } = props;
   const headings = Array.isArray(moduleData?.headings) ? moduleData.headings : [];
   const fields = Array.isArray(moduleData?.fields) ? moduleData.fields : [];
@@ -225,10 +226,20 @@ const ModuleDrivenForm = memo(function ModuleDrivenForm(props) {
         ? headings.map((heading, index) => (
             <React.Fragment key={heading?._id || `heading-${index}`}>
               <GridItem colSpan={{ base: 12 }}>
-                {index !== 0 ? <HSeparator /> : null}
-                <Heading as="h1" size="md" mt="10px">
-                  {index + 1}. {heading?.heading}
-                </Heading>
+                <Box className="admin-module-form__sectionHeader">
+                  <Heading
+                    as="h1"
+                    size="md"
+                    mt="0"
+                    className="admin-module-form__sectionHeading"
+                  >
+                    {index + 1}.{" "}
+                    {translateCrmText(heading?.heading, {
+                      t,
+                      language: i18n.language,
+                    })}
+                  </Heading>
+                </Box>
               </GridItem>
               {renderModuleFields({
                 ...props,
@@ -298,6 +309,12 @@ const CommonForm = memo(function CommonForm({
   columns = { base: 1, md: 2 },
   children,
 }) {
+  const { t, i18n } = useTranslation();
+  const resolvedSubmitLabel = translateCrmText(submitLabel || "Save", {
+    t,
+    language: i18n.language,
+  });
+
   if (moduleData) {
     return (
       <ModuleDrivenForm
@@ -327,8 +344,8 @@ const CommonForm = memo(function CommonForm({
           ))}
         </SimpleGrid>
         {children}
-        <Button type="submit" colorScheme="teal" alignSelf="flex-start">
-          {submitLabel}
+        <Button type="submit" variant="brand" alignSelf="flex-start">
+          {resolvedSubmitLabel}
         </Button>
       </Stack>
     </Box>

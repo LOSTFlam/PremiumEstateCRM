@@ -19,7 +19,7 @@ import { MdHome, MdLock } from "react-icons/md";
 import DynamicPage from "views/admin/dynamicPage";
 import DynamicPageview from "views/admin/dynamicPage/DynamicPageview";
 import { fetchRouteData } from "../../redux/slices/routeSlice";
-import { LuChevronRightCircle } from "react-icons/lu";
+import { LuCircleChevronRight } from "react-icons/lu";
 import { fetchRoles } from "../../redux/slices/roleSlice";
 import { fetchModules } from "../../redux/slices/moduleSlice";
 
@@ -108,7 +108,7 @@ export default function Dashboard(props) {
                 <img src={item?.icon} width="20px" height="20px" alt="icon" />
               ) : (
                 <Icon
-                  as={LuChevronRightCircle}
+                  as={LuCircleChevronRight}
                   width="20px"
                   height="20px"
                   color="inherit"
@@ -126,7 +126,7 @@ export default function Dashboard(props) {
                 <img src={item?.icon} width="20px" height="20px" alt="icon" />
               ) : (
                 <Icon
-                  as={LuChevronRightCircle}
+                  as={LuCircleChevronRight}
                   width="20px"
                   height="20px"
                   color="inherit"
@@ -169,7 +169,7 @@ export default function Dashboard(props) {
                   <img src={item?.icon} width="20px" height="20px" alt="icon" />
                 ) : (
                   <Icon
-                    as={LuChevronRightCircle}
+                    as={LuCircleChevronRight}
                     width="20px"
                     height="20px"
                     color="inherit"
@@ -187,7 +187,7 @@ export default function Dashboard(props) {
                   <img src={item?.icon} width="20px" height="20px" alt="icon" />
                 ) : (
                   <Icon
-                    as={LuChevronRightCircle}
+                    as={LuCircleChevronRight}
                     width="20px"
                     height="20px"
                     color="inherit"

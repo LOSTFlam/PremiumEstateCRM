@@ -89,6 +89,7 @@ const propertySchema = new mongoose.Schema({
     verificationStatus: {
         type: String,
         default: "pending",
+        index: true,  // Index for filtering by verification status
     },
     verificationScore: {
         type: Number,
@@ -126,6 +127,9 @@ const propertySchema = new mongoose.Schema({
     publicSlug: {
         type: String,
         default: "",
+        unique: true,  // Unique index for public slug
+        sparse: true,  // Allow null/empty values
+        index: true,
     },
     featuredCollections: {
         type: [String],
@@ -134,20 +138,35 @@ const propertySchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false,
+        index: true,  // Index for soft-delete filtering
     },
     updatedDate: {
         type: Date,
         default: Date.now,
+        index: true,  // Index for sorting by update date
     },
     createdDate: {
         type: Date,
+        index: true,  // Index for sorting by creation date
     },
     createBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
+        index: true,  // Index for filtering by agent/creator
     },
+}, {
+    // Enable text search on specific fields
+    timestamps: true,  // Automatically manage createdAt/updatedAt
 });
+
+// Compound indexes for common query patterns
+propertySchema.index({ deleted: 1, createdDate: -1 });  // Active properties by date
+propertySchema.index({ deleted: 1, verificationStatus: 1 });  // Properties by verification status
+propertySchema.index({ createBy: 1, deleted: 1 });  // Properties by agent
+propertySchema.index({ publicSlug: 1, deleted: 1 });  // Public lookup by slug
+propertySchema.index({ propertyType: 1, deleted: 1 });  // Filter by property type
+propertySchema.index({ listingStatus: 1, deleted: 1 });  // Filter by listing status
 
 const initializePropertySchema = async () => {
     const schemaFieldsData = await fetchSchemaFields();

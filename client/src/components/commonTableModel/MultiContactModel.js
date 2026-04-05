@@ -42,9 +42,12 @@ const MultiContactModel = (props) => {
     setColumns(tempTableColumns);
     setIsLoding(false);
   };
-  useEffect(async () => {
-    await dispatch(fetchContactData());
-    fetchCustomDataFields();
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(fetchContactData());
+      fetchCustomDataFields();
+    };
+    loadData();
   }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));

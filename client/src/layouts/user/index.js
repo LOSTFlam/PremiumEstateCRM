@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../redux/slices/imageSlice";
 import { getApi } from "services/api";
 import DynamicPage from "views/admin/dynamicPage";
-import { LuChevronRightCircle } from "react-icons/lu";
+import { LuCircleChevronRight } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
 import { fetchModules } from "../../redux/slices/moduleSlice";
 
@@ -180,7 +180,7 @@ export default function User(props) {
         path: pathName(item.moduleName),
         icon: (
           <Icon
-            as={LuChevronRightCircle}
+            as={LuCircleChevronRight}
             width="20px"
             height="20px"
             color="inherit"

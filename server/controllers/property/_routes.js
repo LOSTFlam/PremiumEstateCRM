@@ -1,6 +1,6 @@
 const express = require("express");
 const property = require("./property.facade");
-const auth = require("../../middelwares/auth");
+const { auth } = require("../../middelwares/auth");
 const { propertyValidation } = require("../../middelwares/validation");
 
 const router = express.Router();

@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 const phoneCall = require('./phonCall')
 
 const router = express.Router();

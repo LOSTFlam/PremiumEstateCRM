@@ -11,6 +11,12 @@ const shadows = {
   none: "none",
   "dark-lg":
     "rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px 5px 10px, rgba(0, 0, 0, 0.4) 0px 15px 40px",
+  glass: "0 8px 32px rgba(31, 38, 135, 0.2)",
+  premium: "0 0 40px rgba(212, 175, 55, 0.15)",
+  "premium-lg": "0 0 60px rgba(212, 175, 55, 0.25)",
+  "brand-glow": "0 0 20px rgba(53, 32, 213, 0.4)",
+  "card-hover": "0 20px 40px rgba(0, 0, 0, 0.15)",
+  "subtle-elevation": "0 2px 8px rgba(0, 0, 0, 0.04)",
 };
 
 export default shadows;

@@ -8,6 +8,8 @@ const compression = require("compression");
 const db = require("./db/config");
 const route = require("./controllers/route");
 const errorHandler = require("./middelwares/errorHandler");
+const { auditLog } = require("./middelwares/auditLog");
+const { initWebSocket, broadcast } = require("./services/websocket");
 
 require("dotenv").config();
 
@@ -27,16 +29,16 @@ const app = express();
 app.disable("x-powered-by");
 
 // Security middleware
-app.use(helmet()); // Security headers
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" })); // Allow cross-origin for images
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // Compression middleware
 app.use(compression());
 
-// Rate limiting (disabled for development)
+// Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Higher limit for development
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'production' ? 100 : 10000,
   message: {
     success: false,
     message: 'Too many requests from this IP, please try again later.'
@@ -45,13 +47,11 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Apply rate limiting to API routes only
 app.use('/api', limiter);
 
-// Stricter rate limit for auth endpoints (disabled for development)
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 5 : 1000, // Higher limit for development
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'production' ? 5 : 1000,
   message: {
     success: false,
     message: 'Too many authentication attempts, please try again later.'
@@ -59,8 +59,8 @@ const authLimiter = rateLimit({
 });
 
 // Middleware
-app.use(cookieParser()); // Parse cookies
-app.use(bodyParser.json({ limit: '10mb' })); // Limit body size
+app.use(cookieParser());
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Set up CORS with options
@@ -89,6 +89,10 @@ app.use(cors({
 // Apply auth limiter to auth routes
 app.use('/api/user', authLimiter);
 
+// Apply audit logging
+app.use('/api/user', auditLog);
+app.use('/api/property', auditLog);
+
 //API Routes
 app.use('/api', route);
 
@@ -100,13 +104,11 @@ app.use((req, res, next) => {
 
 app.use(errorHandler);
 
-
 app.get('/', async (req, res) => {
     res.send('Welcome to my world...')
 });
 
-// Get port from environment and store in Express.
-
+// Create HTTP server
 const server = app.listen(port, () => {
     const protocol = (process.env.HTTPS === true || process.env.NODE_ENV === 'production') ? 'https' : 'http';
     const { address, port } = server.address();
@@ -114,9 +116,25 @@ const server = app.listen(port, () => {
     console.log(`Server listening at ${protocol}://${host}:${port}/`);
 });
 
+// Initialize WebSocket server
+initWebSocket(server);
 
 // Connect to MongoDB
 const DATABASE_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017'
 const DATABASE = process.env.DB || 'PremiumEstateDB'
 
 db(DATABASE_URL, DATABASE);
+
+// Graceful shutdown
+const gracefulShutdown = (signal) => {
+  console.log(`${signal} received. Shutting down gracefully...`);
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+module.exports = { app, server, broadcast };

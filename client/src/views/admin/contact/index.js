@@ -236,10 +236,12 @@ const Index = () => {
     }
   };
 
-  useEffect(async () => {
-    // fetchData();
-    await dispatch(fetchContactData());
-    fetchCustomDataFields();
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(fetchContactData());
+      fetchCustomDataFields();
+    };
+    loadData();
   }, [action]);
 
   return (

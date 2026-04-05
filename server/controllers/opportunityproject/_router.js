@@ -1,5 +1,5 @@
 const express = require('express')
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 const opportunityproject = require('./opportunityproject')
 
 const router = express.Router()

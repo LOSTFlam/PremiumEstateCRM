@@ -33,7 +33,7 @@ import {
   LuCalendarClock,
   LuClock,
   LuExternalLink,
-  LuHome,
+  LuHouse,
   LuMap,
   LuSparkles,
   LuTrees,
@@ -87,7 +87,7 @@ const buildHighlights = (property, t) => [
   {
     label: t?.("publicListing.type"),
     value: property?.propertyType || t?.("publicListing.notSpecified"),
-    icon: LuHome,
+    icon: LuHouse,
   },
   {
     label: t?.("publicListing.area"),

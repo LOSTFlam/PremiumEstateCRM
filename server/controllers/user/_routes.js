@@ -1,15 +1,18 @@
 const express = require('express');
 const user = require('./user');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 const { userValidation } = require("../../middelwares/validation");
+const { rateLimiter } = require('../../middelwares/rateLimiter');
 
 const router = express.Router();
 
 router.post('/admin-register', userValidation.adminRegister, user.adminRegister)
 router.get('/', auth, user.index)
-router.post('/register', userValidation.register, user.register)
-router.post('/login', userValidation.login, user.login)
-router.post('/logout', user.logout)
+router.post('/register', rateLimiter('register'), userValidation.register, user.register)
+router.post('/login', rateLimiter('login'), userValidation.login, user.login)
+router.post('/logout', auth, user.logout)
+router.post('/refresh-token', rateLimiter('refresh'), user.refreshToken)
+router.post('/change-password', rateLimiter('passwordChange'), auth, user.changePassword)
 router.post('/deleteMany', auth, user.deleteMany)
 router.get('/view/:id', auth, user.view)
 router.delete('/delete/:id', auth, user.deleteData)

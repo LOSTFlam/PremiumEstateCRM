@@ -11,6 +11,20 @@ const apiClient = axios.create({
 const requestCache = new Map();
 const GET_CACHE_DURATION = 5 * 60 * 1000;
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 const getStoredToken = () => {
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   return token;
@@ -37,6 +51,11 @@ const persistAuth = (result, rememberMe) => {
   fallbackStorage.removeItem("user");
 };
 
+const updateStoredToken = (token) => {
+  const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
+  storage.setItem("token", token);
+};
+
 const buildHeaders = (isFormData = false, headers = {}) => {
   const token = getStoredToken();
   const nextHeaders = {
@@ -57,7 +76,9 @@ const buildHeaders = (isFormData = false, headers = {}) => {
 };
 
 const shouldSkipAuthRedirect = (url = "") =>
-  url.includes("/api/user/login") || url.includes("/api/user/register");
+  url.includes("/api/user/login") ||
+  url.includes("/api/user/register") ||
+  url.includes("/api/user/refresh-token");
 
 const getCacheEntry = (cacheKey) => {
   const entry = requestCache.get(cacheKey);
@@ -90,21 +111,56 @@ apiClient.interceptors.request.use((config) => ({
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     }
 
+    const originalRequest = error.config;
     const errorMessage =
       error.response?.data?.message ||
       error.response?.data?.error ||
       error.message ||
       "An unexpected error occurred";
 
-    if (error.response?.status === 401 && !shouldSkipAuthRedirect(error.config?.url || "")) {
-      clearStoredAuth();
-      window.location.href = "/auth/sign-in";
-      toast.error("Session expired. Please login again.");
+    if (error.response?.status === 401 && !shouldSkipAuthRedirect(originalRequest?.url || "")) {
+      if (originalRequest._retry) {
+        clearStoredAuth();
+        window.location.href = "/auth/sign-in";
+        toast.error("Session expired. Please login again.");
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await apiClient.post("/api/user/refresh-token");
+        const newToken = refreshResponse.data.token;
+        updateStoredToken(newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        processQueue(null, newToken);
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        clearStoredAuth();
+        window.location.href = "/auth/sign-in";
+        toast.error("Session expired. Please login again.");
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     } else if (error.response?.status === 429) {
       toast.error("Too many requests. Please wait a moment.");
     } else if (error.response?.status >= 500) {

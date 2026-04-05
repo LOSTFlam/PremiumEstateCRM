@@ -191,10 +191,13 @@ export default function PremiumEtherealBackground() {
             transparent 70%)"
           borderRadius="50%"
           filter="blur(1px)"
-          animation={`sparkle ${sparkle.duration} ease-in-out ${sparkle.delay} infinite`}
+          animation={`sparkle ${sparkle.duration} ease-in-out infinite`}
           opacity={sparkle.opacity}
           pointerEvents="none"
           zIndex={1}
+          sx={{
+            animationDelay: sparkle.delay,
+          }}
         />
       ))}
 
@@ -211,11 +214,14 @@ export default function PremiumEtherealBackground() {
             rgba(255, 255, 255, 0.03) 0%,
             transparent 100%)"
           filter="blur(20px)"
-          animation={`light-ray ${8 + i * 2}s ease-in-out ${i * 0.5}s infinite`}
+          animation={`light-ray ${8 + i * 2}s ease-in-out infinite`}
           opacity={0.4}
           pointerEvents="none"
           zIndex={0}
           transform={`rotate(${i * 5 - 10}deg)`}
+          sx={{
+            animationDelay: `${i * 0.5}s`,
+          }}
         />
       ))}
 

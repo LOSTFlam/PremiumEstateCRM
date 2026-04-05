@@ -88,11 +88,14 @@ const View = () => {
     }
   }, [action]);
 
-  useEffect(async () => {
-    setIsLoding(true);
-    let result = await getApi("api/role-access");
-    setRoleData(result?.data);
-    setIsLoding(false);
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoding(true);
+      let result = await getApi("api/role-access");
+      setRoleData(result?.data);
+      setIsLoding(false);
+    };
+    loadData();
   }, []);
 
   const handleDeleteClick = async () => {

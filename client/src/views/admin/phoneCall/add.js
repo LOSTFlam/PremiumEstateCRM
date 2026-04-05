@@ -32,7 +32,7 @@ import { LiaMousePointerSolid } from "react-icons/lia";
 import { phoneCallSchema } from "schema";
 import { getApi, postApi } from "services/api";
 import MultiPropertyModel from "components/commonTableModel/MultiPropertyModel";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 
 const AddPhoneCall = (props) => {
   const { onClose, isOpen, setAction, data } = props;
@@ -95,38 +95,41 @@ const AddPhoneCall = (props) => {
     }
   };
 
-  useEffect(async () => {
-    values.start = props?.date;
-    try {
+  useEffect(() => {
+    const loadData = async () => {
+      values.start = props?.date;
+      try {
       let result;
       if (values?.category === "Contact" && assignToContactData?.length <= 0) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/contact/"
-            : `api/contact/?createBy=${user._id}`,
-        );
-        setAssignToContactData(result?.data);
+      result = await getApi(
+      user?.role === "superAdmin"
+      ? "api/contact/"
+      : `api/contact/?createBy=${user._id}`,
+      );
+      setAssignToContactData(result?.data);
       } else if (values?.category === "Lead" && assignToLeadData?.length <= 0) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/lead/"
-            : `api/lead/?createBy=${user?._id}`,
-        );
-        setAssignToLeadData(result?.data);
+      result = await getApi(
+      user?.role === "superAdmin"
+      ? "api/lead/"
+      : `api/lead/?createBy=${user?._id}`,
+      );
+      setAssignToLeadData(result?.data);
       } else if (
-        (values?.category === "property" && console.log(""),
-        assignToProperyData?.length <= 0)
+      (values?.category === "property" && console.log(""),
+      assignToProperyData?.length <= 0)
       ) {
-        result = await getApi(
-          user?.role === "superAdmin"
-            ? "api/property"
-            : `api/property/?createBy=${user?._id}`,
-        );
-        setAssignToPropertyData(result?.data);
+      result = await getApi(
+      user?.role === "superAdmin"
+      ? "api/property"
+      : `api/property/?createBy=${user?._id}`,
+      );
+      setAssignToPropertyData(result?.data);
       }
-    } catch (e) {
+      } catch (e) {
       console.log(e);
-    }
+      }
+    };
+    loadData();
   }, [props?.date, values?.category]);
 
   const fetchRecipientData = async () => {

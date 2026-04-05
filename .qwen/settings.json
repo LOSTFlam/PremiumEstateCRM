@@ -12,7 +12,9 @@
       "Bash(curl *)",
       "Bash(ls *)",
       "Read(//home/lostflam/.config/hypr/**)",
-      "Bash(mkdir *)"
+      "Bash(mkdir *)",
+      "Bash(git branch *)",
+      "Bash(git rm *)"
     ]
   },
   "$version": 3

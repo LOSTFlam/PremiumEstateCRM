@@ -6,6 +6,7 @@ const PhoneCall = require("../../model/schema/phoneCall");
 const Task = require("../../model/schema/task");
 const MeetingHistory = require("../../model/schema/meeting");
 const DocumentSchema = require("../../model/schema/document");
+const { sendUserConfirmation, sendAdminNotification, sendUserSms } = require("../../services/notificationService");
 
 const index = async (req, res) => {
   const query = req.query;
@@ -74,54 +75,113 @@ const publicInquiry = async (req, res) => {
     const {
       propertyId,
       fullName,
+      name,
       email,
       phoneNumber,
+      phone,
       message,
       preferredContact,
       sourcePage,
       collectionSlug,
+      propertyName,
+      type,
+      preferredDate,
+      preferredTime,
+      source,
     } = req.body;
 
-    if (!propertyId || !fullName || !email || !phoneNumber) {
-      return res.status(400).json({ error: "Missing required lead fields" });
+    const leadName = fullName || name;
+    const leadPhone = phoneNumber || phone;
+
+    if (!leadName || !email || !leadPhone) {
+      return res.status(400).json({ error: "Missing required lead fields: name, email, phone" });
     }
 
-    const property = await Property.findOne({ _id: propertyId, deleted: false }).lean();
-    if (!property) {
-      return res.status(404).json({ error: "Property not found" });
+    const notificationData = {
+      userName: leadName,
+      userPhone: leadPhone,
+      userEmail: email,
+      message: message || '',
+      propertyName: propertyName || '',
+      ipAddress: req.ip || req.connection.remoteAddress,
+      userAgent: req.headers['user-agent'],
+    };
+
+    if (propertyId) {
+      const property = await Property.findOne({ _id: propertyId, deleted: false }).lean();
+      if (!property) {
+        return res.status(404).json({ error: "Property not found" });
+      }
+
+      const owner = await resolveLeadOwner(property);
+      if (!owner) {
+        return res.status(400).json({ error: "No available agent found for this listing" });
+      }
+
+      const lead = new Lead({
+        leadName,
+        leadEmail: email,
+        leadPhoneNumber: leadPhone,
+        leadMobile: leadPhone,
+        leadStatus: "pending",
+        leadCampaign: "Online",
+        leadState: "Open",
+        communicationTool: preferredContact === "email" ? "Email" : "WhatsApp",
+        listedFor: String(property?.listingStatus || "buy").toLowerCase().includes("rent") ? "Rent" : "Buy",
+        associatedListing: property._id,
+        assignUser: owner._id,
+        leadAssignedAgent: [owner.firstName, owner.lastName].filter(Boolean).join(" ").trim(),
+        leadSource: source || "Public Website",
+        leadSourceDetails: sourcePage || "Public property page",
+        leadSourceChannel: "Website",
+        leadSourceMedium: "Organic",
+        leadSourceCampaign: collectionSlug || "public-catalog",
+        leadMessage: message || "",
+        leadNotes: message || "",
+        createBy: owner._id,
+        createdDate: new Date(),
+      });
+
+      await lead.save();
+      notificationData.propertyId = property._id.toString();
+      notificationData.propertyName = property?.title || property?.name || propertyId;
+    } else {
+      const lead = new Lead({
+        leadName,
+        leadEmail: email,
+        leadPhoneNumber: leadPhone,
+        leadMobile: leadPhone,
+        leadStatus: "new",
+        leadCampaign: "Online",
+        leadState: "Open",
+        communicationTool: preferredContact === "email" ? "Email" : "WhatsApp",
+        leadSource: source || "Public Website",
+        leadSourceDetails: sourcePage || "Website form",
+        leadSourceChannel: "Website",
+        leadSourceMedium: "Organic",
+        leadSourceCampaign: collectionSlug || type || "public-catalog",
+        leadMessage: message || "",
+        leadNotes: message || "",
+        createdDate: new Date(),
+      });
+
+      await lead.save();
+      notificationData.propertyId = propertyId || '';
+      notificationData.propertyName = propertyName || 'General inquiry';
     }
 
-    const owner = await resolveLeadOwner(property);
-    if (!owner) {
-      return res.status(400).json({ error: "No available agent found for this listing" });
-    }
-
-    const lead = new Lead({
-      leadName: fullName,
-      leadEmail: email,
-      leadPhoneNumber: phoneNumber,
-      leadMobile: phoneNumber,
-      leadStatus: "pending",
-      leadCampaign: "Online",
-      leadState: "Open",
-      communicationTool: preferredContact === "email" ? "Email" : "WhatsApp",
-      listedFor: String(property?.listingStatus || "buy").toLowerCase().includes("rent") ? "Rent" : "Buy",
-      associatedListing: property._id,
-      assignUser: owner._id,
-      leadAssignedAgent: [owner.firstName, owner.lastName].filter(Boolean).join(" ").trim(),
-      leadSource: "Public Website",
-      leadSourceDetails: sourcePage || "Public property page",
-      leadSourceChannel: "Website",
-      leadSourceMedium: "Organic",
-      leadSourceCampaign: collectionSlug || "public-catalog",
-      leadMessage: message || "",
-      leadNotes: message || "",
-      createBy: owner._id,
-      createdDate: new Date(),
+    setImmediate(async () => {
+      try {
+        await sendUserConfirmation(notificationData);
+        await sendUserSms(leadPhone, notificationData);
+        await sendAdminNotification(notificationData);
+        console.log(`✅ All notifications sent for lead #${notificationData.propertyId || 'general'}`);
+      } catch (notifError) {
+        console.error('❌ Notification error (non-critical):', notifError.message);
+      }
     });
 
-    await lead.save();
-    res.status(200).json({ message: "Lead captured successfully", leadId: lead._id });
+    res.status(200).json({ message: "Lead captured successfully" });
   } catch (err) {
     console.error("Failed to capture public lead:", err);
     res.status(400).json({ error: "Failed to capture public lead" });

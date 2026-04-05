@@ -32,7 +32,7 @@ import { getApi } from "services/api";
 import { useSelector } from "react-redux";
 import { HasAccess } from "../../../redux/accessUtils";
 import MultiPropertyModel from "components/commonTableModel/MultiPropertyModel";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import MultiLeadModel from "components/commonTableModel/MultiLeadModel";
 
 const Editopportunityproject = (props) => {
@@ -142,8 +142,11 @@ const Editopportunityproject = (props) => {
     setAssignToPropertyData(propertyOptionData?.data);
   };
 
-  useEffect(async () => {
-    getAllApi();
+  useEffect(() => {
+    const loadData = async () => {
+      getAllApi();
+    };
+    loadData();
   }, [props, values?.category]);
 
   useEffect(() => {

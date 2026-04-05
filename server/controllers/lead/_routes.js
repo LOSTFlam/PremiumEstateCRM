@@ -1,10 +1,11 @@
 const express = require('express');
 const lead = require('./lead');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 
 const router = express.Router();
 
 router.post('/public-inquiry', lead.publicInquiry)
+router.post('/create', lead.publicInquiry)
 router.get('/', auth, lead.index)
 router.post('/add', auth, lead.add)
 router.post('/addMany', auth, lead.addMany)

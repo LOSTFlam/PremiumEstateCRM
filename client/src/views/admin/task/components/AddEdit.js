@@ -220,44 +220,47 @@ const AddEdit = (props) => {
     }
   };
 
-  useEffect(async () => {
-    values.start = props?.date;
-    if (view === true) {
+  useEffect(() => {
+    const loadData = async () => {
+      values.start = props?.date;
+      if (view === true) {
       if (values?.category === "Contact" && assignToContactData?.length <= 0) {
-        setAssignToContactData(contactData);
-        // result = await getApi(user.role === 'superAdmin' ? 'api/contact/' : `api/contact/?createBy=${user._id}`)
-        // setAssignToContactData(result?.data)
+      setAssignToContactData(contactData);
+      // result = await getApi(user.role === 'superAdmin' ? 'api/contact/' : `api/contact/?createBy=${user._id}`)
+      // setAssignToContactData(result?.data)
       } else if (values?.category === "Lead" && assignToLeadData?.length <= 0) {
-        setAssignToLeadData(leadData);
+      setAssignToLeadData(leadData);
       }
-    } else {
+      } else {
       try {
-        let result;
-        if (
-          values?.category === "Contact" &&
-          assignToContactData?.length <= 0
-        ) {
-          result = await getApi(
-            user.role === "superAdmin"
-              ? "api/contact/"
-              : `api/contact/?createBy=${user._id}`
-          );
-          setAssignToContactData(result?.data);
-        } else if (
-          values?.category === "Lead" &&
-          assignToLeadData?.length <= 0
-        ) {
-          result = await getApi(
-            user?.role === "superAdmin"
-              ? "api/lead/"
-              : `api/lead/?createBy=${user._id}`
-          );
-          setAssignToLeadData(result?.data);
-        }
-      } catch (e) {
-        console.log(e);
+      let result;
+      if (
+      values?.category === "Contact" &&
+      assignToContactData?.length <= 0
+      ) {
+      result = await getApi(
+      user.role === "superAdmin"
+      ? "api/contact/"
+      : `api/contact/?createBy=${user._id}`
+      );
+      setAssignToContactData(result?.data);
+      } else if (
+      values?.category === "Lead" &&
+      assignToLeadData?.length <= 0
+      ) {
+      result = await getApi(
+      user?.role === "superAdmin"
+      ? "api/lead/"
+      : `api/lead/?createBy=${user._id}`
+      );
+      setAssignToLeadData(result?.data);
       }
-    }
+      } catch (e) {
+      console.log(e);
+      }
+      }
+    };
+    loadData();
   }, [props, values?.category]);
 
   useEffect(() => {
@@ -622,7 +625,7 @@ const AddEdit = (props) => {
                   fontSize="sm"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values?.backgroundColor}
+                  value={values?.backgroundColor || ""}
                   name="backgroundColor"
                   fontWeight="500"
                   borderColor={
@@ -653,7 +656,7 @@ const AddEdit = (props) => {
                   type="color"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values?.borderColor}
+                  value={values?.borderColor || ""}
                   name="borderColor"
                   placeholder="borderColor"
                   fontWeight="500"
@@ -685,7 +688,7 @@ const AddEdit = (props) => {
                   type="color"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values?.textColor}
+                  value={values?.textColor || ""}
                   name="textColor"
                   placeholder="textColor"
                   fontWeight="500"

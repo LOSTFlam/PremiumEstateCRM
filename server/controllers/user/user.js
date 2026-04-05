@@ -2,12 +2,29 @@ const User = require("../../model/schema/user");
 const bcrypt = require("bcrypt");
 const {
   AUTH_COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
   assertJwtSecret,
   signAuthToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  generateRefreshTokenId,
+  storeRefreshToken,
+  rotateRefreshToken,
   getAuthCookieOptions,
+  getRefreshCookieOptions,
   getLogoutCookieOptions,
   sanitizeUser,
 } = require("./auth.service");
+const {
+  validatePasswordComplexity,
+  validatePasswordChange,
+  hashPassword,
+} = require("../../middelwares/passwordValidator");
+const {
+  incrementFailedAttempts,
+  resetFailedAttempts,
+} = require("../../middelwares/rateLimiter");
+const { invalidateUserCache } = require("../../middelwares/auth");
 
 const getDefaultUsers = () =>
   String(process.env.DEFAULT_USERS || "")
@@ -30,7 +47,16 @@ const adminRegister = async (req, res, next) => {
         .json({ message: "Admin already exist please try another email" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validate password complexity
+    const passwordValidation = validatePasswordComplexity(password);
+    if (!passwordValidation.valid) {
+      return res.status(400).json({
+        message: "Password does not meet requirements",
+        errors: passwordValidation.errors,
+      });
+    }
+
+    const hashedPassword = await hashPassword(password);
     const newUser = new User({
       username: normalizedUsername,
       email: normalizedUsername,
@@ -39,7 +65,9 @@ const adminRegister = async (req, res, next) => {
       lastName: String(lastName || "").trim(),
       phoneNumber,
       role: "superAdmin",
-      createdDate: new Date(),
+      // Store initial password in history to prevent reuse on first change
+      passwordHistory: [{ password: hashedPassword }],
+      lastPasswordChange: new Date(),
     });
 
     await newUser.save();
@@ -75,7 +103,16 @@ const register = async (req, res, next) => {
         .json({ message: "User already exist please try another email" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validate password complexity
+    const passwordValidation = validatePasswordComplexity(password);
+    if (!passwordValidation.valid) {
+      return res.status(400).json({
+        message: "Password does not meet requirements",
+        errors: passwordValidation.errors,
+      });
+    }
+
+    const hashedPassword = await hashPassword(password);
     const newUser = new User({
       username: finalUsername,
       email: normalizedEmail,
@@ -85,13 +122,22 @@ const register = async (req, res, next) => {
       lastName: String(lastName || "").trim(),
       phoneNumber,
       role: "user",
-      createdDate: new Date(),
+      passwordHistory: [{ password: hashedPassword }],  // Store initial password
+      lastPasswordChange: new Date(),
     });
 
     await newUser.save();
 
-    const token = signAuthToken({ userId: newUser._id });
+    // Generate tokens (include role for authorize middleware)
+    const token = signAuthToken({ userId: newUser._id, role: newUser.role });
+    const refreshTokenId = generateRefreshTokenId();
+    const refreshToken = signRefreshToken({ userId: newUser._id, tokenId: refreshTokenId });
+    
+    // Store refresh token
+    await storeRefreshToken(newUser._id, refreshToken, refreshTokenId);
+
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, getRefreshCookieOptions());
 
     res.status(201).json({
       message: "User created successfully",
@@ -149,6 +195,8 @@ let deleteData = async (req, res, next) => {
     if (user.role !== "superAdmin") {
       // Update the user's 'deleted' field to true
       await User.updateOne({ _id: userId }, { $set: { deleted: true } });
+      // Invalidate cache to prevent stale auth data
+      invalidateUserCache(userId);
       res.send({ message: "Record deleted Successfully" });
     } else {
       res.status(404).json({ message: "admin can not delete" });
@@ -185,6 +233,9 @@ const deleteMany = async (req, res, next) => {
       { $set: { deleted: true } }
     );
 
+    // Invalidate cache for all deleted users
+    nonSuperAdminIds.forEach(id => invalidateUserCache(id));
+
     res.status(200).json({ message: "done", updatedUsers });
   } catch (err) {
     next(err);
@@ -194,9 +245,7 @@ const deleteMany = async (req, res, next) => {
 const edit = async (req, res, next) => {
   try {
     const { username, email, firstName, lastName, phoneNumber } = req.body;
-    const update = {
-      updatedDate: new Date(),
-    };
+    const update = {};
 
     if (username) {
       update.username = normalizeIdentity(username);
@@ -217,6 +266,11 @@ const edit = async (req, res, next) => {
       }
     );
 
+    // Invalidate cache if user identity fields changed
+    if (username || email) {
+      invalidateUserCache(req.params.id);
+    }
+
     res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -236,7 +290,7 @@ const login = async (req, res, next) => {
         { email: loginIdentifier }
       ]
     })
-      .select("+password")
+      .select("+password +lockedUntil +failedLoginAttempts")
       .populate({
         path: "roles",
       });
@@ -248,31 +302,79 @@ const login = async (req, res, next) => {
       return;
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const lockoutMinutes = Math.ceil((user.lockedUntil - new Date()) / 60000);
+      return res.status(423).json({ 
+        error: "Account temporarily locked due to too many failed attempts",
+        lockedUntil: user.lockedUntil,
+        lockoutMinutes,
+      });
+    }
+
+    // Wrap bcrypt.compare in try-catch to handle potential errors
+    let passwordMatch = false;
+    try {
+      passwordMatch = await bcrypt.compare(password, user.password);
+    } catch (bcryptError) {
+      console.error('Bcrypt comparison error:', bcryptError);
+      return res.status(500).json({ error: 'Authentication failed' });
+    }
+    
     if (!passwordMatch) {
+      // Increment failed login attempts and check lockout status
+      // incrementFailedAttempts returns lockout status, avoiding a second DB query
+      // FIX: In production, fail closed if DB is unavailable to prevent brute force
+      const lockoutResult = await incrementFailedAttempts(user._id).catch(err => {
+        console.error('Failed to track login attempt:', err);
+        // Fail closed in production to prevent brute force when DB is down
+        const isProd = process.env.NODE_ENV === 'production';
+        return { 
+          locked: isProd, 
+          lockedUntil: isProd ? new Date(Date.now() + 5 * 60 * 1000) : null 
+        };
+      });
+      
+      if (lockoutResult.locked) {
+        const lockoutMinutes = Math.ceil((lockoutResult.lockedUntil - new Date()) / 60000);
+        return res.status(423).json({
+          error: "Account locked due to too many failed attempts",
+          lockedUntil: lockoutResult.lockedUntil,
+          lockoutMinutes,
+        });
+      }
+      
       res
         .status(401)
         .json({ error: "Authentication failed, password does not match" });
       return;
     }
 
-    const token = signAuthToken({ userId: user._id });
+    // Reset failed attempts on successful login
+    await resetFailedAttempts(user._id);
+
+    // Generate tokens (include role for authorize middleware)
+    const token = signAuthToken({ userId: user._id, role: user.role });
+    const refreshTokenId = generateRefreshTokenId();
+    const refreshToken = signRefreshToken({ userId: user._id, tokenId: refreshTokenId });
+    
+    // Store refresh token
+    await storeRefreshToken(user._id, refreshToken, refreshTokenId);
+
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, getRefreshCookieOptions());
 
     res
       .status(200)
       .setHeader("Authorization", `Bearer ${token}`)
-      .json({ token, user: sanitizeUser(user) });
+      .json({ 
+        token, 
+        user: sanitizeUser(user),
+        expiresIn: 15 * 60 * 1000,  // 15 minutes
+      });
   } catch (error) {
     next(error);
   }
-};
-
-const logout = async (req, res) => {
-  res
-    .clearCookie(AUTH_COOKIE_NAME, getLogoutCookieOptions())
-    .status(200)
-    .json({ message: "Logged out successfully" });
 };
 
 const changeRoles = async (req, res, next) => {
@@ -284,16 +386,162 @@ const changeRoles = async (req, res, next) => {
       { $set: { roles: req.body } }
     );
 
+    // Invalidate cache to reflect role changes immediately
+    invalidateUserCache(userId);
+
     res.status(200).json(result);
   } catch (error) {
     next(error);
   }
 };
 
+/**
+ * Refresh access token using refresh token
+ * Implements token rotation for security
+ */
+const refreshToken = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.cookies || {};
+    
+    if (!refreshToken) {
+      return res.status(401).json({ error: "Refresh token required" });
+    }
+    
+    // Verify the refresh token
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      return res.status(401).json({ error: "Invalid or expired refresh token" });
+    }
+    
+    // Rotate the refresh token
+    const rotationResult = await rotateRefreshToken(decoded.userId, decoded.tokenId);
+    
+    if (rotationResult.error) {
+      // Clear cookies on error (possible token theft detected)
+      res.clearCookie(AUTH_COOKIE_NAME, getLogoutCookieOptions());
+      res.clearCookie(REFRESH_COOKIE_NAME, getLogoutCookieOptions());
+      return res.status(401).json({ error: rotationResult.error });
+    }
+    
+    // Fetch user to get current role for the new access token
+    const user = await User.findById(decoded.userId).select("+deleted");
+    if (!user || user.deleted) {
+      res.clearCookie(AUTH_COOKIE_NAME, getLogoutCookieOptions());
+      res.clearCookie(REFRESH_COOKIE_NAME, getLogoutCookieOptions());
+      return res.status(401).json({ error: "User not found or deleted" });
+    }
+    
+    // Generate new access token (include role for authorize middleware)
+    const newAccessToken = signAuthToken({ userId: decoded.userId, role: user.role });
+    
+    res.cookie(AUTH_COOKIE_NAME, newAccessToken, getAuthCookieOptions());
+    res.cookie(REFRESH_COOKIE_NAME, rotationResult.refreshToken, getRefreshCookieOptions());
+    
+    res.status(200).json({
+      token: newAccessToken,
+      message: "Token refreshed successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Change password with validation
+ * - Validates new password complexity
+ * - Checks against password history
+ * - Updates password history
+ */
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    // Only use authenticated user's ID - never accept from URL params
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Current password and new password are required" });
+    }
+    
+    // Get user with password
+    const user = await User.findById(userId).select("+password +passwordHistory");
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Verify current password
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+    
+    // Validate new password
+    const validation = await validatePasswordChange(user, newPassword);
+    if (!validation.valid) {
+      return res.status(400).json({
+        error: "New password does not meet requirements",
+        errors: validation.errors || [validation.error],
+      });
+    }
+    
+    // Update password history (keep last 5)
+    const passwordHistory = [...(user.passwordHistory || []), { password: user.password }];
+    if (passwordHistory.length > 5) {
+      passwordHistory.shift();  // Remove oldest
+    }
+    
+    // Update user password
+    await User.findByIdAndUpdate(userId, {
+      password: validation.hashedPassword,
+      passwordHistory,
+      lastPasswordChange: new Date(),
+      lastActiveAt: new Date(),  // FIX: Prevent immediate session expiry after password change
+    });
+    
+    // Invalidate cache immediately after password change
+    invalidateUserCache(userId);
+    
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Logout with refresh token cleanup
+ */
+const logout = async (req, res) => {
+  try {
+    const userId = req.user?.userId;
+    
+    if (userId) {
+      // Clear refresh token from database
+      await User.findByIdAndUpdate(userId, {
+        refreshToken: null,
+        refreshTokenExpiry: null,
+      });
+    }
+  } catch (error) {
+    console.error("Logout cleanup error:", error);
+  }
+  
+  res
+    .clearCookie(AUTH_COOKIE_NAME, getLogoutCookieOptions())
+    .clearCookie(REFRESH_COOKIE_NAME, getLogoutCookieOptions())
+    .status(200)
+    .json({ message: "Logged out successfully" });
+};
+
 module.exports = {
   register,
   login,
   logout,
+  refreshToken,
+  changePassword,
   adminRegister,
   index,
   deleteMany,

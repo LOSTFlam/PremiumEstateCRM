@@ -11,13 +11,16 @@ export const RoleProvider = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   // Fetch user data from API
-  useEffect(async () => {
-    // Call API here
-    // Example using fetch:
-    if (user) {
+  useEffect(() => {
+    const loadData = async () => {
+      // Call API here
+      // Example using fetch:
+      if (user) {
       const response = await getApi(`api/user/view/${user?._id}`);
       setRoleData(response?.data?.roles);
-    }
+      }
+    };
+    loadData();
   }, []);
 
   return (

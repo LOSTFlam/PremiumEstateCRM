@@ -279,9 +279,12 @@ const View = (props) => {
     setIsLoding(false);
   };
 
-  useEffect(async () => {
-    await dispatch(fetchPropertyData());
-    fetchCustomDataFields();
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(fetchPropertyData());
+      fetchCustomDataFields();
+    };
+    loadData();
   }, []);
 
   const handleTabChange = (index) => {

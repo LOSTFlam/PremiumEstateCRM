@@ -19,7 +19,7 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { CUIAutoComplete } from "chakra-ui-autocomplete";
+import { CUIAutoComplete } from "components/CUIAutoComplete";
 import MultiRoleModel from "components/commonTableModel/MultiRoleModel";
 import Spinner from "components/spinner/Spinner";
 import { useFormik } from "formik";

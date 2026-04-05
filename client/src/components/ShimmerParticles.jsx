@@ -61,9 +61,12 @@ export default function ShimmerParticles({ count = 40 }) {
           opacity={particle.opacity}
           pointerEvents="none"
           zIndex={1}
-          animation={!prefersReducedMotion
-            ? `shimmer-float ${particle.duration} ease-in-out ${particle.delay} infinite, shimmer-pulse 2s ease-in-out ${particle.delay} infinite`
-            : undefined}
+          sx={{
+            animation: !prefersReducedMotion
+              ? `shimmer-float ${particle.duration} ease-in-out infinite, shimmer-pulse 2s ease-in-out infinite`
+              : undefined,
+            animationDelay: `${particle.delay}, ${particle.delay}`,
+          }}
         />
       ))}
     </>
@@ -115,9 +118,15 @@ export function LightRays({ count = 3 }) {
           pointerEvents="none"
           zIndex={0}
           transform={`rotate(${ray.rotation}deg)`}
-          animation={!prefersReducedMotion
-            ? `light-ray ${ray.duration} ease-in-out ${ray.delay} infinite`
-            : "none"}
+          animation={
+            !prefersReducedMotion
+              ? `light-ray ${ray.duration} ease-in-out infinite`
+              : "none"
+          }
+          sx={{
+            "--rotation": `${ray.rotation}deg`,
+            animationDelay: ray.delay,
+          }}
         />
       ))}
     </>

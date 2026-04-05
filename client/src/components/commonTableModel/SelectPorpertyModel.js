@@ -54,8 +54,11 @@ const SelectPorpertyModel = (props) => {
     setColumns(tempTableColumns);
     setIsLoding(false);
   };
-  useEffect(async () => {
-    fetchCustomDataFields();
+  useEffect(() => {
+    const loadData = async () => {
+      fetchCustomDataFields();
+    };
+    loadData();
   }, []);
 
   return (

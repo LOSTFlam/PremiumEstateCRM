@@ -1,6 +1,6 @@
 const express = require('express');
 const invoices = require('./invoices');
-const auth = require('../../middelwares/auth');
+const { auth } = require('../../middelwares/auth');
 
 const router = express.Router();
 

@@ -48,9 +48,12 @@ const MultiPropertyModel = (props) => {
     setSelectedValues(propertyIndex);
   }, [selectedItems]);
 
-  useEffect(async () => {
-    await dispatch(fetchPropertyData());
-    fetchCustomDataFields();
+  useEffect(() => {
+    const loadData = async () => {
+      await dispatch(fetchPropertyData());
+      fetchCustomDataFields();
+    };
+    loadData();
   }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));

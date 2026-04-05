@@ -5,9 +5,11 @@ build
 
 # dependencies
 Client/node_modules
+client/node_modules
 server/node_modules
 server/uploads
 server/.env
+client/.env
 Client/.env
 
 # Keep .env.example files but ignore actual .env files

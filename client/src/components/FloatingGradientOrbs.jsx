@@ -93,8 +93,13 @@ export default function FloatingGradientOrbs() {
           opacity={0.6}
           pointerEvents="none"
           zIndex={0}
-          animation={!prefersReducedMotion ? `float-orb-${index + 1} ${orb.duration} ease-in-out infinite ${orb.delay}` : "none"}
+          animation={
+            !prefersReducedMotion
+              ? `float-orb-${index + 1} ${orb.duration} ease-in-out infinite`
+              : "none"
+          }
           sx={{
+            animationDelay: orb.delay,
             willChange: "transform",
           }}
         />
