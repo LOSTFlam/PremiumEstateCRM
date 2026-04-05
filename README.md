@@ -1,192 +1,217 @@
 # 🏠 Premium Estate CRM
 
-> A modern, premium real estate management system with advanced property listings, lead management, and analytics.
+> **Version:** 1.0.0 — Ethereal Luxury Edition  
+> **Author:** [LOSTFlam](https://github.com/LOSTFlam) (Alexander Avdeev)  
+> **Stack:** MERN (MongoDB, Express, React 18, Node.js)
 
 <div align="center">
 
-![Premium Estate CRM Banner](https://img.shields.io/badge/Premium-Estate_CRM-1a2332?style=for-the-badge&logo=react&logoColor=F5D076)
-
-[![Version](https://img.shields.io/badge/version-0.4.1.26-blue?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/releases)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/network)
-[![GitHub issues](https://img.shields.io/github/issues/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=github)](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
-[![Contributors](https://img.shields.io/github/contributors/LOSTFlam/PremiumEstateCRM?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors)
-[![Last commit](https://img.shields.io/github/last-commit/LOSTFlam/PremiumEstateCRM?style=flat-square&logo=git)](https://github.com/LOSTFlam/PremiumEstateCRM/commits)
-
-[![React](https://img.shields.io/badge/React-17.0.2-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
-[![Node](https://img.shields.io/badge/Node-14+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
-[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat-square&logo=express)](https://expressjs.com/)
-
-[![CI/CD](https://img.shields.io/github/actions/workflow/status/LOSTFlam/PremiumEstateCRM/ci-cd.yml?style=flat-square&logo=github-actions)](https://github.com/LOSTFlam/PremiumEstateCRM/actions)
-[![Code Quality](https://img.shields.io/badge/code%20quality-A-orange?style=flat-square)](https://github.com/LOSTFlam/PremiumEstateCRM/actions)
-[![Security](https://img.shields.io/badge/security-audited-brightgreen?style=flat-square)](SECURITY.md)
-
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-ff69b4?style=flat-square)](CODE_OF_CONDUCT.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![Documentation Status](https://img.shields.io/badge/docs-well--documented-success?style=flat-square)](README.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-gold?style=for-the-badge)](https://github.com/LOSTFlam/PremiumEstateCRM/releases)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![Node](https://img.shields.io/badge/Node.js-25+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
+[![Chakra UI](https://img.shields.io/badge/Chakra_UI-2.8.2-319795?style=for-the-badge&logo=chakraui)](https://chakra-ui.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-0055FF?style=for-the-badge)](https://www.framer.com/motion/)
 
 </div>
 
 ---
 
-## 🌍 Language / Язык
+## 📋 Table of Contents
 
-<div align="center">
-
-| [🇬🇧 English](#-premium-estate-crm) | [🇷🇺 Русский](#-premium-estate-crm-1) |
-|---|---|
-
-</div>
-
-> 💡 **Tip:** Click on the language flag above to jump to that section instantly.
-
----
-
-## 📖 Table of Contents
-
-<details>
-<summary>Click to expand</summary>
-
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [Design Features](#-design-features)
-- [Tech Stack](#-tech-stack)
-- [Key Routes](#-key-routes)
-- [User Guide](#-user-guide)
-- [Security Features](#-security-features)
-- [Performance](#-performance)
-- [Contributing](#-contributing)
-- [Community](#-community)
-- [Changelog](#-changelog)
-- [Support](#-support)
-- [License](#-license)
-
-</details>
+- [✨ Features](#-features)
+- [🏗️ Architecture](#️-architecture)
+- [🚀 Quick Start](#-quick-start)
+- [📧 Notification Setup](#-notification-setup)
+- [🎨 Design System](#-design-system)
+- [🔒 Security](#-security)
+- [📁 Project Structure](#-project-structure)
+- [🧪 Testing](#-testing)
+- [📦 Deployment](#-deployment)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ---
 
 ## ✨ Features
 
-### 🌐 Public Portal
+### 🏠 Property Management
+- **Property Catalog** — apartments, houses, land plots, commercial
+- **SEO Optimization** — public pages with meta tags
+- **Media Gallery** — photos, videos, virtual tours, documents
+- **Smart Search** — filters by price, type, location, area
+- **Property Comparison** — side-by-side feature comparison
 
-#### Property Discovery
-- **Advanced Search & Filters** - Filter by price, area, bedrooms, bathrooms, location, property type
-- **Property Details Page** - Full property information with image gallery, video tours, floor plans
-- **Interactive Map** - View properties on map (Google Maps/Mapbox integration ready)
-- **Similar Properties** - AI-powered property recommendations
+### 👥 CRM & Leads
+- **Kanban Board** — visual sales pipeline management
+- **Contact Management** — complete interaction history
+- **Auto Notifications** — email + SMS on new inquiries
+- **Tasks & Meetings** — scheduling and tracking
+- **Invoices & Quotes** — PDF document generation
 
-#### User Tools
-- **Favorites** - Save properties with PDF export and sharing
-- **Compare** - Side-by-side property comparison (up to 3 properties)
-- **Lead Capture Forms** - Schedule viewing, request info, make offers
-- **Multi-language** - English & Russian support
-- **Dark/Light Theme** - Auto-detect system preference
+### 📊 Analytics
+- **Real-time Dashboard** — KPIs, charts, metrics
+- **Reports** — conversion rates, traffic sources, revenue
+- **Data Export** — Excel, CSV, PDF
 
-### 👤 User Dashboard
-- Saved properties and searches
-- Viewing appointments
-- Communication history
-- Document management
+### 🎨 Premium UI/UX
+- **Ethereal Luxury Design** — glassmorphism, gold accents
+- **Animations** — 40+ keyframes, Framer Motion transitions
+- **Page Transitions** — smooth page-to-page animations
+- **Command Palette** — navigation via `Cmd+K`
+- **Scroll-to-top** — smooth return button
+- **Dark & Light Themes** — with system auto-detection
+- **PWA** — installable on device, offline mode
 
-### 🔧 Admin Panel
+### 🔔 Notifications
+- **Email** — via Resend (beautiful HTML templates)
+- **SMS** — via Twilio or SMSC.ru (mock in dev)
+- **Real-time** — WebSocket for instant updates
 
-#### Analytics Dashboard
-- **6 Key Metrics** - Views, leads, favorites, comparisons, conversion rate, properties
-- **Growth Indicators** - Trend analysis with percentage changes
-- **Views by Type** - Property type distribution charts
-- **Recent Activity** - Real-time user activity feed
-- **Popular Properties** - Top performing listings with conversion rates
-- **Export Reports** - PDF export functionality
+---
 
-#### Lead Management
-- **Kanban Board** - Visual pipeline with 7 statuses
-- **Status Workflow**: New → Contacted → Qualified → Viewing → Offer → Closed/Lost
-- **Quick Actions** - Change status, add notes, contact lead
-- **Search & Filter** - Find leads by name, email, property, status
-- **Communication History** - Track all interactions
+## 🏗️ Architecture
 
-#### Property Management
-- Add/Edit/Delete properties
-- Bulk import/export (CSV, Excel)
-- Photo management with drag-and-drop
-- Floor plan uploads
-- Video tour integration
-- Property verification system
-
-#### User Management
-- Role-based access control
-- User permissions
-- Activity logs
-- Account management
-
-#### Additional Modules
-- **Contacts** - CRM contact management
-- **Opportunities** - Deal tracking
-- **Invoices & Quotes** - Financial documents
-- **Meetings & Tasks** - Schedule management
-- **Email Templates** - Pre-built email campaigns
-- **Phone Calls** - Call logging
-- **Documents** - File management
-- **Reports** - Custom report generation
-- **Custom Fields** - Flexible data structure
+```
+┌─────────────────────────────────────────────────┐
+│                  Frontend (React 18)             │
+│  ┌──────────┬──────────┬──────────┬──────────┐  │
+│  │ Chakra   │ Framer   │ Redux    │ React    │  │
+│  │ UI 2.8   │ Motion 11│ Toolkit  │ Query v5 │  │
+│  └──────────┴──────────┴──────────┴──────────┘  │
+│  ┌──────────────────────────────────────────┐   │
+│  │  PremiumCard · MagneticButton ·          │   │
+│  │  ScrollRevealPro · CommandPalette        │   │
+│  └──────────────────────────────────────────┘   │
+└─────────────────────┬───────────────────────────┘
+                      │ REST API + WebSocket
+┌─────────────────────┴───────────────────────────┐
+│                  Backend (Node.js)               │
+│  ┌──────────┬──────────┬──────────┬──────────┐  │
+│  │ Express  │ Mongoose │ JWT Auth │ Nodemailer│ │
+│  │ 4.x      │ 7.x      │ Refresh  │ / Resend │  │
+│  └──────────┴──────────┴──────────┴──────────┘  │
+│  ┌──────────────────────────────────────────┐   │
+│  │  Rate Limiting · Helmet · Compression    │   │
+│  │  Cache Middleware · Audit Logging         │   │
+│  └──────────────────────────────────────────┘   │
+└─────────────────────┬───────────────────────────┘
+                      │
+┌─────────────────────┴───────────────────────────┐
+│              MongoDB Atlas                       │
+│  ┌──────────────────────────────────────────┐   │
+│  │  Indexed Collections · Connection Pool   │   │
+│  └──────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 14+ 
-- MongoDB 4.4+
-- npm or yarn
+- **Node.js** 18+ (recommended 25+)
+- **MongoDB** — local or MongoDB Atlas
+- **npm** or **yarn**
 
 ### Installation
 
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/LOSTFlam/PremiumEstateCRM.git
 cd PremiumEstateCRM
 
-# Install server dependencies
+# 2. Install server dependencies
 cd server
+cp .env.example .env
+# Edit .env — set MongoDB URL and Resend API key
 npm install
 
-# Install client dependencies
+# 3. Install client dependencies
 cd ../client
-npm install
+npm install --legacy-peer-deps
 
-# Configure environment variables
-# Server: server/.env
-# Client: client/.env
+# 4. Create MongoDB indexes
+cd ../server
+npm run seed:index
 
-# Start development servers
-# Terminal 1 - Server
-cd server
+# 5. Start the server (port 5001)
 npm start
 
-# Terminal 2 - Client
-cd client
+# 6. In a new terminal, start the client (port 3000)
+cd ../client
 npm start
 ```
 
-### Environment Variables
+Open **http://localhost:3000** — the landing page is ready!
 
-**Server (.env):**
+---
+
+## 📧 Notification Setup
+
+### Email (Resend)
+1. Register at [resend.com](https://resend.com)
+2. Create an API Key in Dashboard
+3. Add to `server/.env`:
 ```env
-PORT=5001
-MONGODB_URI=mongodb://localhost:27017/premium-estate
-JWT_SECRET=your-secret-key
-NODE_ENV=development
+RESEND_API_KEY=re_your_api_key_here
+EMAIL_FROM=noreply@premiumestatecrm.com
+ADMIN_EMAIL=your_email@gmail.com
 ```
 
-**Client (.env):**
+### SMS (Twilio or SMSC.ru)
 ```env
-REACT_APP_API_URL=http://localhost:5001
-NODE_ENV=development
+# Twilio
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# Or SMSC.ru (for Russia)
+SMSC_LOGIN=your_login
+SMSC_PASSWORD=your_password
+SMSC_SENDER=PremiumEstate
 ```
+
+Without SMS keys, notifications are logged to the server console (mock mode).
+
+---
+
+## 🎨 Design System
+
+### Color Palette
+| Palette | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 |
+|---------|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| **Gold** | #FFFDF5 | #FFF9E6 | #F5E6B8 | #F5D076 | #E8C46B | **#D4AF37** | #B8962E | #9C7D25 | #7A621D | #584715 |
+| **Platinum** | #F9FAFB | #F3F4F6 | #E5E7EB | #D1D5DB | #9CA3AF | **#6B7280** | #4B5563 | #374151 | #1F2937 | #111827 |
+| **Bronze** | #FFF8F0 | #FFE8CC | #FFD1A3 | #FFB575 | #FF9947 | **#FF7D19** | #E66600 | #B34F00 | #803800 | #4D2100 |
+
+### Premium Components
+| Component | Description |
+|-----------|-------------|
+| **PremiumCard** | Card with 3D parallax, glow, shimmer effects |
+| **MagneticButton** | Button with cursor attraction physics |
+| **ScrollRevealPro** | 7 scroll-reveal animation directions |
+| **CommandPalette** | Global navigation via `Cmd+K` |
+| **ParticleUniverse** | Three.js 3D particle background |
+
+### Keyboard Shortcuts
+| Key | Action |
+|-----|--------|
+| `Cmd+K` / `Ctrl+K` | Open Command Palette |
+| `Esc` | Close modals |
+
+---
+
+## 🔒 Security
+
+- **JWT with refresh token** — automatic session renewal
+- **Rate limiting** — brute force and spam protection
+- **Helmet** — HTTP security headers
+- **Password validation** — complexity + password history
+- **Account lockout** — after failed attempts
+- **Input sanitization** — all incoming data validated
+- **Audit logging** — critical actions logged
 
 ---
 
@@ -194,946 +219,111 @@ NODE_ENV=development
 
 ```
 PremiumEstateCRM/
-├── client/                 # React frontend
-│   ├── public/            # Static files
+├── client/                          # React Frontend
 │   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   │   ├── property/  # Property-specific components
-│   │   │   ├── Modern*.jsx # Landing page components
+│   │   ├── components/
+│   │   │   ├── ui/                  # PremiumCard, MagneticButton
+│   │   │   ├── animations/          # ScrollRevealPro
+│   │   │   ├── effects/             # ParticleUniverse
+│   │   │   ├── skeletons/           # Loading skeletons
 │   │   │   └── ...
-│   │   ├── views/         # Page components
-│   │   │   ├── admin/     # Admin pages
-│   │   │   ├── public/    # Public pages
-│   │   │   └── auth/      # Auth pages
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── utils/         # Utility functions
-│   │   ├── services/      # API services
-│   │   ├── theme/         # Chakra UI theme
-│   │   └── i18n/          # Translations
-│   └── package.json
+│   │   ├── hooks/                   # Custom React hooks
+│   │   ├── views/
+│   │   │   ├── admin/               # Admin dashboard pages
+│   │   │   └── public/              # Public catalog pages
+│   │   ├── redux/                   # Redux Toolkit store
+│   │   ├── services/                # API client (JS + TS)
+│   │   ├── theme/                   # Chakra UI theme
+│   │   ├── styles/                  # Premium CSS effects
+│   │   ├── types/                   # TypeScript types
+│   │   └── utils/                   # Helpers, validators
+│   └── public/
+│       ├── manifest.json            # PWA manifest
+│       └── service-worker.js        # PWA service worker
 │
-├── server/                # Node.js backend
-│   ├── controllers/       # Route controllers
-│   ├── models/           # MongoDB schemas
-│   ├── routes/           # API routes
-│   ├── middlewares/      # Auth, validation
-│   └── index.js          # Entry point
+├── server/                          # Node.js Backend
+│   ├── controllers/                 # Route handlers
+│   ├── model/schema/                # Mongoose models
+│   ├── services/
+│   │   ├── notificationService.js   # Email + SMS
+│   │   ├── websocket.js             # Real-time updates
+│   │   └── mediaService.js          # File management
+│   ├── middelwares/
+│   │   ├── auth.js                  # JWT + refresh tokens
+│   │   ├── cache.js                 # Response caching
+│   │   ├── auditLog.js              # Activity logging
+│   │   └── passwordValidator.js     # Password strength
+│   └── scripts/
+│       └── createIndexes.js         # MongoDB indexes
 │
-└── README.md
+└── README.md                        # This file
 ```
 
 ---
 
-## 🎨 Design Features
+## 🧪 Testing
 
-### Premium UI/UX
-- **Glassmorphism Effects** - Modern frosted glass design
-- **Smooth Animations** - 40+ CSS animations
-- **Dark Mode** - System-aware theme switching
-- **Responsive Design** - Mobile-first approach
-- **Accessibility** - WCAG 2.1 compliant
+```bash
+# Server
+cd server
+npm test              # Run tests
+npm run test:watch    # Watch mode
 
-### Visual Effects
-- Mouse-following glow effects
-- Floating gradient orbs
-- Shimmer particles
-- Parallax backgrounds
-- Card hover animations
-- Gradient borders
-
----
-
-## 📊 Tech Stack
-
-### Frontend
-- **React 17** - UI library
-- **Chakra UI** - Component library
-- **React Router** - Navigation
-- **i18next** - Internationalization
-- **Redux Toolkit** - State management
-- **React Query** - Data fetching
-- **Formik** - Form handling
-
-### Backend
-- **Node.js** - Runtime
-- **Express** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM
-- **JWT** - Authentication
-- **Bcrypt** - Password hashing
-- **Multer** - File uploads
-
-### DevOps
-- **Git** - Version control
-- **npm** - Package manager
-
----
-
-## 🔑 Key Routes
-
-### Public Routes
-```
-/                    - Homepage
-/offers              - Property catalog
-/property/:slug      - Property details
-/favorites           - Saved properties
-/offers/compare      - Compare properties
-/auth/sign-in        - Login
-/auth/sign-up        - Register
-```
-
-### Admin Routes
-```
-/admin/dashboard     - Admin dashboard
-/admin/analytics     - Analytics dashboard
-/admin/leads         - Lead management (Kanban)
-/admin/properties    - Property management
-/admin/users         - User management
-/admin/contacts      - Contacts CRM
-/admin/opportunities - Opportunities
-/admin/invoices      - Invoices
-/admin/reports       - Reports
+# Client
+cd client
+npm test              # Run tests
 ```
 
 ---
 
-## 📖 User Guide
+## 📦 Deployment
 
-### For Property Buyers
+### Production .env
+```env
+NODE_ENV=production
+DB_URL=mongodb+srv://user:pass@cluster.mongodb.net/PremiumEstateDB
+RESEND_API_KEY=re_your_key
+EMAIL_FROM=noreply@premiumestatecrm.com
+ADMIN_EMAIL=your_email@gmail.com
+JWT_SECRET=your-production-secret
+JWT_EXPIRES_IN=7d
+PORT=5001
+CLIENT_URL=https://yourdomain.com
+```
 
-1. **Browse Properties**
-   - Visit `/offers` to see all listings
-   - Use filters to narrow down search
-   - Save favorites for later
+### Build
+```bash
+# Client
+cd client
+npm run build
 
-2. **View Details**
-   - Click on any property for full details
-   - View photo gallery
-   - Check location on map
-   - Read property description
-
-3. **Take Action**
-   - Schedule a viewing
-   - Request more information
-   - Make an offer
-   - Compare with other properties
-
-### For Real Estate Agents
-
-1. **Manage Properties**
-   - Add new listings
-   - Upload photos and documents
-   - Update property status
-   - Track views and leads
-
-2. **Handle Leads**
-   - View lead pipeline (Kanban)
-   - Update lead status
-   - Add notes and follow-ups
-   - Schedule viewings
-
-3. **Analyze Performance**
-   - Check analytics dashboard
-   - View popular properties
-   - Track conversion rates
-   - Export reports
-
-### For Administrators
-
-1. **User Management**
-   - Create/edit users
-   - Assign roles
-   - Manage permissions
-   - Monitor activity
-
-2. **System Configuration**
-   - Custom fields
-   - Email templates
-   - Validation rules
-   - Module settings
-
----
-
-## 🔒 Security Features
-
-- JWT authentication
-- Password hashing (bcrypt)
-- Role-based access control
-- Input validation
-- XSS protection
-- CSRF protection
-- Rate limiting ready
-
----
-
-## 📈 Performance
-
-- **60fps** animations
-- **Lazy loading** components
-- **Code splitting** for faster loads
-- **Image optimization**
-- **Caching** strategies
-- **MongoDB indexing**
-
----
-
-## 🌍 Languages
-
-Currently supported:
-- 🇬🇧 English (EN)
-- 🇷🇺 Russian (RU)
+# Server
+cd server
+NODE_ENV=production npm start
+```
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions from the community! Please read our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
-
-### Quick Start for Contributors
-
-```bash
-# Fork the repository
-git clone https://github.com/YOUR_USERNAME/PremiumEstateCRM.git
-cd PremiumEstateCRM
-
-# Install all dependencies
-npm run install-all
-
-# Start development servers
-npm run dev
-```
-
-### Ways to Contribute
-
-- 🐛 **Report bugs** - Found a bug? [Create an issue](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=bug_report.md)
-- 🔧 **Fix bugs** - Submit a PR with a fix
-- ✨ **New features** - Propose and implement new functionality
-- 📝 **Documentation** - Improve or add documentation
-- 🌍 **Translations** - Help translate the project
-- 🧪 **Testing** - Add tests or improve test coverage
-- 💡 **Ideas** - Share your ideas via [feature requests](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=feature_request.md)
-- 🎨 **Design** - Suggest UI/UX improvements
-
-### Good First Issues
-
-If you're new to the project, look for issues labeled:
-- [`good first issue`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/good%20first%20issue) - Perfect for beginners
-- [`help wanted`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/help%20wanted) - We need your help!
-- [`bug`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/bug) - Bug fixes are always welcome
-
-### Pull Request Process
-
-1. Create feature branch (`git checkout -b feature/AmazingFeature`)
-2. Make your changes
-3. Run tests and linting
-4. Commit changes (`git commit -m 'Add AmazingFeature'`)
-5. Push to branch (`git push origin feature/AmazingFeature`)
-6. Open a [Pull Request](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
-
-For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## 🌟 Community
-
-### Connect with Us
-
-- 💬 [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions) - General discussions
-- 🐛 [Issue Tracker](https://github.com/LOSTFlam/PremiumEstateCRM/issues) - Bug reports and feature requests
-- 📧 **Contact:** Александр Авдеев (LOSTFlam) - support@premiumestate.com
-- 📚 [Documentation](README.md) - Project documentation
-
-### Show Your Support
-
-If you find this project helpful, please consider:
-
-- ⭐ **Starring the repository** - It helps others discover the project!
-- 🍴 **Forking** - Create your own version and experiment
-- 📢 **Sharing** - Share with colleagues and on social media
-- 💰 **Sponsoring** - (Coming soon) Support development financially
-
-### Contributors
-
-This project exists thanks to all the people who contribute.
-
-<a href="https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LOSTFlam/PremiumEstateCRM" alt="Contributors" />
-</a>
-
-### Backers and Sponsors
-
-_Sponsorship opportunities coming soon!_
-
----
-
-## 📝 Changelog
-
-### Version 0.4.1.26 (Latest) - Accessibility Improvements
-**♿ Accessibility Fixes:**
-- Fixed all label htmlFor associations (Input, Textarea, Slider, RadioGroup, Checkbox)
-- Added id to all form fields in commonForm component
-- Fixed date inputs in advanceSearch (From/To fields)
-- Fixed customView Input fields (text, tel types)
-- Fixed Parking field and all custom property fields
-- All label htmlFor now match element id
-
-**🐛 DOM Nesting Fixes:**
-- Fixed 14 admin views (Text → Flex in Action columns)
-- Fixed: opportunities, property, account, contact
-- Fixed: dynamicPage, emailTemplate, invoice, newQuotes
-- Fixed: opportunityproject, phoneCall, quotes, task, users, bankDetails
-
-**⚠️ Bug Fixes:**
-- Fixed duplicate key warnings (added index to option keys)
-- Removed duplicate Flex imports
-- Cleaned up all React console warnings
-- Fixed select/radio option keys in commonForm and customView
-
-**📊 Impact:**
-- Improved form accessibility for screen readers
-- Better browser autofill support
-- Cleaner console output
-- Enhanced user experience
-
-### Version 0.3.1.26
-**✨ New Features:**
-- Analytics Dashboard with 6 key metrics
-- Lead Kanban Board with 7 statuses
-- Enhanced Favorites with PDF export
-- Improved Compare page
-- Dark theme toggle
-- Property detail page with gallery
-- Advanced search filters
-- Lead capture forms
-
-**🐛 Bug Fixes:**
-- Fixed React warnings
-- Fixed DOM nesting issues
-- Fixed memory leaks
-- Removed unused code
-
-**⚡ Performance:**
-- Optimized animations
-- Reduced bundle size
-- Improved load times
-
-### Version 0.2.0
-- Initial public release
-- Basic property management
-- User authentication
-- CRM modules
-
----
-
-## 📞 Support
-
-- **Contact:** Александр Авдеев (LOSTFlam)
-- **Email:** support@premiumestate.com
-- **Documentation:** See `/docs` folder
-- **Issues:** [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
-- **Security:** See [SECURITY.md](SECURITY.md) for reporting vulnerabilities
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Александр Авдеев (LOSTFlam)**
-- GitHub: [@LOSTFlam](https://github.com/LOSTFlam)
-- Project: [Premium Estate CRM](https://github.com/LOSTFlam/PremiumEstateCRM)
-- Email: support@premiumestate.com
-
----
-
-## 🙏 Acknowledgments
-
-- Chakra UI team for amazing components
-- React community for excellent documentation
-- All contributors and supporters
-
----
-
-## 📊 Statistics
-
-- **15+** Core Features
-- **40+** Animations
-- **6** Admin Modules
-- **7** Lead Statuses
-- **2** Languages
-- **100%** Responsive
-
----
-
-**Made with ❤️ for Real Estate Professionals**
-
-⭐ Star this repo if you find it helpful!
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 <div align="center">
 
-### 🌍 Выберите язык / Select Language
+**Made with ❤️ by [LOSTFlam](https://github.com/LOSTFlam)**
 
-| [🇬🇧 English (вверху)](#-premium-estate-crm) | [🇷🇺 Русский (ниже)](#-premium-estate-crm-1) |
-|---|---|
-
-</div>
-
----
-
-# 🏠 Premium Estate CRM (Русский)
-
-[⬆️ Вернуться к English version](#-premium-estate-crm)
-
-Современная система управления недвижимостью премиум-класса с расширенными возможностями для агентств и частных брокеров.
-
-![Версия](https://img.shields.io/badge/версия-0.3.2.26-blue)
-![Лицензия](https://img.shields.io/badge/лицензия-MIT-green)
-![React](https://img.shields.io/badge/React-17.0.2-blue)
-![Node](https://img.shields.io/badge/Node-14+-green)
-
----
-
-## ✨ Возможности
-
-### 🌐 Публичный портал
-
-#### Поиск недвижимости
-- **Расширенный поиск и фильтры** - по цене, площади, количеству комнат, типу объекта, локации
-- **Страница объекта** - полная информация с галереей, видео-турами, планировками
-- **Интерактивная карта** - просмотр объектов на карте (интеграция с Google Maps/Mapbox)
-- **Похожие объекты** - AI-рекомендации недвижимости
-
-#### Инструменты пользователя
-- **Избранное** - сохранение объектов с экспортом в PDF и публикацией
-- **Сравнение** - сравнение до 3 объектов бок о бок
-- **Формы захвата лидов** - запись на просмотр, запрос информации, отправка предложения
-- **Мультиязычность** - поддержка русского и английского языков
-- **Тёмная/светлая тема** - автоопределение системных настроек
-
-### 👤 Личный кабинет пользователя
-- Сохранённые объекты и поиски
-- Назначенные просмотры
-- История коммуникаций
-- Управление документами
-
-### 🔧 Панель администратора
-
-#### Аналитика
-- **6 ключевых метрик** - просмотры, лиды, избранные, сравнения, конверсия, объекты
-- **Индикаторы роста** - анализ трендов с процентными изменениями
-- **Просмотры по типам** - диаграмма распределения по типам недвижимости
-- **Последняя активность** - лента действий пользователей в реальном времени
-- **Популярные объекты** - топ объектов с показателями конверсии
-- **Экспорт отчётов** - выгрузка в PDF
-
-#### Управление лидами
-- **Канбан-доска** - визуальная воронка с 7 статусами
-- **Статусы**: Новый → Связались → Квалифицирован → Просмотр → Предложение → Закрыт/Потерян
-- **Быстрые действия** - смена статуса, добавление заметок, контакт с лидом
-- **Поиск и фильтрация** - поиск по имени, email, объекту, статусу
-- **История коммуникаций** - отслеживание всех взаимодействий
-
-#### Управление объектами
-- Добавление/редактирование/удаление объектов
-- Массовый импорт/экспорт (CSV, Excel)
-- Управление фото с drag-and-drop
-- Загрузка планировок
-- Интеграция видео-туров
-- Система верификации объектов
-
-#### Управление пользователями
-- Ролевая модель доступа
-- Права пользователей
-- Журналы активности
-- Управление аккаунтами
-
-#### Дополнительные модули
-- **Контакты** - CRM-управление контактами
-- **Возможности** - отслеживание сделок
-- **Счета и предложения** - финансовые документы
-- **Встречи и задачи** - управление расписанием
-- **Шаблоны писем** - готовые email-кампании
-- **Звонки** - логирование звонков
-- **Документы** - управление файлами
-- **Отчёты** - генерация пользовательских отчётов
-- **Пользовательские поля** - гибкая структура данных
-
----
-
-## 🚀 Быстрый старт
-
-### Требования
-- Node.js 14+
-- MongoDB 4.4+
-- npm или yarn
-
-### Установка
-
-```bash
-# Клонировать репозиторий
-git clone https://github.com/LOSTFlam/PremiumEstateCRM.git
-cd PremiumEstateCRM
-
-# Установить зависимости сервера
-cd server
-npm install
-
-# Установить зависимости клиента
-cd ../client
-npm install
-
-# Настроить переменные окружения
-# Сервер: server/.env
-# Клиент: client/.env
-
-# Запустить серверы разработки
-# Терминал 1 - Сервер
-cd server
-npm start
-
-# Терминал 2 - Клиент
-cd client
-npm start
-```
-
-### Переменные окружения
-
-**Сервер (.env):**
-```env
-PORT=5001
-MONGODB_URI=mongodb://localhost:27017/premium-estate
-JWT_SECRET=your-secret-key
-NODE_ENV=development
-```
-
-**Клиент (.env):**
-```env
-REACT_APP_API_URL=http://localhost:5001
-NODE_ENV=development
-```
-
----
-
-## 📁 Структура проекта
-
-```
-PremiumEstateCRM/
-├── client/                 # React фронтенд
-│   ├── public/            # Статические файлы
-│   ├── src/
-│   │   ├── components/    # Переиспользуемые компоненты
-│   │   │   ├── property/  # Компоненты объектов
-│   │   │   ├── Modern*.jsx # Компоненты лендинга
-│   │   │   └── ...
-│   │   ├── views/         # Страницы
-│   │   │   ├── admin/     # Админ-панель
-│   │   │   ├── public/    # Публичные страницы
-│   │   │   └── auth/      # Страницы авторизации
-│   │   ├── hooks/         # Кастомные React-хуки
-│   │   ├── utils/         # Утилиты
-│   │   ├── services/      # API-сервисы
-│   │   ├── theme/         # Тема Chakra UI
-│   │   └── i18n/          # Переводы
-│   └── package.json
-│
-├── server/                # Node.js бэкенд
-│   ├── controllers/       # Контроллеры маршрутов
-│   ├── models/           # MongoDB схемы
-│   ├── routes/           # API маршруты
-│   ├── middlewares/      # Аутентификация, валидация
-│   └── index.js          # Точка входа
-│
-└── README.md
-```
-
----
-
-## 🎨 Дизайн
-
-### Премиум UI/UX
-- **Глассморфизм** - современный дизайн с эффектом матового стекла
-- **Плавные анимации** - 40+ CSS анимаций
-- **Тёмная тема** - переключение с учётом системных настроек
-- **Адаптивный дизайн** - mobile-first подход
-- **Доступность** - соответствие WCAG 2.1
-
-### Визуальные эффекты
-- Свечение, следующее за курсором
-- Плавающие градиентные орбы
-- Мерцающие частицы
-- Параллакс фоны
-- Анимации при наведении на карточки
-- Градиентные границы
-
----
-
-## 📊 Технологический стек
-
-### Фронтенд
-- **React 17** - UI библиотека
-- **Chakra UI** - библиотека компонентов
-- **React Router** - навигация
-- **i18next** - интернационализация
-- **Redux Toolkit** - управление состоянием
-- **React Query** - загрузка данных
-- **Formik** - работа с формами
-
-### Бэкенд
-- **Node.js** - среда выполнения
-- **Express** - веб-фреймворк
-- **MongoDB** - база данных
-- **Mongoose** - ODM
-- **JWT** - аутентификация
-- **Bcrypt** - хеширование паролей
-- **Multer** - загрузка файлов
-
-### DevOps
-- **Git** - контроль версий
-- **npm** - менеджер пакетов
-
----
-
-## 🔑 Основные маршруты
-
-### Публичные маршруты
-```
-/                    - Главная страница
-/offers              - Каталог недвижимости
-/property/:slug      - Страница объекта
-/favorites           - Избранное
-/offers/compare      - Сравнение объектов
-/auth/sign-in        - Вход
-/auth/sign-up        - Регистрация
-```
-
-### Админ-маршруты
-```
-/admin/dashboard     - Панель администратора
-/admin/analytics     - Аналитика
-/admin/leads         - Управление лидами (Канбан)
-/admin/properties    - Управление объектами
-/admin/users         - Управление пользователями
-/admin/contacts      - Контакты CRM
-/admin/opportunities - Возможности
-/admin/invoices      - Счета
-/admin/reports       - Отчёты
-```
-
----
-
-## 📖 Руководство пользователя
-
-### Для покупателей недвижимости
-
-1. **Просмотр объектов**
-   - Посетите `/offers` для просмотра всех объектов
-   - Используйте фильтры для уточнения поиска
-   - Сохраняйте понравившиеся объекты
-
-2. **Просмотр деталей**
-   - Нажмите на объект для полной информации
-   - Просмотрите фотогалерею
-   - Проверьте расположение на карте
-   - Прочитайте описание объекта
-
-3. **Действия**
-   - Запишитесь на просмотр
-   - Запросите дополнительную информацию
-   - Сделайте предложение
-   - Сравните с другими объектами
-
-### Для риелторов
-
-1. **Управление объектами**
-   - Добавляйте новые объекты
-   - Загружайте фото и документы
-   - Обновляйте статус объекта
-   - Отслеживайте просмотры и лиды
-
-2. **Работа с лидами**
-   - Просматривайте воронку лидов (Канбан)
-   - Обновляйте статус лида
-   - Добавляйте заметки и напоминания
-   - Планируйте просмотры
-
-3. **Анализ эффективности**
-   - Проверяйте панель аналитики
-   - Просматривайте популярные объекты
-   - Отслеживайте конверсию
-   - Экспортируйте отчёты
-
-### Для администраторов
-
-1. **Управление пользователями**
-   - Создание/редактирование пользователей
-   - Назначение ролей
-   - Управление правами доступа
-   - Мониторинг активности
-
-2. **Настройка системы**
-   - Пользовательские поля
-   - Шаблоны писем
-   - Правила валидации
-   - Настройки модулей
-
----
-
-## 🔒 Безопасность
-
-- JWT аутентификация
-- Хеширование паролей (bcrypt)
-- Ролевой контроль доступа
-- Валидация входных данных
-- Защита от XSS
-- Защита от CSRF
-- Готовность к rate limiting
-
----
-
-## 📈 Производительность
-
-- **60fps** анимации
-- **Ленивая загрузка** компонентов
-- **Разделение кода** для ускорения загрузки
-- **Оптимизация изображений**
-- **Стратегии кэширования**
-- **Индексация MongoDB**
-
----
-
-## 🌍 Языки
-
-Поддерживаемые языки:
-- 🇬🇧 Английский (EN)
-- 🇷🇺 Русский (RU)
-
----
-
-## 🤝 Вклад в проект
-
-Мы приветствуем вклады от сообщества! Пожалуйста, ознакомьтесь с нашими [Руководством по внесению вклада](CONTRIBUTING.md) и [Кодексом поведения](CODE_OF_CONDUCT.md) перед началом работы.
-
-### Быстрый старт для контрибьюторов
-
-```bash
-# Форкнуть репозиторий
-git clone https://github.com/ВАШ_НИК/PremiumEstateCRM.git
-cd PremiumEstateCRM
-
-# Установить все зависимости
-npm run install-all
-
-# Запустить серверы разработки
-npm run dev
-```
-
-### Способы внести вклад
-
-- 🐛 **Сообщить об ошибке** - [Создать issue](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=bug_report.md)
-- 🔧 **Исправить ошибки** - Отправить PR с исправлением
-- ✨ **Новые функции** - Предложить и реализовать новую функциональность
-- 📝 **Документация** - Улучшить или добавить документацию
-- 🌍 **Переводы** - Помочь с переводом проекта
-- 🧪 **Тестирование** - Добавить тесты или улучшить покрытие
-- 💡 **Идеи** - Поделиться идеями через [запросы функций](https://github.com/LOSTFlam/PremiumEstateCRM/issues/new?template=feature_request.md)
-- 🎨 **Дизайн** - Предложить улучшения UI/UX
-
-### Задачи для начинающих
-
-Если вы новичок в проекте, ищите issues с метками:
-- [`good first issue`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/good%20first%20issue) - Идеально для начинающих
-- [`help wanted`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/help%20wanted) - Нам нужна ваша помощь!
-- [`bug`](https://github.com/LOSTFlam/PremiumEstateCRM/labels/bug) - Исправления ошибок всегда приветствуются
-
-### Процесс Pull Request
-
-1. Создайте ветку функции (`git checkout -b feature/AmazingFeature`)
-2. Внесите изменения
-3. Запустите тесты и линтинг
-4. Закоммитьте изменения (`git commit -m 'Add AmazingFeature'`)
-5. Отправьте в ветку (`git push origin feature/AmazingFeature`)
-6. Откройте [Pull Request](https://github.com/LOSTFlam/PremiumEstateCRM/pulls)
-
-Подробные инструкции см. в [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## 🌟 Сообщество
-
-### Связь с нами
-
-- 💬 [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions) - Общие обсуждения
-- 🐛 [Issue Tracker](https://github.com/LOSTFlam/PremiumEstateCRM/issues) - Отчеты об ошибках и запросы функций
-- 📧 **Email:** support@premiumestate.com
-- 📚 [Документация](README.md) - Документация проекта
-
-### Поддержите проект
-
-Если вы находите этот проект полезным, пожалуйста:
-
-- ⭐ **Добавьте звезду** - Это поможет другим открыть проект!
-- 🍴 **Форкните** - Создайте свою версию и экспериментируйте
-- 📢 **Поделитесь** - Расскажите коллегам и в соцсетях
-- 💰 **Спонсорство** - (Скоро) Поддержите разработку финансово
-
-### Контрибьюторы
-
-Этот проект существует благодаря всем людям, которые вносят свой вклад.
-
-<a href="https://github.com/LOSTFlam/PremiumEstateCRM/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LOSTFlam/PremiumEstateCRM" alt="Контрибьюторы" />
-</a>
-
-### Бэкеры и спонсоры
-
-_Возможности спонсорства скоро появятся!_
-
----
-
-## 📝 Журнал изменений
-
-### Версия 0.4.1.26 (Текущая) - Улучшения доступности
-**♿ Исправления доступности:**
-- Исправлены все label htmlFor ассоциации (Input, Textarea, Slider, RadioGroup, Checkbox)
-- Добавлен id ко всем полям форм в commonForm
-- Исправлены поля дат в advanceSearch (From/To)
-- Исправлены Input поля в customView (text, tel типы)
-- Исправлено поле Parking и все пользовательские поля объектов
-- Все label htmlFor теперь соответствуют element id
-
-**🐛 Исправления DOM Nesting:**
-- Исправлено 14 admin views (Text → Flex в Action колонках)
-- Исправлено: opportunities, property, account, contact
-- Исправлено: dynamicPage, emailTemplate, invoice, newQuotes
-- Исправлено: opportunityproject, phoneCall, quotes, task, users, bankDetails
-
-**⚠️ Исправления ошибок:**
-- Исправлены предупреждения о дублирующихся ключах (добавлен индекс к option keys)
-- Удалены дублирующиеся импорты Flex
-- Очищены все предупреждения React в консоли
-- Исправлены ключи select/radio опций в commonForm и customView
-
-**📊 Влияние:**
-- Улучшена доступность форм для скринридеров
-- Лучшая поддержка автозаполнения браузера
-- Чище вывод консоли
-- Улучшен пользовательский опыт
-
-### Версия 0.3.2.26
-**✨ Новые функции:**
-- Маршруты и фильтры витрины (Storefront Routes & Filters)
-- Расширенная главная страница с сегментами каталога
-- Живые сигналы витрины (статистика в реальном времени)
-- Высокоинтентные маршруты (быстрый доступ к популярным сценариям)
-- Улучшенная система верификации объектов
-- Подборки объектов (кураторские коллекции)
-- Локационные сигналы на витрине
-- Расширенные фильтры каталога (статус проверки, подборки)
-- Улучшенные переводы всех интерфейсных элементов
-
-**🐛 Исправления:**
-- Улучшена обработка статусов объектов
-- Оптимизирована работа с изображениями
-- Улучшена читаемость текстов на русском языке
-- Исправлены мелкие UI проблемы
-
-**⚡ Производительность:**
-- Оптимизирована загрузка данных витрины
-- Улучшена работа с большими каталогами
-- Снижено количество повторных рендеров
-
-### Версия 0.3.1.26
-**✨ Новые функции:**
-- Панель аналитики с 6 ключевыми метриками
-- Канбан-доска для лидов с 7 статусами
-- Улучшенная страница избранного с экспортом в PDF
-- Улучшенная страница сравнения
-- Переключатель тёмной темы
-- Страница деталей объекта с галереей
-- Расширенные фильтры поиска
-- Формы захвата лидов
-
-**🐛 Исправления:**
-- Исправлены предупреждения React
-- Исправлены проблемы с вложенностью DOM
-- Исправлены утечки памяти
-- Удалён неиспользуемый код
-
-**⚡ Производительность:**
-- Оптимизированы анимации
-- Уменьшен размер бандла
-- Улучшено время загрузки
-
-### Версия 0.2.0
-- Первый публичный релиз
-- Базовое управление объектами
-- Аутентификация пользователей
-- CRM модули
-
----
-
-## 📞 Поддержка
-
-- **Email:** support@premiumestate.com
-- **Документация:** смотрите папку `/docs`
-- **Issues:** [GitHub Issues](https://github.com/LOSTFlam/PremiumEstateCRM/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/LOSTFlam/PremiumEstateCRM/discussions)
-
----
-
-## 📄 Лицензия
-
-Этот проект лицензирован под лицензией MIT - смотрите файл [LICENSE](LICENSE) для деталей.
-
----
-
-## 👨‍💻 Автор
-
-**LOSTFlam**
-- GitHub: [@LOSTFlam](https://github.com/LOSTFlam)
-- Проект: [Premium Estate CRM](https://github.com/LOSTFlam/PremiumEstateCRM)
-
----
-
-## 🙏 Благодарности
-
-- Команда Chakra UI за потрясающие компоненты
-- React сообщество за отличную документацию
-- Все контрибьюторы и поддерживающие
-
----
-
-## 📊 Статистика
-
-- **15+** основных функций
-- **40+** анимаций
-- **6** админ-модулей
-- **7** статусов лидов
-- **2** языка
-- **100%** адаптивность
-
----
-
-**Сделано с ❤️ для профессионалов рынка недвижимости**
-
-⭐ Добавьте звезду репозиторию, если он оказался полезным!
-
----
-
-<div align="center">
-
-### 🌍 Выберите язык / Select Language
-
-| [🇬🇧 English (вверху)](#-premium-estate-crm) | [🇷🇺 Русский (выше)](#-premium-estate-crm-1) |
-|---|---|
-
-[⬆️ Вернуться к началу](#-premium-estate-crm)
+[![GitHub](https://img.shields.io/badge/GitHub-LOSTFlam-181717?style=for-the-badge&logo=github)](https://github.com/LOSTFlam)
 
 </div>
