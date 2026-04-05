@@ -18,6 +18,17 @@
 
 ---
 
+## 🌍 Language / Язык
+
+<div align="center">
+
+| [🇬🇧 English](#-table-of-contents) | [🇷🇺 Русский](#-оглавление) |
+|---|---|
+
+</div>
+
+---
+
 ## 📋 Table of Contents
 
 - [✨ Features](#-features)
@@ -89,8 +100,8 @@
 ┌─────────────────────┴───────────────────────────┐
 │                  Backend (Node.js)               │
 │  ┌──────────┬──────────┬──────────┬──────────┐  │
-│  │ Express  │ Mongoose │ JWT Auth │ Nodemailer│ │
-│  │ 4.x      │ 7.x      │ Refresh  │ / Resend │  │
+│  │ Express  │ Mongoose │ JWT Auth │ Resend   │  │
+│  │ 4.x      │ 7.x      │ Refresh  │ / SMS    │  │
 │  └──────────┴──────────┴──────────┴──────────┘  │
 │  ┌──────────────────────────────────────────┐   │
 │  │  Rate Limiting · Helmet · Compression    │   │
@@ -323,6 +334,251 @@ MIT License — see [LICENSE](LICENSE) for details.
 <div align="center">
 
 **Made with ❤️ by [LOSTFlam](https://github.com/LOSTFlam)**
+
+[![GitHub](https://img.shields.io/badge/GitHub-LOSTFlam-181717?style=for-the-badge&logo=github)](https://github.com/LOSTFlam)
+
+</div>
+
+---
+
+---
+
+# 🇷🇺 Русская версия
+
+## 📋 Оглавление
+
+- [✨ Возможности](#-возможности)
+- [🏗️ Архитектура](#️-архитектура-1)
+- [🚀 Быстрый старт](#-быстрый-старт)
+- [📧 Настройка уведомлений](#-настройка-уведомлений)
+- [🎨 Дизайн-система](#-дизайн-система)
+- [🔒 Безопасность](#-безопасность)
+- [📁 Структура проекта](#-структура-проекта)
+- [🧪 Тестирование](#-тестирование)
+- [📦 Деплой](#-деплой)
+- [🤝 Контрибьюция](#-контрибьюция)
+- [📄 Лицензия](#-лицензия)
+
+---
+
+## ✨ Возможности
+
+### 🏠 Управление недвижимостью
+- **Каталог объектов** — квартиры, дома, участки, коммерция
+- **SEO-оптимизация** — публичные страницы с мета-тегами
+- **Медиа-галерея** — фото, видео, виртуальные туры, документы
+- **Умный поиск** — фильтры по цене, типу, локации, площади
+- **Сравнение объектов** — side-by-side сравнение характеристик
+
+### 👥 CRM и лиды
+- **Kanban-доска** — визуальное управление воронкой продаж
+- **Управление контактами** — полная история взаимодействий
+- **Автоматические уведомления** — email + SMS при новых заявках
+- **Задачи и встречи** — планирование и отслеживание
+- **Счета и котировки** — генерация PDF-документов
+
+### 📊 Аналитика
+- **Дашборд в реальном времени** — KPI, графики, метрики
+- **Отчёты** — конверсия, источники трафика, доход
+- **Экспорт данных** — Excel, CSV, PDF
+
+### 🎨 Премиум UI/UX
+- **Ethereal Luxury дизайн** — glassmorphism, золотые акценты
+- **Анимации** — 40+ keyframes, Framer Motion transitions
+- **Page transitions** — плавные переходы между страницами
+- **Command Palette** — навигация через `Cmd+K`
+- **Scroll-to-top** — кнопка возврата наверх
+- **Тёмная и светлая темы** — с автоопределением системы
+- **PWA** — установка на устройство, offline-режим
+
+### 🔔 Уведомления
+- **Email** — через Resend (красивые HTML-шаблоны)
+- **SMS** — через Twilio или SMSC.ru (mock в разработке)
+- **Real-time** — WebSocket для мгновенных обновлений
+
+---
+
+## 🏗️ Архитектура
+
+См. [Architecture](#️-architecture) — схема идентична.
+
+---
+
+## 🚀 Быстрый старт
+
+### Предварительные требования
+- **Node.js** 18+ (рекомендуется 25+)
+- **MongoDB** — локальная или MongoDB Atlas
+- **npm** или **yarn**
+
+### Установка
+
+```bash
+# 1. Клонируйте репозиторий
+git clone https://github.com/LOSTFlam/PremiumEstateCRM.git
+cd PremiumEstateCRM
+
+# 2. Установите зависимости сервера
+cd server
+cp .env.example .env
+# Отредактируйте .env — укажите MongoDB URL и Resend API key
+npm install
+
+# 3. Установите зависимости клиента
+cd ../client
+npm install --legacy-peer-deps
+
+# 4. Создайте MongoDB индексы
+cd ../server
+npm run seed:index
+
+# 5. Запустите сервер (порт 5001)
+npm start
+
+# 6. В новом терминале запустите клиент (порт 3000)
+cd ../client
+npm start
+```
+
+Откройте **http://localhost:3000** — главная страница готова!
+
+---
+
+## 📧 Настройка уведомлений
+
+### Email (Resend)
+1. Зарегистрируйтесь на [resend.com](https://resend.com)
+2. Создайте API Key в Dashboard
+3. Добавьте в `server/.env`:
+```env
+RESEND_API_KEY=re_your_api_key_here
+EMAIL_FROM=noreply@premiumestatecrm.com
+ADMIN_EMAIL=cahek1234500000@gmail.com
+```
+
+### SMS (Twilio или SMSC.ru)
+```env
+# Twilio
+TWILIO_ACCOUNT_SID=your_sid
+TWILIO_AUTH_TOKEN=your_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# Или SMSC.ru (для РФ)
+SMSC_LOGIN=your_login
+SMSC_PASSWORD=your_password
+SMSC_SENDER=PremiumEstate
+```
+
+Без SMS-ключей уведомления логируются в консоль сервера (mock-режим).
+
+---
+
+## 🎨 Дизайн-система
+
+### Цветовая палитра
+| Палитра | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 |
+|---------|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+| **Gold** | #FFFDF5 | #FFF9E6 | #F5E6B8 | #F5D076 | #E8C46B | **#D4AF37** | #B8962E | #9C7D25 | #7A621D | #584715 |
+| **Platinum** | #F9FAFB | #F3F4F6 | #E5E7EB | #D1D5DB | #9CA3AF | **#6B7280** | #4B5563 | #374151 | #1F2937 | #111827 |
+| **Bronze** | #FFF8F0 | #FFE8CC | #FFD1A3 | #FFB575 | #FF9947 | **#FF7D19** | #E66600 | #B34F00 | #803800 | #4D2100 |
+
+### Премиум-компоненты
+| Компонент | Описание |
+|-----------|----------|
+| **PremiumCard** | Карточка с 3D-параллаксом, свечением, shimmer-эффектом |
+| **MagneticButton** | Кнопка с физикой притяжения к курсору |
+| **ScrollRevealPro** | 7 направлений анимации появления при скролле |
+| **CommandPalette** | Глобальная навигация через `Cmd+K` |
+| **ParticleUniverse** | Three.js 3D-частицы на фоне |
+
+### Горячие клавиши
+| Клавиша | Действие |
+|---------|----------|
+| `Cmd+K` / `Ctrl+K` | Открыть Command Palette |
+| `Esc` | Закрыть модальные окна |
+
+---
+
+## 🔒 Безопасность
+
+- **JWT с refresh token** — автоматическое обновление сессии
+- **Rate limiting** — защита от брутфорса и спама
+- **Helmet** — HTTP security headers
+- **Password validation** — сложность + история паролей
+- **Account lockout** — блокировка после failed attempts
+- **Input sanitization** — валидация всех входящих данных
+- **Audit logging** — логирование критических действий
+
+---
+
+## 📁 Структура проекта
+
+См. [Project Structure](#-project-structure) — структура идентична.
+
+---
+
+## 🧪 Тестирование
+
+```bash
+# Сервер
+cd server
+npm test              # Запуск тестов
+npm run test:watch    # Watch mode
+
+# Клиент
+cd client
+npm test              # Запуск тестов
+```
+
+---
+
+## 📦 Деплой
+
+### Production .env
+```env
+NODE_ENV=production
+DB_URL=mongodb+srv://user:pass@cluster.mongodb.net/PremiumEstateDB
+RESEND_API_KEY=re_your_key
+EMAIL_FROM=noreply@premiumestatecrm.com
+ADMIN_EMAIL=cahek1234500000@gmail.com
+JWT_SECRET=your-production-secret
+JWT_EXPIRES_IN=7d
+PORT=5001
+CLIENT_URL=https://yourdomain.com
+```
+
+### Сборка
+```bash
+# Клиент
+cd client
+npm run build
+
+# Сервер
+cd server
+NODE_ENV=production npm start
+```
+
+---
+
+## 🤝 Контрибьюция
+
+1. Fork репозиторий
+2. Создайте feature-ветку (`git checkout -b feature/amazing-feature`)
+3. Commit изменения (`git commit -m 'Add amazing feature'`)
+4. Push в ветку (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
+
+---
+
+## 📄 Лицензия
+
+MIT License — см. [LICENSE](LICENSE) для деталей.
+
+---
+
+<div align="center">
+
+**Сделано с ❤️ от [LOSTFlam](https://github.com/LOSTFlam)**
 
 [![GitHub](https://img.shields.io/badge/GitHub-LOSTFlam-181717?style=for-the-badge&logo=github)](https://github.com/LOSTFlam)
 
