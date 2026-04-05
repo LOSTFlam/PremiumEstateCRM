@@ -12,15 +12,18 @@ import AdminNavbarLinks from "components/navbar/NavbarLinksAdmin";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import i18next from "i18next";
-  const isHidden = useHideOnScroll({ offset: 120 });
+import useHideOnScroll from "hooks/useHideOnScroll";
 
-  const changeNavbar = () => {
-    if (window?.scrollY > 1) {
-      setScrolled(true);
-    } else {
-      setScrolled(false);
-    }
-  };
+import { AiOutlineMenuUnfold } from "react-icons/ai";
+import { AiOutlineMenuFold } from "react-icons/ai";
+
+export default function AdminNavbar(props) {
+  const [scrolled, setScrolled] = useState(false);
+  const isHidden = useHideOnScroll({
+    offset: 104,
+    delta: 10,
+    targetId: props?.scrollTargetId,
+  });
 
   useEffect(() => {
     const scrollContainer =
@@ -90,10 +93,10 @@ import i18next from "i18next";
       borderWidth="1.5px"
       borderStyle="solid"
       zIndex={1}
-      transform={isHidden ? "translateY(calc(-100% - 24px))" : "translateY(0)"}
-      opacity={isHidden ? 0 : 1}
-      pointerEvents={isHidden ? "none" : "auto"}
-      transition="transform 0.28s ease, opacity 0.28s ease, box-shadow 0.25s linear, background-color 0.25s linear, filter 0.25s linear, border-color 0.25s linear"
+      transitionDelay="0s, 0s, 0s, 0s"
+      transitionDuration=" 0.25s, 0.25s, 0.25s, 0s"
+      transitionProperty="box-shadow, background-color, filter, border, transform, opacity"
+      transitionTimingFunction="linear, linear, linear, linear"
       alignItems={{ xl: "center" }}
       display={secondary ? "block" : "flex"}
       minH="75px"

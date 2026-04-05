@@ -36,33 +36,21 @@ import {
   normalizeStatus,
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
-import { useUsdRubRate } from "hooks/useUsdRubRate";
 
 const metricText = (value, fallback = "—") => {
-  if (
-    value === null ||
-    value === undefined ||
-    value === "" ||
-    Number(value) === 0
-  ) {
+  if (value === null || value === undefined || value === "" || Number(value) === 0) {
     return fallback;
   }
   return String(value);
 };
 
 const propertyTypeLabel = (property, t) => {
-  const key =
-    property?.propertyTypeKey ||
-    normalizePropertyTypeKey(property?.propertyType);
+  const key = property?.propertyTypeKey || normalizePropertyTypeKey(property?.propertyType);
   if (key === "house") return t?.("publicListing.houses") || "House";
-  if (key === "apartment")
-    return t?.("publicListing.apartments") || "Apartment";
+  if (key === "apartment") return t?.("publicListing.apartments") || "Apartment";
   if (key === "land") return t?.("publicListing.plots") || "Land";
-  if (key === "commercial")
-    return t?.("publicListing.commercial") || "Commercial";
-  return (
-    property?.propertyType || t?.("publicListing.propertyType") || "Property"
-  );
+  if (key === "commercial") return t?.("publicListing.commercial") || "Commercial";
+  return property?.propertyType || (t?.("publicListing.propertyType") || "Property");
 };
 
 const buildPropertyHref = (property) => {
@@ -70,8 +58,7 @@ const buildPropertyHref = (property) => {
   return slug ? `/offers/slug/${slug}` : `/offers/${property?._id}`;
 };
 
-const buildShareUrl = (property) =>
-  `${window.location.origin}${buildPropertyHref(property)}`;
+const buildShareUrl = (property) => `${window.location.origin}${buildPropertyHref(property)}`;
 
 const actionStyles = {
   bg: "rgba(7, 12, 20, 0.56)",
@@ -99,23 +86,17 @@ const metricBlocks = (property, t) => [
 
 const assetBlocks = (property, t) => [
   {
-    label:
-      t?.("publicListing.photosCount", { count: getPhotoCount(property) }) ||
-      "Photos",
+    label: t?.("publicListing.photosCount", { count: getPhotoCount(property) }) || "Photos",
     icon: MdOutlinePhotoLibrary,
     value: String(getPhotoCount(property)),
   },
   {
-    label:
-      t?.("publicListing.docsCount", { count: getDocumentCount(property) }) ||
-      "Docs",
+    label: t?.("publicListing.docsCount", { count: getDocumentCount(property) }) || "Docs",
     icon: MdOutlineDescription,
     value: String(getDocumentCount(property)),
   },
   {
-    label:
-      t?.("publicListing.plansCount", { count: getFloorPlanCount(property) }) ||
-      "Plans",
+    label: t?.("publicListing.plansCount", { count: getFloorPlanCount(property) }) || "Plans",
     icon: FiSearch,
     value: String(getFloorPlanCount(property)),
   },
@@ -128,8 +109,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
   onFavoriteToggle,
   onCompareToggle,
 }) {
-  const { t, i18n } = useTranslation();
-  const { data: rateData } = useUsdRubRate();
+  const { t } = useTranslation();
   const toast = useToast();
   const status = normalizeStatus(property?.listingStatus, t);
   const typeLabel = propertyTypeLabel(property, t);
@@ -158,7 +138,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
       as={RouterLink}
       to={propertyHref}
       className="property-card"
-      borderRadius="36px"
+      borderRadius="40px"
       overflow="hidden"
       bg={publicBrand.gradients.panelLight}
       border="1px solid rgba(9,18,32,0.06)"
@@ -171,9 +151,8 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         left: 0,
         right: 0,
         bottom: 0,
-        borderRadius: "36px",
-        background:
-          "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(212,175,55,0.03) 100%)",
+        borderRadius: "40px",
+        background: "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(212,175,55,0.03) 100%)",
         opacity: 0,
         transition: "opacity 0.4s ease",
         zIndex: 0,
@@ -182,23 +161,22 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         _before: {
           opacity: 1,
         },
-        transform: "translateY(-6px)",
-        boxShadow:
-          "0 18px 54px rgba(6, 10, 16, 0.18), 0 0 24px rgba(212, 175, 55, 0.08)",
+        transform: "translateY(-8px) scale(1.01)",
+        boxShadow: "0 15px 50px rgba(0, 0, 0, 0.2), 0 0 30px rgba(212, 175, 55, 0.1), 0 0 60px rgba(255, 255, 255, 0.05)",
       }}
     >
-      <Box position="relative" overflow="hidden" borderRadius="32px 32px 0 0">
+      <Box position="relative" overflow="hidden" borderRadius="34px 34px 0 0">
         <Box
           className="property-image-wrapper"
           transition="transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
           _hover={{
-            transform: "scale(1.05)",
+            transform: "scale(1.08)",
           }}
         >
           <Image
             src={getPrimaryImage(property)}
             alt={property?.name || property?.propertyAddress}
-            h={{ base: "300px", md: "340px", xl: "360px" }}
+            h="320px"
             w="100%"
             objectFit="cover"
           />
@@ -213,13 +191,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           }}
         />
 
-        <HStack
-          position="absolute"
-          top={4}
-          left={4}
-          spacing={2}
-          flexWrap="wrap"
-        >
+        <HStack position="absolute" top={4} left={4} spacing={2} flexWrap="wrap">
           <Badge
             px={3.5}
             py={1.5}
@@ -264,14 +236,10 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
             color={isFavorite ? publicBrand.colors.ink : actionStyles.color}
             border={actionStyles.border}
             transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
-              bg: isFavorite
-                ? publicBrand.gradients.brass
-                : "rgba(7, 12, 20, 0.76)",
+            _hover={{ 
+              bg: isFavorite ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
               transform: "scale(1.15)",
-              boxShadow: isFavorite
-                ? "0 0 20px rgba(212, 175, 55, 0.5)"
-                : "0 0 15px rgba(255, 255, 255, 0.2)",
+              boxShadow: isFavorite ? "0 0 20px rgba(212, 175, 55, 0.5)" : "0 0 15px rgba(255, 255, 255, 0.2)",
             }}
             _active={{ transform: "scale(0.95)" }}
             onClick={(event) => {
@@ -288,14 +256,10 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
             color={isInCompare ? publicBrand.colors.ink : actionStyles.color}
             border={actionStyles.border}
             transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
-              bg: isInCompare
-                ? publicBrand.gradients.brass
-                : "rgba(7, 12, 20, 0.76)",
+            _hover={{ 
+              bg: isInCompare ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
               transform: "scale(1.15)",
-              boxShadow: isInCompare
-                ? "0 0 20px rgba(212, 175, 55, 0.5)"
-                : "0 0 15px rgba(255, 255, 255, 0.2)",
+              boxShadow: isInCompare ? "0 0 20px rgba(212, 175, 55, 0.5)" : "0 0 15px rgba(255, 255, 255, 0.2)",
             }}
             _active={{ transform: "scale(0.95)" }}
             onClick={(event) => {
@@ -312,7 +276,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
             color={actionStyles.color}
             border={actionStyles.border}
             transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
+            _hover={{ 
               bg: "rgba(7, 12, 20, 0.76)",
               transform: "scale(1.15)",
               boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)",
@@ -332,7 +296,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
                 letterSpacing="-0.04em"
                 color="white"
               >
-                {formatPrice(property, t, i18n.language, rateData)}
+                {formatPrice(property?.listingPrice, t)}
               </Text>
               <Text color="whiteAlpha.700" fontSize="sm">
                 {t?.("publicListing.priceLabel") || "Price"}
@@ -346,151 +310,85 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
               border="1px solid rgba(227, 211, 184, 0.14)"
               backdropFilter="blur(10px)"
             >
-              <Text
-                color="whiteAlpha.600"
-                fontSize="xs"
-                textTransform="uppercase"
-                letterSpacing="0.12em"
-              >
+              <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
                 {t?.("publicListing.verificationTitle") || "Verification"}
               </Text>
               <Text color="white" fontWeight="700" mt={1}>
-                {verificationScore
-                  ? `${verificationScore}%`
-                  : t?.("publicListing.notSpecified") || "On request"}
+                {verificationScore ? `${verificationScore}%` : t?.("publicListing.notSpecified") || "On request"}
               </Text>
             </Box>
           </HStack>
         </Stack>
       </Box>
 
-      <Stack p={{ base: 6, md: 7, lg: 8 }} spacing={{ base: 5, md: 6 }}>
-        <Stack spacing={{ base: 2.5, md: 3 }}>
-          <Text
-            fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
-            fontWeight="700"
-            lineHeight="1.2"
-            color={publicBrand.colors.ink}
-            noOfLines={2}
-            sx={{
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-            }}
-          >
+      <Stack p={6} spacing={5}>
+        <Stack spacing={3}>
+          <Text fontSize="xl" fontWeight="700" lineHeight="1.15" color={publicBrand.colors.ink} noOfLines={2}>
             {property?.name || property?.propertyAddress}
           </Text>
           <HStack spacing={2} color={publicBrand.colors.textSoft}>
-            <Icon as={LuMapPin} boxSize={4} />
-            <Text
-              fontSize={{ base: "sm", md: "md" }}
-              noOfLines={1}
-              sx={{
-                wordWrap: "break-word",
-                overflowWrap: "break-word",
-              }}
-            >
-              {property?.propertyAddress ||
-                t?.("publicListing.notSpecified") ||
-                "Location on request"}
+            <Icon as={LuMapPin} />
+            <Text fontSize="sm" noOfLines={1}>
+              {property?.propertyAddress || (t?.("publicListing.notSpecified") || "Location on request")}
             </Text>
           </HStack>
-          <Text
-            color={publicBrand.colors.textSoft}
-            noOfLines={3}
-            lineHeight="1.8"
-            fontSize={{ base: "sm", md: "md" }}
-            sx={{
-              wordWrap: "break-word",
-              overflowWrap: "break-word",
-            }}
-          >
+          <Text color={publicBrand.colors.textSoft} noOfLines={3} lineHeight="1.8">
             {property?.marketingDescription ||
               property?.propertyDescription ||
               "A structured premium listing with clear facts, direct inquiry, and stronger buyer confidence."}
           </Text>
         </Stack>
 
-        <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={{ base: 3, md: 3.5 }}>
+        <SimpleGrid columns={3} spacing={3}>
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
-              borderRadius="20px"
-              px={{ base: 3, md: 4 }}
-              py={{ base: 3, md: 4 }}
+              borderRadius="22px"
+              px={4}
+              py={4}
               bg="rgba(9,18,32,0.04)"
               border="1px solid rgba(9,18,32,0.06)"
-              transition="all 0.3s ease"
-              _hover={{
-                bg: "rgba(9,18,32,0.06)",
-                transform: "translateY(-2px)",
-                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
-              }}
             >
               <HStack spacing={2} color={publicBrand.colors.textSoft}>
-                <Icon as={metric.icon} boxSize={4} />
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
-                  textTransform="uppercase"
-                  letterSpacing="0.12em"
-                  noOfLines={1}
-                >
+                <Icon as={metric.icon} />
+                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
                   {metric.label}
                 </Text>
               </HStack>
-              <Text
-                mt={2}
-                fontWeight="700"
-                color={publicBrand.colors.ink}
-                fontSize={{ base: "lg", md: "xl" }}
-              >
+              <Text mt={2} fontWeight="700" color={publicBrand.colors.ink}>
                 {metric.value}
               </Text>
             </Box>
           ))}
         </SimpleGrid>
 
-        <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={{ base: 3, md: 3.5 }}>
+        <SimpleGrid columns={3} spacing={3}>
           {assetBlocks(property, t).map((asset) => (
             <HStack
               key={asset.label}
               spacing={3}
               borderRadius="20px"
-              px={{ base: 3, md: 3.5 }}
-              py={{ base: 2.5, md: 3 }}
+              px={3.5}
+              py={3}
               bg="rgba(245,239,228,0.75)"
               border="1px solid rgba(9,18,32,0.06)"
-              transition="all 0.3s ease"
-              _hover={{
-                bg: "rgba(245,239,228,0.9)",
-                transform: "translateY(-2px)",
-                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
-              }}
             >
               <Box
-                w={{ base: "32px", md: "34px" }}
-                h={{ base: "32px", md: "34px" }}
+                w="34px"
+                h="34px"
                 borderRadius="14px"
                 display="grid"
                 placeItems="center"
                 bg="rgba(245,208,118,0.12)"
                 color={publicBrand.colors.copper}
-                flexShrink={0}
               >
-                <Icon as={asset.icon} boxSize={{ base: 4, md: 5 }} />
+                <Icon as={asset.icon} />
               </Box>
-              <Box minW="0" flex={1}>
-                <Text
-                  fontSize={{ base: "xs", md: "sm" }}
-                  color={publicBrand.colors.textSoft}
-                  noOfLines={1}
-                >
+              <Box minW="0">
+                <Text fontSize="xs" color={publicBrand.colors.textSoft} noOfLines={1}>
                   {asset.label}
                 </Text>
-                <Text
-                  fontWeight="700"
-                  color={publicBrand.colors.ink}
-                  fontSize={{ base: "sm", md: "md" }}
-                >
+                <Text fontWeight="700" color={publicBrand.colors.ink}>
                   {asset.value}
                 </Text>
               </Box>
@@ -498,22 +396,10 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           ))}
         </SimpleGrid>
 
-        <HStack
-          justify="space-between"
-          align="center"
-          pt={{ base: 1, md: 2 }}
-          spacing={{ base: 3, md: 4 }}
-        >
-          <Text
-            color={publicBrand.colors.copper}
-            fontSize={{ base: "sm", md: "md" }}
-            fontWeight="700"
-            noOfLines={2}
-            flex="1"
-          >
+        <HStack justify="space-between" align="center" pt={1}>
+          <Text color={publicBrand.colors.copper} fontSize="sm" fontWeight="700">
             {richListing
-              ? t?.("publicListing.savedOffersHelp") ||
-                "Saved in a premium shortlist-ready format"
+              ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
               : t?.("publicListing.openOffer") || "Open offer"}
           </Text>
           <Button
@@ -521,16 +407,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
             borderRadius="full"
             bg={publicBrand.colors.ink}
             color="white"
-            px={{ base: 5, md: 6 }}
-            h={{ base: "44px", md: "48px" }}
-            fontSize={{ base: "sm", md: "md" }}
-            fontWeight="600"
-            _hover={{
-              bg: publicBrand.colors.inkElevated,
-              transform: "translateX(2px)",
-              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
-            }}
-            transition="all 0.3s ease"
+            _hover={{ bg: publicBrand.colors.inkElevated }}
           >
             {t?.("publicListing.viewOffer") || "View offer"}
           </Button>

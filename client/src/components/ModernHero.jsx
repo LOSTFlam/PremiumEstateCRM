@@ -20,14 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  FiArrowRight,
-  FiClock,
-  FiHome,
-  FiSearch,
-  FiShield,
-  FiTrendingUp,
-} from "react-icons/fi";
+import { FiArrowRight, FiClock, FiHome, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
 import { LuBuilding2, LuMapPin, LuSparkles, LuTrees } from "react-icons/lu";
 import {
   formatPrice,
@@ -40,7 +33,6 @@ import {
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 import { useScrollReveal } from "hooks/useScrollReveal";
-import { useUsdRubRate } from "hooks/useUsdRubRate";
 
 const heroCopy = {
   ru: {
@@ -53,17 +45,11 @@ const heroCopy = {
     searchHint: "Адрес, тип объекта, район, сценарий жизни",
     primary: "Открыть каталог",
     secondary: "Показать подборку ниже",
-    trustLine: [
-      "Проверенные карточки",
-      "Сравнение и подборка",
-      "Прямая заявка на просмотр",
-    ],
+    trustLine: ["Проверенные карточки", "Сравнение и подборка", "Прямая заявка на просмотр"],
     panelTitle: "С чего начать поиск",
-    panelText:
-      "Выберите сегмент, введите запрос и уйдите в каталог уже с нужным контекстом.",
+    panelText: "Выберите сегмент, введите запрос и уйдите в каталог уже с нужным контекстом.",
     routesTitle: "Частые маршруты",
-    routesText:
-      "Быстрые входы в самые востребованные сценарии без длинного фильтрационного экрана.",
+    routesText: "Быстрые входы в самые востребованные сценарии без длинного фильтрационного экрана.",
     routesCta: "Открыть маршрут",
     statsCatalog: "В каталоге",
     statsRich: "Полных карточек",
@@ -79,21 +65,17 @@ const heroCopy = {
       "Домашняя страница больше не просто красива. Она сразу ведёт в нужный раздел, подборку или конкретный объект, включая премиальную коммерцию.",
     locationFallback: "Локация уточняется",
     familyTitle: "Семейные дома",
-    familyText:
-      "Дома и виллы с 3+ спальнями и коротким путём к личному показу.",
+    familyText: "Дома и виллы с 3+ спальнями и коротким путём к личному показу.",
     apartmentTitle: "Городские квартиры",
-    apartmentText:
-      "Квартиры и резиденции для жизни, аренды или спокойной инвестиции.",
+    apartmentText: "Квартиры и резиденции для жизни, аренды или спокойной инвестиции.",
     verifiedTitle: "Проверенные карточки",
-    verifiedText:
-      "Объявления с фото, документами и более сильным уровнем доверия.",
+    verifiedText: "Объявления с фото, документами и более сильным уровнем доверия.",
     investmentTitle: "Участки и девелопмент",
     investmentText: "Земля и инвестиционные сценарии с отдельной подборкой.",
   },
   en: {
     eyebrow: "Agency marketplace",
-    kicker:
-      "Structured discovery, stronger listing pages, and a direct route to viewing",
+    kicker: "Structured discovery, stronger listing pages, and a direct route to viewing",
     title: "Search property like a serious portal,",
     accent: "with the guidance of a private agency",
     description:
@@ -101,17 +83,11 @@ const heroCopy = {
     searchHint: "Address, property type, district, lifestyle",
     primary: "Open catalog",
     secondary: "Preview below",
-    trustLine: [
-      "Verified listings",
-      "Compare and shortlist",
-      "Direct viewing request",
-    ],
+    trustLine: ["Verified listings", "Compare and shortlist", "Direct viewing request"],
     panelTitle: "Start the search with structure",
-    panelText:
-      "Choose a segment, enter a query, and move into the catalog with the right context already applied.",
+    panelText: "Choose a segment, enter a query, and move into the catalog with the right context already applied.",
     routesTitle: "High-intent routes",
-    routesText:
-      "Fast entry points into the most common buying scenarios without a long filter screen.",
+    routesText: "Fast entry points into the most common buying scenarios without a long filter screen.",
     routesCta: "Open route",
     statsCatalog: "In catalog",
     statsRich: "Rich listings",
@@ -127,16 +103,13 @@ const heroCopy = {
       "The homepage is no longer only attractive. It routes buyers directly into the right category, collection, or listing, including premium commercial inventory.",
     locationFallback: "Location on request",
     familyTitle: "Family homes",
-    familyText:
-      "Houses and villas with 3+ bedrooms and a shorter path to private viewing.",
+    familyText: "Houses and villas with 3+ bedrooms and a shorter path to private viewing.",
     apartmentTitle: "City apartments",
-    apartmentText:
-      "Apartments and residences for living, rental income, or calmer urban investing.",
+    apartmentText: "Apartments and residences for living, rental income, or calmer urban investing.",
     verifiedTitle: "Verified listings",
     verifiedText: "Offers with photos, documents, and stronger trust signals.",
     investmentTitle: "Land and development",
-    investmentText:
-      "Land deals and investment scenarios collected in one route.",
+    investmentText: "Land deals and investment scenarios collected in one route.",
   },
 };
 
@@ -171,8 +144,6 @@ const categoryConfig = [
   },
 ];
 
-const PAGE_MAX_W = "1920px";
-
 const metricValue = (value, fallback = "—") => {
   if (value === null || value === undefined || value === "") return fallback;
   if (Number(value) === 0) return fallback;
@@ -197,37 +168,19 @@ export default function ModernHero({
   marketRouteCards = [],
 }) {
   const { t, i18n } = useTranslation();
-  const { data: rateData } = useUsdRubRate();
   const prefersReducedMotion = usePrefersReducedMotion();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = heroCopy[locale];
 
   const [titleRef, titleRevealed] = useScrollReveal({ threshold: 0.18 });
-  const [panelRef, panelRevealed] = useScrollReveal({
-    threshold: 0.15,
-    delay: 160,
-  });
-  const [statsRef, statsRevealed] = useScrollReveal({
-    threshold: 0.15,
-    delay: 280,
-  });
-  const [routesRef, routesRevealed] = useScrollReveal({
-    threshold: 0.1,
-    delay: 420,
-  });
-  const [heroCardRef, heroCardRevealed] = useScrollReveal({
-    threshold: 0.15,
-    delay: 220,
-  });
-  const [pulseRef, pulseRevealed] = useScrollReveal({
-    threshold: 0.15,
-    delay: 420,
-  });
+  const [panelRef, panelRevealed] = useScrollReveal({ threshold: 0.15, delay: 160 });
+  const [statsRef, statsRevealed] = useScrollReveal({ threshold: 0.15, delay: 280 });
+  const [routesRef, routesRevealed] = useScrollReveal({ threshold: 0.1, delay: 420 });
+  const [heroCardRef, heroCardRevealed] = useScrollReveal({ threshold: 0.15, delay: 220 });
+  const [pulseRef, pulseRevealed] = useScrollReveal({ threshold: 0.15, delay: 420 });
 
   const heroProperty = useMemo(() => {
-    const withImages = (properties || []).filter(
-      (property) => getPhotoCount(property) > 0,
-    );
+    const withImages = (properties || []).filter((property) => getPhotoCount(property) > 0);
     return withImages[0] || properties?.[0] || null;
   }, [properties]);
 
@@ -242,17 +195,14 @@ export default function ModernHero({
   );
 
   const richCount = useMemo(
-    () =>
-      (properties || []).filter((property) => isRichListing(property)).length,
+    () => (properties || []).filter((property) => isRichListing(property)).length,
     [properties],
   );
 
   const availableCount = useMemo(
     () =>
       (properties || []).filter((property) =>
-        ["available", "active", "new"].includes(
-          String(property?.listingStatus || "").toLowerCase(),
-        ),
+        ["available", "active", "new"].includes(String(property?.listingStatus || "").toLowerCase()),
       ).length,
     [properties],
   );
@@ -260,26 +210,19 @@ export default function ModernHero({
   const newCount = useMemo(
     () =>
       (properties || []).filter((property) =>
-        String(property?.listingStatus || "")
-          .toLowerCase()
-          .includes("new"),
+        String(property?.listingStatus || "").toLowerCase().includes("new"),
       ).length,
     [properties],
   );
 
   const averagePrice = useMemo(() => {
-    const priced = (properties || [])
-      .map((property) => parsePrice(property?.listingPrice))
-      .filter(Boolean);
+    const priced = (properties || []).map((property) => parsePrice(property?.listingPrice)).filter(Boolean);
     if (!priced.length) return 0;
     const total = priced.reduce((sum, value) => sum + value, 0);
     return Math.round(total / priced.length);
   }, [properties]);
 
-  const catalogHref = useMemo(
-    () => buildCatalogHref(searchQuery),
-    [searchQuery],
-  );
+  const catalogHref = useMemo(() => buildCatalogHref(searchQuery), [searchQuery]);
   const segmentEntries = useMemo(() => {
     if (Array.isArray(segmentCards) && segmentCards.length) {
       return segmentCards;
@@ -296,17 +239,9 @@ export default function ModernHero({
   }, [segmentCards, t, typeCounts]);
 
   const highlightStats = [
-    {
-      label: copy.statsCatalog,
-      value: String(properties?.length || 0),
-      icon: FiTrendingUp,
-    },
+    { label: copy.statsCatalog, value: String(properties?.length || 0), icon: FiTrendingUp },
     { label: copy.statsRich, value: String(richCount || 0), icon: FiShield },
-    {
-      label: copy.statsAverage,
-      value: formatPrice(averagePrice, t, i18n.language, rateData),
-      icon: LuSparkles,
-    },
+    { label: copy.statsAverage, value: formatPrice(averagePrice, t), icon: LuSparkles },
   ];
 
   const routeCards = useMemo(
@@ -347,14 +282,7 @@ export default function ModernHero({
               icon: LuTrees,
             },
           ],
-    [
-      copy,
-      marketRouteCards,
-      richCount,
-      typeCounts.apartment,
-      typeCounts.house,
-      typeCounts.land,
-    ],
+    [copy, marketRouteCards, richCount, typeCounts.apartment, typeCounts.house, typeCounts.land],
   );
 
   return (
@@ -383,21 +311,8 @@ export default function ModernHero({
         bg="radial-gradient(circle, rgba(212,175,55,0.24) 0%, rgba(212,175,55,0) 72%)"
       />
 
-      <Container
-        maxW={PAGE_MAX_W}
-        position="relative"
-        zIndex={1}
-        px={{ base: 4, md: 6, xl: 8 }}
-      >
-        <Grid
-          templateColumns={{
-            base: "1fr",
-            xl: "minmax(0, 1.08fr) minmax(360px, 0.92fr)",
-            "2xl": "minmax(0, 1.14fr) minmax(440px, 0.86fr)",
-          }}
-          gap={{ base: 10, xl: 12, "2xl": 14 }}
-          alignItems="start"
-        >
+      <Container maxW="8xl" position="relative" zIndex={1}>
+        <Grid templateColumns={{ base: "1fr", xl: "1.02fr 0.98fr" }} gap={{ base: 10, xl: 12 }} alignItems="start">
           <GridItem>
             <Stack spacing={8}>
               <Stack
@@ -405,12 +320,9 @@ export default function ModernHero({
                 maxW="820px"
                 ref={titleRef}
                 style={{
-                  transition:
-                    "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: titleRevealed ? 1 : 0,
-                  transform: titleRevealed
-                    ? "translateY(0)"
-                    : "translateY(40px)",
+                  transform: titleRevealed ? "translateY(0)" : "translateY(40px)",
                 }}
               >
                 <HStack spacing={3} flexWrap="wrap">
@@ -426,12 +338,7 @@ export default function ModernHero({
                   >
                     {copy.eyebrow}
                   </Badge>
-                  <Text
-                    color="whiteAlpha.760"
-                    fontSize="sm"
-                    letterSpacing="0.12em"
-                    textTransform="uppercase"
-                  >
+                  <Text color="whiteAlpha.760" fontSize="sm" letterSpacing="0.12em" textTransform="uppercase">
                     {copy.kicker}
                   </Text>
                 </HStack>
@@ -444,22 +351,12 @@ export default function ModernHero({
                   maxW="940px"
                 >
                   {copy.title}
-                  <Text
-                    as="span"
-                    display="block"
-                    className="text-gradient-animated"
-                    mt={2}
-                  >
+                  <Text as="span" display="block" className="text-gradient-animated" mt={2}>
                     {copy.accent}
                   </Text>
                 </Heading>
 
-                <Text
-                  color="whiteAlpha.800"
-                  fontSize={{ base: "lg", md: "xl" }}
-                  maxW="760px"
-                  lineHeight="1.9"
-                >
+                <Text color="whiteAlpha.800" fontSize={{ base: "lg", md: "xl" }} maxW="760px" lineHeight="1.9">
                   {copy.description}
                 </Text>
               </Stack>
@@ -471,22 +368,14 @@ export default function ModernHero({
                 px={{ base: 5, md: 6 }}
                 py={{ base: 5, md: 6 }}
                 style={{
-                  transition:
-                    "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: panelRevealed ? 1 : 0,
-                  transform: panelRevealed
-                    ? "translateY(0)"
-                    : "translateY(40px)",
+                  transform: panelRevealed ? "translateY(0)" : "translateY(40px)",
                 }}
               >
                 <Stack spacing={5}>
                   <Stack spacing={1.5}>
-                    <Text
-                      color="#f5d076"
-                      fontSize="xs"
-                      letterSpacing="0.16em"
-                      textTransform="uppercase"
-                    >
+                    <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
                       {copy.panelTitle}
                     </Text>
                     <Text color="whiteAlpha.760" maxW="640px">
@@ -494,69 +383,45 @@ export default function ModernHero({
                     </Text>
                   </Stack>
 
-                  <SimpleGrid
-                    columns={{ base: 1, md: 2, "2xl": 4 }}
-                    spacing={3.5}
-                  >
+                  <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={5}>
                     {segmentEntries.map((category) => (
                       <Box
                         key={category.key}
                         as={RouterLink}
                         to={category.href}
-                        position="relative"
-                        overflow="hidden"
-                        borderRadius="24px"
-                        px={{ base: 5, md: 5.5 }}
-                        py={{ base: 5, md: 5.5 }}
-                        minH={{ base: "176px", md: "188px" }}
-                        bg="rgba(255,255,255,0.04)"
-                        border="1px solid rgba(227, 211, 184, 0.10)"
+                        borderRadius="32px"
+                        px={6}
+                        py={6}
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.12)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
-                        _before={{
-                          content: '""',
-                          position: "absolute",
-                          inset: 0,
-                          bg: "radial-gradient(circle at top right, rgba(245,208,118,0.14), transparent 42%)",
-                          opacity: 0.9,
-                        }}
                         _hover={{
-                          transform: "translateY(-4px)",
-                          borderColor: "rgba(245,208,118,0.26)",
-                          boxShadow: "0 18px 44px rgba(0, 0, 0, 0.18)",
+                          transform: "translateY(-6px)",
+                          borderColor: "rgba(245,208,118,0.30)",
+                          boxShadow: "0 24px 56px rgba(0, 0, 0, 0.22)",
                         }}
                       >
-                        <HStack
-                          position="relative"
-                          zIndex={1}
-                          justify="space-between"
-                          align="start"
-                        >
+                        <HStack justify="space-between" align="start">
                           <Box
-                            w={{ base: "58px", md: "62px" }}
-                            h={{ base: "58px", md: "62px" }}
-                            borderRadius="20px"
+                            w="56px"
+                            h="56px"
+                            borderRadius="22px"
                             display="grid"
                             placeItems="center"
-                            bg="rgba(245,208,118,0.10)"
+                            bg="rgba(245,208,118,0.12)"
                             color="#f5d076"
-                            boxShadow="inset 0 0 0 1px rgba(245,208,118,0.10)"
                           >
-                            <Icon as={category.icon} boxSize={{ base: 6, md: 6.5 }} />
+                            <Icon as={category.icon} boxSize={6} />
                           </Box>
                           <Text color="whiteAlpha.620" fontSize="sm">
                             {category.count || 0}
                           </Text>
                         </HStack>
-                        <Stack mt={4} spacing={2} position="relative" zIndex={1}>
+                        <Stack mt={5} spacing={2}>
                           <Text color="white" fontWeight="700" fontSize="lg">
                             {category.title}
                           </Text>
-                          <Text
-                            color="whiteAlpha.680"
-                            fontSize="sm"
-                            lineHeight="1.75"
-                            noOfLines={3}
-                          >
+                          <Text color="whiteAlpha.680" fontSize="md" noOfLines={2} lineHeight="1.7">
                             {category.text}
                           </Text>
                         </Stack>
@@ -564,13 +429,7 @@ export default function ModernHero({
                     ))}
                   </SimpleGrid>
 
-                  <Grid
-                    templateColumns={{
-                      base: "1fr",
-                      lg: "minmax(0,1fr) auto auto",
-                    }}
-                    gap={3}
-                  >
+                  <Grid templateColumns={{ base: "1fr", lg: "minmax(0,1fr) auto auto" }} gap={3}>
                     <InputGroup size="lg">
                       <InputLeftElement pointerEvents="none">
                         <FiSearch color="#d7c4a3" />
@@ -608,10 +467,7 @@ export default function ModernHero({
                       bg={publicBrand.gradients.brass}
                       color={publicBrand.colors.ink}
                       fontWeight="700"
-                      _hover={{
-                        transform: "translateY(-1px)",
-                        boxShadow: publicBrand.shadows.glow,
-                      }}
+                      _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
                     >
                       {copy.primary}
                     </Button>
@@ -647,12 +503,9 @@ export default function ModernHero({
                 columns={{ base: 1, md: 3 }}
                 spacing={4}
                 style={{
-                  transition:
-                    "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: statsRevealed ? 1 : 0,
-                  transform: statsRevealed
-                    ? "translateY(0)"
-                    : "translateY(36px)",
+                  transform: statsRevealed ? "translateY(0)" : "translateY(36px)",
                 }}
               >
                 {highlightStats.map((stat) => (
@@ -677,28 +530,94 @@ export default function ModernHero({
                       >
                         <Icon as={stat.icon} />
                       </Box>
-                      <Text
-                        color="whiteAlpha.560"
-                        fontSize="xs"
-                        letterSpacing="0.14em"
-                        textTransform="uppercase"
-                      >
+                      <Text color="whiteAlpha.560" fontSize="xs" letterSpacing="0.14em" textTransform="uppercase">
                         {stat.label}
                       </Text>
                     </HStack>
-                    <Text
-                      mt={5}
-                      color="white"
-                      fontSize={{ base: "2xl", md: "3xl" }}
-                      fontWeight="700"
-                      lineHeight="1.1"
-                    >
+                    <Text mt={5} color="white" fontSize={{ base: "2xl", md: "3xl" }} fontWeight="700" lineHeight="1.1">
                       {stat.value}
                     </Text>
                   </Box>
                 ))}
               </SimpleGrid>
 
+              <Box
+                ref={routesRef}
+                borderRadius="32px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+                bg="rgba(255,255,255,0.04)"
+                border="1px solid rgba(227, 211, 184, 0.10)"
+                style={{
+                  transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  opacity: routesRevealed ? 1 : 0,
+                  transform: routesRevealed ? "translateY(0)" : "translateY(36px)",
+                }}
+              >
+                <Stack spacing={6}>
+                  <Box>
+                    <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
+                      {copy.routesTitle}
+                    </Text>
+                    <Heading mt={2} fontSize={{ base: "2xl", md: "3xl" }} lineHeight="1.1">
+                      {copy.marketLabel}
+                    </Heading>
+                    <Text mt={4} color="whiteAlpha.760" lineHeight="1.8">
+                      {copy.marketText}
+                    </Text>
+                  </Box>
+
+                  <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={5}>
+                    {routeCards.map((route) => (
+                      <Box
+                        key={route.key}
+                        as={RouterLink}
+                        to={route.href}
+                        borderRadius="28px"
+                        px={5}
+                        py={5}
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.12)"
+                        transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
+                        _hover={{
+                          transform: "translateY(-6px)",
+                          borderColor: "rgba(245,208,118,0.30)",
+                          boxShadow: "0 24px 56px rgba(0,0,0,0.22)",
+                        }}
+                      >
+                        <HStack justify="space-between" align="start">
+                          <Box
+                            w="48px"
+                            h="48px"
+                            borderRadius="20px"
+                            display="grid"
+                            placeItems="center"
+                            bg="rgba(245,208,118,0.12)"
+                            color="#f5d076"
+                          >
+                            <Icon as={route.icon} boxSize={5} />
+                          </Box>
+                          <Text color="whiteAlpha.620" fontSize="sm">
+                            {route.count}
+                          </Text>
+                        </HStack>
+                        <Heading mt={4} size="md" color="white">
+                          {route.title}
+                        </Heading>
+                        <Text mt={2} color="whiteAlpha.720" fontSize="md" lineHeight="1.7">
+                          {route.text}
+                        </Text>
+                        <HStack mt={5} spacing={2} color="#f5d076">
+                          <Text fontSize="sm" fontWeight="700">
+                            {copy.routesCta}
+                          </Text>
+                          <FiArrowRight />
+                        </HStack>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+                </Stack>
+              </Box>
             </Stack>
           </GridItem>
 
@@ -712,21 +631,14 @@ export default function ModernHero({
                 boxShadow={publicBrand.shadows.deep}
                 minH={{ base: "460px", md: "620px" }}
                 style={{
-                  transition:
-                    "opacity 900ms cubic-bezier(0.4, 0, 0.2, 1), transform 900ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  transition: "opacity 900ms cubic-bezier(0.4, 0, 0.2, 1), transform 900ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: heroCardRevealed ? 1 : 0,
-                  transform: heroCardRevealed
-                    ? "translateY(0)"
-                    : "translateY(44px)",
+                  transform: heroCardRevealed ? "translateY(0)" : "translateY(44px)",
                 }}
               >
                 <Image
                   src={getPrimaryImage(heroProperty)}
-                  alt={
-                    heroProperty?.name ||
-                    heroProperty?.propertyAddress ||
-                    publicBrand.name
-                  }
+                  alt={heroProperty?.name || heroProperty?.propertyAddress || publicBrand.name}
                   w="100%"
                   h={{ base: "460px", md: "620px" }}
                   objectFit="cover"
@@ -737,12 +649,7 @@ export default function ModernHero({
                   bg="linear-gradient(180deg, rgba(7,12,20,0.02) 0%, rgba(7,12,20,0.24) 28%, rgba(7,12,20,0.90) 100%)"
                 />
 
-                <Stack
-                  position="absolute"
-                  inset="0"
-                  justify="space-between"
-                  p={{ base: 5, md: 6 }}
-                >
+                <Stack position="absolute" inset="0" justify="space-between" p={{ base: 5, md: 6 }}>
                   <HStack justify="space-between" align="start">
                     <Badge
                       px={3.5}
@@ -762,12 +669,7 @@ export default function ModernHero({
                       border="1px solid rgba(227, 211, 184, 0.14)"
                       backdropFilter="blur(14px)"
                     >
-                      <Text
-                        color="#f5d076"
-                        fontSize="xs"
-                        letterSpacing="0.14em"
-                        textTransform="uppercase"
-                      >
+                      <Text color="#f5d076" fontSize="xs" letterSpacing="0.14em" textTransform="uppercase">
                         {normalizeStatus(heroProperty?.listingStatus, t)}
                       </Text>
                     </Box>
@@ -783,57 +685,31 @@ export default function ModernHero({
                       border="1px solid rgba(227, 211, 184, 0.14)"
                       backdropFilter="blur(12px)"
                     >
-                      <Text
-                        fontSize={{ base: "3xl", md: "4xl" }}
-                        fontWeight="700"
-                        lineHeight="1"
-                      >
-                        {formatPrice(heroProperty, t, i18n.language, rateData)}
+                      <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="700" lineHeight="1">
+                        {formatPrice(heroProperty?.listingPrice, t)}
                       </Text>
                     </Box>
 
                     <Stack spacing={3} maxW="560px">
-                      <Heading
-                        fontSize={{ base: "2xl", md: "4xl" }}
-                        lineHeight="1.04"
-                        letterSpacing="-0.04em"
-                        color="white"
-                      >
+                      <Heading fontSize={{ base: "2xl", md: "4xl" }} lineHeight="1.04" letterSpacing="-0.04em" color="white">
                         {heroProperty?.name || heroProperty?.propertyAddress}
                       </Heading>
                       <HStack spacing={2} color="whiteAlpha.760">
                         <Icon as={LuMapPin} />
                         <Text noOfLines={1}>
-                          {heroProperty?.propertyAddress ||
-                            copy.locationFallback}
+                          {heroProperty?.propertyAddress || copy.locationFallback}
                         </Text>
                       </HStack>
-                      <Text
-                        color="whiteAlpha.780"
-                        noOfLines={3}
-                        maxW="560px"
-                        lineHeight="1.8"
-                      >
-                        {heroProperty?.marketingDescription ||
-                          heroProperty?.propertyDescription ||
-                          copy.marketText}
+                      <Text color="whiteAlpha.780" noOfLines={3} maxW="560px" lineHeight="1.8">
+                        {heroProperty?.marketingDescription || heroProperty?.propertyDescription || copy.marketText}
                       </Text>
                     </Stack>
 
                     <SimpleGrid columns={3} spacing={3}>
                       {[
-                        {
-                          label: t("publicListing.bedrooms"),
-                          value: metricValue(heroProperty?.numberofBedrooms),
-                        },
-                        {
-                          label: t("publicListing.bathrooms"),
-                          value: metricValue(heroProperty?.numberofBathrooms),
-                        },
-                        {
-                          label: t("publicListing.area"),
-                          value: metricValue(heroProperty?.squareFootage),
-                        },
+                        { label: t("publicListing.bedrooms"), value: metricValue(heroProperty?.numberofBedrooms) },
+                        { label: t("publicListing.bathrooms"), value: metricValue(heroProperty?.numberofBathrooms) },
+                        { label: t("publicListing.area"), value: metricValue(heroProperty?.squareFootage) },
                       ].map((item) => (
                         <Box
                           key={item.label}
@@ -844,12 +720,7 @@ export default function ModernHero({
                           border="1px solid rgba(227, 211, 184, 0.14)"
                           backdropFilter="blur(12px)"
                         >
-                          <Text
-                            color="whiteAlpha.600"
-                            fontSize="xs"
-                            textTransform="uppercase"
-                            letterSpacing="0.12em"
-                          >
+                          <Text color="whiteAlpha.600" fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
                             {item.label}
                           </Text>
                           <Text color="white" fontWeight="700" mt={1.5}>
@@ -867,12 +738,9 @@ export default function ModernHero({
                 templateColumns={{ base: "1fr", md: "1fr 1fr" }}
                 gap={4}
                 style={{
-                  transition:
-                    "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
+                  transition: "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
                   opacity: pulseRevealed ? 1 : 0,
-                  transform: pulseRevealed
-                    ? "translateY(0)"
-                    : "translateY(36px)",
+                  transform: pulseRevealed ? "translateY(0)" : "translateY(36px)",
                 }}
               >
                 <Box
@@ -882,12 +750,7 @@ export default function ModernHero({
                   bg="rgba(255,255,255,0.05)"
                   border="1px solid rgba(227, 211, 184, 0.12)"
                 >
-                  <Text
-                    color="#f5d076"
-                    fontSize="xs"
-                    letterSpacing="0.16em"
-                    textTransform="uppercase"
-                  >
+                  <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
                     {copy.pulseTitle}
                   </Text>
                   <Text mt={2} color="whiteAlpha.720" lineHeight="1.7">
@@ -895,23 +758,9 @@ export default function ModernHero({
                   </Text>
                   <Stack mt={5} spacing={3.5}>
                     {[
-                      {
-                        label: copy.pulseAvailable,
-                        value: availableCount,
-                        icon: FiClock,
-                      },
-                      {
-                        label: copy.pulseNew,
-                        value: newCount,
-                        icon: LuSparkles,
-                      },
-                      {
-                        label: copy.pulseTypes,
-                        value: Object.keys(typeCounts).filter(
-                          (key) => Number(typeCounts[key]) > 0,
-                        ).length,
-                        icon: FiTrendingUp,
-                      },
+                      { label: copy.pulseAvailable, value: availableCount, icon: FiClock },
+                      { label: copy.pulseNew, value: newCount, icon: LuSparkles },
+                      { label: copy.pulseTypes, value: Object.keys(typeCounts).filter((key) => Number(typeCounts[key]) > 0).length, icon: FiTrendingUp },
                     ].map((item) => (
                       <HStack
                         key={item.label}
@@ -952,12 +801,7 @@ export default function ModernHero({
                   bg="rgba(255,255,255,0.05)"
                   border="1px solid rgba(227, 211, 184, 0.12)"
                 >
-                  <Text
-                    color="#f5d076"
-                    fontSize="xs"
-                    letterSpacing="0.16em"
-                    textTransform="uppercase"
-                  >
+                  <Text color="#f5d076" fontSize="xs" letterSpacing="0.16em" textTransform="uppercase">
                     {copy.marketLabel}
                   </Text>
                   <Heading mt={3} size="md" color="white">
@@ -987,13 +831,8 @@ export default function ModernHero({
                           <Text color="white" fontWeight="600" noOfLines={1}>
                             {route.title}
                           </Text>
-                          <Text
-                            color="whiteAlpha.600"
-                            fontSize="sm"
-                            noOfLines={1}
-                          >
-                            {route.count}{" "}
-                            {locale === "ru" ? "предложений" : "offers"}
+                          <Text color="whiteAlpha.600" fontSize="sm" noOfLines={1}>
+                            {route.count} {locale === "ru" ? "предложений" : "offers"}
                           </Text>
                         </Box>
                         <FiArrowRight color="#f5d076" />
@@ -1005,118 +844,6 @@ export default function ModernHero({
             </Stack>
           </GridItem>
         </Grid>
-
-        <Box
-          ref={routesRef}
-          mt={{ base: 10, xl: 12 }}
-          style={{
-            transition:
-              "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
-            opacity: routesRevealed ? 1 : 0,
-            transform: routesRevealed ? "translateY(0)" : "translateY(36px)",
-          }}
-        >
-          <Box
-            className="public-brand-panel"
-            borderRadius={{ base: "32px", xl: "38px" }}
-            px={{ base: 5, md: 6, xl: 7 }}
-            py={{ base: 6, md: 7 }}
-          >
-            <Stack spacing={6}>
-              <Stack spacing={4} maxW="980px">
-                <Text
-                  color="#f5d076"
-                  fontSize="xs"
-                  letterSpacing="0.16em"
-                  textTransform="uppercase"
-                >
-                  {copy.routesTitle}
-                </Text>
-                <Heading
-                  fontSize={{ base: "2xl", md: "4xl", xl: "5xl" }}
-                  lineHeight="1.04"
-                  maxW="920px"
-                >
-                  {copy.marketLabel}
-                </Heading>
-                <Text color="whiteAlpha.760" lineHeight="1.9" maxW="920px">
-                  {copy.marketText}
-                </Text>
-              </Stack>
-
-              <SimpleGrid
-                columns={{ base: 1, md: 2, xl: 3, "2xl": 5 }}
-                spacing={4.5}
-              >
-                {routeCards.map((route) => (
-                  <Box
-                    key={route.key}
-                    as={RouterLink}
-                    to={route.href}
-                    position="relative"
-                    overflow="hidden"
-                    borderRadius="30px"
-                    px={{ base: 5, md: 5.5 }}
-                    py={{ base: 5, md: 5.5 }}
-                    minH={{ base: "212px", xl: "232px" }}
-                    bg="rgba(255,255,255,0.04)"
-                    border="1px solid rgba(227, 211, 184, 0.10)"
-                    transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
-                    _before={{
-                      content: '""',
-                      position: "absolute",
-                      inset: 0,
-                      bg: "radial-gradient(circle at top right, rgba(245,208,118,0.16), transparent 40%)",
-                      opacity: 0.92,
-                    }}
-                    _hover={{
-                      transform: "translateY(-4px)",
-                      borderColor: "rgba(245,208,118,0.24)",
-                      boxShadow: "0 20px 50px rgba(0,0,0,0.18)",
-                    }}
-                  >
-                    <Stack position="relative" zIndex={1} spacing={4} h="100%">
-                      <HStack justify="space-between" align="start">
-                        <Box
-                          w="58px"
-                          h="58px"
-                          borderRadius="20px"
-                          display="grid"
-                          placeItems="center"
-                          bg="rgba(245,208,118,0.10)"
-                          color="#f5d076"
-                        >
-                          <Icon as={route.icon} boxSize={6} />
-                        </Box>
-                        <Text color="whiteAlpha.620" fontSize="sm">
-                          {route.count}
-                        </Text>
-                      </HStack>
-                      <Stack spacing={2} flex={1}>
-                        <Heading mt={1} size="sm" color="white">
-                          {route.title}
-                        </Heading>
-                        <Text
-                          color="whiteAlpha.720"
-                          fontSize="sm"
-                          lineHeight="1.85"
-                        >
-                          {route.text}
-                        </Text>
-                      </Stack>
-                      <HStack mt="auto" spacing={2} color="#f5d076">
-                        <Text fontSize="sm" fontWeight="700">
-                          {copy.routesCta}
-                        </Text>
-                        <FiArrowRight />
-                      </HStack>
-                    </Stack>
-                  </Box>
-                ))}
-              </SimpleGrid>
-            </Stack>
-          </Box>
-        </Box>
       </Container>
     </Box>
   );
