@@ -8,4 +8,4 @@ export { default as useHideOnScroll } from "./useHideOnScroll";
 export { default as useScrollReveal } from "./useScrollReveal";
 export { useSafeT } from "./useSafeT";
 export { usePropertyPagination } from "./usePropertyPagination";
-export { useActiveBranding } from "./useActiveBranding";
+export { default as useActiveBranding } from "./useActiveBranding";

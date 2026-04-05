@@ -369,7 +369,7 @@ No changes required.
 
 ### Documentation
 - **New Guides:** 7 markdown files
-- **Updated:** QWEN.md, IMPROVEMENTS.md
+- **Updated:** README.md, IMPROVEMENTS.md
 
 ---
 

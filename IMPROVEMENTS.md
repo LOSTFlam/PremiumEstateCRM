@@ -63,7 +63,7 @@ Updated `index.html`:
 ### 5. Documentation
 Created comprehensive guides:
 - **LOGO_DESIGN.md**: Complete logo usage guidelines
-- **QWEN.md**: Updated with logo section
+- **README.md**: Updated with logo section
 - **IMPROVEMENTS.md**: This summary file
 
 ---
@@ -151,7 +151,7 @@ LOGO_DESIGN.md                     ✨ NEW
 client/src/views/public/publicBrand.js          ✨ UPDATED
 client/src/components/ModernHeader.jsx          ✨ UPDATED
 client/public/index.html                        ✨ UPDATED
-QWEN.md                                         ✨ UPDATED
+README.md                                         ✨ UPDATED
 ```
 
 ---

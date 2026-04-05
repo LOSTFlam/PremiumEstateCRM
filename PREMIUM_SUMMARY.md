@@ -203,7 +203,7 @@ client/src/views/public/
 └── ModernLandingPage.jsx          ♻️ UPDATED (rounded)
 
 Documentation/
-└── QWEN.md                        ♻️ UPDATED
+└── README.md                        ♻️ UPDATED
 ```
 
 ---
@@ -413,7 +413,7 @@ Available guides:
 1. **PREMIUM_EFFECTS.md** - Complete effects guide
 2. **ANIMATIONS_GUIDE.md** - Animation system
 3. **LOGO_DESIGN.md** - Logo guidelines
-4. **QWEN.md** - Full project docs
+4. **README.md** - Full project docs
 5. **PREMIUM_SUMMARY.md** - This file
 
 ---

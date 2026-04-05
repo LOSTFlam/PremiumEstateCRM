@@ -244,7 +244,7 @@ client/public/
 └── index.html                   ♻️ UPDATED
 
 Documentation/
-├── QWEN.md                      ♻️ UPDATED
+├── README.md                      ♻️ UPDATED
 └── IMPROVEMENTS.md              ♻️ UPDATED
 ```
 
@@ -314,7 +314,7 @@ Navigate to `http://localhost:3000`
 ### Available Guides
 1. **LOGO_DESIGN.md** - Complete logo usage guidelines
 2. **ANIMATIONS_GUIDE.md** - Comprehensive animation documentation
-3. **QWEN.md** - Full project documentation (updated)
+3. **README.md** - Full project documentation (updated)
 4. **IMPROVEMENTS.md** - Improvement summary
 5. **DESIGN_SUMMARY.md** - This file
 
