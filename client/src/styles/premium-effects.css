@@ -1,0 +1,338 @@
+/* ========================================
+   PREMIUM ESTATE CRM — Ethereal Luxury Effects
+   Version 2.0
+   ======================================== */
+
+/* === ETHEREAL GLOW LAYERS === */
+.ethereal-glow {
+  position: relative;
+}
+
+.ethereal-glow::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(212, 175, 55, 0.15) 0%,
+    rgba(212, 175, 55, 0.05) 30%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ethereal-glow:hover::before {
+  opacity: 1;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* === LIGHT REFRACTION === */
+.light-refraction {
+  position: relative;
+  overflow: hidden;
+}
+
+.light-refraction::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.03) 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 60%,
+    transparent 70%
+  );
+  transform: rotate(45deg) translateX(-100%);
+  animation: light-sweep 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes light-sweep {
+  0%,
+  100% {
+    transform: rotate(45deg) translateX(-100%);
+  }
+  50% {
+    transform: rotate(45deg) translateX(100%);
+  }
+}
+
+/* === CRYSTAL PRISM EFFECT === */
+.crystal-prism {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(212, 175, 55, 0.04) 100%
+  );
+  backdrop-filter: blur(40px) saturate(220%);
+  -webkit-backdrop-filter: blur(40px) saturate(220%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 60px rgba(212, 175, 55, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 0 100px rgba(255, 255, 255, 0.05);
+}
+
+.crystal-prism::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(212, 175, 55, 0.15) 50%,
+    rgba(255, 255, 255, 0.1) 60%,
+    transparent 70%
+  );
+  background-size: 400% 400%;
+  animation: prism-shift 8s ease infinite;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+@keyframes prism-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* === AURORA BOREALIS BACKGROUND === */
+.aurora-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-background::before,
+.aurora-background::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: aurora-float 20s ease-in-out infinite;
+}
+
+.aurora-background::before {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%);
+  top: -200px;
+  right: -200px;
+  animation-delay: 0s;
+}
+
+.aurora-background::after {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245, 208, 118, 0.25) 0%, transparent 70%);
+  bottom: -150px;
+  left: -150px;
+  animation-delay: -10s;
+}
+
+@keyframes aurora-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  75% {
+    transform: translate(10px, 10px) scale(1.02);
+  }
+}
+
+/* === GRADIENT TEXT === */
+.text-gradient-animated {
+  background: linear-gradient(135deg, #d4af37 0%, #f5d076 50%, #d4af37 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 8s ease infinite;
+  text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* === ANIMATED GRADIENT BORDER === */
+.animated-gradient-border {
+  position: relative;
+}
+
+.animated-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(90deg, #f5d076, #d4af37, #b8962e, #d4af37, #f5d076);
+  background-size: 400% 100%;
+  animation: border-flow 4s linear infinite;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.animated-gradient-border:hover::before {
+  opacity: 1;
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
+}
+
+/* === PULSE SOFT === */
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* === FLOAT ANIMATION === */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* === HOVER SOFT GLOW === */
+.hover-soft-glow {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.hover-soft-glow:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 20px rgba(212, 175, 55, 0.08);
+  transform: translateY(-2px);
+}
+
+/* === ELEVATED CARD === */
+.elevated-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.elevated-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    0 0 40px rgba(212, 175, 55, 0.12),
+    0 0 80px rgba(255, 255, 255, 0.06);
+}
+
+/* === PREMIUM BUTTON === */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-premium:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+}
+
+.btn-premium:active {
+  transform: translateY(-1px);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #d4af37, #f5d076);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* === ACCESSIBILITY === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* === RESPONSIVE PREMIUM === */
+@media (max-width: 768px) {
+  .crystal-prism {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .aurora-background::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .aurora-background::after {
+    width: 200px;
+    height: 200px;
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "premium-estate-crm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PremiumEstate CRM with modern design",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
+    "start": "npm run dev",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "start:server": "npm run start -w server",
+    "start:client": "npm run start -w client",
+    "lint": "npm run lint -w client",
+    "typecheck": "npm run typecheck -w client",
+    "build:client": "npm run build -w client",
+    "test": "npm test -w client && npm test -w server",
+    "verify": "npm run lint && npm run typecheck && npm run build:client && npm test",
+    "build": "npm run verify"
+  },
+  "keywords": [
+    "real-estate",
+    "crm",
+    "react",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
