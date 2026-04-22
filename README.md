@@ -99,72 +99,81 @@
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│           Frontend (React 18 + Vite)            │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Modern Landing Page with Effects        │   │
-│  │  • Smoke particles • Floating orbs       │   │
-│  │  • 3D backgrounds • Parallax layers      │   │
-│  ├──────────────────────────────────────────┤   │
-│  │  Public Catalog (/offers)                │   │
-│  │  • Property cards • Filters • Search     │   │
-│  ├──────────────────────────────────────────┤   │
-│  │  Admin Dashboard                         │   │
-│  │  • CRM • Analytics • Lead Management     │   │
-│  └──────────────────────────────────────────┘   │
-│  Chakra UI • Framer Motion • React Router      │
-└─────────────────────────────────────────────────┘
-                      ↕ REST API
-┌─────────────────────────────────────────────────┐
-│           Backend (Node.js + Express)           │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Controllers (MVC Pattern)               │   │
-│  │  • Property • Lead • Contact • User      │   │
-│  ├──────────────────────────────────────────┤   │
-│  │  Services                                │   │
-│  │  • Email (Resend) • SMS (Twilio)        │   │
-│  │  • WebSocket • Media Upload              │   │
-│  ├──────────────────────────────────────────┤   │
-│  │  Middleware                              │   │
-│  │  • Auth (JWT) • Validation • CORS        │   │
-│  └──────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────┘
-                      ↕
-┌─────────────────────────────────────────────────┐
-│              MongoDB Atlas                      │
-│  Collections: properties, leads, contacts,      │
-│  users, invoices, quotes, tasks, meetings       │
-└─────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                          PREMIUM ESTATE CRM                                        │
+│                        Architecture Overview                                      │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   Browser   │
+                                    └──────┬──────┘
+                                           │
+                    ┌──────────────────────┴──────────────────────┐
+                    │              Frontend (React 18)           │
+                    │  ┌────────────────────────────────────┐   │
+                    │  │  UI Layer                          │   │
+                    │  │  ┌────────┐ ┌─────────┐ ┌────────┐ │   │
+                    │  │  │Chakra  │ │ Framer  │ │ Tail   │ │   │
+                    │  │  │  UI    │ │ Motion │ │ wind   │ │   │
+                    │  │  │ 2.8.x  │ │  11.x  │ │ 3.x   │ │   │
+                    │  │  └────────┘ └─────────┘ └────────┘ │   │
+                    │  ├────────────────────────────────────┤   │
+                    │  │  State Management                 │   │
+                    │  │  ┌────────┐ ┌──────────┐         │   │
+                    │  │  │ Redux  │ │ React   │         │   │
+                    │  │  │Toolkit │ │ Query   │         │   │
+                    │  │  │        │ │ v5      │         │   │
+                    │  │  └────────┘ └──────────┘         │   │
+                    │  └────────────────────────────────────┘   │
+                    └──────────────────────┬───────────────────┘
+                                           │ HTTPS / WebSocket
+                    ┌──────────────────────┴───────────────────┐
+                    │            Backend (Node.js)             │
+                    │  ┌────────────────────────────────┐    │
+                    │  │  Express Server + Middlewares   │    │
+                    │  ├────────────────────────────────┤    │
+                    │  │  Security                      │    │
+                    │  │  • Helmet • JWT • Rate Limit  │    │
+                    │  ├────────────────────────────────┤    │
+                    │  │  Controllers                   │    │
+                    │  │  • Property • Lead • Contact │    │
+                    │  │  • User • Account • Invoice │    │
+                    │  ├────────────────────────────────┤    │
+                    │  │  Services                     │    │
+                    │  │  • Email • SMS • WebSocket  │    │
+                    │  └────────────────────────────────┘    │
+                    └──────────────────────┬───────────────────┘
+                                           │
+                    ┌──────────────────────┴───────────────────┐
+                    │           MongoDB Atlas                   │
+                    │  ┌────────────────────────────────┐     │
+                    │  │  Collections                   │     │
+                    │  │  • properties  • contacts      │     │
+                    │  │  • leads     • users         │     │
+                    │  │  • invoices  • quotes        │     │
+                    │  │  • tasks     • meetings     │     │
+                    │  └────────────────────────────────┘     │
+                    └────────────────────────────────────────┘
 ```
-│  ┌──────────┬──────────┬──────────┬──────────┐  │
-│  │ Chakra   │ Framer   │ Redux    │ React    │  │
-│  │ UI 2.8   │ Motion 11│ Toolkit  │ Query v5 │  │
-│  └──────────┴──────────┴──────────┴──────────┘  │
-│  ┌──────────────────────────────────────────┐   │
-│  │  PremiumCard · MagneticButton ·          │   │
-│  │  ScrollRevealPro · CommandPalette        │   │
-│  └──────────────────────────────────────────┘   │
-└─────────────────────┬───────────────────────────┘
-                      │ REST API + WebSocket
-┌─────────────────────┴───────────────────────────┐
-│                  Backend (Node.js)               │
-│  ┌──────────┬──────────┬──────────┬──────────┐  │
-│  │ Express  │ Mongoose │ JWT Auth │ Resend   │  │
-│  │ 4.x      │ 7.x      │ Refresh  │ / SMS    │  │
-│  └──────────┴──────────┴──────────┴──────────┘  │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Rate Limiting · Helmet · Compression    │   │
-│  │  Cache Middleware · Audit Logging         │   │
-│  └──────────────────────────────────────────┘   │
-└─────────────────────┬───────────────────────────┘
-                      │
-┌─────────────────────┴───────────────────────────┐
-│              MongoDB Atlas                       │
-│  ┌──────────────────────────────────────────┐   │
-│  │  Indexed Collections · Connection Pool   │   │
-│  └──────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────┘
-```
+
+### Technology Stack
+
+| Category | Technology | Version |
+|----------|------------|---------|
+| **Frontend** |
+| UI Framework | Chakra UI | 2.8.x |
+| Animations | Framer Motion | 11.x |
+| Build Tool | Vite | 6.x |
+| State | Redux Toolkit | + |
+| Data Fetching | React Query | v5 |
+| Routing | React Router | 6.x |
+| **Backend** |
+| Runtime | Node.js | 18+ |
+| Framework | Express.js | 4.x |
+| Database | MongoDB (Mongoose) | 7.x |
+| Auth | JWT + Refresh Tokens | + |
+| Email | Resend / Nodemailer | + |
+| SMS | Twilio | + |
 
 ---
 
