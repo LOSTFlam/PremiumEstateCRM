@@ -1,6 +1,6 @@
 # 🏠 Premium Estate CRM
 
-> **Version:** 1.1.0 — Ethereal Luxury Edition with Enhanced Visual Effects  
+> **Version:** 1.1.0 — Ethereal Luxury Edition  
 > **Author:** [LOSTFlam](https://github.com/LOSTFlam) (Alexander Avdeev / Александр Авдеев)  
 > **Stack:** MERN (MongoDB, Express, React 18, Node.js) + Vite
 
@@ -20,6 +20,19 @@
 *Premium CRM system for real estate management with stunning visual effects*
 
 </div>
+
+---
+
+## 🆕 What's New (v1.1.0)
+
+- **Property Numeric Fields** — added Bedrooms, Bathrooms, Area to Add/Edit forms
+- **Security Enhancements** — ownership enforcement, secure file uploads with auth
+- **DB Reliability** — SRV fallback support via `DB_URL_FALLBACK`
+- **Improved Seeding** — auto-create admin user, bcrypt hashing, upsert logic
+- **New Scripts** — `npm run seed:properties`, `npm run seed:all`, `npm run dev:open`
+- **Visual Polish** — updated landing page gradients, shadows, and spacing
+
+---
 
 ---
 
@@ -427,6 +440,17 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
+## 🆕 Что нового (v1.1.0)
+
+- **Поля недвижимости** — добавлены Спальни, Ванные, Площадь в формы
+- **Безопасность** — проверка владельца, защита загрузок файлов
+- **Надёжность БД** — поддержка `DB_URL_FALLBACK` для обхода проблем SRV
+- **Сидинг** — автосоздание админа, хеширование bcrypt, логика upsert
+- **Новые скрипты** — `seed:properties`, `seed:all`, `dev:open`
+- **Визуальный полиш** — обновлённые градиенты, тени, отступы
+
+---
+
 ## ✨ Возможности
 
 ### 🏠 Управление недвижимостью
@@ -489,6 +513,7 @@ cd PremiumEstateCRM
 cd server
 cp .env.example .env
 # Отредактируйте .env — укажите MongoDB URL и Resend API key
+# Опционально: DB_URL_FALLBACK для обхода проблем SRV
 npm install
 
 # 3. Установите зависимости клиента
@@ -499,12 +524,16 @@ npm install --legacy-peer-deps
 cd ../server
 npm run seed:index
 
-# 5. Запустите сервер (порт 5001)
-npm start
+# 5. Заполните БД тестовыми объектами (создаст админа, если нет)
+npm run seed:properties
 
-# 6. В новом терминале запустите клиент (порт 3000)
-cd ../client
-npm start
+# 6. Запустите сервер (порт 5001) и клиент (порт 3000)
+# Вариант А: Стандартный запуск
+npm start # в терминале сервера
+npm start # в терминале клиента
+
+# Вариант Б: Одной командой с открытием браузера
+npm run dev:open
 ```
 
 Откройте **http://localhost:3000** — главная страница готова!
@@ -569,6 +598,8 @@ SMSC_SENDER=PremiumEstate
 ## 🔒 Безопасность
 
 - **JWT с refresh token** — автоматическое обновление сессии
+- **Проверка владельца (Ownership)** — пользователи видят только свои данные
+- **Защита загрузок** — авторизация для загрузки фото и документов
 - **Rate limiting** — защита от брутфорса и спама
 - **Helmet** — HTTP security headers
 - **Password validation** — сложность + история паролей
@@ -605,9 +636,10 @@ npm test              # Запуск тестов
 ```env
 NODE_ENV=production
 DB_URL=mongodb+srv://user:pass@cluster.mongodb.net/PremiumEstateDB
+# Опционально: DB_URL_FALLBACK=mongodb://host1:27017,host2:27017/?tls=true
 RESEND_API_KEY=re_your_key
 EMAIL_FROM=noreply@premiumestatecrm.com
-ADMIN_EMAIL=cahek1234500000@gmail.com
+ADMIN_EMAIL=your_email@gmail.com
 JWT_SECRET=your-production-secret
 JWT_EXPIRES_IN=7d
 PORT=5001
