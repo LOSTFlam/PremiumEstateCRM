@@ -1,5 +1,5 @@
 import { loadExcelJS } from "../utils/lazyImports";
-import { secureParseExcel, secureWriteExcel } from "./secureXlsxWrapper";
+import { secureParseExcel, secureWriteExcel as _secureWriteExcel } from "./secureXlsxWrapper";
 import { toast } from "react-toastify";
 
 /**
@@ -94,7 +94,7 @@ export const exportTableToExcel = async (tableId, filename = "table-export.xlsx"
   try {
     // We'll continue using the original XLSX for table exports as it's a different use case
     const XLSX = await import("xlsx");
-    
+
     const table = document.getElementById(tableId);
 
     if (!table) {
@@ -105,22 +105,22 @@ export const exportTableToExcel = async (tableId, filename = "table-export.xlsx"
     const workbook = XLSX.utils.table_to_book(table, {
       // Safer export options
       raw: false, // Set to false to prevent raw formula execution
-      defval: null
+      defval: null,
     });
-    
+
     // Add extra sanitization
-    Object.keys(workbook.Sheets).forEach(sheetName => {
+    Object.keys(workbook.Sheets).forEach((sheetName) => {
       const sheet = workbook.Sheets[sheetName];
       // Clean up any potentially unsafe properties
-      if (sheet['!ref']) {
+      if (sheet["!ref"]) {
         // Basic validation to ensure the range is reasonable
-        const rangeMatch = sheet['!ref'].match(/[A-Z]+[0-9]+:[A-Z]+[0-9]+/);
+        const rangeMatch = sheet["!ref"].match(/[A-Z]+[0-9]+:[A-Z]+[0-9]+/);
         if (!rangeMatch) {
           throw new Error("Invalid sheet range detected");
         }
       }
     });
-    
+
     XLSX.writeFile(workbook, filename);
 
     toast.success("Table exported to Excel successfully");

@@ -5,7 +5,7 @@
 export const loadSecureXlsx = async () => {
   // Add any security wrappers or configuration here
   const xlsx = await import("xlsx");
-  
+
   // Add any security hardening here if needed
   return xlsx;
 };
@@ -18,6 +18,8 @@ let excelJSModule = null;
 let pdfModule = null;
 let xlsxModule = null;
 let chartsModule = null;
+let jsPdfModule = null;
+let html2pdfModule = null;
 
 export const loadExcelJS = async () => {
   if (!excelJSModule) {
@@ -47,6 +49,25 @@ export const loadCharts = async () => {
     chartsModule = await import("react-apexcharts");
   }
   return chartsModule.default || chartsModule;
+};
+
+// Backwards-compatible alias used by some components
+export const loadReactApexCharts = loadCharts;
+
+export const loadJsPDF = async () => {
+  if (!jsPdfModule) {
+    jsPdfModule = await import("jspdf");
+  }
+
+  return jsPdfModule.jsPDF || jsPdfModule.default || jsPdfModule;
+};
+
+export const loadHtml2Pdf = async () => {
+  if (!html2pdfModule) {
+    html2pdfModule = await import("html2pdf.js");
+  }
+
+  return html2pdfModule.default || html2pdfModule;
 };
 
 // Helper to show loading state

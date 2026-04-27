@@ -6,6 +6,9 @@ NODE_ENV=development
 
 # Конфигурация Базы Данных
 DB_URL=mongodb://127.0.0.1:27017
+# Опциональный fallback для случаев, когда DB_URL использует mongodb+srv и DNS SRV недоступен
+# Пример: mongodb://user:password@host1:27017,host2:27017,host3:27017/?tls=true&replicaSet=<set>&authSource=admin&retryWrites=true&w=majority
+DB_URL_FALLBACK=
 DB=PremiumEstateDB
 
 # JWT Конфигурация

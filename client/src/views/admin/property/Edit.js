@@ -1,6 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
+  FormControl,
+  FormLabel,
+  Input,
+  SimpleGrid,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -53,6 +57,11 @@ const Edit = (props) => {
   });
 
   const { errors: _errors, touched: _touched, values, handleSubmit, setFieldValue } = formik;
+  const ensureNumericFields = () => ({
+    numberofBedrooms: values?.numberofBedrooms ?? "",
+    numberofBathrooms: values?.numberofBathrooms ?? "",
+    squareFootage: values?.squareFootage ?? "",
+  });
 
   const [isLoding, setIsLoding] = useState(false);
 
@@ -126,6 +135,39 @@ const Edit = (props) => {
             ) : (
               <Flex direction="column" gap={4}>
                 <CustomForm moduleData={props?.propertyData} form={formik} />
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+                  <FormControl>
+                    <FormLabel>Bedrooms</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().numberofBedrooms}
+                      onChange={(e) =>
+                        setFieldValue("numberofBedrooms", Number(e.target.value || 0))
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Bathrooms</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().numberofBathrooms}
+                      onChange={(e) =>
+                        setFieldValue("numberofBathrooms", Number(e.target.value || 0))
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Area (sq ft)</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().squareFootage}
+                      onChange={(e) => setFieldValue("squareFootage", String(e.target.value || ""))}
+                    />
+                  </FormControl>
+                </SimpleGrid>
                 {/* Property Photo Manager */}
                 <PropertyPhotoManager
                   propertyId={props?.selectedId || param?.id}

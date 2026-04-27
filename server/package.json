@@ -12,7 +12,9 @@
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --runInBand",
-    "seed:index": "node scripts/createIndexes.js"
+    "seed:index": "node scripts/createIndexes.js",
+    "seed:properties": "node seed-properties.js",
+    "seed:all": "node scripts/seed-crm-data.js"
   },
   "author": "",
   "license": "ISC",

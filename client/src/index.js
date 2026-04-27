@@ -146,7 +146,7 @@ function replaceLegacyRuText(value) {
   let nextValue = value;
   // Early exit if value doesn't contain any of the common phrases
   const containsReplacableText = RU_LEGACY_TEXT_REPLACEMENTS.some(([from]) => value.includes(from));
-  
+
   if (containsReplacableText) {
     RU_LEGACY_TEXT_REPLACEMENTS.forEach(([from, to]) => {
       if (nextValue.includes(from)) {
@@ -157,9 +157,10 @@ function replaceLegacyRuText(value) {
 
   // Cache the result to avoid recomputation
   ruTextCache.set(value, nextValue);
-  
+
   // Limit cache size to prevent memory issues
-  if (ruTextCache.size > 500) { // Reduced cache size
+  if (ruTextCache.size > 500) {
+    // Reduced cache size
     const firstKey = ruTextCache.keys().next().value;
     ruTextCache.delete(firstKey);
   }
@@ -232,7 +233,7 @@ function LegacyRuTextGuard() {
       // Limit the number of nodes processed to prevent long-running operations
       let processedCount = 0;
       const MAX_NODES_TO_PROCESS = 200; // Reduced limit to improve performance
-      
+
       while (currentNode && processedCount < MAX_NODES_TO_PROCESS) {
         if (currentNode.nodeType === Node.TEXT_NODE) {
           const textContent = currentNode.textContent || "";
@@ -252,7 +253,7 @@ function LegacyRuTextGuard() {
 
     const pendingNodes = new Set();
     let frameId = 0;
-    
+
     // Debounce function to prevent too frequent execution
     let lastExecutionTime = 0;
     const MIN_EXECUTION_INTERVAL = 100; // ms
@@ -264,13 +265,13 @@ function LegacyRuTextGuard() {
         frameId = window.requestAnimationFrame(flushPendingNodes);
         return;
       }
-      
+
       lastExecutionTime = now;
       frameId = 0;
-      
+
       // Limit the number of pending nodes to process
       const nodesToProcess = Array.from(pendingNodes).slice(0, 50); // Only process first 50 nodes
-      
+
       const nodes = nodesToProcess.filter(
         (node) =>
           !nodesToProcess.some(
@@ -287,9 +288,10 @@ function LegacyRuTextGuard() {
 
     const scheduleReplacement = (node = document.body) => {
       if (!node) return;
-      
+
       // Only add to pending if we have space
-      if (pendingNodes.size < 100) { // Limit pending nodes
+      if (pendingNodes.size < 100) {
+        // Limit pending nodes
         pendingNodes.add(node);
       }
 
@@ -302,18 +304,18 @@ function LegacyRuTextGuard() {
 
     // Throttle the observer to reduce performance impact
     let observerTimeout = null;
-    
+
     const throttledObserver = (mutations) => {
       // Clear any pending timeout
       if (observerTimeout) {
         clearTimeout(observerTimeout);
       }
-      
+
       // Use a timeout to batch mutations and reduce frequency
       observerTimeout = setTimeout(() => {
         // Limit the number of mutations processed
         const limitedMutations = mutations.slice(0, 30); // Only process first 30 mutations
-        
+
         limitedMutations.forEach((mutation) => {
           if (mutation.type === "characterData") {
             scheduleReplacement(mutation.target);

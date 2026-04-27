@@ -1,10 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * useScrollReveal Hook - Optimized version
  * Always returns true immediately - no IntersectionObserver overhead
  */
-export function useScrollReveal(options = {}) {
+export function useScrollReveal(_options = {}) {
   const ref = useRef(null);
   return [ref, true];
 }

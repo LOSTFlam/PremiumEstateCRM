@@ -1,6 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
+  FormControl,
+  FormLabel,
+  Input,
+  SimpleGrid,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -55,6 +59,12 @@ const Add = (props) => {
   });
 
   const { errors: _errors, touched: _touched, values, handleSubmit, setFieldValue } = formik;
+
+  const ensureNumericFields = () => ({
+    numberofBedrooms: values?.numberofBedrooms ?? "",
+    numberofBathrooms: values?.numberofBathrooms ?? "",
+    squareFootage: values?.squareFootage ?? "",
+  });
 
   // Auto-generate slug when name or propertyAddress changes
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,6 +121,35 @@ const Add = (props) => {
           </DrawerHeader>
           <DrawerBody>
             <CustomForm moduleData={props?.propertyData} form={formik} />
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mt={4}>
+              <FormControl>
+                <FormLabel>Bedrooms</FormLabel>
+                <Input
+                  type="number"
+                  min={0}
+                  value={ensureNumericFields().numberofBedrooms}
+                  onChange={(e) => setFieldValue("numberofBedrooms", Number(e.target.value || 0))}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Bathrooms</FormLabel>
+                <Input
+                  type="number"
+                  min={0}
+                  value={ensureNumericFields().numberofBathrooms}
+                  onChange={(e) => setFieldValue("numberofBathrooms", Number(e.target.value || 0))}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Area (sq ft)</FormLabel>
+                <Input
+                  type="number"
+                  min={0}
+                  value={ensureNumericFields().squareFootage}
+                  onChange={(e) => setFieldValue("squareFootage", String(e.target.value || ""))}
+                />
+              </FormControl>
+            </SimpleGrid>
             {/* Photo Upload Section */}
             <Box mt={6} mb={4}>
               <PropertyPhotoManager

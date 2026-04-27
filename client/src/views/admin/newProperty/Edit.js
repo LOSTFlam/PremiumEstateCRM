@@ -1,6 +1,10 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
+  FormControl,
+  FormLabel,
+  Input,
+  SimpleGrid,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -51,6 +55,11 @@ const Edit = (props) => {
     handleSubmit,
     setFieldValue: _setFieldValue,
   } = formik;
+  const ensureNumericFields = () => ({
+    numberofBedrooms: values?.numberofBedrooms ?? "",
+    numberofBathrooms: values?.numberofBathrooms ?? "",
+    squareFootage: values?.squareFootage ?? "",
+  });
 
   const [isLoding, setIsLoding] = useState(false);
 
@@ -113,7 +122,44 @@ const Edit = (props) => {
                 <Spinner />
               </Flex>
             ) : (
-              <CustomForm moduleData={props?.propertyData} form={formik} />
+              <>
+                <CustomForm moduleData={props?.propertyData} form={formik} />
+                <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4} mt={4}>
+                  <FormControl>
+                    <FormLabel>Bedrooms</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().numberofBedrooms}
+                      onChange={(e) =>
+                        _setFieldValue("numberofBedrooms", Number(e.target.value || 0))
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Bathrooms</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().numberofBathrooms}
+                      onChange={(e) =>
+                        _setFieldValue("numberofBathrooms", Number(e.target.value || 0))
+                      }
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Area (sq ft)</FormLabel>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={ensureNumericFields().squareFootage}
+                      onChange={(e) =>
+                        _setFieldValue("squareFootage", String(e.target.value || ""))
+                      }
+                    />
+                  </FormControl>
+                </SimpleGrid>
+              </>
             )}
           </DrawerBody>
           <DrawerFooter>

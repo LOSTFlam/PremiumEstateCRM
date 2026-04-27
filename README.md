@@ -54,6 +54,7 @@
 
 ### 🏠 Property Management
 - **Property Catalog** — apartments, houses, land plots, commercial
+- **Detailed Attributes** — bedrooms, bathrooms, square footage tracking
 - **SEO Optimization** — public pages with meta tags
 - **Media Gallery** — photos, videos, virtual tours, documents
 - **Smart Search** — filters by price, type, location, area
@@ -195,6 +196,7 @@ cd PremiumEstateCRM
 cd server
 cp .env.example .env
 # Edit .env — set MongoDB URL and Resend API key
+# Optional: set DB_URL_FALLBACK for SRV connection issues
 npm install
 
 # 3. Install client dependencies
@@ -205,12 +207,16 @@ npm install --legacy-peer-deps
 cd ../server
 npm run seed:index
 
-# 5. Start the server (port 5001)
-npm start
+# 5. Seed sample properties (auto-creates admin if needed)
+npm run seed:properties
 
-# 6. In a new terminal, start the client (port 3000)
-cd ../client
-npm start
+# 6. Start the server (port 5001) and client (port 3000)
+# Option A: Standard start
+npm start # in server terminal
+npm start # in client terminal
+
+# Option B: One-command start with browser open
+npm run dev:open
 ```
 
 Open **http://localhost:3000** — the landing page is ready!
@@ -275,6 +281,8 @@ Without SMS keys, notifications are logged to the server console (mock mode).
 ## 🔒 Security
 
 - **JWT with refresh token** — automatic session renewal
+- **Ownership enforcement** — users see only their properties (non-admins)
+- **Secure uploads** — auth required for photos, tours, and documents
 - **Rate limiting** — brute force and spam protection
 - **Helmet** — HTTP security headers
 - **Password validation** — complexity + password history
@@ -423,6 +431,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ### 🏠 Управление недвижимостью
 - **Каталог объектов** — квартиры, дома, участки, коммерция
+- **Детальные атрибуты** — количество спален, ванных, площадь
 - **SEO-оптимизация** — публичные страницы с мета-тегами
 - **Медиа-галерея** — фото, видео, виртуальные туры, документы
 - **Умный поиск** — фильтры по цене, типу, локации, площади

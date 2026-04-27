@@ -30,7 +30,7 @@ export const publicBrand = {
   gradients: {
     page: "linear-gradient(180deg, #08111a 0%, #101924 38%, #162334 100%)",
     pageLight: "linear-gradient(180deg, #f4eee5 0%, #ece3d7 100%)",
-    hero: "radial-gradient(circle at 20% 12%, rgba(212,175,55,0.22) 0%, rgba(212,175,55,0) 32%), radial-gradient(circle at 88% 10%, rgba(185,119,55,0.22) 0%, rgba(185,119,55,0) 28%), linear-gradient(145deg, #08111a 0%, #121b28 38%, #162334 100%)",
+    hero: "radial-gradient(circle at 18% 10%, rgba(212,175,55,0.26) 0%, rgba(212,175,55,0) 30%), radial-gradient(circle at 85% 12%, rgba(185,119,55,0.24) 0%, rgba(185,119,55,0) 32%), radial-gradient(circle at 55% 85%, rgba(143,193,154,0.08) 0%, rgba(143,193,154,0) 34%), linear-gradient(150deg, #060d15 0%, #101a27 42%, #17283a 100%)",
     brass:
       "linear-gradient(135deg, rgba(243,217,161,0.95) 0%, rgba(212,175,55,0.92) 48%, rgba(166,106,45,0.95) 100%)",
     lightBrass: "linear-gradient(135deg, rgba(247,231,206,0.96) 0%, rgba(238,223,198,0.92) 100%)",
@@ -40,14 +40,14 @@ export const publicBrand = {
       "linear-gradient(90deg, rgba(243,217,161,0) 0%, rgba(212,175,55,0.85) 50%, rgba(185,119,55,0) 100%)",
   },
   shadows: {
-    soft: "0 28px 80px rgba(6, 10, 16, 0.18)",
-    deep: "0 35px 100px rgba(4, 8, 14, 0.38)",
-    glow: "0 24px 70px rgba(185, 119, 55, 0.18)",
+    soft: "0 24px 70px rgba(6, 10, 16, 0.16)",
+    deep: "0 38px 110px rgba(4, 8, 14, 0.42)",
+    glow: "0 22px 64px rgba(185, 119, 55, 0.2)",
     inset: "inset 0 1px 0 rgba(255,255,255,0.06)",
   },
   radii: {
-    xl: "36px",
-    lg: "30px",
+    xl: "40px",
+    lg: "32px",
     md: "22px",
     sm: "18px",
   },

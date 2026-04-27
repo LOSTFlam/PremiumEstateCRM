@@ -138,11 +138,11 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
       as={RouterLink}
       to={propertyHref}
       className="property-card"
-      borderRadius="48px"
+      borderRadius={{ base: "30px", md: "40px", xl: "44px" }}
       overflow="hidden"
       bg={publicBrand.gradients.panelLight}
       border="1px solid rgba(9,18,32,0.06)"
-      boxShadow="0 8px 32px rgba(0, 0, 0, 0.12), 0 0 24px rgba(212, 175, 55, 0.08)"
+      boxShadow="0 10px 36px rgba(0, 0, 0, 0.14), 0 0 26px rgba(212, 175, 55, 0.09)"
       position="relative"
       transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
       _before={{
@@ -152,7 +152,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         left: 0,
         right: 0,
         bottom: 0,
-        borderRadius: "48px",
+        borderRadius: "inherit",
         background:
           "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.05) 100%)",
         opacity: 0,
@@ -168,7 +168,11 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           "0 20px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(212, 175, 55, 0.15), 0 0 80px rgba(255, 255, 255, 0.08)",
       }}
     >
-      <Box position="relative" overflow="hidden" borderRadius="42px 42px 0 0">
+      <Box
+        position="relative"
+        overflow="hidden"
+        borderRadius={{ base: "26px 26px 0 0", md: "34px 34px 0 0" }}
+      >
         <Box
           className="property-image-wrapper"
           transition="transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -179,7 +183,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           <Image
             src={getPrimaryImage(property)}
             alt={property?.name || property?.propertyAddress}
-            h="320px"
+            h={{ base: "240px", md: "300px", xl: "320px" }}
             w="100%"
             objectFit="cover"
           />
@@ -194,7 +198,14 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           }}
         />
 
-        <HStack position="absolute" top={4} left={4} spacing={2} flexWrap="wrap" maxW="calc(100% - 140px)">
+        <HStack
+          position="absolute"
+          top={4}
+          left={4}
+          spacing={2}
+          flexWrap="wrap"
+          maxW="calc(100% - 140px)"
+        >
           <Badge
             px={3.5}
             py={1.5}
@@ -428,12 +439,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         </SimpleGrid>
 
         <HStack justify="space-between" align="center" pt={1} spacing={3}>
-          <Text 
-            color={publicBrand.colors.copper} 
-            fontSize="xs" 
-            fontWeight="700"
-            flex={1}
-          >
+          <Text color={publicBrand.colors.copper} fontSize="xs" fontWeight="700" flex={1}>
             {richListing
               ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
               : t?.("publicListing.openOffer") || "Open offer"}

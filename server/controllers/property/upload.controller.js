@@ -34,10 +34,20 @@ const createUploadHandler = ({ field, routePrefix }) => async (req, res) => {
 
     const files = mapUploadedFiles(req, routePrefix, field === "propertyDocuments");
 
-    await Property.updateOne(
-      { _id: id },
+    const filter = { _id: id };
+    // Enforce ownership for non-super admins
+    if (req.user?.role !== "superAdmin") {
+      filter.createBy = req.user?.userId;
+    }
+
+    const result = await Property.updateOne(
+      filter,
       { $push: { [field]: { $each: files } } },
     );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Property not found or access denied" });
+    }
 
     res.send("File uploaded successfully.");
   } catch (err) {

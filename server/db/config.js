@@ -12,6 +12,7 @@ const { leadFields } = require('./leadFields.js');
 const { propertiesFields } = require('./propertiesFields.js');
 const { defaultRole } = require("./defaultRoles.js");
 const seedPipelineStages = require("../scripts/seedPipelineStages.js");
+const { connectWithFallback } = require("../utils/mongoConnect");
 
 const initializedSchemas = async () => {
     await initializeLeadSchema();
@@ -46,12 +47,13 @@ const initializedSchemas = async () => {
 
 const connectDB = async (DATABASE_URL, DATABASE) => {
     try {
-        const DB_OPTIONS = {
-            dbName: DATABASE
-        }
-
         mongoose.set("strictQuery", false);
-        await mongoose.connect(DATABASE_URL, DB_OPTIONS);
+        await connectWithFallback({
+            primaryUri: DATABASE_URL,
+            fallbackUri: process.env.DB_URL_FALLBACK,
+            dbName: DATABASE,
+            context: "db-connect",
+        });
 
         // const collectionsToDelete = ['abc', 'Report and analytics', 'test', 'krushil', 'bca', 'xyz', 'lkjhg', 'testssssss', 'tel', 'levajav', 'tellevajav', 'Contact'];
         // const db = mongoose.connection.db;

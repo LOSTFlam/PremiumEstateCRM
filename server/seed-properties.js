@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const User = require("./model/schema/user");
+const bcrypt = require("bcrypt");
+const path = require("path");
+const { connectWithFallback } = require("./utils/mongoConnect");
 
+// Load env from server/.env first, then fallback to repo root .env
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 require("dotenv").config();
 
 const slugify = (value = "") =>
@@ -442,20 +447,58 @@ const enrichProperty = (property, ownerId) => {
 
 async function seedDatabase() {
   try {
-    await mongoose.connect(process.env.DB_URL || "mongodb://127.0.0.1:27017", {
+    await connectWithFallback({
+      primaryUri: process.env.DB_URL || "mongodb://127.0.0.1:27017",
+      fallbackUri: process.env.DB_URL_FALLBACK || "",
       dbName: process.env.DB || "PremiumEstateDB",
+      context: "seed-properties",
     });
 
-    const owner =
-      (await User.findOne({ deleted: false, role: "superAdmin" }).select("_id")) ||
-      (await User.findOne({ deleted: false }).select("_id"));
+    const ensureAdminUser = async () => {
+      const existing =
+        (await User.findOne({ deleted: false, role: "superAdmin" })) ||
+        (await User.findOne({ deleted: false }));
+
+      if (existing?._id) return existing;
+
+      const email = String(process.env.ADMIN_EMAIL || "admin@gmail.com").trim().toLowerCase();
+      const password = String(process.env.ADMIN_PASSWORD || "").trim();
+      if (!password) {
+        throw new Error(
+          "No users found in DB and ADMIN_PASSWORD is not set. Set ADMIN_PASSWORD in server/.env so the seeder can create an admin."
+        );
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const created = await User.create({
+        username: email,
+        email,
+        password: hashedPassword,
+        firstName: process.env.ADMIN_FIRST_NAME || "Premium",
+        lastName: process.env.ADMIN_LAST_NAME || "Estate",
+        phoneNumber: process.env.ADMIN_PHONE || "",
+        role: "superAdmin",
+        deleted: false,
+        createdDate: new Date(),
+      });
+
+      return created;
+    };
+
+    const owner = await ensureAdminUser();
+    if (!owner?._id) {
+      throw new Error(
+        "No active user found to assign as createBy. Create an admin user first (superAdmin) and re-run seeding."
+      );
+    }
 
     const collection = mongoose.connection.db.collection("Properties");
     let created = 0;
     let updated = 0;
 
     for (const property of sampleProperties) {
-      const document = enrichProperty(property, owner?._id || null);
+      const document = enrichProperty(property, owner._id);
+      const { createdDate, ...documentWithoutCreatedDate } = document;
       const existing = await collection.findOne(
         { publicSlug: document.publicSlug },
         { projection: { _id: 1 } },
@@ -464,9 +507,9 @@ async function seedDatabase() {
       await collection.updateOne(
         { publicSlug: document.publicSlug },
         {
-          $set: document,
+          $set: documentWithoutCreatedDate,
           $setOnInsert: {
-            createdDate: document.createdDate,
+            createdDate,
           },
         },
         { upsert: true },
@@ -490,7 +533,10 @@ async function seedDatabase() {
     // Console statement removed
     // Console statement removed
   } catch (error) {
-    // Console statement removed
+    console.error("[seed:properties] Failed:", error?.message || error);
+    if (error?.stack) {
+      console.error(error.stack);
+    }
     process.exitCode = 1;
   } finally {
     await mongoose.disconnect().catch(() => {});

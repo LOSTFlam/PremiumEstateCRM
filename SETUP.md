@@ -38,14 +38,14 @@ cd PremiumEstateCRM
 ### Step 2: Install Dependencies
 
 ```bash
-# Install all dependencies (server + client) in one command
-npm run install-all
+# Install all dependencies (root + workspaces)
+npm install
 ```
 
-This will install:
-- Root dependencies
-- Client dependencies (`/client`)
-- Server dependencies (`/server`)
+This will install dependencies for:
+- Root workspace
+- Client (`/client`)
+- Server (`/server`)
 
 ### Step 3: Configure Environment Variables
 
@@ -115,6 +115,21 @@ mongod --dbpath /data/db
 ```
 
 ### Step 5: Start the Application
+
+#### Recommended (auto-open browser)
+
+```bash
+# Starts server + client and opens:
+# - http://127.0.0.1:5173 (site)
+# - http://127.0.0.1:5001/api/health/status (API health)
+npm run dev:open
+```
+
+#### Optional: Seed sample properties (so admin sees objects)
+
+```bash
+npm run seed:properties
+```
 
 #### Option A: Start Both Servers (Recommended)
 

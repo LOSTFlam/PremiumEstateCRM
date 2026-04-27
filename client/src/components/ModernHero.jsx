@@ -178,7 +178,7 @@ export default function ModernHero({
   const [titleRef, titleRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
   const [panelRef, panelRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
   const [statsRef, statsRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
-  const [routesRef, routesRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
+  const [routesRef, _routesRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
   const [heroCardRef, heroCardRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
   const [pulseRef, pulseRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
 
@@ -296,32 +296,32 @@ export default function ModernHero({
     <Box
       position="relative"
       overflow="hidden"
-      pt={{ base: 28, md: 32 }}
-      pb={{ base: 16, md: 20 }}
+      pt={{ base: 24, md: 30, xl: 36 }}
+      pb={{ base: 14, md: 18, xl: 22 }}
       bg={publicBrand.gradients.hero}
     >
       <Box
         position="absolute"
         inset="0"
-        opacity={0.75}
-        bg="radial-gradient(circle at 12% 18%, rgba(247,231,206,0.14) 0%, rgba(247,231,206,0) 26%), radial-gradient(circle at 82% 14%, rgba(185,119,55,0.20) 0%, rgba(185,119,55,0) 32%)"
+        opacity={0.82}
+        bg="radial-gradient(circle at 12% 18%, rgba(247,231,206,0.16) 0%, rgba(247,231,206,0) 28%), radial-gradient(circle at 82% 14%, rgba(185,119,55,0.24) 0%, rgba(185,119,55,0) 34%)"
       />
       <Box
         position="absolute"
         right={{ base: "-12%", xl: "-2%" }}
         top={{ base: "9%", xl: "6%" }}
-        w={{ base: "320px", xl: "620px" }}
-        h={{ base: "320px", xl: "620px" }}
+        w={{ base: "300px", xl: "660px" }}
+        h={{ base: "300px", xl: "660px" }}
         borderRadius="full"
         opacity={prefersReducedMotion ? 0.14 : 0.3}
-        filter="blur(90px)"
+        filter="blur(110px)"
         bg="radial-gradient(circle, rgba(212,175,55,0.24) 0%, rgba(212,175,55,0) 72%)"
       />
 
-      <Box position="relative" zIndex={1} maxW="100%" px={{ base: 4, md: 8 }}>
+      <Box position="relative" zIndex={1} maxW="1560px" mx="auto" px={{ base: 4, md: 8, xl: 10 }}>
         <Grid
           templateColumns={{ base: "1fr", xl: "1fr" }}
-          gap={{ base: 10, xl: 12 }}
+          gap={{ base: 8, xl: 10 }}
           alignItems="start"
           width="100%"
         >
@@ -363,7 +363,7 @@ export default function ModernHero({
 
                 <Heading
                   as="h1"
-                  fontSize={{ base: "4xl", md: "6xl", xl: "7xl" }}
+                  fontSize={{ base: "3xl", md: "5xl", xl: "6xl", "2xl": "7xl" }}
                   lineHeight={{ base: "1.04", md: "0.94" }}
                   letterSpacing="-0.05em"
                   maxW="940px"
@@ -390,6 +390,9 @@ export default function ModernHero({
                 borderRadius={{ base: "28px", md: "34px" }}
                 px={{ base: 5, md: 6 }}
                 py={{ base: 5, md: 6 }}
+                backdropFilter="blur(12px)"
+                border="1px solid rgba(227, 211, 184, 0.16)"
+                boxShadow="0 28px 80px rgba(4, 8, 14, 0.36)"
                 style={{
                   transition:
                     "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -611,7 +614,18 @@ export default function ModernHero({
                     </Text>
                   </Box>
 
-                  <Box display="grid" gridTemplateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)", "2xl": "repeat(5, 1fr)" }} gap={5} width="100%">
+                  <Box
+                    display="grid"
+                    gridTemplateColumns={{
+                      base: "1fr",
+                      md: "repeat(2, 1fr)",
+                      lg: "repeat(3, 1fr)",
+                      xl: "repeat(4, 1fr)",
+                      "2xl": "repeat(5, 1fr)",
+                    }}
+                    gap={5}
+                    width="100%"
+                  >
                     {routeCards.map((route) => (
                       <Box
                         key={route.key}

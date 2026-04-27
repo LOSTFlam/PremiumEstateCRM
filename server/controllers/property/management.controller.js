@@ -30,8 +30,13 @@ const resolveUniqueSlug = async (input, excludedId = null) => {
 };
 
 const index = async (req, res) => {
-  const query = req.query;
-  query.deleted = false;
+  const query = { ...req.query, deleted: false };
+
+  // Enforce ownership for non-super admins (server-side security)
+  // Super admin may query any creator via ?createBy=...
+  if (req.user?.role !== "superAdmin") {
+    query.createBy = req.user?.userId;
+  }
 
   const allData = await Property.find(query)
     .populate({
@@ -40,13 +45,16 @@ const index = async (req, res) => {
     })
     .exec();
 
-  const result = allData.filter((item) => item.createBy !== null);
-  res.send(result);
+  // Do not drop properties when creator is deleted/missing;
+  // admin should still see and be able to manage them.
+  res.send(allData);
 };
 
 const add = async (req, res) => {
   try {
-    req.body.createdDate = new Date();
+    req.body.createdDate = req.body.createdDate || new Date();
+    // Always set creator from the authenticated user (never trust client input)
+    req.body.createBy = req.user?.userId;
 
     const slugSource = req.body.publicSlug || req.body.name || req.body.propertyAddress || "property";
     req.body.publicSlug = await resolveUniqueSlug(slugSource);

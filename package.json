@@ -12,11 +12,14 @@
   },
   "scripts": {
     "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:open": "concurrently --kill-others-on-fail \"npm run dev -w server\" \"npm run dev -w client\" \"npx wait-on http://127.0.0.1:3000 && xdg-open http://127.0.0.1:3000\" \"npx wait-on http://127.0.0.1:5001/api/health/status && xdg-open http://127.0.0.1:5001/api/health/status\"",
     "start": "npm run dev",
     "dev:server": "npm run dev -w server",
     "dev:client": "npm run dev -w client",
     "start:server": "npm run start -w server",
     "start:client": "npm run start -w client",
+    "seed:properties": "npm run seed:properties -w server",
+    "seed:all": "npm run seed:all -w server",
     "lint": "npm run lint -w client",
     "typecheck": "npm run typecheck -w client",
     "build:client": "npm run build -w client",
@@ -33,6 +36,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "wait-on": "^9.0.5"
   }
 }

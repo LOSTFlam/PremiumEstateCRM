@@ -4,8 +4,6 @@ import {
   Box,
   Button,
   Container,
-  Grid,
-  GridItem,
   Heading,
   HStack,
   Icon,
@@ -198,8 +196,8 @@ const resolveLocationLabel = (address, language) => {
 export default function ModernLandingPage() {
   const { t, i18n } = useTranslation();
   const toast = useToast();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const [isDesktop] = useMediaQuery("(min-width: 62em)");
+  const _prefersReducedMotion = usePrefersReducedMotion();
+  const [_isDesktop] = useMediaQuery("(min-width: 62em)");
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -507,10 +505,10 @@ export default function ModernLandingPage() {
 
         <Box
           id="market"
-          py={{ base: 16, md: 20 }}
+          py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,0.98) 0%, rgba(236,227,215,1) 100%)"
         >
-          <Container maxW="8xl">
+          <Container maxW="min(1640px, 96vw)">
             <Stack spacing={10}>
               <Box
                 borderRadius="32px"
@@ -519,6 +517,7 @@ export default function ModernLandingPage() {
                 bg="white"
                 border="1px solid rgba(9,18,32,0.08)"
                 boxShadow={publicBrand.shadows.soft}
+                backdropFilter="blur(8px)"
               >
                 <Stack spacing={8}>
                   <Box>
@@ -594,7 +593,17 @@ export default function ModernLandingPage() {
                 </Stack>
               </Box>
 
-              <Box display="grid" gridTemplateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)", xl: "repeat(4, 1fr)" }} gap={5} width="100%">
+              <Box
+                display="grid"
+                gridTemplateColumns={{
+                  base: "1fr",
+                  md: "repeat(2, 1fr)",
+                  lg: "repeat(3, 1fr)",
+                  xl: "repeat(4, 1fr)",
+                }}
+                gap={{ base: 4, md: 5 }}
+                width="100%"
+              >
                 {marketRoutes.map((route) => (
                   <Box
                     key={route.key}
@@ -653,237 +662,235 @@ export default function ModernLandingPage() {
           py={{ base: 16, md: 20 }}
           bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
         >
-          <Container maxW="8xl">
+          <Container maxW="min(1640px, 96vw)">
             <Stack spacing={8}>
               <Box>
                 <Badge
-                    w="fit-content"
-                    px={4}
-                    py={1.5}
-                    borderRadius="full"
-                    bg="rgba(245,208,118,0.14)"
-                    border="1px solid rgba(245,208,118,0.24)"
-                    color="#f5d076"
-                    letterSpacing="0.12em"
-                    textTransform="uppercase"
-                  >
-                    {copy.collectionsBadge}
-                  </Badge>
-                  <Heading color="white" fontSize={{ base: "3xl", md: "5xl" }} lineHeight="1.05">
-                    {copy.collectionsTitle}
-                  </Heading>
-                  <Text
-                    color="whiteAlpha.760"
-                    fontSize={{ base: "md", md: "lg" }}
-                    lineHeight="1.9"
-                    maxW="760px"
-                  >
-                    {copy.collectionsText}
-                  </Text>
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 5 }} spacing={5}>
-                    {collectionCards.map((collection) => (
-                      <Box
-                        key={collection.slug}
-                        as={RouterLink}
-                        to={collection.href}
-                        borderRadius="32px"
-                        px={{ base: 5, md: 6 }}
-                        py={{ base: 5, md: 6 }}
-                        bg="rgba(255,255,255,0.05)"
-                        border="1px solid rgba(227, 211, 184, 0.12)"
-                        transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
-                        _hover={{
-                          transform: "translateY(-6px)",
-                          borderColor: "rgba(245,208,118,0.24)",
-                          boxShadow: "0 28px 70px rgba(0,0,0,0.18)",
-                        }}
-                      >
-                        <HStack justify="space-between" align="start">
-                          <Badge
-                            px={3}
-                            py={1.5}
-                            borderRadius="full"
-                            bg="rgba(245,208,118,0.12)"
-                            color="#f5d076"
-                            border="1px solid rgba(245,208,118,0.20)"
-                          >
-                            {collection.badge}
-                          </Badge>
-                          <Text color="whiteAlpha.620" fontSize="sm">
-                            {collection.count}
-                          </Text>
-                        </HStack>
-                        <Heading mt={5} size="md" color="white">
-                          {collection.title}
-                        </Heading>
-                        <Text mt={3} color="whiteAlpha.760" lineHeight="1.8" noOfLines={3}>
-                          {collection.description}
+                  w="fit-content"
+                  px={4}
+                  py={1.5}
+                  borderRadius="full"
+                  bg="rgba(245,208,118,0.14)"
+                  border="1px solid rgba(245,208,118,0.24)"
+                  color="#f5d076"
+                  letterSpacing="0.12em"
+                  textTransform="uppercase"
+                >
+                  {copy.collectionsBadge}
+                </Badge>
+                <Heading color="white" fontSize={{ base: "3xl", md: "5xl" }} lineHeight="1.05">
+                  {copy.collectionsTitle}
+                </Heading>
+                <Text
+                  color="whiteAlpha.760"
+                  fontSize={{ base: "md", md: "lg" }}
+                  lineHeight="1.9"
+                  maxW="760px"
+                >
+                  {copy.collectionsText}
+                </Text>
+                <SimpleGrid
+                  columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 5 }}
+                  spacing={{ base: 4, md: 5 }}
+                >
+                  {collectionCards.map((collection) => (
+                    <Box
+                      key={collection.slug}
+                      as={RouterLink}
+                      to={collection.href}
+                      borderRadius="32px"
+                      px={{ base: 5, md: 6 }}
+                      py={{ base: 5, md: 6 }}
+                      bg="rgba(255,255,255,0.05)"
+                      border="1px solid rgba(227, 211, 184, 0.12)"
+                      transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
+                      _hover={{
+                        transform: "translateY(-6px)",
+                        borderColor: "rgba(245,208,118,0.24)",
+                        boxShadow: "0 28px 70px rgba(0,0,0,0.18)",
+                      }}
+                    >
+                      <HStack justify="space-between" align="start">
+                        <Badge
+                          px={3}
+                          py={1.5}
+                          borderRadius="full"
+                          bg="rgba(245,208,118,0.12)"
+                          color="#f5d076"
+                          border="1px solid rgba(245,208,118,0.20)"
+                        >
+                          {collection.badge}
+                        </Badge>
+                        <Text color="whiteAlpha.620" fontSize="sm">
+                          {collection.count}
                         </Text>
-                        <Stack mt={5} spacing={2}>
-                          {collection.heroPoints?.slice(0, 2).map((point) => (
-                            <HStack key={point} spacing={2.5} color="whiteAlpha.820">
-                              <Icon as={LuSparkles} color="#f5d076" />
-                              <Text fontSize="sm">{point}</Text>
-                            </HStack>
-                          ))}
-                        </Stack>
-                        <HStack mt={5} spacing={2} color="#f5d076">
-                          <Text fontWeight="700" fontSize="sm">
-                            {copy.collectionsOpen}
-                          </Text>
-                          <FiArrowRight />
+                      </HStack>
+                      <Heading mt={5} size="md" color="white">
+                        {collection.title}
+                      </Heading>
+                      <Text mt={3} color="whiteAlpha.760" lineHeight="1.8" noOfLines={3}>
+                        {collection.description}
+                      </Text>
+                      <Stack mt={5} spacing={2}>
+                        {collection.heroPoints?.slice(0, 2).map((point) => (
+                          <HStack key={point} spacing={2.5} color="whiteAlpha.820">
+                            <Icon as={LuSparkles} color="#f5d076" />
+                            <Text fontSize="sm">{point}</Text>
+                          </HStack>
+                        ))}
+                      </Stack>
+                      <HStack mt={5} spacing={2} color="#f5d076">
+                        <Text fontWeight="700" fontSize="sm">
+                          {copy.collectionsOpen}
+                        </Text>
+                        <FiArrowRight />
+                      </HStack>
+                    </Box>
+                  ))}
+                </SimpleGrid>
+              </Box>
+            </Stack>
+
+            <Stack spacing={5}>
+              <GuidedFinder
+                properties={properties}
+                variant="dark"
+                onMatchFound={handleGuidedMatch}
+              />
+
+              <Box
+                id="services"
+                className="public-brand-panel"
+                borderRadius="32px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+              >
+                <Stack spacing={5}>
+                  <Box>
+                    <Text
+                      color="#f5d076"
+                      fontSize="xs"
+                      letterSpacing="0.16em"
+                      textTransform="uppercase"
+                    >
+                      {copy.servicesBadge}
+                    </Text>
+                    <Heading mt={2} size="lg" color="white">
+                      {copy.servicesTitle}
+                    </Heading>
+                    <Text mt={3} color="whiteAlpha.760" lineHeight="1.8">
+                      {copy.servicesText}
+                    </Text>
+                  </Box>
+                  <Stack spacing={4}>
+                    {copy.services.map((service) => (
+                      <Box
+                        key={service.key}
+                        borderRadius="24px"
+                        px={4}
+                        py={4}
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.10)"
+                      >
+                        <HStack spacing={4} align="start">
+                          <Box
+                            w="44px"
+                            h="44px"
+                            borderRadius="18px"
+                            display="grid"
+                            placeItems="center"
+                            bg="rgba(245,208,118,0.10)"
+                            color="#f5d076"
+                            flexShrink={0}
+                          >
+                            <Icon as={service.icon} />
+                          </Box>
+                          <Box>
+                            <Text color="white" fontWeight="700">
+                              {service.title}
+                            </Text>
+                            <Text mt={1.5} color="whiteAlpha.720" fontSize="sm" lineHeight="1.8">
+                              {service.text}
+                            </Text>
+                          </Box>
                         </HStack>
                       </Box>
                     ))}
-                  </SimpleGrid>
-                </Box>
-              </Stack>
-
-              <Stack spacing={5}>
-                <GuidedFinder
-                  properties={properties}
-                  variant="dark"
-                  onMatchFound={handleGuidedMatch}
-                />
-
-                <Box
-                  id="services"
-                  className="public-brand-panel"
-                  borderRadius="32px"
-                  px={{ base: 5, md: 6 }}
-                  py={{ base: 5, md: 6 }}
-                >
-                  <Stack spacing={5}>
-                    <Box>
-                      <Text
-                        color="#f5d076"
-                        fontSize="xs"
-                        letterSpacing="0.16em"
-                        textTransform="uppercase"
-                      >
-                        {copy.servicesBadge}
-                      </Text>
-                      <Heading mt={2} size="lg" color="white">
-                        {copy.servicesTitle}
-                      </Heading>
-                      <Text mt={3} color="whiteAlpha.760" lineHeight="1.8">
-                        {copy.servicesText}
-                      </Text>
-                    </Box>
-                    <Stack spacing={4}>
-                      {copy.services.map((service) => (
-                        <Box
-                          key={service.key}
-                          borderRadius="24px"
-                          px={4}
-                          py={4}
-                          bg="rgba(255,255,255,0.05)"
-                          border="1px solid rgba(227, 211, 184, 0.10)"
-                        >
-                          <HStack spacing={4} align="start">
-                            <Box
-                              w="44px"
-                              h="44px"
-                              borderRadius="18px"
-                              display="grid"
-                              placeItems="center"
-                              bg="rgba(245,208,118,0.10)"
-                              color="#f5d076"
-                              flexShrink={0}
-                            >
-                              <Icon as={service.icon} />
-                            </Box>
-                            <Box>
-                              <Text color="white" fontWeight="700">
-                                {service.title}
-                              </Text>
-                              <Text
-                                mt={1.5}
-                                color="whiteAlpha.720"
-                                fontSize="sm"
-                                lineHeight="1.8"
-                              >
-                                {service.text}
-                              </Text>
-                            </Box>
-                          </HStack>
-                        </Box>
-                      ))}
-                    </Stack>
                   </Stack>
-                </Box>
+                </Stack>
+              </Box>
 
-                <Box
-                  className="public-brand-panel"
-                  borderRadius="32px"
-                  px={{ base: 5, md: 6 }}
-                  py={{ base: 5, md: 6 }}
-                >
-                  <Stack spacing={4}>
-                    <Box>
-                      <Text
-                        color="#f5d076"
-                        fontSize="xs"
-                        letterSpacing="0.16em"
-                        textTransform="uppercase"
+              <Box
+                className="public-brand-panel"
+                borderRadius="32px"
+                px={{ base: 5, md: 6 }}
+                py={{ base: 5, md: 6 }}
+              >
+                <Stack spacing={4}>
+                  <Box>
+                    <Text
+                      color="#f5d076"
+                      fontSize="xs"
+                      letterSpacing="0.16em"
+                      textTransform="uppercase"
+                    >
+                      {copy.locationsTitle}
+                    </Text>
+                    <Text mt={2} color="whiteAlpha.760" lineHeight="1.8">
+                      {copy.locationsText}
+                    </Text>
+                  </Box>
+                  <Stack spacing={3}>
+                    {locationSignals.map((location) => (
+                      <HStack
+                        key={location.label}
+                        justify="space-between"
+                        align="center"
+                        px={4}
+                        py={4}
+                        borderRadius="22px"
+                        bg="rgba(255,255,255,0.05)"
+                        border="1px solid rgba(227, 211, 184, 0.10)"
                       >
-                        {copy.locationsTitle}
-                      </Text>
-                      <Text mt={2} color="whiteAlpha.760" lineHeight="1.8">
-                        {copy.locationsText}
-                      </Text>
-                    </Box>
-                    <Stack spacing={3}>
-                      {locationSignals.map((location) => (
-                        <HStack
-                          key={location.label}
-                          justify="space-between"
-                          align="center"
-                          px={4}
-                          py={4}
-                          borderRadius="22px"
-                          bg="rgba(255,255,255,0.05)"
-                          border="1px solid rgba(227, 211, 184, 0.10)"
-                        >
-                          <HStack spacing={3}>
-                            <Box
-                              w="40px"
-                              h="40px"
-                              borderRadius="16px"
-                              display="grid"
-                              placeItems="center"
-                              bg="rgba(245,208,118,0.10)"
-                              color="#f5d076"
-                            >
-                              <LuMapPin />
-                            </Box>
-                            <Box>
-                              <Text color="white" fontWeight="700">
-                                {location.label}
-                              </Text>
-                              <Text color="whiteAlpha.620" fontSize="sm">
-                                {location.count} {locale === "ru" ? "объекта" : "offers"}
-                              </Text>
-                            </Box>
-                          </HStack>
-                          <Text color="#f5d076" fontWeight="700" fontSize="sm">
-                            {copy.fromLabel} {compactCurrency(location.price, i18n.language, t)}
-                          </Text>
+                        <HStack spacing={3}>
+                          <Box
+                            w="40px"
+                            h="40px"
+                            borderRadius="16px"
+                            display="grid"
+                            placeItems="center"
+                            bg="rgba(245,208,118,0.10)"
+                            color="#f5d076"
+                          >
+                            <LuMapPin />
+                          </Box>
+                          <Box>
+                            <Text color="white" fontWeight="700">
+                              {location.label}
+                            </Text>
+                            <Text color="whiteAlpha.620" fontSize="sm">
+                              {location.count} {locale === "ru" ? "объекта" : "offers"}
+                            </Text>
+                          </Box>
                         </HStack>
-                      ))}
-                    </Stack>
+                        <Text color="#f5d076" fontWeight="700" fontSize="sm">
+                          {copy.fromLabel} {compactCurrency(location.price, i18n.language, t)}
+                        </Text>
+                      </HStack>
+                    ))}
                   </Stack>
-                </Box>
-              </Stack>
-            </Container>
+                </Stack>
+              </Box>
+            </Stack>
+          </Container>
         </Box>
 
         <Box
           id="properties-section"
-          py={{ base: 16, md: 20 }}
+          py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,1) 0%, rgba(244,238,229,1) 100%)"
         >
-          <Container maxW="8xl">
+          <Container maxW="min(1640px, 96vw)">
             <Stack spacing={10}>
               <Stack spacing={6} align="center" textAlign="center">
                 <Badge
@@ -949,13 +956,13 @@ export default function ModernLandingPage() {
               </Stack>
 
               {loading ? (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={{ base: 4, md: 6 }}>
                   {Array.from({ length: 6 }).map((_, index) => (
                     <Skeleton key={`landing-skeleton-${index}`} h="520px" borderRadius="40px" />
                   ))}
                 </SimpleGrid>
               ) : (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={6}>
+                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={{ base: 4, md: 6 }}>
                   {featuredProperties.map((property) => (
                     <MemoizedModernPropertyCard
                       key={property?._id}

@@ -17,7 +17,7 @@ export default function SmokeEffect({ opacity = 0.15, speed = 0.5 }) {
       // Limit canvas size to prevent performance issues on very large screens
       const displayWidth = canvas.clientWidth;
       const displayHeight = canvas.clientHeight;
-      
+
       if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
         canvas.width = Math.min(displayWidth, 1920); // Max width 1920
         canvas.height = Math.min(displayHeight, 1080); // Max height 1080
@@ -59,7 +59,7 @@ export default function SmokeEffect({ opacity = 0.15, speed = 0.5 }) {
 
       draw() {
         if (!ctx) return;
-        
+
         const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
         gradient.addColorStop(0, `rgba(200, 200, 220, ${this.currentOpacity})`);
         gradient.addColorStop(0.5, `rgba(180, 180, 200, ${this.currentOpacity * 0.5})`);
@@ -73,16 +73,18 @@ export default function SmokeEffect({ opacity = 0.15, speed = 0.5 }) {
     }
 
     // Reduce particle count for performance
-    for (let i = 0; i < 8; i++) { // Reduced from 15 to 8 particles
+    for (let i = 0; i < 8; i++) {
+      // Reduced from 15 to 8 particles
       particles.push(new SmokeParticle());
     }
 
     const animate = () => {
       if (!ctx) return;
-      
+
       // Limit FPS to prevent excessive CPU usage
       const now = Date.now();
-      if (now - animationStartTime < 1000/30) { // Cap at 30fps
+      if (now - animationStartTime < 1000 / 30) {
+        // Cap at 30fps
         animationRef.current = requestAnimationFrame(animate);
         return;
       }

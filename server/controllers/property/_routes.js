@@ -38,21 +38,25 @@ router.post(
 );
 router.post(
   "/add-property-photos/:id",
+  auth,
   property.upload.array("property", 10),
   property.propertyPhoto
 );
 router.post(
   "/add-virtual-tours-or-videos/:id",
+  auth,
   property.virtualTours.array("property", 10),
   property.VirtualToursorVideos
 );
 router.post(
   "/add-floor-plans/:id",
+  auth,
   property.FloorPlansStorage.array("property", 10),
   property.FloorPlans
 );
 router.post(
   "/add-property-documents/:id",
+  auth,
   property.PropertyDocumentsStorage.array("property", 10),
   property.PropertyDocuments
 );
