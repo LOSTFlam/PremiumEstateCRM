@@ -702,7 +702,7 @@ const View = () => {
                                   (field) => field?.isTableField === true
                                 ) || []
                               }
-                              AdvanceSearch={() => ""}
+                              AdvanceSearch={false}
                               ManageGrid={false}
                               deleteMany={false}
                               selectType="multiple"

@@ -88,7 +88,7 @@ const AccountModel = (props) => {
               // dataColumn={columns ?? []}
               allData={data ?? []}
               tableData={data}
-              AdvanceSearch={() => ""}
+              AdvanceSearch={false}
               ManageGrid={false}
               deleteMany={false}
               selectedValues={selectedValues}

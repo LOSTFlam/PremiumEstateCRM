@@ -138,11 +138,12 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
       as={RouterLink}
       to={propertyHref}
       className="property-card"
-      borderRadius="48px"
+      borderRadius="42px"
       overflow="hidden"
-      bg={publicBrand.gradients.panelLight}
-      border="1px solid rgba(9,18,32,0.06)"
-      boxShadow="0 8px 32px rgba(0, 0, 0, 0.12), 0 0 24px rgba(212, 175, 55, 0.08)"
+      bg="linear-gradient(145deg, rgba(255,250,244,0.82) 0%, rgba(245,238,230,0.76) 52%, rgba(238,230,221,0.84) 100%)"
+      border="1px solid rgba(255,255,255,0.46)"
+      backdropFilter="blur(24px) saturate(155%)"
+      boxShadow="0 20px 48px rgba(8, 14, 22, 0.12), inset 0 1px 0 rgba(255,255,255,0.58)"
       position="relative"
       transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
       _before={{
@@ -152,9 +153,9 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         left: 0,
         right: 0,
         bottom: 0,
-        borderRadius: "48px",
+        borderRadius: "42px",
         background:
-          "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.05) 100%)",
+          "linear-gradient(135deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.06) 34%, rgba(212,175,55,0.08) 100%)",
         opacity: 0,
         transition: "opacity 0.5s ease",
         zIndex: 0,
@@ -163,9 +164,9 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
         _before: {
           opacity: 1,
         },
-        transform: "translateY(-12px) scale(1.02)",
+        transform: "translateY(-10px) scale(1.015)",
         boxShadow:
-          "0 20px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(212, 175, 55, 0.15), 0 0 80px rgba(255, 255, 255, 0.08)",
+          "0 28px 64px rgba(8, 14, 22, 0.18), 0 0 32px rgba(212, 175, 55, 0.10), inset 0 1px 0 rgba(255,255,255,0.62)",
       }}
     >
       <Box position="relative" overflow="hidden" borderRadius="42px 42px 0 0">
@@ -371,8 +372,10 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
               borderRadius="22px"
               px={4}
               py={4}
-              bg="rgba(9,18,32,0.04)"
-              border="1px solid rgba(9,18,32,0.06)"
+              bg="rgba(255,255,255,0.50)"
+              border="1px solid rgba(255,255,255,0.46)"
+              backdropFilter="blur(14px)"
+              boxShadow="inset 0 1px 0 rgba(255,255,255,0.40)"
             >
               <HStack spacing={2} color={publicBrand.colors.textSoft}>
                 <Icon as={metric.icon} />
@@ -395,13 +398,14 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
               borderRadius="24px"
               px={3.5}
               py={3}
-              bg="rgba(245,239,228,0.75)"
-              border="1px solid rgba(9,18,32,0.06)"
+              bg="rgba(255,255,255,0.58)"
+              border="1px solid rgba(255,255,255,0.44)"
+              backdropFilter="blur(14px)"
               transition="all 0.3s ease"
               _hover={{
-                bg: "rgba(245,239,228,0.95)",
+                bg: "rgba(255,255,255,0.72)",
                 transform: "translateY(-2px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                boxShadow: "0 8px 18px rgba(8, 14, 22, 0.10)",
               }}
             >
               <Box

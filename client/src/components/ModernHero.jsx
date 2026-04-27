@@ -21,6 +21,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FiArrowRight, FiClock, FiHome, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
 import { LuBuilding2, LuMapPin, LuSparkles, LuTrees } from "react-icons/lu";
+import showcasePoster from "assets/img/auth/banner.png";
 import {
   formatPrice,
   getPhotoCount,
@@ -59,6 +60,7 @@ const heroCopy = {
     pulseAvailable: "Доступно сейчас",
     pulseNew: "Новых объявлений",
     pulseTypes: "Активных сегментов",
+    mediaTitle: "Визуальный ритм витрины",
     heroCardLabel: "Объект недели",
     marketLabel: "Рынок в одном экране",
     marketText:
@@ -99,6 +101,7 @@ const heroCopy = {
     pulseAvailable: "Available now",
     pulseNew: "New listings",
     pulseTypes: "Active segments",
+    mediaTitle: "A visual rhythm for the storefront",
     heroCardLabel: "Property of the week",
     marketLabel: "The market in one screen",
     marketText:
@@ -230,6 +233,31 @@ export default function ModernHero({
   }, [properties]);
 
   const catalogHref = useMemo(() => buildCatalogHref(searchQuery), [searchQuery]);
+  const mediaTiles = useMemo(() => {
+    const tiles = [
+      {
+        key: "showcase-poster",
+        image: showcasePoster,
+        label: locale === "ru" ? "Moodboard" : "Moodboard",
+        title: locale === "ru" ? "Новая подача витрины" : "Refined storefront cut",
+      },
+    ];
+
+    (properties || [])
+      .filter((property) => property?._id && property?._id !== heroProperty?._id)
+      .slice(0, 2)
+      .forEach((property) => {
+        tiles.push({
+          key: property._id,
+          image: getPrimaryImage(property),
+          label: normalizeStatus(property?.listingStatus, t),
+          title: property?.name || property?.propertyAddress || publicBrand.name,
+        });
+      });
+
+    return tiles;
+  }, [heroProperty?._id, locale, properties, t]);
+
   const segmentEntries = useMemo(() => {
     if (Array.isArray(segmentCards) && segmentCards.length) {
       return segmentCards;
@@ -363,6 +391,7 @@ export default function ModernHero({
 
                 <Heading
                   as="h1"
+                  fontFamily='"Playfair Display", "DM Sans", serif'
                   fontSize={{ base: "4xl", md: "6xl", xl: "7xl" }}
                   lineHeight={{ base: "1.04", md: "0.94" }}
                   letterSpacing="-0.05em"
@@ -421,13 +450,14 @@ export default function ModernHero({
                         borderRadius="32px"
                         px={6}
                         py={6}
-                        bg="rgba(255,255,255,0.05)"
-                        border="1px solid rgba(227, 211, 184, 0.12)"
+                        bg="rgba(255,255,255,0.08)"
+                        border="1px solid rgba(255,255,255,0.16)"
+                        backdropFilter="blur(16px)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
                         _hover={{
                           transform: "translateY(-6px)",
                           borderColor: "rgba(245,208,118,0.30)",
-                          boxShadow: "0 24px 56px rgba(0, 0, 0, 0.22)",
+                          boxShadow: "0 24px 56px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.12)",
                         }}
                       >
                         <HStack justify="space-between" align="start">
@@ -548,8 +578,9 @@ export default function ModernHero({
                     px={5}
                     py={5}
                     bg="rgba(255,255,255,0.04)"
-                    border="1px solid rgba(227, 211, 184, 0.10)"
-                    backdropFilter="blur(10px)"
+                    border="1px solid rgba(255,255,255,0.14)"
+                    boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
+                    backdropFilter="blur(18px)"
                   >
                     <HStack justify="space-between" align="start">
                       <Box
@@ -591,7 +622,9 @@ export default function ModernHero({
                 px={{ base: 5, md: 6 }}
                 py={{ base: 5, md: 6 }}
                 bg="rgba(255,255,255,0.04)"
-                border="1px solid rgba(227, 211, 184, 0.10)"
+                border="1px solid rgba(255,255,255,0.14)"
+                boxShadow="inset 0 1px 0 rgba(255,255,255,0.14)"
+                backdropFilter="blur(22px)"
               >
                 <Stack spacing={6}>
                   <Box>
@@ -620,13 +653,14 @@ export default function ModernHero({
                         borderRadius="28px"
                         px={5}
                         py={5}
-                        bg="rgba(255,255,255,0.05)"
-                        border="1px solid rgba(227, 211, 184, 0.12)"
+                        bg="rgba(255,255,255,0.07)"
+                        border="1px solid rgba(255,255,255,0.14)"
+                        backdropFilter="blur(14px)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
                         _hover={{
                           transform: "translateY(-6px)",
                           borderColor: "rgba(245,208,118,0.30)",
-                          boxShadow: "0 24px 56px rgba(0,0,0,0.22)",
+                          boxShadow: "0 24px 56px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.10)",
                         }}
                       >
                         <HStack justify="space-between" align="start">
@@ -673,6 +707,7 @@ export default function ModernHero({
                 borderRadius={{ base: "34px", md: "40px" }}
                 overflow="hidden"
                 boxShadow={publicBrand.shadows.deep}
+                border="1px solid rgba(255,255,255,0.16)"
                 minH={{ base: "460px", md: "620px" }}
                 style={{
                   transition:
@@ -800,6 +835,69 @@ export default function ModernHero({
                         </Box>
                       ))}
                     </SimpleGrid>
+
+                    <Stack spacing={3}>
+                      <HStack justify="space-between" align="center">
+                        <Text
+                          color="whiteAlpha.700"
+                          fontSize="xs"
+                          letterSpacing="0.16em"
+                          textTransform="uppercase"
+                        >
+                          {copy.mediaTitle}
+                        </Text>
+                        <Badge
+                          px={3}
+                          py={1}
+                          borderRadius="full"
+                          bg="rgba(255,255,255,0.10)"
+                          color="white"
+                          border="1px solid rgba(255,255,255,0.14)"
+                        >
+                          {mediaTiles.length}
+                        </Badge>
+                      </HStack>
+                      <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3}>
+                        {mediaTiles.map((tile) => (
+                          <Box
+                            key={tile.key}
+                            position="relative"
+                            overflow="hidden"
+                            borderRadius="22px"
+                            h={{ base: "96px", md: "108px" }}
+                            border="1px solid rgba(255,255,255,0.18)"
+                            bg="rgba(255,255,255,0.06)"
+                            backdropFilter="blur(14px)"
+                            boxShadow="0 10px 26px rgba(5, 9, 14, 0.16), inset 0 1px 0 rgba(255,255,255,0.12)"
+                            transition="transform 0.3s ease, box-shadow 0.3s ease"
+                            _hover={{
+                              transform: "translateY(-4px)",
+                              boxShadow: "0 18px 40px rgba(5, 9, 14, 0.22), inset 0 1px 0 rgba(255,255,255,0.14)",
+                            }}
+                          >
+                            <Image src={tile.image} alt={tile.title} w="100%" h="100%" objectFit="cover" />
+                            <Box
+                              position="absolute"
+                              inset="0"
+                              bg="linear-gradient(180deg, rgba(7,12,20,0.04) 0%, rgba(7,12,20,0.74) 100%)"
+                            />
+                            <Stack position="absolute" insetX={3} bottom={3} spacing={1}>
+                              <Text
+                                color="#f5d076"
+                                fontSize="10px"
+                                letterSpacing="0.14em"
+                                textTransform="uppercase"
+                              >
+                                {tile.label}
+                              </Text>
+                              <Text color="white" fontSize="sm" fontWeight="600" noOfLines={1}>
+                                {tile.title}
+                              </Text>
+                            </Stack>
+                          </Box>
+                        ))}
+                      </SimpleGrid>
+                    </Stack>
                   </Stack>
                 </Stack>
               </Box>

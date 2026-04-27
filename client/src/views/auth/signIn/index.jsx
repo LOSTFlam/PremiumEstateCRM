@@ -31,6 +31,20 @@ import { fetchImage } from "../../../redux/slices/imageSlice";
 import { setUser } from "../../../redux/slices/localSlice";
 import { useTranslation } from "react-i18next";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const normalizeIdentity = (value) => String(value || "").trim();
+
+const buildLoginPayload = (identity, password) => {
+  const normalizedIdentity = normalizeIdentity(identity);
+
+  if (EMAIL_PATTERN.test(normalizedIdentity)) {
+    return { email: normalizedIdentity, password };
+  }
+
+  return { username: normalizedIdentity, password };
+};
+
 function SignIn() {
   const textColor = useColorModeValue("navy.700", "white");
   const textColorSecondary = "gray.400";
@@ -49,9 +63,12 @@ function SignIn() {
   }, [dispatch]);
 
   const showPass = () => setShow(!show);
+  const identityLabel = i18n.language?.startsWith("ru")
+    ? "Email или username"
+    : "Email or username";
 
   const initialValues = {
-    email: "",
+    identity: "",
     password: "",
   };
 
@@ -65,14 +82,14 @@ function SignIn() {
 
   const login = async () => {
     // Validate manually
-    if (!values.email || !values.password) {
+    if (!values.identity || !values.password) {
       toast.error("Please fill in all fields");
       return;
     }
 
     try {
       setIsLoding(true);
-      const payload = { email: values.email, password: values.password };
+      const payload = buildLoginPayload(values.identity, values.password);
 
       const result = await postApi("api/user/login", payload, checkBox);
 
@@ -109,12 +126,13 @@ function SignIn() {
         toast.success(t?.("auth.signIn.loginSuccessfully"));
 
         setTimeout(() => {
-          if (currentUser?.role === "user" || currentUser?.role === "superAdmin") {
-            // Force reload to ensure App component re-renders with new auth state
-            window.location.href = "/dashboard";
-          } else {
+          if (!currentUser?.role) {
             navigate("/auth/sign-in", { replace: true });
+            return;
           }
+
+          // Force reload to ensure the app shell re-renders with the latest auth state.
+          window.location.href = "/dashboard";
         }, 500);
       } else {
         // Error handled silently
@@ -186,8 +204,9 @@ function SignIn() {
           mb={{ base: "20px", md: "auto" }}
         >
           <form onSubmit={handleSubmit}>
-            <FormControl isInvalid={errors?.email && touched?.email}>
+            <FormControl isInvalid={errors?.identity && touched?.identity}>
               <FormLabel
+                htmlFor="identity"
                 display="flex"
                 ms="4px"
                 fontSize="sm"
@@ -195,35 +214,47 @@ function SignIn() {
                 color={textColor}
                 mb="8px"
               >
-                {t?.("auth.signIn.email")}
+                {identityLabel}
                 <Text color={brandStars}>*</Text>
               </FormLabel>
               <Input
+                id="identity"
                 fontSize="sm"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values?.email}
-                name="email"
+                value={values?.identity}
+                name="identity"
                 ms={{ base: "0px", md: "0px" }}
-                type="email"
-                placeholder="mail@simmmple.com"
-                mb={errors?.email && touched?.email ? undefined : "24px"}
+                type="text"
+                placeholder="admin@gmail.com or username"
+                autoComplete="username"
+                autoCapitalize="none"
+                spellCheck={false}
+                mb={errors?.identity && touched?.identity ? undefined : "24px"}
                 fontWeight="500"
                 size="lg"
-                borderColor={errors?.email && touched?.email ? "red.300" : null}
+                borderColor={errors?.identity && touched?.identity ? "red.300" : null}
               />
-              {errors?.email && touched?.email && (
-                <FormErrorMessage mb="24px">{errors?.email}</FormErrorMessage>
+              {errors?.identity && touched?.identity && (
+                <FormErrorMessage mb="24px">{errors?.identity}</FormErrorMessage>
               )}
             </FormControl>
 
             <FormControl isInvalid={errors?.password && touched?.password} mb="24px">
-              <FormLabel ms="4px" fontSize="sm" fontWeight="500" color={textColor} display="flex">
+              <FormLabel
+                htmlFor="password"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                display="flex"
+              >
                 {t?.("auth.signIn.password")}
                 <Text color={brandStars}>*</Text>
               </FormLabel>
               <InputGroup size="md">
                 <Input
+                  id="password"
                   isRequired={true}
                   fontSize="sm"
                   placeholder="Enter Your Password"
@@ -235,6 +266,7 @@ function SignIn() {
                   size="lg"
                   variant="auth"
                   type={show ? "text" : "password"}
+                  autoComplete="current-password"
                   borderColor={errors?.password && touched?.password ? "red.300" : null}
                 />
                 <InputRightElement display="flex" alignItems="center" mt="4px">
@@ -255,8 +287,7 @@ function SignIn() {
                   <Checkbox
                     onChange={(e) => setCheckBox(e?.target?.checked)}
                     id="remember-login"
-                    value={checkBox}
-                    defaultChecked
+                    isChecked={checkBox}
                     colorScheme="brandScheme"
                     me="10px"
                   />

@@ -77,22 +77,61 @@ body {
 }
 
 .public-brand-shell {
-  background: linear-gradient(180deg, var(--public-ink) 0%, var(--public-ink-soft) 40%, #162334 100%);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 24%),
+    radial-gradient(circle at 88% 4%, rgba(247,231,206,0.10) 0%, rgba(247,231,206,0) 22%),
+    linear-gradient(180deg, #0c141e 0%, #162132 42%, #263447 100%);
   color: var(--public-text);
 }
 
 .public-brand-panel {
-  background: linear-gradient(160deg, rgba(18,29,43,0.98) 0%, rgba(22,35,52,0.96) 100%);
-  border: 1px solid var(--public-line);
-  box-shadow: var(--public-shadow-deep), inset 0 1px 0 rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(140deg, rgba(18,29,43,0.72) 0%, rgba(24,35,49,0.54) 48%, rgba(30,42,58,0.66) 100%);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow:
+    0 28px 80px rgba(4, 8, 14, 0.22),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(255,255,255,0.03);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
   border-radius: 30px;
 }
 
 .public-brand-panel-light {
-  background: linear-gradient(145deg, rgba(255,250,244,0.98) 0%, rgba(241,233,223,0.96) 100%);
-  border: 1px solid rgba(9, 18, 32, 0.08);
-  box-shadow: var(--public-shadow-soft);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(145deg, rgba(255,250,244,0.86) 0%, rgba(246,239,231,0.78) 52%, rgba(239,231,221,0.86) 100%);
+  border: 1px solid rgba(255,255,255,0.58);
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(212,175,55,0.06);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
   border-radius: 30px;
+}
+
+.public-brand-panel::before,
+.public-brand-panel-light::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.06) 24%,
+    rgba(255,255,255,0) 52%
+  );
+  pointer-events: none;
+}
+
+.public-brand-panel > *,
+.public-brand-panel-light > * {
+  position: relative;
+  z-index: 1;
 }
 
 .public-brand-kicker {

@@ -82,7 +82,7 @@ export const fileValidation = (acceptedTypes = [], maxSizeMB = 5, fieldName = "F
 };
 
 export const loginSchema = Yup.object().shape({
-  email: emailValidation(),
+  identity: Yup.string().trim().required("Email or username is required"),
   password: Yup.string().required("Password is required"),
   rememberMe: Yup.boolean(),
 });

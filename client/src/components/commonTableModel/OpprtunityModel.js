@@ -90,7 +90,7 @@ const OpprtunityModel = (props) => {
               columnData={tableColumns ?? []}
               allData={data ?? []}
               tableData={data}
-              AdvanceSearch={() => ""}
+              AdvanceSearch={false}
               ManageGrid={false}
               deleteMany={false}
               selectedValues={selectedValues}

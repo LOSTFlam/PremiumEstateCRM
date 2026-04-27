@@ -82,7 +82,7 @@ const SelectPorpertyModel = (props) => {
               tableCustomFields={
                 propertyData?.[0]?.fields?.filter((field) => field?.isTableField === true) || []
               }
-              AdvanceSearch={() => ""}
+              AdvanceSearch={false}
               ManageGrid={false}
               deleteMany={false}
               selectedValues={selectedValues}

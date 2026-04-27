@@ -171,14 +171,16 @@ export default function ModernHeader({ largeLogo = [] }) {
             borderRadius={{ base: "20px", md: "24px" }}
             bg={
               isScrolled || location.pathname !== "/"
-                ? "rgba(7, 12, 20, 0.65)"
-                : "rgba(7, 12, 20, 0.35)"
+                ? "linear-gradient(135deg, rgba(18, 26, 37, 0.82) 0%, rgba(24, 34, 49, 0.62) 100%)"
+                : "linear-gradient(135deg, rgba(18, 26, 37, 0.62) 0%, rgba(24, 34, 49, 0.40) 100%)"
             }
-            border="1px solid rgba(227, 211, 184, 0.06)"
+            border="1px solid rgba(255, 255, 255, 0.15)"
             boxShadow={
-              isScrolled || location.pathname !== "/" ? "0 4px 30px rgba(0, 0, 0, 0.15)" : "none"
+              isScrolled || location.pathname !== "/"
+                ? "0 20px 55px rgba(8, 14, 22, 0.26), inset 0 1px 0 rgba(255,255,255,0.18)"
+                : "0 10px 32px rgba(8, 14, 22, 0.12), inset 0 1px 0 rgba(255,255,255,0.14)"
             }
-            backdropFilter={isScrolled || location.pathname !== "/" ? "blur(20px)" : "blur(10px)"}
+            backdropFilter={isScrolled || location.pathname !== "/" ? "blur(24px)" : "blur(18px)"}
             transition="all 0.3s ease"
           >
             <RouterLink to="/">
@@ -187,12 +189,13 @@ export default function ModernHeader({ largeLogo = [] }) {
                   px={{ base: 2, md: 3 }}
                   py={{ base: 1.5, md: 2 }}
                   borderRadius="20px"
-                  bg="transparent"
-                  border="1px solid rgba(227, 211, 184, 0.06)"
+                  bg="rgba(255,255,255,0.06)"
+                  border="1px solid rgba(255,255,255,0.12)"
+                  boxShadow="inset 0 1px 0 rgba(255,255,255,0.12)"
                   transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                   _hover={{
-                    borderColor: "rgba(212, 175, 55, 0.2)",
-                    boxShadow: "0 0 20px rgba(212, 175, 55, 0.1)",
+                    borderColor: "rgba(245, 208, 118, 0.30)",
+                    boxShadow: "0 10px 24px rgba(8, 14, 22, 0.18), inset 0 1px 0 rgba(255,255,255,0.18)",
                   }}
                 >
                   <Image
@@ -241,23 +244,25 @@ export default function ModernHeader({ largeLogo = [] }) {
                     onClick={() => navigateToHref(link.href)}
                     variant="ghost"
                     position="relative"
-                    color="whiteAlpha.600"
+                    color={active ? "white" : "whiteAlpha.760"}
                     fontWeight="500"
-                    px={3}
+                    px={4}
+                    h="40px"
+                    borderRadius="full"
                     fontSize="sm"
-                    bg="transparent"
-                    _hover={{ color: "white", bg: "transparent" }}
+                    bg={active ? "rgba(255,255,255,0.08)" : "transparent"}
+                    _hover={{ color: "white", bg: "rgba(255,255,255,0.06)" }}
                     _after={
                       active
                         ? {
                             content: '""',
                             position: "absolute",
-                            left: "12px",
-                            right: "12px",
-                            bottom: "4px",
-                            h: "1.5px",
+                            left: "18px",
+                            right: "18px",
+                            bottom: "6px",
+                            h: "2px",
                             borderRadius: "999px",
-                            bg: "rgba(212, 175, 55, 0.5)",
+                            bg: "rgba(245, 208, 118, 0.7)",
                           }
                         : undefined
                     }
@@ -278,8 +283,9 @@ export default function ModernHeader({ largeLogo = [] }) {
                 px={2}
                 py={1.5}
                 borderRadius="full"
-                bg="transparent"
-                border="1px solid rgba(227, 211, 184, 0.06)"
+                bg="rgba(255,255,255,0.04)"
+                border="1px solid rgba(255,255,255,0.10)"
+                boxShadow="inset 0 1px 0 rgba(255,255,255,0.10)"
               >
                 <Button
                   size="xs"
@@ -326,8 +332,9 @@ export default function ModernHeader({ largeLogo = [] }) {
                 color="whiteAlpha.500"
                 fontSize="sm"
                 px={2}
-                bg="transparent"
-                _hover={{ bg: "transparent", color: "white" }}
+                bg="rgba(255,255,255,0.04)"
+                borderRadius="full"
+                _hover={{ bg: "rgba(255,255,255,0.08)", color: "white" }}
               >
                 <MdCompareArrows size={18} />
               </Button>
@@ -339,8 +346,9 @@ export default function ModernHeader({ largeLogo = [] }) {
                 color="whiteAlpha.500"
                 fontSize="sm"
                 px={2}
-                bg="transparent"
-                _hover={{ bg: "transparent", color: "white" }}
+                bg="rgba(255,255,255,0.04)"
+                borderRadius="full"
+                _hover={{ bg: "rgba(255,255,255,0.08)", color: "white" }}
               >
                 <FiHeart size={18} />
               </Button>
@@ -353,8 +361,9 @@ export default function ModernHeader({ largeLogo = [] }) {
                   color="whiteAlpha.600"
                   fontSize="sm"
                   px={2}
-                  bg="transparent"
-                  _hover={{ bg: "transparent", color: "white" }}
+                  bg="rgba(255,255,255,0.04)"
+                  borderRadius="full"
+                  _hover={{ bg: "rgba(255,255,255,0.08)", color: "white" }}
                 >
                   <FiUser size={18} />
                 </Button>
@@ -365,9 +374,10 @@ export default function ModernHeader({ largeLogo = [] }) {
                   variant="ghost"
                   color="whiteAlpha.500"
                   fontSize="sm"
-                  px={2}
-                  bg="transparent"
-                  _hover={{ bg: "transparent", color: "white" }}
+                  px={4}
+                  borderRadius="full"
+                  bg="rgba(255,255,255,0.04)"
+                  _hover={{ bg: "rgba(255,255,255,0.08)", color: "white" }}
                 >
                   {t("auth.signIn.signInButton")}
                 </Button>
@@ -381,6 +391,8 @@ export default function ModernHeader({ largeLogo = [] }) {
               onClick={isOpen ? onClose : onOpen}
               variant="ghost"
               color="white"
+              bg="rgba(255,255,255,0.05)"
+              borderRadius="full"
               _hover={{ bg: "whiteAlpha.100" }}
             />
           </Flex>

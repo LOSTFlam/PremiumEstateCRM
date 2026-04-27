@@ -66,6 +66,20 @@ const translateRouteName = (name) => {
 const defaultBrandLabel = () =>
   i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";
 
+const getStoredUser = () => {
+  const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawUser);
+  } catch {
+    return null;
+  }
+};
+
 // Custom Chakra theme
 export default function Dashboard(props) {
   const { ...rest } = props;
@@ -74,8 +88,7 @@ export default function Dashboard(props) {
   const [fixed] = useState(false);
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
-  // const user = JSON.parse(localStorage.getItem("user"))
-  const userId = JSON.parse(localStorage.getItem("user"))?._id;
+  const userId = getStoredUser()?._id;
 
   // let routes = newRoutes;
   const [routes, setRoutes] = useState(newRoutes);

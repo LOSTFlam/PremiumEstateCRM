@@ -1,0 +1,9 @@
+[2026-04-26T22:57:08.730Z] [WARNING] [LOGIN_FAILURE] {"ip":"127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36","username":"admin@gmail.com","statusCode":401,"reason":"Invalid credentials"}
+[2026-04-26T22:57:08.735Z] [WARNING] [TOKEN_REFRESH] {"ip":"127.0.0.1","success":false}
+[2026-04-26T22:57:18.160Z] [WARNING] [LOGIN_FAILURE] {"ip":"127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36","username":"admin@gmail.com","statusCode":401,"reason":"Invalid credentials"}
+[2026-04-26T22:57:18.163Z] [WARNING] [TOKEN_REFRESH] {"ip":"127.0.0.1","success":false}
+[2026-04-26T22:57:39.053Z] [WARNING] [LOGIN_FAILURE] {"ip":"127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36","username":"admin@gmail.com","statusCode":401,"reason":"Invalid credentials"}
+[2026-04-26T22:57:39.058Z] [WARNING] [TOKEN_REFRESH] {"ip":"127.0.0.1","success":false}
+[2026-04-26T23:02:04.866Z] [INFO] [LOGIN_SUCCESS] {"ip":"127.0.0.1","userAgent":"curl/8.19.0","username":"admin@gmail.com"}
+[2026-04-26T23:07:47.463Z] [INFO] [LOGIN_SUCCESS] {"ip":"127.0.0.1","userAgent":"curl/8.19.0","username":"admin@gmail.com"}
+[2026-04-26T23:09:32.542Z] [INFO] [LOGIN_SUCCESS] {"ip":"127.0.0.1","userAgent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36","username":"admin@gmail.com"}

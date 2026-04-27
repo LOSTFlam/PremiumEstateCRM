@@ -110,7 +110,7 @@ const MultiRoleModel = (props) => {
               columnData={columns ?? []}
               allData={roleData ?? []}
               tableData={roleData}
-              AdvanceSearch={() => ""}
+              AdvanceSearch={false}
               ManageGrid={false}
               deleteMany={false}
               selectedValues={selectedValues}

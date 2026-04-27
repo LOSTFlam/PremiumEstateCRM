@@ -31,11 +31,23 @@ const generateSlug = (text) => {
   );
 };
 
+const getInitialFieldValue = (field) => {
+  if (field?.type === "check") {
+    return false;
+  }
+
+  if (field?.type === "photo" || field?.backendType === "Array") {
+    return [];
+  }
+
+  return "";
+};
+
 const Add = (props) => {
   const [isLoding, setIsLoding] = useState(false);
 
   const initialFieldValues = Object?.fromEntries(
-    (props?.propertyData?.fields || [])?.map((field) => [field?.name, ""])
+    (props?.propertyData?.fields || [])?.map((field) => [field?.name, getInitialFieldValue(field)])
   );
 
   const initialValues = {
@@ -69,10 +81,13 @@ const Add = (props) => {
   const AddData = async () => {
     try {
       setIsLoding(true);
-      let response = await postApi("api/form/add", {
+      const payload = {
         ...values,
+        publicSlug: values?.publicSlug || generateSlug(values?.name || values?.propertyAddress),
         moduleId: props?.propertyData?._id,
-      });
+      };
+
+      let response = await postApi("api/form/add", payload);
       if (response?.status === 200) {
         // Property created successfully, now user can add photos
         // Keep the drawer open and show photo upload section
@@ -81,20 +96,12 @@ const Add = (props) => {
         if (response?.data?._id) {
           formik.setFieldValue("_id", response.data._id);
         }
-        toast({
-          title: "Property created",
-          description: "You can now upload photos",
-          status: "success",
-          duration: 3000,
-        });
+        toast.success("Property created. You can now upload photos.");
       }
     } catch (e) {
-      toast({
-        title: "Error",
-        description: e?.response?.data?.error || "Failed to create property",
-        status: "error",
-        duration: 3000,
-      });
+      toast.error(
+        e?.response?.data?.message || e?.response?.data?.error || "Failed to create property"
+      );
     } finally {
       setIsLoding(false);
     }

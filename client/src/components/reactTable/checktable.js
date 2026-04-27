@@ -52,6 +52,26 @@ import {
 import { commonUtils } from "utils/utils";
 import { useTranslation } from "react-i18next";
 
+const areColumnCollectionsEqual = (left = [], right = []) =>
+  left.length === right.length &&
+  left.every((column, index) => {
+    const leftKey = String(column?.accessor || column?.id || column?.Header || `column-${index}`);
+    const rightKey = String(
+      right?.[index]?.accessor || right?.[index]?.id || right?.[index]?.Header || `column-${index}`
+    );
+
+    return leftKey === rightKey;
+  });
+
+const areTagValuesEqual = (left = [], right = []) =>
+  JSON.stringify(left || []) === JSON.stringify(right || []);
+
+const areSearchResultsEqual = (left = [], right = []) =>
+  left.length === right.length &&
+  left.every(
+    (item, index) => (item?._id || item?.id) === (right?.[index]?._id || right?.[index]?.id)
+  );
+
 const CommonCheckTable = (props) => {
   const {
     isLoding,
@@ -90,6 +110,7 @@ const CommonCheckTable = (props) => {
   const { handleSearchType } = props;
   const { i18n } = useTranslation();
   const isRu = i18n.language?.startsWith("ru");
+  const isAdvanceSearchEnabled = Boolean(AdvanceSearch) && typeof AdvanceSearch !== "function";
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -105,16 +126,22 @@ const CommonCheckTable = (props) => {
   const getTagValues = useSelector((state) => state?.advanceSearchData?.getTagValues);
   const data = useMemo(
     () =>
-      (AdvanceSearch ? searchDisplay : displaySearchData)
-        ? AdvanceSearch
+      (isAdvanceSearchEnabled ? searchDisplay : displaySearchData)
+        ? isAdvanceSearchEnabled
           ? searchedDataOut
           : searchedData
         : allData,
-    [searchDisplay, displaySearchData, AdvanceSearch, searchedDataOut, searchedData, allData]
+    [
+      searchDisplay,
+      displaySearchData,
+      isAdvanceSearchEnabled,
+      searchedDataOut,
+      searchedData,
+      allData,
+    ]
   );
 
   const [manageColumnsModel, setManageColumnsModel] = useState(false);
-  const [csvColumns, setCsvColumns] = useState([]);
   const [searchbox, setSearchbox] = useState("");
   const [advaceSearch, setAdvaceSearch] = useState(false);
   // const [column, setColumn] = useState('');
@@ -123,6 +150,16 @@ const CommonCheckTable = (props) => {
   const dispatch = useDispatch();
   const getColumnKey = (column, index = 0) =>
     String(column?.accessor || column?.id || column?.Header || `column-${index}`);
+  const csvColumns = useMemo(
+    () =>
+      (columns || [])
+        ?.filter((col) => col?.Header !== "#" && col?.Header !== "Action")
+        ?.map((field) => ({
+          Header: field?.Header,
+          accessor: field?.accessor,
+        })),
+    [columns]
+  );
 
   const tableInstance = useTable(
     {
@@ -159,14 +196,19 @@ const CommonCheckTable = (props) => {
   }, [gopageValue, pageOptions]);
 
   const handleSearch = (results) => {
-    AdvanceSearch && dispatch(getSearchData({ searchData: results || [], type: handleSearchType }));
-    AdvanceSearch ? setSearchedDataOut(results || []) : setSearchedData(results || []);
+    if (isAdvanceSearchEnabled) {
+      dispatch(getSearchData({ searchData: results || [], type: handleSearchType }));
+      setSearchedDataOut && setSearchedDataOut(results || []);
+      return;
+    }
+
+    setSearchedData(results || []);
   };
 
   const handleAdvanceSearch = (values) => {
     dispatch(setSearchValue(values));
-    const searchResult = AdvanceSearch
-      ? dispatch(getSearchData({ values: values, allData: allData, type: title }))
+    const searchResult = isAdvanceSearchEnabled
+      ? searchedDataOut
       : allData?.filter((item) => {
           return tableCustomFields?.every((field) => {
             const fieldValue = values[field?.name];
@@ -220,8 +262,12 @@ const CommonCheckTable = (props) => {
 
       return result;
     }, []);
-    dispatch(setGetTagValues(getValue));
-    setSearchedData(searchResult);
+    if (!areTagValuesEqual(getTagValues, getValue)) {
+      dispatch(setGetTagValues(getValue));
+    }
+    if (!isAdvanceSearchEnabled) {
+      setSearchedData((prev) => (areSearchResultsEqual(prev, searchResult) ? prev : searchResult));
+    }
     setDisplaySearchData(true);
     setAdvaceSearch(false);
     if (setSearchbox) {
@@ -253,15 +299,19 @@ const CommonCheckTable = (props) => {
       (item) =>
         !state || (item?.status && item?.status?.toLowerCase()?.includes(state?.toLowerCase()))
     );
-    let getValue = [state || undefined]?.filter((value) => value);
+    const nextTags = [state || undefined]?.filter((value) => value);
 
-    dispatch(setGetTagValues(getValue));
-    AdvanceSearch
-      ? setSearchedDataOut && setSearchedDataOut(searchResult)
-      : setSearchedData && setSearchedData(searchResult);
-    AdvanceSearch
-      ? setSearchDisplay && setSearchDisplay(true)
-      : setDisplaySearchData && setDisplaySearchData(searchResult);
+    if (!areTagValuesEqual(getTagValues, nextTags)) {
+      dispatch(setGetTagValues(nextTags));
+    }
+
+    if (isAdvanceSearchEnabled) {
+      setSearchedDataOut && setSearchedDataOut(searchResult);
+      setSearchDisplay && setSearchDisplay(true);
+    } else {
+      setSearchedData((prev) => (areSearchResultsEqual(prev, searchResult) ? prev : searchResult));
+    }
+
     setDisplaySearchData(true);
     setAdvaceSearch(false);
   };
@@ -387,26 +437,11 @@ const CommonCheckTable = (props) => {
   };
 
   useEffect(() => {
-    AdvanceSearch
-      ? setSearchedDataOut && setSearchedDataOut(data)
-      : setSearchedData && setSearchedData(data);
-  }, []);
+    const nextColumns = Array.isArray(columnData) ? columnData : [];
 
-  useEffect(() => {
-    setColumns(columnData);
+    setColumns((prev) => (areColumnCollectionsEqual(prev, nextColumns) ? prev : nextColumns));
+    setTempSelectedColumns((prev) => (prev?.length > 0 ? prev : nextColumns));
   }, [columnData]);
-
-  useEffect(() => {
-    if (columns) {
-      let tempCsvColumns = columns
-        ?.filter((col) => col?.Header !== "#" && col?.Header !== "Action")
-        ?.map((field) => ({
-          Header: field?.Header,
-          accessor: field?.accessor,
-        }));
-      setCsvColumns([...tempCsvColumns]);
-    }
-  }, [columns]);
 
   return (
     <>

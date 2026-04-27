@@ -107,6 +107,29 @@ const add = async (req, res) => {
 
     } catch (err) {
         // Console statement removed
+        if (err?.code === 11000) {
+            const duplicateField = Object.keys(err?.keyPattern || {})?.[0] || "field";
+            return res.status(409).json({
+                success: false,
+                message: `${duplicateField} must be unique`,
+                error: err.toString(),
+                field: duplicateField,
+            });
+        }
+
+        if (err?.name === "ValidationError" || err?.name === "CastError") {
+            return res.status(400).json({
+                success: false,
+                message: "Validation failed",
+                error: err.toString(),
+                details: Object.values(err?.errors || {})?.map((errorItem) => ({
+                    field: errorItem?.path,
+                    message: errorItem?.message,
+                    value: errorItem?.value,
+                })),
+            });
+        }
+
         return res.status(400).json({ success: false, message: `Failed to Add Record`, error: err.toString() });
     }
 };

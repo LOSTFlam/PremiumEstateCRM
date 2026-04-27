@@ -11,6 +11,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "db:up": "docker compose -f docker-compose.dev.yml up -d mongodb",
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "db:logs": "docker compose -f docker-compose.dev.yml logs -f mongodb",
     "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
     "start": "npm run dev",
     "dev:server": "npm run dev -w server",

@@ -417,16 +417,14 @@ export function AnimatedRoutes() {
           />
 
           {isAuthenticated ? (
-            user?.role === "user" ? (
-              <Route path="/*" element={<UserLayout />} />
-            ) : user?.role === "superAdmin" ? (
+            user?.role === "superAdmin" ? (
               <>
                 <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/admin/leads" element={<LeadKanban />} />
                 <Route path="/*" element={<AdminLayout />} />
               </>
             ) : (
-              <Route path="/*" element={<Navigate to="/" replace />} />
+              <Route path="/*" element={<UserLayout />} />
             )
           ) : (
             <Route path="/*" element={<Navigate to="/" replace />} />

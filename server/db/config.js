@@ -1,114 +1,114 @@
-const mongoose = require('mongoose');
-const User = require('../model/schema/user');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+const User = require("../model/schema/user");
 const { initializeLeadSchema } = require("../model/schema/lead");
 const { initializeContactSchema } = require("../model/schema/contact");
 const { initializePropertySchema } = require("../model/schema/property");
-const { createNewModule } = require("../controllers/customField/customField.js");
-const { add: createNewRole } = require("../controllers/roleAccess/roleAccess.js");
-const customField = require('../model/schema/customField.js');
-const { contactFields } = require('./contactFields.js');
-const { leadFields } = require('./leadFields.js');
-const { propertiesFields } = require('./propertiesFields.js');
-const { defaultRole } = require("./defaultRoles.js");
-const seedPipelineStages = require("../scripts/seedPipelineStages.js");
+const { createNewModule } = require("../controllers/customField/customField");
+const customField = require("../model/schema/customField");
+const { contactFields } = require("./contactFields");
+const { leadFields } = require("./leadFields");
+const { propertiesFields } = require("./propertiesFields");
+const seedPipelineStages = require("../scripts/seedPipelineStages");
 
-const initializedSchemas = async () => {
-    await initializeLeadSchema();
-    await initializeContactSchema();
-    await initializePropertySchema();
+const NOOP_RESPONSE = Object.freeze({
+  status: () => ({
+    json: () => undefined,
+  }),
+  json: () => undefined,
+});
 
-    const CustomFields = await customField.find({ deleted: false });
-    const createDynamicSchemas = async (CustomFields) => {
-        for (const module of CustomFields) {
-            const { moduleName, fields } = module;
+const DEFAULT_MODULES = [
+  { moduleName: "Leads", fields: leadFields },
+  { moduleName: "Contacts", fields: contactFields },
+  { moduleName: "Properties", fields: propertiesFields },
+];
 
-            // Check if schema already exists
-            if (!mongoose.models[moduleName]) {
-                // Create schema object
-                const schemaFields = {};
-                for (const field of fields) {
-                    schemaFields[field.name] = { type: field.backendType };
-                    if (field.ref) schemaFields[field.name] = { type: field.backendType, ref: field.ref };
-                }
-                // Create Mongoose schema
-                const moduleSchema = new mongoose.Schema(schemaFields);
-                // Create Mongoose model
-                mongoose.model(moduleName, moduleSchema, moduleName);
-                // Console statement removed
-            }
-        }
-    };
+const createDynamicSchemas = async (customFields) => {
+  for (const moduleDefinition of customFields) {
+    const { moduleName, fields } = moduleDefinition;
 
-    createDynamicSchemas(CustomFields);
-
-}
-
-const connectDB = async (DATABASE_URL, DATABASE) => {
-    try {
-        const DB_OPTIONS = {
-            dbName: DATABASE
-        }
-
-        mongoose.set("strictQuery", false);
-        await mongoose.connect(DATABASE_URL, DB_OPTIONS);
-
-        // const collectionsToDelete = ['abc', 'Report and analytics', 'test', 'krushil', 'bca', 'xyz', 'lkjhg', 'testssssss', 'tel', 'levajav', 'tellevajav', 'Contact'];
-        // const db = mongoose.connection.db;
-        // console.log(db)
-        // for (const collectionName of collectionsToDelete) {
-        //     await db.collection(collectionName).drop();
-        //     console.log(`Collection ${collectionName} deleted successfully.`);
-        // }
-
-        await initializedSchemas();
-
-        /* this was temporary  */
-        const mockRes = {
-            status: (code) => {
-                return {
-                    json: (data) => { }
-                };
-            },
-            json: (data) => { }
-        };
-
-        // Create default modules
-        await createNewModule({ body: { moduleName: 'Leads', fields: leadFields, headings: [], isDefault: true } }, mockRes);
-        await createNewModule({ body: { moduleName: 'Contacts', fields: contactFields, headings: [], isDefault: true } }, mockRes);
-        await createNewModule({ body: { moduleName: 'Properties', fields: propertiesFields, headings: [], isDefault: true } }, mockRes);
-
-        // Create default role
-        // await createNewRole({ body: defaultRole }, mockRes);
-
-        /*  */
-        await initializedSchemas();
-
-        let adminExisting = await User.find({ role: 'superAdmin' });
-        if (adminExisting.length <= 0) {
-            const phoneNumber = process.env.ADMIN_PHONE || '7874263694';
-            const firstName = process.env.ADMIN_FIRST_NAME || 'Premium';
-            const lastName = process.env.ADMIN_LAST_NAME || 'Estate';
-            const username = process.env.ADMIN_EMAIL || 'admin@gmail.com';
-            const password = process.env.ADMIN_PASSWORD;
-            if (!password) {
-                // Console statement removed
-            } else {
-                const hashedPassword = await bcrypt.hash(password, 10);
-                const user = new User({ _id: new mongoose.Types.ObjectId('64d33173fd7ff3fa0924a109'), username, password: hashedPassword, firstName, lastName, phoneNumber, role: 'superAdmin' });
-                await user.save();
-                // Console statement removed
-            }
-        } else if (adminExisting[0].deleted === true) {
-            await User.findByIdAndUpdate(adminExisting[0]._id, { deleted: false });
-            // Console statement removed
-        }
-
-        await seedPipelineStages();
-
-        // Console statement removed
-    } catch (err) {
-        // Console statement removed
+    if (mongoose.models[moduleName]) {
+      continue;
     }
-}
-module.exports = connectDB
+
+    const schemaDefinition = {};
+
+    for (const field of fields) {
+      schemaDefinition[field.name] = field.ref
+        ? { type: field.backendType, ref: field.ref }
+        : { type: field.backendType };
+    }
+
+    mongoose.model(moduleName, new mongoose.Schema(schemaDefinition), moduleName);
+  }
+};
+
+const initializeSchemas = async () => {
+  await initializeLeadSchema();
+  await initializeContactSchema();
+  await initializePropertySchema();
+
+  const customFields = await customField.find({ deleted: false });
+  await createDynamicSchemas(customFields);
+};
+
+const ensureDefaultModules = async () => {
+  for (const moduleDefinition of DEFAULT_MODULES) {
+    await createNewModule(
+      {
+        body: {
+          ...moduleDefinition,
+          headings: [],
+          isDefault: true,
+        },
+      },
+      NOOP_RESPONSE
+    );
+  }
+};
+
+const ensureAdminUser = async () => {
+  const existingAdmin = await User.findOne({ role: "superAdmin" });
+
+  if (!existingAdmin) {
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!password) {
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({
+      _id: new mongoose.Types.ObjectId("64d33173fd7ff3fa0924a109"),
+      username: process.env.ADMIN_EMAIL || "admin@gmail.com",
+      password: hashedPassword,
+      firstName: process.env.ADMIN_FIRST_NAME || "Premium",
+      lastName: process.env.ADMIN_LAST_NAME || "Estate",
+      phoneNumber: process.env.ADMIN_PHONE || "7874263694",
+      role: "superAdmin",
+    });
+
+    await user.save();
+    return;
+  }
+
+  if (existingAdmin.deleted) {
+    await User.findByIdAndUpdate(existingAdmin._id, { deleted: false });
+  }
+};
+
+const connectDB = async (databaseUrl, databaseName) => {
+  mongoose.set("strictQuery", false);
+
+  await mongoose.connect(databaseUrl, { dbName: databaseName });
+  await initializeSchemas();
+  await ensureDefaultModules();
+  await initializeSchemas();
+  await ensureAdminUser();
+  await seedPipelineStages();
+
+  return mongoose.connection;
+};
+
+module.exports = connectDB;
