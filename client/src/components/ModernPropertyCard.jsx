@@ -111,7 +111,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
   onFavoriteToggle,
   onCompareToggle,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toast = useToast();
   const status = normalizeStatus(property?.listingStatus, t);
   const typeLabel = propertyTypeLabel(property, t);
@@ -321,7 +321,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
                 letterSpacing="-0.04em"
                 color="white"
               >
-                {formatPrice(property?.listingPrice, t)}
+                {formatPrice(property?.listingPrice, t, i18n.language)}
               </Text>
               <Text color="whiteAlpha.700" fontSize="sm">
                 {t?.("publicListing.priceLabel") || "Price"}

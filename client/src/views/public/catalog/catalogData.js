@@ -1,4 +1,5 @@
 import { t } from "i18next";
+import i18next from "i18next";
 
 const EX_RATE_KEY = "premium_estate_usd_rub";
 const EX_RATE_TTL = 60 * 60 * 1000;
@@ -42,6 +43,7 @@ export const getPropertyById = (properties, id) => properties?.find((p) => p?._i
 
 const runtimeLanguage = () => {
   if (typeof window === "undefined") return "ru";
+  try { if (i18next.language) return i18next.language; } catch {}
   return window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "ru";
 };
 
@@ -612,19 +614,12 @@ export const formatPrice = (value, t, language = runtimeLanguage()) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
   const locale = runtimeLocale(language);
-  if (isRu(language)) {
+  const isRussian = isRu(language);
+  if (isRussian) {
     const rubAmount = Math.round(amount * getRubRate());
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: "RUB",
-      maximumFractionDigits: 0,
-    }).format(rubAmount);
+    return rubAmount.toLocaleString("ru-RU") + " \u20BD";
   }
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return amount.toLocaleString("en-US") + " \u0024";
 };
 
 export const formatDate = (value, language = runtimeLanguage()) => {
