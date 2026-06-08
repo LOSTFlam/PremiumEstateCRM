@@ -1,5 +1,18 @@
 import { t } from "i18next";
-import { getRate } from "services/exchangeRate";
+
+const EX_RATE_KEY = "premium_estate_usd_rub";
+const EX_RATE_TTL = 60 * 60 * 1000;
+const EX_RATE_DEFAULT = 88;
+
+const getRubRate = () => {
+  try {
+    const raw = localStorage.getItem(EX_RATE_KEY);
+    if (!raw) return EX_RATE_DEFAULT;
+    const { rate, timestamp } = JSON.parse(raw);
+    if (Date.now() - timestamp > EX_RATE_TTL) return EX_RATE_DEFAULT;
+    return rate;
+  } catch { return EX_RATE_DEFAULT; }
+};
 
 // Helper to create photo sets
 export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
@@ -600,7 +613,7 @@ export const formatPrice = (value, t, language = runtimeLanguage()) => {
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
   const locale = runtimeLocale(language);
   if (isRu(language)) {
-    const rubAmount = Math.round(amount * getRate());
+    const rubAmount = Math.round(amount * getRubRate());
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: "RUB",
