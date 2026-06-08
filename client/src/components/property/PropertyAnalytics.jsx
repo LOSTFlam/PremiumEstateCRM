@@ -24,6 +24,7 @@ import {
   FiActivity,
   FiAward,
 } from "react-icons/fi";
+import { formatPrice } from "views/public/catalog/catalogData";
 
 // Neighborhood Insights
 export const NeighborhoodInsights = () => {
@@ -341,7 +342,7 @@ export const PropertyComparison = ({ properties }) => {
             <Td fontWeight="bold">Price</Td>
             {properties.map((property) => (
               <Td key={property._id} fontWeight="bold" color="blue.500">
-                ${property.listingPrice?.toLocaleString()}
+                {formatPrice(property.listingPrice)}
               </Td>
             ))}
           </Tr>

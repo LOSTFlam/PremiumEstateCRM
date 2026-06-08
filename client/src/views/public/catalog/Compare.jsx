@@ -1,22 +1,18 @@
 import { useState, useEffect } from "react";
 import {
   Box,
+  Button,
   Container,
   Heading,
   Stack,
-  HStack,
-  Button,
   Text,
   SimpleGrid,
-  useToast,
-  Icon,
-  Table,
-  Tbody,
-  Tr,
-  Td,
+  HStack,
   Badge,
+  Icon,
+  useToast,
   Image,
-  Flex,
+  Skeleton,
 } from "@chakra-ui/react";
 import { useSearchParams, Link as RouterLink } from "react-router-dom";
 import { FiX, FiCheck, FiDownload, FiArrowLeft } from "react-icons/fi";
@@ -25,6 +21,7 @@ import { LuMapPin, LuBuilding2, LuTrees } from "react-icons/lu";
 import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
+import { formatPrice } from "./catalogData";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -192,7 +189,7 @@ const ComparePage = () => {
     const rows = [
       [
         copy.price,
-        ...properties.map((p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}`),
+        ...properties.map((p) => formatPrice(p?.listingPrice) || copy.onRequest),
       ],
       [copy.area, ...properties.map((p) => p.squareFootage || "—")],
       [copy.bedrooms, ...properties.map((p) => p.numberofBedrooms || "—")],
@@ -229,7 +226,7 @@ const ComparePage = () => {
         {
           key: "price",
           label: copy.price,
-          getValue: (p) => `$${p.listingPrice?.toLocaleString() || copy.onRequest}`,
+          getValue: (p) => formatPrice(p?.listingPrice) || copy.onRequest,
         },
         { key: "type", label: copy.propertyType, getValue: (p) => p.propertyTypeKey || "—" },
       ],
@@ -394,7 +391,7 @@ const ComparePage = () => {
                       {property.name || property.propertyAddress}
                     </Heading>
                     <Text color="#F5D076" fontWeight="bold" fontSize="xl">
-                      ${property.listingPrice?.toLocaleString() || copy.onRequest}
+                      {formatPrice(property.listingPrice) || copy.onRequest}
                     </Text>
                     <HStack color="gray.400" fontSize="sm">
                       <Icon as={LuMapPin} />

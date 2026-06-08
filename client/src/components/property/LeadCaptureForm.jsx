@@ -19,6 +19,7 @@ import {
 import { FiCalendar, FiMail, FiPhone, FiUser, FiMessageSquare } from "react-icons/fi";
 import { postApi } from "services/api";
 import { useTranslation } from "react-i18next";
+import { formatPrice } from "views/public/catalog/catalogData";
 
 const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
   const { i18n } = useTranslation();
@@ -195,11 +196,7 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               <Text fontWeight="600">{property.name || property.propertyAddress}</Text>
               {property.listingPrice && (
                 <Text color="#F5D076" fontWeight="bold">
-                  {copy.priceLabel}:{" "}
-                  {Number(property.listingPrice).toLocaleString(
-                    locale === "ru" ? "ru-RU" : "en-US"
-                  )}{" "}
-                  $
+                  {copy.priceLabel}: {formatPrice(property.listingPrice)}
                 </Text>
               )}
             </Stack>

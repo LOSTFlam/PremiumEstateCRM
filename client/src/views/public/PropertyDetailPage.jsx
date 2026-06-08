@@ -39,6 +39,7 @@ import LeadCaptureForm from "components/property/LeadCaptureForm";
 import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
 import { publicBrand } from "views/public/publicBrand";
+import { formatPrice } from "./catalog/catalogData";
 
 const detailCopy = {
   ru: {
@@ -200,7 +201,7 @@ const PropertyDetailPage = () => {
     {
       icon: FiDollarSign,
       label: copy.price,
-      value: `$${property.listingPrice?.toLocaleString() || copy.onRequest}`,
+      value: formatPrice(property.listingPrice) || copy.onRequest,
     },
   ];
 
@@ -326,7 +327,7 @@ const PropertyDetailPage = () => {
                     {copy.price}
                   </Text>
                   <Heading size="xl" color="#F5D076">
-                    ${property.listingPrice?.toLocaleString() || copy.onRequest}
+                    {formatPrice(property.listingPrice) || copy.onRequest}
                   </Heading>
                 </Stack>
                 {property.pricePerSqm && (

@@ -19,6 +19,7 @@ import ModernPropertyCard from "components/ModernPropertyCard";
 import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
+import { formatPrice } from "./catalog/catalogData";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -217,7 +218,7 @@ const FavoritesPage = () => {
     const tableData = favorites.map((property, index) => [
       index + 1,
       property.name || property.propertyAddress || copy.propertyFallback,
-      `$${property.listingPrice?.toLocaleString() || copy.onRequest}`,
+      `${formatPrice(property.listingPrice) || copy.onRequest}`,
       `${property.squareFootage || "—"} m²`,
       `${property.numberofBedrooms || "—"} ${copy.bedroomsShort}`,
       `${property.numberofBathrooms || "—"} ${copy.bathroomsShort}`,

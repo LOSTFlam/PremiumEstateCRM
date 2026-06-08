@@ -100,7 +100,7 @@ const PropertyMap = ({ properties, onPropertySelect, selectedProperty }) => {
                   fontSize="sm"
                   zIndex={1}
                 >
-                  ${Math.round(property.listingPrice / 1000)}K
+                  {formatPrice(property.listingPrice)}
                 </Box>
               </Box>
             </Box>

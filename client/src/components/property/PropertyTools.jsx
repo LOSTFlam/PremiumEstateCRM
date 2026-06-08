@@ -37,6 +37,7 @@ import {
   FiPhone,
   FiCalendar,
 } from "react-icons/fi";
+import { formatPrice } from "views/public/catalog/catalogData";
 
 // Investment Calculator
 export const InvestmentCalculator = ({ propertyPrice, isOpen, onClose }) => {
@@ -345,7 +346,7 @@ export const ContactAgentForm = ({ property, onClose }) => {
             <Box bg="blue.50" p={4} borderRadius="lg">
               <Text fontWeight="bold">{property?.name}</Text>
               <Text color="blue.500" fontWeight="bold">
-                ${property?.listingPrice?.toLocaleString()}
+                {formatPrice(property?.listingPrice)}
               </Text>
             </Box>
 
