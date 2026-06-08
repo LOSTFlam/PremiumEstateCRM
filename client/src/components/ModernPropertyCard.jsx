@@ -15,6 +15,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
+import { useState } from "react";
 import {
   MdArrowForward,
   MdBathtub,
@@ -34,6 +35,7 @@ import {
   isRichListing,
   normalizePropertyTypeKey,
   normalizeStatus,
+  placeholderImage,
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 
@@ -116,6 +118,7 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
   const verificationScore = Number(property?.verification?.score || 0);
   const richListing = isRichListing(property);
   const propertyHref = buildPropertyHref(property);
+  const [imgError, setImgError] = useState(false);
 
   const handleShare = async (event) => {
     event.preventDefault();
@@ -181,11 +184,12 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
           }}
         >
           <Image
-            src={getPrimaryImage(property)}
+            src={imgError ? placeholderImage : getPrimaryImage(property)}
             alt={property?.name || property?.propertyAddress}
             h={{ base: "240px", md: "300px", xl: "320px" }}
             w="100%"
             objectFit="cover"
+            onError={() => setImgError(true)}
           />
         </Box>
         <Box

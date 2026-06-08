@@ -18,6 +18,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import "./i18n/i18n.config";
+import { initExchangeRate } from "services/exchangeRate";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "components/PageTransition";
@@ -441,6 +442,8 @@ export function AnimatedRoutes() {
 
 export function LegacyApplicationShell() {
   const [commandOpen, setCommandOpen] = useState(false);
+
+  useEffect(() => { initExchangeRate(); }, []);
 
   const handleKeyDown = useCallback((e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {

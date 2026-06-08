@@ -44,7 +44,8 @@ import {
 } from "utils/storefrontPresets";
 import { fetchPublicCatalog } from "./catalog/catalogService";
 import { countCatalogProperties, extractPresetFilters } from "./catalog/catalogFilters";
-import { formatPrice, isRichListing, parsePrice } from "./catalog/catalogData";
+import { formatPrice, isRichListing, parsePrice, placeholderImage } from "./catalog/catalogData";
+import { getRate } from "services/exchangeRate";
 import { getSeoCollectionConfig } from "./catalog/seoCollections";
 import {
   getCompareIds,
@@ -171,7 +172,17 @@ const landingCopy = {
 const compactCurrency = (value, language, t) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
-  const locale = language?.startsWith("ru") ? "ru-RU" : "en-US";
+  const isRussian = language?.startsWith("ru");
+  const locale = isRussian ? "ru-RU" : "en-US";
+  if (isRussian) {
+    const rubAmount = Math.round(amount * getRate());
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "RUB",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(rubAmount);
+  }
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "USD",

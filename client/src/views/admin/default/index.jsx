@@ -47,6 +47,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getApi } from "services/api";
 import { isRussianLocale } from "i18n/crmDictionary";
+import { getRate } from "services/exchangeRate";
 
 const PAGE_MAX_W = "1400px";
 const PROPERTY_GRID_COLUMNS = { base: 1, md: 2, xl: 2 };
@@ -97,9 +98,9 @@ const formatPrice = (value, t, language) => {
 
   return new Intl.NumberFormat(isRussianLocale(language) ? "ru-RU" : "en-US", {
     style: "currency",
-    currency: "USD",
+    currency: isRussianLocale(language) ? "RUB" : "USD",
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(isRussianLocale(language) ? Math.round(amount * getRate()) : amount);
 };
 
 const normalizeStatus = (value, t) => {

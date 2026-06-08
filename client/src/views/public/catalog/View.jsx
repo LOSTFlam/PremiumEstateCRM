@@ -825,6 +825,7 @@ export default function PublicOfferView() {
                             w="100%"
                             h="150px"
                             objectFit="cover"
+                            onError={(e) => { e.target.src = placeholderImage; }}
                           />
                           <Badge position="absolute" top={2} right={2} colorScheme="green">
                             {index === 0 ? t?.("publicListing.primaryImage") : `#${index + 1}`}

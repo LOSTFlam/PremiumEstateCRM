@@ -1,4 +1,5 @@
 import { t } from "i18next";
+import { getRate } from "services/exchangeRate";
 
 // Helper to create photo sets
 export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
@@ -597,7 +598,16 @@ export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/
 export const formatPrice = (value, t, language = runtimeLanguage()) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
-  return new Intl.NumberFormat(runtimeLocale(language), {
+  const locale = runtimeLocale(language);
+  if (isRu(language)) {
+    const rubAmount = Math.round(amount * getRate());
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: "RUB",
+      maximumFractionDigits: 0,
+    }).format(rubAmount);
+  }
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
@@ -637,10 +647,13 @@ export const normalizeStatus = (status, t) => {
   );
 };
 
+export const placeholderImage =
+  "https://placehold.co/800x600/1a202c/ffffff?text=%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82";
+
 export const getPrimaryImage = (property) =>
   property?.propertyPhotos?.[0]?.img ||
   property?.floorPlans?.[0]?.img ||
-  "https://placehold.co/800x600";
+  placeholderImage;
 
 export const getPhotoCount = (property) =>
   Array.isArray(property?.propertyPhotos) ? property.propertyPhotos.length : 0;

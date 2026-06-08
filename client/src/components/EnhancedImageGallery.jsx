@@ -17,6 +17,8 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon, DownloadIcon, ViewIcon } from "@chakra-ui/icons";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
 
+const FALLBACK_IMG = "https://placehold.co/800x600/1a202c/ffffff?text=%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82";
+
 function normalizeImages(images) {
   if (!Array.isArray(images)) return [];
   return images
@@ -138,6 +140,7 @@ export default function EnhancedImageGallery({ images = [], title = "Gallery" })
                 h="160px"
                 objectFit="cover"
                 loading="lazy"
+                onError={(e) => { e.target.src = FALLBACK_IMG; }}
               />
             </Skeleton>
             <Box position="absolute" right={2} top={2}>
@@ -214,6 +217,7 @@ export default function EnhancedImageGallery({ images = [], title = "Gallery" })
                   objectFit="contain"
                   transform={`scale(${zoom})`}
                   transition="transform 0.15s ease"
+                  onError={(e) => { e.target.src = FALLBACK_IMG; }}
                 />
               </Box>
 

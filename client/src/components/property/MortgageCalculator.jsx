@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { getRate } from "services/exchangeRate";
 import {
   Box,
   Button,
@@ -97,12 +98,20 @@ export default function MortgageCalculator({ propertyPrice, isOpen, onClose }) {
   }, [homePrice, downPaymentPercent, interestRate, loanTerm, propertyTax, homeInsurance, hoaFees]);
 
   const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
+    if (typeof value !== "number") return value;
+    const i18nLang = typeof window !== "undefined"
+      ? (window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "en")
+      : "en";
+    const isRussian = String(i18nLang).startsWith("ru");
+    const locale = isRussian ? "ru-RU" : "en-US";
+    const currency = isRussian ? "RUB" : "USD";
+    const displayValue = isRussian ? Math.round(value * getRate()) : value;
+    return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency: "USD",
+      currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value);
+    }).format(displayValue);
   };
 
   return (

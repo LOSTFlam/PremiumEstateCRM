@@ -32,7 +32,7 @@ import {
   FiMapPin,
   FiDollarSign as _FiDollarSign,
 } from "react-icons/fi";
-import { getPrimaryImage } from "views/public/catalog/catalogData";
+import { getPrimaryImage, formatPrice, placeholderImage } from "views/public/catalog/catalogData";
 
 export const VirtualTourViewer = ({ property, isOpen, onClose }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -131,6 +131,7 @@ export const VirtualTourViewer = ({ property, isOpen, onClose }) => {
                   maxH="100%"
                   maxW="100%"
                   objectFit="contain"
+                  onError={(e) => { e.target.src = placeholderImage; }}
                 />
               </Box>
 
@@ -268,7 +269,7 @@ export const VirtualTourViewer = ({ property, isOpen, onClose }) => {
             </VStack>
             <VStack align="end" spacing={1}>
               <Text color="green.400" fontSize="2xl" fontWeight="bold">
-                ${property?.listingPrice?.toLocaleString()}
+                {formatPrice(property?.listingPrice)}
               </Text>
               <Text color="gray.400" fontSize="sm">
                 {property?.bedrooms} bed • {property?.bathrooms} bath • {property?.squareFootage}{" "}
