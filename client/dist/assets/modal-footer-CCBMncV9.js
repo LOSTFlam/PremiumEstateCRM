@@ -1,0 +1,1 @@
+import{o as c,aM as n,bm as f,aN as m,j as d,p as i}from"./index-BuJTNjUm.js";const x=c((s,e)=>{const{className:a,...o}=s,t=n("chakra-modal__footer",a),r=f(),l=m({display:"flex",alignItems:"center",justifyContent:"flex-end",...r.footer});return d.jsx(i.footer,{ref:e,...o,__css:l,className:t})});x.displayName="ModalFooter";export{x as M};
