@@ -107,8 +107,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(distPath));
 
   // SPA fallback for client-side routing
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
     res.sendFile(path.join(distPath, 'index.html'));
   });
 } else {
