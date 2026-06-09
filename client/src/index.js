@@ -64,8 +64,8 @@ const getStoredUser = () => {
 const resolveLocale = () => {
   if (typeof window === "undefined") return "ru";
   const stored = window.localStorage?.getItem("i18nextLng");
-  const fallback = stored || window.navigator?.language || "ru";
-  return String(fallback).toLowerCase().startsWith("ru") ? "ru" : "en";
+  const fallback = stored || window.navigator?.language || "en";
+  return "ru";
 };
 
 const RU_LEGACY_TEXT_REPLACEMENTS = [

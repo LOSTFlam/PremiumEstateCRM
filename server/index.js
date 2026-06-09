@@ -28,6 +28,7 @@ const allowedOrigins = [
 //Setup Express App
 const app = express();
 app.disable("x-powered-by");
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet({
