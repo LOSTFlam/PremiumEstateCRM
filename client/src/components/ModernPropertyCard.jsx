@@ -56,8 +56,8 @@ const propertyTypeLabel = (property, t) => {
 };
 
 const buildPropertyHref = (property) => {
-  const slug = property?.publicSlugResolved || property?.publicSlug;
-  return slug ? `/offers/slug/${slug}` : `/offers/${property?._id}`;
+  const id = property?._id;
+  return id ? `/offers/${id}` : "#";
 };
 
 const buildShareUrl = (property) => `${window.location.origin}${buildPropertyHref(property)}`;
@@ -379,37 +379,37 @@ const ModernPropertyCard = ({
           </Text>
         </Stack>
 
-        <SimpleGrid columns={3} spacing={3}>
+        <SimpleGrid columns={3} spacing={2}>
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
               borderRadius="22px"
-              px={4}
-              py={4}
+              px={3}
+              py={3}
               bg="rgba(9,18,32,0.04)"
               border="1px solid rgba(9,18,32,0.06)"
             >
-              <HStack spacing={2} color={publicBrand.colors.textSoft}>
-                <Icon as={metric.icon} />
-                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.12em">
+              <HStack spacing={1.5} color={publicBrand.colors.textSoft} minH="20px">
+                <Icon as={metric.icon} boxSize="14px" flexShrink={0} />
+                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
                   {metric.label}
                 </Text>
               </HStack>
-              <Text mt={2} fontWeight="700" color={publicBrand.colors.ink}>
+              <Text mt={1.5} fontWeight="700" color={publicBrand.colors.ink} noOfLines={1}>
                 {metric.value}
               </Text>
             </Box>
           ))}
         </SimpleGrid>
 
-        <SimpleGrid columns={3} spacing={3}>
+        <SimpleGrid columns={3} spacing={2}>
           {assetBlocks(property, t).map((asset) => (
             <HStack
               key={asset.label}
-              spacing={3}
+              spacing={2}
               borderRadius="24px"
-              px={3.5}
-              py={3}
+              px={2.5}
+              py={2.5}
               bg="rgba(245,239,228,0.75)"
               border="1px solid rgba(9,18,32,0.06)"
               transition="all 0.3s ease"
@@ -420,21 +420,22 @@ const ModernPropertyCard = ({
               }}
             >
               <Box
-                w="34px"
-                h="34px"
-                borderRadius="16px"
+                w="30px"
+                h="30px"
+                borderRadius="14px"
                 display="grid"
                 placeItems="center"
                 bg="rgba(245,208,118,0.12)"
                 color={publicBrand.colors.copper}
+                flexShrink={0}
               >
-                <Icon as={asset.icon} />
+                <Icon as={asset.icon} boxSize="15px" />
               </Box>
-              <Box minW="0">
+              <Box minW="0" flex={1}>
                 <Text fontSize="xs" color={publicBrand.colors.textSoft} noOfLines={1}>
                   {asset.label}
                 </Text>
-                <Text fontWeight="700" color={publicBrand.colors.ink}>
+                <Text fontWeight="700" color={publicBrand.colors.ink} noOfLines={1}>
                   {asset.value}
                 </Text>
               </Box>
@@ -442,8 +443,8 @@ const ModernPropertyCard = ({
           ))}
         </SimpleGrid>
 
-        <HStack justify="space-between" align="center" pt={1} spacing={3}>
-          <Text color={publicBrand.colors.copper} fontSize="xs" fontWeight="700" flex={1}>
+        <HStack justify="space-between" align="center" pt={1} spacing={3} minH="36px">
+          <Text color={publicBrand.colors.copper} fontSize="xs" fontWeight="700" noOfLines={1} flex={1} minW="0">
             {richListing
               ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
               : t?.("publicListing.openOffer") || "Open offer"}
@@ -455,8 +456,9 @@ const ModernPropertyCard = ({
             bg={publicBrand.colors.ink}
             color="white"
             h="32px"
-            px={4}
+            px={3}
             fontSize="xs"
+            flexShrink={0}
             transition="all 0.3s ease"
             _hover={{
               bg: publicBrand.colors.inkElevated,

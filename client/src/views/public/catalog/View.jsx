@@ -143,6 +143,8 @@ export default function PublicOfferView() {
 
         const propertyData = await fetchPublicPropertyById(id);
         setProperty(propertyData || null);
+      } catch (err) {
+        setProperty(null);
       } finally {
         setLoading(false);
       }

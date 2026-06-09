@@ -37,7 +37,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https://placehold.co"],
+      imgSrc: ["'self'", "data:", "https://placehold.co", "https://images.unsplash.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'"],
       frameAncestors: ["'self'"],
