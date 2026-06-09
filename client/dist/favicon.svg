@@ -1,0 +1,46 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D076"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B8962E"/>
+    </linearGradient>
+    <linearGradient id="favDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2332"/>
+      <stop offset="100%" stop-color="#0d141f"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="url(#favDark)"/>
+  
+  <!-- Border -->
+  <rect x="1" y="1" width="62" height="62" rx="13" stroke="url(#favGold)" stroke-width="2"/>
+  
+  <!-- Simplified house icon -->
+  <g transform="translate(8, 12)">
+    <!-- House outline -->
+    <path d="M24 8 L44 22 L44 48 L4 48 L4 22 Z" 
+          fill="none" 
+          stroke="url(#favGold)" 
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- Base -->
+    <path d="M4 48 L44 48" 
+          stroke="url(#favGold)" 
+          stroke-width="2.5"
+          stroke-linecap="round"/>
+    
+    <!-- Center line -->
+    <path d="M24 28 L24 48" 
+          stroke="url(#favGold)" 
+          stroke-width="1.5"
+          stroke-linecap="round"
+          opacity="0.6"/>
+    
+    <!-- Peak dot -->
+    <circle cx="24" cy="8" r="2" fill="url(#favGold)"/>
+  </g>
+</svg>

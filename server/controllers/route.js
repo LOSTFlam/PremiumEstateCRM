@@ -1,0 +1,121 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const router = express.Router();
+
+const DB_STATES = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+
+// Health check endpoint
+router.get('/health/status', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  res.json({
+    status: dbState === 1 ? 'ok' : 'degraded',
+    db: DB_STATES[dbState] || 'unknown',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+router.get('/exchange-rates/latest/:baseCurrency', async (req, res) => {
+  const baseCurrency = String(req.params.baseCurrency || 'USD').toUpperCase();
+  const url = `https://api.exchangerate-api.com/v4/latest/${encodeURIComponent(baseCurrency)}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        success: false,
+        message: 'Exchange rate provider is unavailable',
+      });
+    }
+
+    const data = await response.json();
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(502).json({
+      success: false,
+      message: 'Unable to fetch exchange rates',
+    });
+  }
+});
+
+const contactRoute = require('./contact/_routes')
+const propertyRoute = require('./property/_routes');
+const leadRoute = require('./lead/_routes');
+const taskRoute = require('./task/_routes');
+const reportingRoute = require('./reporting/_routes');
+const documentRoute = require('./document/_routes');
+const userRoute = require('./user/_routes');
+const mediaRoute = require('./media/_routes');
+
+const route = require('./route/_routes');
+const emailRoute = require('./emailHistory/_routes');
+const phoneCallRoute = require('./phoneCall/_routes');
+const TextMsgRoute = require('./textMsg/_routes');
+const meetingRoute = require('./meeting/_routes');
+const paymentRoute = require('./payment/_routes');
+const roleAccessRoute = require('./roleAccess/_routes');
+const imagesRoute = require('./images/_routes');
+const customFieldRoute = require("./customField/_routes");
+const validationRoute = require("./validation/_routes");
+const formRoute = require("./form/_routes");
+const statusRoute = require("./status/_routes");
+const calendarRoute = require("./calendar/_routes")
+const emailTempRoute = require("./emailTemplate/_routes")
+const opportunityRoute = require("./opportunities/_routes")
+const quotesRoute = require("./quotes/_routes")
+const newQuoteRoute = require("./quote/_routes")
+const invoicesRoute = require("./invoices/_routes")
+const newInvoiceRoute = require("./invoice/_routes")
+const moduleActiveDeactiveRoute = require("./moduleActiveDeactive/_routes")
+const accountRoute = require("./account/_routes")
+const opportunitiesproject = require("./opportunityproject/_router")
+const bankDetailsRoute = require("./bankDetails/_routes")
+const storefrontSettingsRoute = require("./storefrontSettings/_routes")
+const pipelineRoute = require("./pipeline/_routes")
+const notificationRoute = require("./notifications/_routes")
+const aiRoute = require("./ai/_routes")
+const metricsRoute = require("./metrics/_routes")
+
+//Api`s
+router.use('/contact', contactRoute);
+router.use('/property', propertyRoute)
+router.use('/lead', leadRoute)
+router.use('/task', taskRoute);
+router.use('/document', documentRoute);
+router.use('/reporting', reportingRoute);
+router.use('/user', userRoute);
+router.use('/payment', paymentRoute);
+router.use('/bank-details', bankDetailsRoute);
+router.use('/media', mediaRoute);
+
+router.use('/email', emailRoute);
+router.use('/phoneCall', phoneCallRoute);
+router.use('/text-msg', TextMsgRoute);
+router.use('/meeting', meetingRoute);
+
+router.use("/images", imagesRoute);
+router.use('/role-access', roleAccessRoute);
+router.use('/route', route);
+
+router.use('/modules', moduleActiveDeactiveRoute);
+router.use("/custom-field", customFieldRoute);
+router.use("/validation", validationRoute);
+router.use("/form", formRoute);
+router.use("/status", statusRoute);
+router.use("/calendar", calendarRoute);
+
+router.use("/email-temp", emailTempRoute);
+router.use("/opportunity", opportunityRoute);
+router.use("/quotes", quotesRoute);
+router.use("/crm-quotes", newQuoteRoute);
+router.use("/invoices", invoicesRoute);
+router.use("/crm-invoices", newInvoiceRoute);
+router.use("/account", accountRoute);
+router.use("/opportunityproject",opportunitiesproject)
+router.use("/storefront-settings", storefrontSettingsRoute);
+router.use("/pipeline", pipelineRoute);
+router.use("/notifications", notificationRoute);
+router.use("/ai", aiRoute);
+router.use("/metrics", metricsRoute);
+module.exports = router;

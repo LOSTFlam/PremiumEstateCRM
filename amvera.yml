@@ -1,0 +1,9 @@
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: 20
+
+run:
+  command: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=192" node server/index.js
+  containerPort: 5001

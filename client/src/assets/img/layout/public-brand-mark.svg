@@ -1,0 +1,65 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D076"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B8962E"/>
+    </linearGradient>
+    <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2332"/>
+      <stop offset="100%" stop-color="#0d141f"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle with gradient -->
+  <circle cx="60" cy="60" r="58" fill="url(#darkGradient)" stroke="url(#goldGradient)" stroke-width="2.5"/>
+  
+  <!-- Outer decorative ring -->
+  <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="1"/>
+  
+  <!-- Minimalist house/roof icon -->
+  <g filter="url(#glow)">
+    <!-- Roof peak -->
+    <path d="M60 28 L88 48 L88 88 L32 88 L32 48 Z" 
+          fill="none" 
+          stroke="url(#goldGradient)" 
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- Horizontal base line -->
+    <path d="M32 88 L88 88" 
+          stroke="url(#goldGradient)" 
+          stroke-width="3"
+          stroke-linecap="round"/>
+    
+    <!-- Vertical accent lines (building floors) -->
+    <path d="M52 58 L52 88" 
+          stroke="url(#goldGradient)" 
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity="0.7"/>
+    <path d="M68 58 L68 88" 
+          stroke="url(#goldGradient)" 
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity="0.7"/>
+    
+    <!-- Diamond accent at peak -->
+    <path d="M60 28 L63 32 L60 36 L57 32 Z" 
+          fill="url(#goldGradient)"/>
+  </g>
+  
+  <!-- Decorative corner accents -->
+  <circle cx="38" cy="38" r="2" fill="url(#goldGradient)" opacity="0.6"/>
+  <circle cx="82" cy="38" r="2" fill="url(#goldGradient)" opacity="0.6"/>
+  <circle cx="38" cy="82" r="2" fill="url(#goldGradient)" opacity="0.6"/>
+  <circle cx="82" cy="82" r="2" fill="url(#goldGradient)" opacity="0.6"/>
+</svg>

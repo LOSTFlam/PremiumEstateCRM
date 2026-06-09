@@ -1,0 +1,29 @@
+{
+  "name": "PremiumEstate CRM",
+  "short_name": "PremiumEstate",
+  "description": "Premium Real Estate CRM — manage properties, leads, and deals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3520d5",
+  "orientation": "portrait-primary",
+  "icons": [],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "description": "Open dashboard"
+    },
+    {
+      "name": "Properties",
+      "url": "/admin/properties",
+      "description": "View all properties"
+    },
+    {
+      "name": "Leads",
+      "url": "/admin/leads",
+      "description": "Manage leads"
+    }
+  ]
+}
