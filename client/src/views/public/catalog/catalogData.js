@@ -1,4 +1,3 @@
-import { t } from "i18next";
 import i18next from "i18next";
 import { normalizeUrl } from "../../../constant";
 
@@ -13,30 +12,74 @@ const getRubRate = () => {
     const { rate, timestamp } = JSON.parse(raw);
     if (Date.now() - timestamp > EX_RATE_TTL) return EX_RATE_DEFAULT;
     return rate;
-  } catch { return EX_RATE_DEFAULT; }
+  } catch {
+    return EX_RATE_DEFAULT;
+  }
+};
+
+const inlinePropertyImage = ({ title, subtitle, primary, secondary, accent }) => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="${primary}"/>
+          <stop offset="0.62" stop-color="${secondary}"/>
+          <stop offset="1" stop-color="${accent}"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="30%" cy="24%" r="70%">
+          <stop offset="0" stop-color="rgba(255,255,255,0.32)"/>
+          <stop offset="1" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="800" height="600" fill="url(#bg)"/>
+      <rect width="800" height="600" fill="url(#glow)"/>
+      <path d="M86 452 L238 318 L342 395 L475 254 L684 452 Z" fill="rgba(255,255,255,0.22)"/>
+      <circle cx="625" cy="138" r="58" fill="rgba(255,255,255,0.2)"/>
+      <text x="70" y="92" fill="rgba(255,255,255,0.86)" font-family="Arial, sans-serif" font-size="44" font-weight="700">${title}</text>
+      <text x="72" y="136" fill="rgba(255,255,255,0.72)" font-family="Arial, sans-serif" font-size="24">${subtitle}</text>
+    </svg>`;
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 };
 
 // Helper to create photo sets
 export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
   {
-    img: `https://placehold.co/800x600/${primary.replace("#", "")}/${secondary.replace("#", "")}?text=${encodeURIComponent(title)}`,
+    img: inlinePropertyImage({ title, subtitle, primary, secondary, accent }),
     title,
     subtitle,
   },
   {
-    img: `https://placehold.co/800x600/${secondary.replace("#", "")}/${accent.replace("#", "")}?text=${encodeURIComponent(subtitle)}`,
+    img: inlinePropertyImage({
+      title: subtitle,
+      subtitle: title,
+      primary: secondary,
+      secondary: accent,
+      accent: primary,
+    }),
     title,
     subtitle,
   },
   {
-    img: `https://placehold.co/800x600/${accent.replace("#", "")}/${primary.replace("#", "")}?text=${encodeURIComponent(title + " " + subtitle)}`,
+    img: inlinePropertyImage({
+      title,
+      subtitle: `${title} ${subtitle}`,
+      primary: accent,
+      secondary: primary,
+      accent: secondary,
+    }),
     title,
     subtitle,
   },
 ];
 
-export const placeholderImage =
-  "https://placehold.co/800x600/1a202c/ffffff?text=%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82";
+export const placeholderImage = inlinePropertyImage({
+  title: "Premium Estate",
+  subtitle: "Объект",
+  primary: "#1a202c",
+  secondary: "#243b32",
+  accent: "#d4af37",
+});
 
 const docLink = (name) => ({ name, url: "#" });
 
@@ -44,7 +87,11 @@ export const getPropertyById = (properties, id) => properties?.find((p) => p?._i
 
 const runtimeLanguage = () => {
   if (typeof window === "undefined") return "ru";
-  try { if (i18next.language) return i18next.language; } catch {}
+  try {
+    if (i18next.language) return i18next.language;
+  } catch {
+    // Fall back to browser storage below when i18next is not ready.
+  }
   return window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "ru";
 };
 
@@ -614,7 +661,6 @@ export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/
 export const formatPrice = (value, t, language = runtimeLanguage()) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";
-  const locale = runtimeLocale(language);
   const isRussian = isRu(language);
   if (isRussian) {
     const rubAmount = Math.round(amount * getRubRate());
@@ -658,9 +704,7 @@ export const normalizeStatus = (status, t) => {
 
 export const getPrimaryImage = (property) =>
   normalizeUrl(
-    property?.propertyPhotos?.[0]?.img ||
-    property?.floorPlans?.[0]?.img ||
-    placeholderImage
+    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage
   );
 
 export const getPhotoCount = (property) =>
@@ -773,7 +817,7 @@ export const getCatalogDataset = (properties) =>
       publicSlugResolved: p?.publicSlug || p?.seo?.slug || p?.seoSlug || "",
       createdDate: p?.createdDate || p?.listingDate || null,
       updatedDate: p?.updatedDate || p?.listingDate || null,
-      normalizedStatus: normalizeStatus(p?.listingStatus, t),
+      normalizedStatus: normalizeStatus(p?.listingStatus, i18next.t.bind(i18next)),
       searchableText: [
         p?.name,
         p?.propertyAddress,

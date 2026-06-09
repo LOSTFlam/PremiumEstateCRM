@@ -14,6 +14,31 @@ router.get('/health/status', (req, res) => {
   });
 });
 
+router.get('/exchange-rates/latest/:baseCurrency', async (req, res) => {
+  const baseCurrency = String(req.params.baseCurrency || 'USD').toUpperCase();
+  const url = `https://api.exchangerate-api.com/v4/latest/${encodeURIComponent(baseCurrency)}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        success: false,
+        message: 'Exchange rate provider is unavailable',
+      });
+    }
+
+    const data = await response.json();
+
+    return res.json(data);
+  } catch (error) {
+    return res.status(502).json({
+      success: false,
+      message: 'Unable to fetch exchange rates',
+    });
+  }
+});
+
 const contactRoute = require('./contact/_routes')
 const propertyRoute = require('./property/_routes');
 const leadRoute = require('./lead/_routes');

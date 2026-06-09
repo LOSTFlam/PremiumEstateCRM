@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -19,6 +19,14 @@ import ModernPropertyCard from "components/ModernPropertyCard";
 import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
+import {
+  clearFavoriteIds,
+  getCompareIds,
+  getFavoriteIds,
+  toggleCompareId,
+  toggleFavoriteId,
+} from "./catalog/catalogStorage";
+import { fetchPublicCatalog } from "./catalog/catalogService";
 import { formatPrice } from "./catalog/catalogData";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -101,29 +109,39 @@ const FavoritesPage = () => {
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = pageCopy[locale];
 
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true);
-      const storedIds = JSON.parse(localStorage.getItem("favorites") || "[]");
-      setFavoriteIds(storedIds);
+  const fetchFavorites = useCallback(async () => {
+    setLoading(true);
 
-      if (storedIds.length > 0) {
-        const response = await getApi(`api/property/public/by-ids?ids=${storedIds.join(",")}`);
-        if (response && response.data) {
-          setFavorites(response.data);
-        }
-      }
-    } catch (error) {
-      // Error handled silently
-      toast({
-        title: copy.loadError,
-        status: "error",
-        duration: 3000,
+    const storedIds = getFavoriteIds();
+    setFavoriteIds(storedIds);
+    setCompareIds(getCompareIds());
+
+    if (storedIds.length === 0) {
+      setFavorites([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await getApi(`api/property/public/by-ids?ids=${storedIds.join(",")}`, {
+        silent: true,
       });
+      const remoteFavorites = Array.isArray(response?.data) ? response.data : [];
+
+      if (remoteFavorites.length > 0) {
+        setFavorites(remoteFavorites);
+        return;
+      }
+
+      const catalog = await fetchPublicCatalog();
+      setFavorites(catalog.filter((property) => storedIds.includes(property?._id)));
+    } catch (error) {
+      const catalog = await fetchPublicCatalog();
+      setFavorites(catalog.filter((property) => storedIds.includes(property?._id)));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchFavorites();
@@ -131,7 +149,7 @@ const FavoritesPage = () => {
 
   const removeFromFavorites = (propertyId) => {
     const newFavorites = favoriteIds.filter((id) => id !== propertyId);
-    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+    toggleFavoriteId(propertyId);
     setFavoriteIds(newFavorites);
     setFavorites(favorites.filter((p) => p._id !== propertyId));
 
@@ -143,7 +161,7 @@ const FavoritesPage = () => {
   };
 
   const clearAllFavorites = () => {
-    localStorage.removeItem("favorites");
+    clearFavoriteIds();
     setFavoriteIds([]);
     setFavorites([]);
     toast({
@@ -154,18 +172,19 @@ const FavoritesPage = () => {
   };
 
   const toggleCompare = (propertyId) => {
-    if (compareIds.includes(propertyId)) {
-      setCompareIds(compareIds.filter((id) => id !== propertyId));
-    } else {
-      if (compareIds.length >= 3) {
-        toast({
-          title: copy.compareLimit,
-          status: "warning",
-          duration: 3000,
-        });
-        return;
-      }
-      setCompareIds([...compareIds, propertyId]);
+    if (!compareIds.includes(propertyId) && compareIds.length >= 3) {
+      toast({
+        title: copy.compareLimit,
+        status: "warning",
+        duration: 3000,
+      });
+      return;
+    }
+
+    const next = toggleCompareId(propertyId);
+    setCompareIds(next);
+
+    if (next.includes(propertyId)) {
       toast({
         title: copy.addedToCompare,
         status: "success",
@@ -267,7 +286,9 @@ const FavoritesPage = () => {
             <Stack spacing={2}>
               <HStack>
                 <Icon as={FiHeart} color="#F5D076" boxSize={8} />
-                <Heading size="xl">{t("publicListing.favoritesTitle") || copy.title}</Heading>
+                <Heading as="h1" size="xl">
+                  {t("publicListing.favoritesTitle") || copy.title}
+                </Heading>
               </HStack>
               <Text color="gray.400">{copy.saved(favorites.length)}</Text>
             </Stack>

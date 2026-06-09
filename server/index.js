@@ -36,9 +36,9 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https://placehold.co", "https://images.unsplash.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https://placehold.co", "https://images.unsplash.com"],
+      fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
       connectSrc: ["'self'"],
       frameAncestors: ["'self'"],
       formAction: ["'self'"],

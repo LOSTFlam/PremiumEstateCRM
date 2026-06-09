@@ -41,6 +41,7 @@ export const fetchPublicCatalog = async (options = {}) => {
     const response = await getApi("api/property/public", {
       useCache: true,
       cacheKey: "public:catalog",
+      silent: true,
       ...options,
     });
     const collection = extractCollection(response);
@@ -55,6 +56,7 @@ export const fetchPublicPropertyById = async (id) => {
   const response = await getApi(`api/property/public/${id}`, {
     useCache: true,
     cacheKey: `public:property:${id}`,
+    silent: true,
   });
 
   return extractEntity(response, "property");
@@ -64,6 +66,7 @@ export const fetchPublicPropertyBySlug = async (slug) => {
   const response = await getApi(`api/property/public/slug/${slug}`, {
     useCache: true,
     cacheKey: `public:property:slug:${slug}`,
+    silent: true,
   });
 
   return extractEntity(response, "property");

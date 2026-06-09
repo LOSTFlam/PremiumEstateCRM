@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,7 +12,11 @@ import {
   Icon,
   useToast,
   Image,
-  Skeleton,
+  Table,
+  Tbody,
+  Td,
+  Tr,
+  Flex,
 } from "@chakra-ui/react";
 import { useSearchParams, Link as RouterLink } from "react-router-dom";
 import { FiX, FiCheck, FiDownload, FiArrowLeft } from "react-icons/fi";
@@ -21,7 +25,9 @@ import { LuMapPin, LuBuilding2, LuTrees } from "react-icons/lu";
 import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
-import { formatPrice } from "./catalogData";
+import { formatPrice, getPrimaryImage, normalizePropertyTypeKey } from "./catalogData";
+import { getCompareIds } from "./catalogStorage";
+import { fetchPublicCatalog } from "./catalogService";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -116,6 +122,26 @@ const compareCopy = {
   },
 };
 
+const propertyTypeLabels = {
+  ru: {
+    house: "Дом",
+    apartment: "Квартира",
+    land: "Участок",
+    commercial: "Коммерция",
+  },
+  en: {
+    house: "House",
+    apartment: "Apartment",
+    land: "Land",
+    commercial: "Commercial",
+  },
+};
+
+const getLocalizedPropertyType = (property, locale, fallback) => {
+  const key = normalizePropertyTypeKey(property?.propertyType);
+  return propertyTypeLabels[locale]?.[key] || property?.propertyType || fallback;
+};
+
 const ComparePage = () => {
   const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();
@@ -125,47 +151,57 @@ const ComparePage = () => {
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = compareCopy[locale];
 
-  useEffect(() => {
-    fetchProperties();
-  }, [searchParams, fetchProperties]);
+  const fetchProperties = useCallback(async () => {
+    setLoading(true);
 
-  const fetchProperties = async () => {
+    const requestedIds = searchParams.get("ids") || getCompareIds().join(",");
+    const idList = requestedIds
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    if (idList.length === 0) {
+      setProperties([]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true);
-      const ids = searchParams.get("ids");
-      if (!ids) {
-        toast({
-          title: copy.noSelection,
-          status: "warning",
-          duration: 3000,
-        });
+      const response = await getApi(`api/property/public/by-ids?ids=${idList.join(",")}`, {
+        silent: true,
+      });
+      const remoteProperties = Array.isArray(response?.data) ? response.data : [];
+
+      if (remoteProperties.length > 0) {
+        setProperties(remoteProperties);
         return;
       }
 
-      const response = await getApi(`api/property/public/by-ids?ids=${ids}`);
-      if (response && response.data) {
-        setProperties(response.data);
-      }
+      const catalog = await fetchPublicCatalog();
+      setProperties(catalog.filter((property) => idList.includes(property?._id)));
     } catch (error) {
-      // Error handled silently
-      toast({
-        title: copy.loadError,
-        status: "error",
-        duration: 3000,
-      });
+      const catalog = await fetchPublicCatalog();
+      const fallbackProperties = catalog.filter((property) => idList.includes(property?._id));
+      setProperties(fallbackProperties);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]);
 
   const removeProperty = (propertyId) => {
     const newIds = properties.filter((p) => p._id !== propertyId).map((p) => p._id);
 
     if (newIds.length > 0) {
       window.history.pushState({}, "", `/offers/compare?ids=${newIds.join(",")}`);
+      window.localStorage.setItem("public_catalog_compare", JSON.stringify(newIds));
       setProperties(properties.filter((p) => p._id !== propertyId));
     } else {
       window.history.pushState({}, "", "/offers/compare");
+      window.localStorage.setItem("public_catalog_compare", JSON.stringify([]));
       setProperties([]);
     }
 
@@ -187,14 +223,11 @@ const ComparePage = () => {
     // Property names
     const headers = [copy.feature, ...properties.map((p, i) => copy.property(i))];
     const rows = [
-      [
-        copy.price,
-        ...properties.map((p) => formatPrice(p?.listingPrice) || copy.onRequest),
-      ],
+      [copy.price, ...properties.map((p) => formatPrice(p?.listingPrice) || copy.onRequest)],
       [copy.area, ...properties.map((p) => p.squareFootage || "—")],
       [copy.bedrooms, ...properties.map((p) => p.numberofBedrooms || "—")],
       [copy.bathrooms, ...properties.map((p) => p.numberofBathrooms || "—")],
-      [copy.type, ...properties.map((p) => p.propertyTypeKey || "—")],
+      [copy.type, ...properties.map((p) => getLocalizedPropertyType(p, locale, "—"))],
       [copy.location, ...properties.map((p) => p.propertyAddress || "—")],
     ];
 
@@ -228,7 +261,11 @@ const ComparePage = () => {
           label: copy.price,
           getValue: (p) => formatPrice(p?.listingPrice) || copy.onRequest,
         },
-        { key: "type", label: copy.propertyType, getValue: (p) => p.propertyTypeKey || "—" },
+        {
+          key: "type",
+          label: copy.propertyType,
+          getValue: (p) => getLocalizedPropertyType(p, locale, "—"),
+        },
       ],
     },
     {
@@ -306,7 +343,9 @@ const ComparePage = () => {
             <Stack spacing={2}>
               <HStack>
                 <Icon as={MdCompareArrows} color="#F5D076" boxSize={8} />
-                <Heading size="xl">{copy.title}</Heading>
+                <Heading as="h1" size="xl">
+                  {copy.title}
+                </Heading>
               </HStack>
               <Text color="gray.400">{copy.comparing(properties.length)}</Text>
             </Stack>
@@ -344,7 +383,7 @@ const ComparePage = () => {
                 border="1px solid rgba(255,255,255,0.1)"
               >
                 <Image
-                  src={property.images?.[0] || property.primaryImage}
+                  src={getPrimaryImage(property)}
                   alt={property.name || property.propertyAddress}
                   h="200px"
                   w="100%"
@@ -363,17 +402,17 @@ const ComparePage = () => {
                         <HStack spacing={2}>
                           <Icon
                             as={
-                              property.propertyTypeKey === "house"
+                              normalizePropertyTypeKey(property.propertyType) === "house"
                                 ? LuBuilding2
-                                : property.propertyTypeKey === "apartment"
+                                : normalizePropertyTypeKey(property.propertyType) === "apartment"
                                   ? LuBuilding2
-                                  : property.propertyTypeKey === "land"
+                                  : normalizePropertyTypeKey(property.propertyType) === "land"
                                     ? LuTrees
                                     : LuMapPin
                             }
                           />
                           <Text textTransform="capitalize">
-                            {property.propertyTypeKey || copy.propertyType}
+                            {getLocalizedPropertyType(property, locale, copy.propertyType)}
                           </Text>
                         </HStack>
                       </Badge>

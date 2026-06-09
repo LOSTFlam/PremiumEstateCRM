@@ -21,6 +21,7 @@ interface GetOptions {
   headers?: Record<string, string>;
   timeout?: number;
   signal?: AbortSignal;
+  silent?: boolean;
 }
 
 interface CacheEntry {
@@ -130,11 +131,27 @@ const setCacheEntry = (cacheKey: string, data: unknown): void => {
 const buildCacheKey = (path: string, params?: Record<string, unknown>): string =>
   `${path}:${JSON.stringify(params || {})}`;
 
-apiClient.interceptors.request.use((config) => {
-  const headers = buildHeaders(
-    config?.headers?.["Content-Type"] === "multipart/form-data",
-    config.headers as Record<string, string>
+const isSilentRequest = (config?: AxiosRequestConfig): boolean => {
+  const headers = config?.headers as
+    | (Record<string, string> & { get?: (_key: string) => string | undefined })
+    | undefined;
+
+  return (
+    headers?.["X-Silent-Request"] === "true" ||
+    headers?.["x-silent-request"] === "true" ||
+    headers?.get?.("X-Silent-Request") === "true" ||
+    headers?.get?.("x-silent-request") === "true"
   );
+};
+
+apiClient.interceptors.request.use((config) => {
+  const existingHeaders =
+    typeof config.headers?.toJSON === "function"
+      ? (config.headers.toJSON() as Record<string, string>)
+      : (config.headers as Record<string, string>);
+  const contentType = existingHeaders?.["Content-Type"] || existingHeaders?.["content-type"];
+  const headers = buildHeaders(contentType === "multipart/form-data", existingHeaders);
+
   Object.keys(headers).forEach((key) => {
     config.headers.set(key, headers[key]);
   });
@@ -149,11 +166,16 @@ apiClient.interceptors.response.use(
     }
 
     const originalRequest = error.config;
+    const silentRequest = isSilentRequest(originalRequest);
     const errorMessage =
       error.response?.data?.message ||
       error.response?.data?.error ||
       error.message ||
       "An unexpected error occurred";
+
+    if (silentRequest) {
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !shouldSkipAuthRedirect(originalRequest?.url || "")) {
       if (originalRequest._retry) {
@@ -228,7 +250,8 @@ const normalizeGetArgs = (
       "cacheKey" in idOrOptions ||
       "headers" in idOrOptions ||
       "timeout" in idOrOptions ||
-      "signal" in idOrOptions;
+      "signal" in idOrOptions ||
+      "silent" in idOrOptions;
 
     if (hasOptionKeys) {
       options = idOrOptions as GetOptions;
@@ -339,11 +362,16 @@ export const getApi = async (
     }
   }
 
+  const headers = buildHeaders(false, options.headers);
+  if (options.silent) {
+    headers["X-Silent-Request"] = "true";
+  }
+
   const result = await apiClient.get(url, {
     params,
     timeout: options.timeout,
     signal: options.signal,
-    headers: buildHeaders(false, options.headers),
+    headers,
   });
 
   const normalized = result?.data || result;

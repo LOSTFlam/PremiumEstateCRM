@@ -45,6 +45,7 @@ export default function useActiveBranding(initialItems = []) {
         const response = await getApi("api/images/?isActive=true", {
           useCache: true,
           cacheKey: BRANDING_CACHE_KEY,
+          silent: true,
         });
         const collection = extractCollection(response);
         const activeItems = collection.filter((item) => item?.isActive);

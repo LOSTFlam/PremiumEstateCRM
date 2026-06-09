@@ -64,8 +64,8 @@ const getStoredUser = () => {
 const resolveLocale = () => {
   if (typeof window === "undefined") return "ru";
   const stored = window.localStorage?.getItem("i18nextLng");
-  const fallback = stored || window.navigator?.language || "en";
-  return "ru";
+  const fallback = stored || document.documentElement?.lang || window.navigator?.language || "ru";
+  return String(fallback).toLowerCase().startsWith("ru") ? "ru" : "en";
 };
 
 const RU_LEGACY_TEXT_REPLACEMENTS = [
@@ -443,7 +443,9 @@ export function AnimatedRoutes() {
 export function LegacyApplicationShell() {
   const [commandOpen, setCommandOpen] = useState(false);
 
-  useEffect(() => { initExchangeRate(); }, []);
+  useEffect(() => {
+    initExchangeRate();
+  }, []);
 
   const handleKeyDown = useCallback((e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "k") {

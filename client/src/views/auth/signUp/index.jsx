@@ -91,7 +91,7 @@ function SignUp() {
         role: "user",
       };
 
-      const result = await postApi("api/user/register", payload, false);
+      const result = await postApi("/api/user/register", payload, false);
 
       // Check if it's an error object
       if (result?.response) {
@@ -169,7 +169,7 @@ function SignUp() {
         <Box me="auto">
           <Flex justify="space-between" align="center" w="100%">
             <Box>
-              <Heading color={textColor} fontSize="36px" mb="10px">
+              <Heading as="h1" color={textColor} fontSize="36px" mb="10px">
                 {t?.("auth.signUp.title")}
               </Heading>
               <Text mb="36px" ms="4px" color={textColorSecondary} fontWeight="400" fontSize="md">
@@ -226,6 +226,7 @@ function SignUp() {
                   value={values?.firstName}
                   name="firstName"
                   type="text"
+                  autoComplete="given-name"
                   placeholder={t?.("auth.signUp.firstName")}
                   fontWeight="500"
                   size="lg"
@@ -256,6 +257,7 @@ function SignUp() {
                   value={values?.lastName}
                   name="lastName"
                   type="text"
+                  autoComplete="family-name"
                   placeholder={t?.("auth.signUp.lastName")}
                   fontWeight="500"
                   size="lg"
@@ -287,6 +289,7 @@ function SignUp() {
                 value={values?.email}
                 name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="mail@example.com"
                 fontWeight="500"
                 size="lg"
@@ -315,6 +318,7 @@ function SignUp() {
                   size="lg"
                   variant="auth"
                   type={show ? "text" : "password"}
+                  autoComplete="new-password"
                   borderColor={errors?.password && touched?.password ? "red.300" : null}
                 />
 
@@ -349,6 +353,7 @@ function SignUp() {
                   size="lg"
                   variant="auth"
                   type={show ? "text" : "password"}
+                  autoComplete="new-password"
                   borderColor={
                     errors?.confirmPassword && touched?.confirmPassword ? "red.300" : null
                   }
@@ -372,7 +377,7 @@ function SignUp() {
               <Checkbox
                 onChange={(e) => setFieldValue("agreeToTerms", e.target.checked)}
                 id="agree-terms"
-                value={values.agreeToTerms}
+                checked={values.agreeToTerms}
                 colorScheme="brandScheme"
                 me="10px"
               />

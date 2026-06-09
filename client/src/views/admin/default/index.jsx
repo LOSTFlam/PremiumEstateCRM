@@ -48,6 +48,7 @@ import { useNavigate } from "react-router-dom";
 import { getApi } from "services/api";
 import { isRussianLocale } from "i18n/crmDictionary";
 import { getRate } from "services/exchangeRate";
+import { normalizeUrl } from "constant";
 
 const PAGE_MAX_W = "1400px";
 const PROPERTY_GRID_COLUMNS = { base: 1, md: 2, xl: 2 };
@@ -140,17 +141,10 @@ const getShortDescription = (property, t) => {
   return text.length > 150 ? `${text.slice(0, 147)}...` : text;
 };
 
-const getPrimaryImage = (property) => {
-  if (property?.propertyPhotos?.length > 0) {
-    return property.propertyPhotos[0]?.img;
-  }
-
-  if (property?.floorPlans?.length > 0) {
-    return property.floorPlans[0]?.img;
-  }
-
-  return placeholderImage;
-};
+const getPrimaryImage = (property) =>
+  normalizeUrl(
+    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage
+  );
 
 const getArea = (property, t) => {
   if (!property?.squareFootage) {
