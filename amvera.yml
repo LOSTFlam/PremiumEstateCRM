@@ -4,9 +4,6 @@ meta:
     name: npm
     version: 20
 
-build:
-  command: npm install --workspace=server
-
 run:
   command: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=192" node server/index.js
   containerPort: 5001

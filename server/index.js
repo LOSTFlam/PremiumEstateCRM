@@ -69,6 +69,16 @@ app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
 
+    const req = this;
+
+    // Allow same-origin requests (handles crossorigin attribute on Vite assets)
+    try {
+      const host = req.get('host');
+      if (host && origin.includes(host)) {
+        return callback(null, true);
+      }
+    } catch {}
+
     // Extract hostname from origin to allow various IP addresses
     const isLocalhost = origin && (origin.includes('localhost') || origin.includes('127.0.0.1'));
     const isLocalIP = origin && /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/.test(new URL(origin).hostname);
