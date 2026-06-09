@@ -137,14 +137,9 @@ const rateLimiter = (type = 'api') => {
   const config = RATE_LIMITS[type] || RATE_LIMITS.api;
 
   return async (req, res, next) => {
-    // Fail closed in production when Redis is not available
-    // This prevents brute force attacks from succeeding when rate limiting is down
-    if (isProduction && !redisAvailable) {
-      // Console statement removed
-      return res.status(503).json({
-        success: false,
-        message: 'Service temporarily unavailable. Please contact support.',
-      });
+    // Fall back to in-memory store when Redis is not available
+    if (redisAvailable && redisClient) {
+      // Redis is available, will use it below
     }
     
     // Get client identifier (IP address or X-Forwarded-For)

@@ -30,7 +30,21 @@ const app = express();
 app.disable("x-powered-by");
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https://placehold.co"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'"],
+      frameAncestors: ["'self'"],
+      formAction: ["'self'"],
+      baseUri: ["'self'"],
+    },
+  },
+}));
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // Compression middleware

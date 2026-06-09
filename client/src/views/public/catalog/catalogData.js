@@ -1,5 +1,6 @@
 import { t } from "i18next";
 import i18next from "i18next";
+import { normalizeUrl } from "../../../constant";
 
 const EX_RATE_KEY = "premium_estate_usd_rub";
 const EX_RATE_TTL = 60 * 60 * 1000;
@@ -656,9 +657,11 @@ export const normalizeStatus = (status, t) => {
 };
 
 export const getPrimaryImage = (property) =>
-  property?.propertyPhotos?.[0]?.img ||
-  property?.floorPlans?.[0]?.img ||
-  placeholderImage;
+  normalizeUrl(
+    property?.propertyPhotos?.[0]?.img ||
+    property?.floorPlans?.[0]?.img ||
+    placeholderImage
+  );
 
 export const getPhotoCount = (property) =>
   Array.isArray(property?.propertyPhotos) ? property.propertyPhotos.length : 0;
