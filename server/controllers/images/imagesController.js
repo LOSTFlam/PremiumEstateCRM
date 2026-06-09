@@ -218,7 +218,7 @@ const updateAuthAndLogoImg = async (req, res) => {
                 updateData.logoSmImg = `${url}/api/images/logoImg/${logoSmImg?.[0]?.filename}`;
             }
 
-            let result = await Img.findByIdAndUpdate({ _id: id }, { $set: { ...updateData } }, { new: true });
+            let result = await Img.findByIdAndUpdate({ _id: id }, { $set: { ...updateData } }, { returnDocument: 'after' });
             return res.send({ data: result, message: 'Files updated successfully.' });
 
         }
@@ -250,7 +250,7 @@ const updateAuthAndLogoImg = async (req, res) => {
 const setActiveImg = async (req, res) => {
     try {
         const { isActive } = req.body;
-        const imageData = await Img.findByIdAndUpdate(req.params.id, { isActive: isActive }, { new: true });
+        const imageData = await Img.findByIdAndUpdate(req.params.id, { isActive: isActive }, { returnDocument: 'after' });
 
         if (!imageData) {
             return res.status(404).send({ success: false, message: "No Data Found" })
@@ -267,7 +267,7 @@ const setActiveImg = async (req, res) => {
 
 const deleteData = async (req, res) => {
     try {
-        const imageData = await Img.findByIdAndUpdate(req.params.id, { deleted: true }, { new: true });
+        const imageData = await Img.findByIdAndUpdate(req.params.id, { deleted: true }, { returnDocument: 'after' });
 
         if (!imageData) {
             return res.status(404).send({ success: false, message: "No Data Found" })

@@ -100,9 +100,22 @@ app.use('/api/property', auditLog);
 //API Routes
 app.use('/api', route);
 
-app.get('/', async (req, res) => {
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const path = require('path');
+  const distPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(distPath));
+
+  // SPA fallback for client-side routing
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  app.get('/', async (req, res) => {
     res.send('Welcome to my world...')
-});
+  });
+}
 
 app.use((req, res, next) => {
   const error = new Error("Route not found");

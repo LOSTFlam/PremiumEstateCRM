@@ -210,7 +210,7 @@ const edit = async (req, res) => {
         const result = await ExistingModel.findOneAndUpdate(
             { _id: req.params.id },
             { $set: req.body },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (result) {

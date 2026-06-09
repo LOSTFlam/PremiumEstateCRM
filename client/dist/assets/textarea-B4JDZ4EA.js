@@ -1,1 +1,0 @@
-import{o as n,aZ as i,aB as x,bE as h,bc as l,j as p,p as T,aK as f}from"./index-C6Wzh14X.js";const g=["h","minH","height","minHeight"],u=n((a,e)=>{const s=i("Textarea",a),{className:r,rows:t,...o}=x(a),c=h(o),m=t?l(s,g):s;return p.jsx(T.textarea,{ref:e,rows:t,...c,className:f("chakra-textarea",r),__css:m})});u.displayName="Textarea";export{u as T};

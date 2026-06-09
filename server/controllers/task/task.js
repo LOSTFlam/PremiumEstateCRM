@@ -101,7 +101,7 @@ const edit = async (req, res) => {
         let result = await Task.findOneAndUpdate(
             { _id: req.params.id },
             { $set: taskData },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         res.status(200).json(result);

@@ -257,7 +257,7 @@ const deleteField = async (req, res) => {
                                 }
                             }
                         },
-                        { new: true }
+                        { returnDocument: 'after' }
                     );
 
                     if (updatedCustomField) {
@@ -506,7 +506,7 @@ const changeIcon = async (req, res) => {
             const url = req.protocol + '://' + req.get('host');
             const file = `${url}/api/custom-field/icon/${req?.file?.filename}`;
 
-            let result = await CustomField.findByIdAndUpdate({ _id: id }, { $set: { icon: file } }, { new: true });
+            let result = await CustomField.findByIdAndUpdate({ _id: id }, { $set: { icon: file } }, { returnDocument: 'after' });
             return res.send({ data: result, message: 'Icon updated successfully.' })
         }
 
@@ -525,7 +525,7 @@ const changeModuleName = async (req, res) => {
         let result = await CustomField.findOneAndUpdate(
             { _id: req.params.id },
             { $set: { moduleName: moduleName } },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!result) {
@@ -730,7 +730,7 @@ const changeIsTableField = async (req, res) => {
         let result = await CustomField.findOneAndUpdate(
             { _id: moduleId, 'fields._id': fieldId },
             { $set: { 'fields.$.isTableField': isTableField } },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!result) {

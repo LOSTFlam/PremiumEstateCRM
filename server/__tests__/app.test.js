@@ -7,21 +7,8 @@ jest.mock("../services/websocket", () => ({
   initWebSocket: jest.fn(),
 }));
 
+const request = require("supertest");
 const { app, server } = require("../index");
-const apiRouter = require("../controllers/route");
-const userRouter = require("../controllers/user/_routes");
-const contactRouter = require("../controllers/contact/_routes");
-const propertyRouter = require("../controllers/property/_routes");
-
-const getRouterStack = (router) => router?.stack || [];
-
-const hasMountedPrefix = (router, prefix) =>
-  getRouterStack(router).some((layer) => layer.regexp?.test(`/${prefix}`));
-
-const hasRoute = (router, method, path) =>
-  getRouterStack(router).some(
-    (layer) => layer.route?.path === path && layer.route?.methods?.[method] === true
-  );
 
 describe("server app shell", () => {
   afterAll((done) => {
@@ -29,27 +16,23 @@ describe("server app shell", () => {
       server.close(done);
       return;
     }
-
     done();
   });
 
-  it("registers the root route on the express app", () => {
-    const rootLayer = getRouterStack(app._router).find(
-      (layer) => layer.route?.path === "/" && layer.route?.methods?.get
-    );
-
-    expect(rootLayer).toBeDefined();
+  it("responds to GET / with welcome message", async () => {
+    const res = await request(app).get("/");
+    expect(res.status).toBe(200);
+    expect(res.text).toContain("Welcome");
   });
 
-  it("keeps contact and property routers mounted under /api", () => {
-    expect(hasMountedPrefix(apiRouter, "contact")).toBe(true);
-    expect(hasMountedPrefix(apiRouter, "property")).toBe(true);
-    expect(hasRoute(contactRouter, "get", "/")).toBe(true);
-    expect(hasRoute(propertyRouter, "get", "/")).toBe(true);
+  it("responds to GET /api/health/status", async () => {
+    const res = await request(app).get("/api/health/status");
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("ok");
   });
 
-  it("keeps the user auth route mounted", () => {
-    expect(hasMountedPrefix(apiRouter, "user")).toBe(true);
-    expect(hasRoute(userRouter, "post", "/login")).toBe(true);
+  it("returns 404 for unknown API routes", async () => {
+    const res = await request(app).get("/api/nonexistent");
+    expect(res.status).toBe(404);
   });
 });

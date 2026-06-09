@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+// Health check endpoint
+router.get('/health/status', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 const contactRoute = require('./contact/_routes')
 const propertyRoute = require('./property/_routes');
 const leadRoute = require('./lead/_routes');

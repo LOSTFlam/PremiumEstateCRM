@@ -2,6 +2,7 @@ import { Button, FormLabel, GridItem, Input, Text } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
+import { constant } from "../../../constant";
 
 export default function PaymentForm() {
   const { t } = useTranslation();
@@ -32,7 +33,7 @@ export default function PaymentForm() {
   const { errors, touched, values, handleBlur, handleChange, handleSubmit } = formik;
 
   const addPayment = () => {
-    fetch(`${process?.env?.REACT_APP_BASE_URL}api/payment/add`, {
+    fetch(`${constant.baseUrl}api/payment/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

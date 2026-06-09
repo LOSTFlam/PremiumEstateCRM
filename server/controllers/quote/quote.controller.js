@@ -83,7 +83,7 @@ const updateQuote = async (req, res) => {
     const quote = await Quote.findByIdAndUpdate(
       req.params.id,
       { ...req.body },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     )
     .populate('lead', 'name email')
     .populate('contact', 'name email')

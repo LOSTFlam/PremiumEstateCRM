@@ -31,7 +31,7 @@ const updateStage = async (req, res) => {
     const stage = await PipelineStage.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
     if (!stage) return res.status(404).json({ error: 'Stage not found' });
     res.status(200).json(stage);
@@ -45,7 +45,7 @@ const deleteStage = async (req, res) => {
     const stage = await PipelineStage.findByIdAndUpdate(
       req.params.id,
       { isActive: false },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!stage) return res.status(404).json({ error: 'Stage not found' });
     res.status(200).json({ message: 'Stage deactivated' });
@@ -120,7 +120,7 @@ const updateWorkflow = async (req, res) => {
     const workflow = await LeadWorkflow.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     )
     .populate('lead')
     .populate('assignedAgent', 'username firstName lastName')

@@ -86,24 +86,29 @@ const connectDB = async (DATABASE_URL, DATABASE) => {
         /*  */
         await initializedSchemas();
 
-        let adminExisting = await User.find({ role: 'superAdmin' });
-        if (adminExisting.length <= 0) {
+        const password = process.env.ADMIN_PASSWORD;
+        if (!password) {
+            // Console statement removed
+        } else {
             const phoneNumber = process.env.ADMIN_PHONE || '7874263694';
             const firstName = process.env.ADMIN_FIRST_NAME || 'Premium';
             const lastName = process.env.ADMIN_LAST_NAME || 'Estate';
             const username = process.env.ADMIN_EMAIL || 'admin@gmail.com';
-            const password = process.env.ADMIN_PASSWORD;
-            if (!password) {
-                // Console statement removed
-            } else {
-                const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            let adminExisting = await User.find({ role: 'superAdmin' });
+            if (adminExisting.length <= 0) {
                 const user = new User({ _id: new mongoose.Types.ObjectId('64d33173fd7ff3fa0924a109'), username, password: hashedPassword, firstName, lastName, phoneNumber, role: 'superAdmin' });
                 await user.save();
-                // Console statement removed
+            } else {
+                const admin = adminExisting[0];
+                if (admin.deleted === true) {
+                    await User.findByIdAndUpdate(admin._id, { deleted: false, password: hashedPassword, firstName, lastName, phoneNumber, username, updatedDate: new Date() });
+                } else {
+                    // Sync admin fields from env on every restart
+                    await User.findByIdAndUpdate(admin._id, { password: hashedPassword, firstName, lastName, phoneNumber, username, deleted: false, updatedDate: new Date() });
+                }
             }
-        } else if (adminExisting[0].deleted === true) {
-            await User.findByIdAndUpdate(adminExisting[0]._id, { deleted: false });
-            // Console statement removed
         }
 
         await seedPipelineStages();

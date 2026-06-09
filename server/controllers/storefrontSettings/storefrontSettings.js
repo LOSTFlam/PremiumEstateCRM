@@ -106,7 +106,7 @@ const edit = async (req, res) => {
           updatedBy: req.user?.userId || null,
         },
       },
-      { new: true, upsert: true, setDefaultsOnInsert: true },
+      { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true },
     );
 
     return res.status(200).json(settings);

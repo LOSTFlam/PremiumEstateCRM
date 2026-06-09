@@ -194,7 +194,7 @@ const edit = async (req, res) => {
         let result = await Opprtunities.findOneAndUpdate(
             { _id: req.params.id },
             { $set: req.body },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         res.status(200).json(result);

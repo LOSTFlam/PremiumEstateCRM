@@ -302,7 +302,7 @@ const incrementFailedAttempts = async (userId) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { $inc: { failedLoginAttempts: 1 } },
-      { new: true }
+      { returnDocument: 'after' }
     ).select('+lockedUntil +failedLoginAttempts');
 
     if (!user) return { locked: false, lockedUntil: null };

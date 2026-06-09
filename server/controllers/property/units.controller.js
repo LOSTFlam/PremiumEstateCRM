@@ -11,7 +11,7 @@ const deleteUnitType = async (req, res) => {
     const updatedProperty = await Property.findByIdAndUpdate(
       { _id: id },
       { $pull: { unitType: { _id: unitTypeId } } },
-      { new: true },
+      { returnDocument: 'after' },
     );
     res.status(200).json(updatedProperty);
   } catch (error) {
@@ -57,7 +57,7 @@ const updateUnitTypeId = async (req, res) => {
       { $set: { "units.$[].flats.$[flat].unitType": newUnitType } },
       {
         arrayFilters: [{ "flat._id": unitid }],
-        new: true,
+        returnDocument: 'after',
       },
     );
     res.status(200).json(updatedUnitTypeId);

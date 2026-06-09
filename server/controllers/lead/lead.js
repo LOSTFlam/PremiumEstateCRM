@@ -43,7 +43,7 @@ const changeStatus = async (req, res) => {
     let result = await Lead.findOneAndUpdate(
       { _id: req.params.id },
       { $set: { leadStatus: leadStatus } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!result) {

@@ -159,7 +159,7 @@ const edit = async (req, res) => {
     let result = await Quotes.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.status(200).json(result);
@@ -385,7 +385,7 @@ const convertToInvoice = async (req, res) => {
     let result = await Quotes.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { invoiceStatus: "Invoiced" } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     res.status(200).json({ message: "Invoiced Convert successfully", result });
