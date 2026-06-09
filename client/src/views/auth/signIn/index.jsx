@@ -33,7 +33,7 @@ import { useTranslation } from "react-i18next";
 
 function SignIn() {
   const textColor = useColorModeValue("navy.700", "white");
-  const textColorSecondary = "gray.400";
+  const textColorSecondary = "gray.500";
   const brandStars = useColorModeValue("brand.500", "brand.400");
   const [isLoding, setIsLoding] = React.useState(false);
   const [checkBox, setCheckBox] = React.useState(true);

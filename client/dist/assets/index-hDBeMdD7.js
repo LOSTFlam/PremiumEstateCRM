@@ -1,0 +1,1 @@
+import{n as o,j as a,T as r}from"./index-DqEd_-t4.js";import"./vendor-charts-8I5hyNb7.js";const i=({message:u})=>{var t;const n=(t=o.language)==null?void 0:t.startsWith("ru");return a.jsx(r,{textAlign:"center",fontSize:"md",fontWeight:"600",color:"gray.500",py:4,children:u||(n?"-- Данные не найдены --":"-- No Data Found --")})};export{i as D};

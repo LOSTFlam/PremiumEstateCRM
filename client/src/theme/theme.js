@@ -9,8 +9,10 @@ import { textareaStyles } from "./components/textarea";
 import { switchStyles } from "./components/switch";
 import { linkStyles } from "./components/link";
 import { globalStyles } from "./styles";
+import foundations from "./foundations";
 
 export default extendTheme(
+  foundations,
   globalStyles,
   badgeStyles,
   buttonStyles,
