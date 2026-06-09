@@ -31,6 +31,17 @@ describe("server app shell", () => {
     expect(["ok", "degraded"]).toContain(res.body.status);
   });
 
+  it("allows requests from Amvera deployment domains", async () => {
+    const res = await request(app)
+      .get("/api/health/status")
+      .set("Origin", "https://premium-estate-crm-lostflam.amvera.io");
+
+    expect(res.status).toBe(200);
+    expect(res.headers["access-control-allow-origin"]).toBe(
+      "https://premium-estate-crm-lostflam.amvera.io",
+    );
+  });
+
   it("returns 404 for unknown API routes", async () => {
     const res = await request(app).get("/api/nonexistent");
     expect(res.status).toBe(404);

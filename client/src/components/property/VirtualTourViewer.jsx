@@ -131,7 +131,9 @@ export const VirtualTourViewer = ({ property, isOpen, onClose }) => {
                   maxH="100%"
                   maxW="100%"
                   objectFit="contain"
-                  onError={(e) => { e.target.src = placeholderImage; }}
+                  onError={(e) => {
+                    e.target.src = placeholderImage;
+                  }}
                 />
               </Box>
 

@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig, transformWithEsbuild } from "vite";
+import { transformWithEsbuild } from "vite";
+import type { Plugin, UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // Dynamically import the ESM-only plugin
@@ -8,7 +9,7 @@ async function getNodePolyfills() {
   return nodePolyfills;
 }
 
-const legacyJsAsJsx = {
+const legacyJsAsJsx: Plugin = {
   name: "legacy-js-as-jsx",
   enforce: "pre" as const,
   async transform(code: string, id: string) {
@@ -23,9 +24,9 @@ const legacyJsAsJsx = {
   },
 };
 
-export default defineConfig(async () => {
+export default async (): Promise<UserConfig> => {
   const nodePolyfillsPlugin = await getNodePolyfills();
-  
+
   return {
     plugins: [
       tsconfigPaths(),
@@ -82,7 +83,7 @@ export default defineConfig(async () => {
       minify: "esbuild",
       rollupOptions: {
         output: {
-          manualChunks(id) {
+          manualChunks(id: string) {
             if (!id.includes("node_modules")) {
               return undefined;
             }
@@ -114,4 +115,4 @@ export default defineConfig(async () => {
       },
     },
   };
-});
+};

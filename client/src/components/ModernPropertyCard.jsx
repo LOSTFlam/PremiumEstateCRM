@@ -444,7 +444,14 @@ const ModernPropertyCard = ({
         </SimpleGrid>
 
         <HStack justify="space-between" align="center" pt={1} spacing={3} minH="36px">
-          <Text color={publicBrand.colors.copper} fontSize="xs" fontWeight="700" noOfLines={1} flex={1} minW="0">
+          <Text
+            color={publicBrand.colors.copper}
+            fontSize="xs"
+            fontWeight="700"
+            noOfLines={1}
+            flex={1}
+            minW="0"
+          >
             {richListing
               ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"
               : t?.("publicListing.openOffer") || "Open offer"}

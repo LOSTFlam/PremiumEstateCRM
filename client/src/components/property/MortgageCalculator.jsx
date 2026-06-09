@@ -101,9 +101,11 @@ export default function MortgageCalculator({ propertyPrice, isOpen, onClose }) {
 
   const formatCurrency = (value) => {
     if (typeof value !== "number") return value;
-    const lang = String(i18n?.language ?? typeof window !== "undefined"
-      ? (window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "en")
-      : "en");
+    const lang = String(
+      (i18n?.language ?? typeof window !== "undefined")
+        ? window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "en"
+        : "en"
+    );
     const isRussian = lang.startsWith("ru");
     const locale = isRussian ? "ru-RU" : "en-US";
     const currency = isRussian ? "RUB" : "USD";

@@ -17,30 +17,80 @@ const USERS_TARGET = Number(process.env.SEED_USERS || 12);
 const ACCOUNTS_TARGET = Number(process.env.SEED_ACCOUNTS || 40);
 
 const PHOTO_LIBRARY = [
-  "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1600",
-  "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1600",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600",
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600",
-  "https://images.unsplash.com/photo-1600607687644-c7f34b5ab5b3?w=1600",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1600",
-  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1600",
-  "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1600",
-  "https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=1600",
-  "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1600",
-  "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=1600",
-  "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1600",
 ];
 
 const FIRST_NAMES = [
-  "Ivan","Nikita","Maksim","Artem","Roman","Ilya","Sergey","Dmitry","Pavel","Andrey",
-  "Elena","Anna","Maria","Olga","Sofia","Alina","Ekaterina","Irina","Natalia","Polina"
+  "Ivan",
+  "Nikita",
+  "Maksim",
+  "Artem",
+  "Roman",
+  "Ilya",
+  "Sergey",
+  "Dmitry",
+  "Pavel",
+  "Andrey",
+  "Elena",
+  "Anna",
+  "Maria",
+  "Olga",
+  "Sofia",
+  "Alina",
+  "Ekaterina",
+  "Irina",
+  "Natalia",
+  "Polina",
 ];
 const LAST_NAMES = [
-  "Ivanov","Petrov","Sidorov","Smirnov","Kuznetsov","Popov","Lebedev","Morozov","Volkov","Sokolov",
-  "Romanova","Orlova","Kiseleva","Fedorova","Mikhailova","Voronova","Belova","Tarasova","Nikolaeva","Andreeva"
+  "Ivanov",
+  "Petrov",
+  "Sidorov",
+  "Smirnov",
+  "Kuznetsov",
+  "Popov",
+  "Lebedev",
+  "Morozov",
+  "Volkov",
+  "Sokolov",
+  "Romanova",
+  "Orlova",
+  "Kiseleva",
+  "Fedorova",
+  "Mikhailova",
+  "Voronova",
+  "Belova",
+  "Tarasova",
+  "Nikolaeva",
+  "Andreeva",
 ];
-const CITIES = ["Moscow", "Saint Petersburg", "Kazan", "Sochi", "Yekaterinburg", "Krasnodar"];
-const INDUSTRIES = ["Investment", "Private Capital", "Development", "Property Management", "Tech", "Retail"];
+const CITIES = [
+  "Moscow",
+  "Saint Petersburg",
+  "Kazan",
+  "Sochi",
+  "Yekaterinburg",
+  "Krasnodar",
+];
+const INDUSTRIES = [
+  "Investment",
+  "Private Capital",
+  "Development",
+  "Property Management",
+  "Tech",
+  "Retail",
+];
 const PROPERTY_TYPES = ["Apartment", "House", "Land", "Commercial"];
 const PROPERTY_STATUSES = ["Available", "Active", "New", "Booked", "Sold"];
 const LEAD_STATUSES = [
@@ -56,12 +106,19 @@ const LEAD_STATUSES = [
   "Lost",
 ];
 
-const randomFrom = (arr, indexSeed = 0) => arr[(indexSeed + Math.floor(Math.random() * arr.length)) % arr.length];
+const randomFrom = (arr, indexSeed = 0) =>
+  arr[(indexSeed + Math.floor(Math.random() * arr.length)) % arr.length];
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-const slugify = (text) => String(text).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const slugify = (text) =>
+  String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 
 const buildPhotoSet = (offset = 0, count = 4) => {
-  const selected = Array.from({ length: count }).map((_, idx) => PHOTO_LIBRARY[(offset + idx) % PHOTO_LIBRARY.length]);
+  const selected = Array.from({ length: count }).map(
+    (_, idx) => PHOTO_LIBRARY[(offset + idx) % PHOTO_LIBRARY.length],
+  );
   return selected;
 };
 
@@ -72,13 +129,22 @@ const mapPhotos = (urls = [], date = new Date()) =>
   }));
 
 const buildUsers = () => {
-  const base = [{ email: "admin@gmail.com", firstName: "Premium", lastName: "Admin", role: "superAdmin" }];
-  const extra = Array.from({ length: Math.max(USERS_TARGET - 1, 3) }).map((_, idx) => ({
-    email: `agent${idx + 1}@premiumestatecrm.com`,
-    firstName: randomFrom(FIRST_NAMES, idx),
-    lastName: randomFrom(LAST_NAMES, idx),
-    role: "user",
-  }));
+  const base = [
+    {
+      email: "admin@gmail.com",
+      firstName: "Premium",
+      lastName: "Admin",
+      role: "superAdmin",
+    },
+  ];
+  const extra = Array.from({ length: Math.max(USERS_TARGET - 1, 3) }).map(
+    (_, idx) => ({
+      email: `agent${idx + 1}@premiumestatecrm.com`,
+      firstName: randomFrom(FIRST_NAMES, idx),
+      lastName: randomFrom(LAST_NAMES, idx),
+      role: "user",
+    }),
+  );
   return [...base, ...extra];
 };
 
@@ -147,7 +213,7 @@ async function upsertUsers() {
           createdDate: now,
         },
       },
-      { upsert: true, returnDocument: "after" }
+      { upsert: true, returnDocument: "after" },
     );
     users.push(user);
   }
@@ -173,7 +239,8 @@ async function seedData() {
     const accounts = [];
     const contactsCollection = mongoose.connection.db.collection("Contacts");
     const leadsCollection = mongoose.connection.db.collection("Leads");
-    const propertiesCollection = mongoose.connection.db.collection("Properties");
+    const propertiesCollection =
+      mongoose.connection.db.collection("Properties");
     for (let i = 0; i < accountSeeds.length; i += 1) {
       const seed = accountSeeds[i];
       const owner = agents[i % agents.length] || admin;
@@ -197,7 +264,7 @@ async function seedData() {
             createdDate: now,
           },
         },
-        { upsert: true, returnDocument: "after" }
+        { upsert: true, returnDocument: "after" },
       );
       accounts.push(account);
     }
@@ -217,8 +284,10 @@ async function seedData() {
         {
           $set: {
             ...seed,
-            propertyDescription: "Modern turnkey property with premium finishing and strong investment potential.",
-            marketingDescription: "Verified listing with high quality media and legal-ready documentation.",
+            propertyDescription:
+              "Modern turnkey property with premium finishing and strong investment potential.",
+            marketingDescription:
+              "Verified listing with high quality media and legal-ready documentation.",
             propertyPhotos: photos,
             // Backup metadata stored in DB for resiliency
             propertyPhotoSources: photoUrls,
@@ -229,7 +298,12 @@ async function seedData() {
               checksumHint: slugify(url).slice(0, 32),
             })),
             floorPlans: photos.slice(0, 1),
-            propertyDocuments: [{ img: "https://example.com/docs/property-brochure.pdf", createOn: now }],
+            propertyDocuments: [
+              {
+                img: "https://example.com/docs/property-brochure.pdf",
+                createOn: now,
+              },
+            ],
             verificationStatus: "verified",
             verificationScore: 90 + i,
             featuredCollections: ["verified", "family-homes"],
@@ -242,10 +316,13 @@ async function seedData() {
             deleted: false,
           },
         },
-        { upsert: true }
+        { upsert: true },
       );
       // eslint-disable-next-line no-await-in-loop
-      const property = await propertiesCollection.findOne({ publicSlug, deleted: false });
+      const property = await propertiesCollection.findOne({
+        publicSlug,
+        deleted: false,
+      });
       if (property) properties.push(property);
     }
 
@@ -278,7 +355,7 @@ async function seedData() {
             deleted: false,
           },
         },
-        { upsert: true }
+        { upsert: true },
       );
     }
 
@@ -296,11 +373,19 @@ async function seedData() {
             leadName: `${leadSeed.firstName} ${leadSeed.lastName}`,
             leadEmail: `lead.${i + 1}.${leadSeed.email}`,
             leadPhoneNumber: leadSeed.phone,
-            leadSource: randomFrom(["Website", "Referral", "Instagram", "Facebook Ads", "Portal"], i),
+            leadSource: randomFrom(
+              ["Website", "Referral", "Instagram", "Facebook Ads", "Portal"],
+              i,
+            ),
             leadStatus: randomFrom(LEAD_STATUSES, i),
             leadCampaign: randomFrom(
-              ["Spring Premium Campaign", "Urban Buyers Q2", "Luxury Villas", "Investors Pipeline"],
-              i
+              [
+                "Spring Premium Campaign",
+                "Urban Buyers Q2",
+                "Luxury Villas",
+                "Investors Pipeline",
+              ],
+              i,
             ),
             leadScore: randInt(35, 98),
             leadNotes: `Interested in ${property?.name}`,
@@ -314,12 +399,12 @@ async function seedData() {
             deleted: false,
           },
         },
-        { upsert: true }
+        { upsert: true },
       );
     }
 
     console.log(
-      `[seed:all] Done. Users: ${users.length}, Accounts: ${accounts.length}, Contacts: ${contactSeeds.length}, Leads: ${LEADS_TARGET}, Properties: ${properties.length}`
+      `[seed:all] Done. Users: ${users.length}, Accounts: ${accounts.length}, Contacts: ${contactSeeds.length}, Leads: ${LEADS_TARGET}, Properties: ${properties.length}`,
     );
   } catch (error) {
     console.error("[seed:all] Failed:", error?.message || error);
@@ -330,4 +415,3 @@ async function seedData() {
 }
 
 seedData();
-

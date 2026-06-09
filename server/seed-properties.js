@@ -16,7 +16,8 @@ const slugify = (value = "") =>
     .slice(0, 120);
 
 const buildPhotos = (...urls) => urls.filter(Boolean).map((img) => ({ img }));
-const buildDocs = (...names) => names.filter(Boolean).map((name) => ({ name, url: "#" }));
+const buildDocs = (...names) =>
+  names.filter(Boolean).map((name) => ({ name, url: "#" }));
 
 const sampleProperties = [
   {
@@ -35,19 +36,23 @@ const sampleProperties = [
       "Современная семейная вилла с панорамным остеклением, приватным участком, бассейном и отдельным блоком для персонала.",
     marketingDescription:
       "Премиальная резиденция для семьи, которой важны безопасность, тишина и быстрый выезд в Москву.",
-    communityAmenities: "Охрана 24/7, теннисный корт, клубный сервис, детская площадка",
+    communityAmenities:
+      "Охрана 24/7, теннисный корт, клубный сервис, детская площадка",
     appliancesIncluded: "Премиальная кухня, прачечный блок, винный шкаф",
-    heatingAndCoolingSystems: "Газовое отопление, мультизональное кондиционирование, теплый пол",
+    heatingAndCoolingSystems:
+      "Газовое отопление, мультизональное кондиционирование, теплый пол",
     flooringType: "Натуральный камень, дубовый паркет",
     exteriorFeatures: "Бассейн, барбекю-зона, терраса, ландшафтный сад",
     parkingAvailability: "Гараж на 3 машины + гостевая парковка",
     listingDate: new Date("2026-02-10"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200",
-      "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1200",
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Брошюра объекта.pdf", "Планировка.pdf"),
     verificationStatus: "verified",
     verificationScore: 98,
@@ -70,18 +75,21 @@ const sampleProperties = [
     marketingDescription:
       "Готовый семейный дом с удобной логистикой, охраной и качественным инженерным пакетом.",
     communityAmenities: "Охрана, парк, детский клуб, фитнес, школа",
-    appliancesIncluded: "Кухонный гарнитур, встроенная техника, системы хранения",
+    appliancesIncluded:
+      "Кухонный гарнитур, встроенная техника, системы хранения",
     heatingAndCoolingSystems: "Газовый котел, кондиционирование, теплые полы",
     flooringType: "Паркет, керамогранит",
     exteriorFeatures: "Терраса, участок с газоном, фасадная подсветка",
     parkingAvailability: "Гараж на 2 машины",
     listingDate: new Date("2026-02-24"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Технический паспорт.pdf"),
     verificationStatus: "verified",
     verificationScore: 91,
@@ -90,7 +98,8 @@ const sampleProperties = [
   {
     name: "Вилла в Барвихе",
     publicSlug: "villa-barvikha-luxury",
-    propertyAddress: "Московская обл., Одинцовский р-н, Барвиха, Luxury Village, 15",
+    propertyAddress:
+      "Московская обл., Одинцовский р-н, Барвиха, Luxury Village, 15",
     listingPrice: 180000000,
     propertyType: "House",
     listingStatus: "New",
@@ -103,7 +112,8 @@ const sampleProperties = [
       "Авторская вилла с бассейном, wellness-зоной, кинотеатром и приватным садом в одной из самых востребованных локаций Рублевки.",
     marketingDescription:
       "Флагманский объект для покупателей, которые ищут статусную резиденцию без компромиссов по инженерии и приватности.",
-    communityAmenities: "Охрана, ресторанный сервис, spa, клубная инфраструктура",
+    communityAmenities:
+      "Охрана, ресторанный сервис, spa, клубная инфраструктура",
     appliancesIncluded: "Chef kitchen, винный шкаф, smart home",
     heatingAndCoolingSystems: "Центральное отопление, VRV-система, теплый пол",
     flooringType: "Мрамор, ценные породы дерева",
@@ -111,13 +121,18 @@ const sampleProperties = [
     parkingAvailability: "Гараж на 4 машины + гостевая парковка",
     listingDate: new Date("2026-03-12"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200",
-      "https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=1200",
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=1200",
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
-    propertyDocuments: buildDocs("Презентация виллы.pdf", "Юридический пакет.pdf"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
+    propertyDocuments: buildDocs(
+      "Презентация виллы.pdf",
+      "Юридический пакет.pdf",
+    ),
     verificationStatus: "verified",
     verificationScore: 99,
     featuredCollections: ["family-homes", "verified"],
@@ -138,7 +153,8 @@ const sampleProperties = [
       "Апартаменты с панорамным видом на Москву, дизайнерской отделкой и сервисной инфраструктурой внутри башни.",
     marketingDescription:
       "Городской лот высокого класса для собственного проживания или статусной инвестиции в центральной деловой локации.",
-    communityAmenities: "Консьерж 24/7, фитнес, бассейн, ресторан, бизнес-центр",
+    communityAmenities:
+      "Консьерж 24/7, фитнес, бассейн, ресторан, бизнес-центр",
     appliancesIncluded: "Премиальная бытовая техника, система умный дом",
     heatingAndCoolingSystems: "Центральное кондиционирование, теплый пол",
     flooringType: "Натуральный камень, инженерная доска",
@@ -146,11 +162,13 @@ const sampleProperties = [
     parkingAvailability: "2 места в подземном паркинге",
     listingDate: new Date("2026-01-19"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Паспорт объекта.pdf"),
     verificationStatus: "verified",
     verificationScore: 95,
@@ -180,10 +198,12 @@ const sampleProperties = [
     parkingAvailability: "1 место в подземном паркинге",
     listingDate: new Date("2026-02-04"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200",
-      "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=1200",
+      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Планировка.pdf"),
     verificationStatus: "verified",
     verificationScore: 88,
@@ -213,11 +233,13 @@ const sampleProperties = [
     parkingAvailability: "2 семейных машиноместа",
     listingDate: new Date("2026-03-15"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200",
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200",
-      "https://images.unsplash.com/photo-1494526585095-c41746248156?w=1200",
+      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Пентхаус-презентация.pdf", "План этажа.pdf"),
     verificationStatus: "verified",
     verificationScore: 97,
@@ -226,7 +248,8 @@ const sampleProperties = [
   {
     name: "Участок в Барвихе Luxury Village",
     publicSlug: "barvikha-luxury-village-land",
-    propertyAddress: "Московская обл., Одинцовский р-н, Барвиха, Luxury Village",
+    propertyAddress:
+      "Московская обл., Одинцовский р-н, Барвиха, Luxury Village",
     listingPrice: 95000000,
     propertyType: "Land",
     listingStatus: "Available",
@@ -247,10 +270,12 @@ const sampleProperties = [
     parkingAvailability: "Гостевая парковка",
     listingDate: new Date("2026-01-31"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200",
-      "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=1200",
+      "https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Кадастровая выписка.pdf", "ГПЗУ.pdf"),
     verificationStatus: "verified",
     verificationScore: 84,
@@ -272,7 +297,8 @@ const sampleProperties = [
       "Крупный участок под малоэтажный девелопмент или клубный семейный поселок рядом с существующей инфраструктурой.",
     marketingDescription:
       "Инвестиционный земельный актив с хорошей логистикой и понятным сценарием развития.",
-    communityAmenities: "Выезд на магистраль, торговая галерея, школы, сервисный кластер",
+    communityAmenities:
+      "Выезд на магистраль, торговая галерея, школы, сервисный кластер",
     appliancesIncluded: "Не применимо",
     heatingAndCoolingSystems: "Коммуникации рядом",
     flooringType: "Ровный рельеф",
@@ -280,10 +306,12 @@ const sampleProperties = [
     parkingAvailability: "Подъезд для строительной техники",
     listingDate: new Date("2026-03-02"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200",
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",
+      "https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/461960/pexels-photo-461960.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Инвест-мемо.pdf", "Схема участка.pdf"),
     verificationStatus: "verified",
     verificationScore: 86,
@@ -313,10 +341,12 @@ const sampleProperties = [
     parkingAvailability: "Гостевой карман у въезда",
     listingDate: new Date("2026-03-18"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200",
-      "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=1200",
+      "https://images.pexels.com/photos/461960/pexels-photo-461960.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Схема поселка.pdf"),
     verificationStatus: "pending",
     verificationScore: 73,
@@ -338,7 +368,8 @@ const sampleProperties = [
       "Угловой retail-блок с высоким пешеходным трафиком под flagship store, showroom или premium clinic.",
     marketingDescription:
       "Премиальный торговый лот в сильной центральной локации с высокой видимостью и готовой витринной фасадной частью.",
-    communityAmenities: "Метро, офисный кластер, рестораны, премиальная аудитория",
+    communityAmenities:
+      "Метро, офисный кластер, рестораны, премиальная аудитория",
     appliancesIncluded: "Система доступа, lighting tracks, security shutters",
     heatingAndCoolingSystems: "Коммерческий HVAC",
     flooringType: "Камень, polished concrete",
@@ -346,11 +377,16 @@ const sampleProperties = [
     parkingAvailability: "Гостевая парковка и зона разгрузки",
     listingDate: new Date("2026-02-14"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200",
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
+      "https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
-    propertyDocuments: buildDocs("Коммерческие условия.pdf", "План арендатора.pdf"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
+    propertyDocuments: buildDocs(
+      "Коммерческие условия.pdf",
+      "План арендатора.pdf",
+    ),
     verificationStatus: "verified",
     verificationScore: 90,
     featuredCollections: ["premium-commercial", "verified"],
@@ -379,12 +415,17 @@ const sampleProperties = [
     parkingAvailability: "10 мест в подземном паркинге",
     listingDate: new Date("2026-03-06"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200",
-      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
-      "https://images.unsplash.com/photo-1497366412874-3415097a27e7?w=1200",
+      "https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
-    propertyDocuments: buildDocs("Fit-out package.pdf", "Коммерческое предложение.pdf"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
+    propertyDocuments: buildDocs(
+      "Fit-out package.pdf",
+      "Коммерческое предложение.pdf",
+    ),
     verificationStatus: "verified",
     verificationScore: 96,
     featuredCollections: ["premium-commercial", "verified"],
@@ -405,7 +446,8 @@ const sampleProperties = [
       "Бутик-пространство на первой линии под showroom, jewelry concept или gallery retail с private client room.",
     marketingDescription:
       "Адресный коммерческий лот в зоне с сильным luxury-footfall и понятным брендовым позиционированием.",
-    communityAmenities: "Премиальный стрит-ритейл, рестораны, affluent audience",
+    communityAmenities:
+      "Премиальный стрит-ритейл, рестораны, affluent audience",
     appliancesIncluded: "Световой трек, security pack, дизайнерский fit-out",
     heatingAndCoolingSystems: "Коммерческий HVAC",
     flooringType: "Натуральный камень, инженерная доска",
@@ -413,10 +455,12 @@ const sampleProperties = [
     parkingAvailability: "Городская парковка и valet nearby",
     listingDate: new Date("2026-03-20"),
     propertyPhotos: buildPhotos(
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200",
-      "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200",
+      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
-    floorPlans: buildPhotos("https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200"),
+    floorPlans: buildPhotos(
+      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
+    ),
     propertyDocuments: buildDocs("Showroom pack.pdf"),
     verificationStatus: "verified",
     verificationScore: 87,
@@ -425,7 +469,8 @@ const sampleProperties = [
 ];
 
 const enrichProperty = (property, ownerId) => {
-  const createdDate = property.createdDate || property.listingDate || new Date();
+  const createdDate =
+    property.createdDate || property.listingDate || new Date();
 
   return {
     deleted: false,
@@ -437,7 +482,9 @@ const enrichProperty = (property, ownerId) => {
     propertyDocuments: [],
     createdDate,
     updatedDate: new Date(),
-    publicSlug: property.publicSlug || slugify(property.name || property.propertyAddress || "property"),
+    publicSlug:
+      property.publicSlug ||
+      slugify(property.name || property.propertyAddress || "property"),
     createBy: ownerId || null,
     ...property,
     createdDate,
@@ -461,11 +508,13 @@ async function seedDatabase() {
 
       if (existing?._id) return existing;
 
-      const email = String(process.env.ADMIN_EMAIL || "admin@gmail.com").trim().toLowerCase();
+      const email = String(process.env.ADMIN_EMAIL || "admin@gmail.com")
+        .trim()
+        .toLowerCase();
       const password = String(process.env.ADMIN_PASSWORD || "").trim();
       if (!password) {
         throw new Error(
-          "No users found in DB and ADMIN_PASSWORD is not set. Set ADMIN_PASSWORD in server/.env so the seeder can create an admin."
+          "No users found in DB and ADMIN_PASSWORD is not set. Set ADMIN_PASSWORD in server/.env so the seeder can create an admin.",
         );
       }
 
@@ -488,7 +537,7 @@ async function seedDatabase() {
     const owner = await ensureAdminUser();
     if (!owner?._id) {
       throw new Error(
-        "No active user found to assign as createBy. Create an admin user first (superAdmin) and re-run seeding."
+        "No active user found to assign as createBy. Create an admin user first (superAdmin) and re-run seeding.",
       );
     }
 

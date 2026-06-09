@@ -18,6 +18,9 @@ JWT_EXPIRES_IN=1d
 # URL Клиента для CORS
 CLIENT_URL=http://localhost:3000
 
+# Дополнительные CORS origins через запятую для опубликованных фронтендов
+CORS_ORIGINS=https://premium-estate-crm-lostflam.amvera.io
+
 # Пользователи по Умолчанию (через запятую)
 DEFAULT_USERS=admin@gmail.com,user@gmail.com
 

@@ -702,9 +702,28 @@ export const normalizeStatus = (status, t) => {
   );
 };
 
+export const normalizePropertyMedia = (property) => {
+  if (!property) return property;
+
+  const normalizeMediaList = (items, type) =>
+    Array.isArray(items)
+      ? items.map((item) => ({
+          ...item,
+          img: normalizeUrl(item?.img, type),
+        }))
+      : items;
+
+  return {
+    ...property,
+    propertyPhotos: normalizeMediaList(property.propertyPhotos, property.propertyType),
+    floorPlans: normalizeMediaList(property.floorPlans, "floorPlan"),
+  };
+};
+
 export const getPrimaryImage = (property) =>
   normalizeUrl(
-    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage
+    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage,
+    property?.propertyPhotos?.[0]?.img ? property?.propertyType : "floorPlan"
   );
 
 export const getPhotoCount = (property) =>
@@ -798,7 +817,8 @@ export const normalizePropertyTypeKey = (value = "") => {
 };
 
 export const getCatalogDataset = (properties) =>
-  properties.map((p) => {
+  properties.map((item) => {
+    const p = normalizePropertyMedia(item);
     const storefrontMeta = sampleStorefrontMeta[p?._id] || {};
 
     return {

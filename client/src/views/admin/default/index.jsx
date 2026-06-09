@@ -143,7 +143,8 @@ const getShortDescription = (property, t) => {
 
 const getPrimaryImage = (property) =>
   normalizeUrl(
-    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage
+    property?.propertyPhotos?.[0]?.img || property?.floorPlans?.[0]?.img || placeholderImage,
+    property?.propertyPhotos?.[0]?.img ? property?.propertyType : "floorPlan"
   );
 
 const getArea = (property, t) => {
