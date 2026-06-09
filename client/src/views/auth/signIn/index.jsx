@@ -74,7 +74,7 @@ function SignIn() {
       setIsLoding(true);
       const payload = { email: values.email, password: values.password };
 
-      const result = await postApi("api/user/login", payload, checkBox);
+      const result = await postApi("/api/user/login", payload, checkBox);
 
       // Check if it's an error response
       if (result?.response) {
@@ -206,6 +206,7 @@ function SignIn() {
                 name="email"
                 ms={{ base: "0px", md: "0px" }}
                 type="email"
+                autoComplete="email"
                 placeholder="mail@simmmple.com"
                 mb={errors?.email && touched?.email ? undefined : "24px"}
                 fontWeight="500"
@@ -235,6 +236,7 @@ function SignIn() {
                   size="lg"
                   variant="auth"
                   type={show ? "text" : "password"}
+                  autoComplete="current-password"
                   borderColor={errors?.password && touched?.password ? "red.300" : null}
                 />
                 <InputRightElement display="flex" alignItems="center" mt="4px">
