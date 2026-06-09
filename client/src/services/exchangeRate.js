@@ -1,7 +1,7 @@
 const STORAGE_KEY = "premium_estate_usd_rub";
 const CACHE_TTL_MS = 60 * 60 * 1000;
 const DEFAULT_RATE = 88;
-const API_URL = "https://api.exchangerate-api.com/v4/latest/USD";
+const API_URL = "/api/exchange-rates/latest/USD";
 
 export const getRate = () => {
   try {
@@ -22,15 +22,14 @@ export const initExchangeRate = async () => {
       try {
         const { timestamp } = JSON.parse(cached);
         if (Date.now() - timestamp <= CACHE_TTL_MS) return;
-      } catch {}
+      } catch {
+        // Ignore corrupt cached exchange-rate metadata and refresh it below.
+      }
     }
     const res = await fetch(API_URL);
     const data = await res.json();
     const rate = data.rates?.RUB || DEFAULT_RATE;
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ rate, timestamp: Date.now() })
-    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ rate, timestamp: Date.now() }));
   } catch {
     // Silently fall back to default rate
   }
