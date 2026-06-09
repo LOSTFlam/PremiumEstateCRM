@@ -1,6 +1,11 @@
 import { getApi } from "services/api";
 import { extractCollection, extractEntity } from "utils/normalizeResponse";
-import { getCatalogDataset, normalizePropertyTypeKey, samplePublicProperties } from "./catalogData";
+import {
+  getCatalogDataset,
+  normalizePropertyMedia,
+  normalizePropertyTypeKey,
+  samplePublicProperties,
+} from "./catalogData";
 
 const MIN_TYPE_COUNTS = {
   house: 3,
@@ -59,7 +64,7 @@ export const fetchPublicPropertyById = async (id) => {
     silent: true,
   });
 
-  return extractEntity(response, "property");
+  return normalizePropertyMedia(extractEntity(response, "property"));
 };
 
 export const fetchPublicPropertyBySlug = async (slug) => {
@@ -69,5 +74,5 @@ export const fetchPublicPropertyBySlug = async (slug) => {
     silent: true,
   });
 
-  return extractEntity(response, "property");
+  return normalizePropertyMedia(extractEntity(response, "property"));
 };

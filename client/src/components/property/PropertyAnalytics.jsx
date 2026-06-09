@@ -201,8 +201,10 @@ export const NeighborhoodInsights = () => {
 export const PriceHistory = () => {
   const { i18n } = useTranslation();
   const ru = String(i18n?.language ?? "").startsWith("ru");
-  const conv = (v) => ru ? Math.round(Number(v) * getRate()) : Number(v);
-  const fmt = (v) => conv(v).toLocaleString(ru ? "ru-RU" : "en-US", { maximumFractionDigits: 0 }) + (ru ? " \u20BD" : " \u0024");
+  const conv = (v) => (ru ? Math.round(Number(v) * getRate()) : Number(v));
+  const fmt = (v) =>
+    conv(v).toLocaleString(ru ? "ru-RU" : "en-US", { maximumFractionDigits: 0 }) +
+    (ru ? " \u20BD" : " \u0024");
   const priceHistory = [
     { date: "2020-01", price: 450000 },
     { date: "2020-06", price: 465000 },
@@ -262,7 +264,9 @@ export const PriceHistory = () => {
               <g key={index}>
                 <circle cx={x} cy={y} r="6" fill="#4299e1" />
                 <text x={x} y={y - 15} textAnchor="middle" fontSize="12" fill="#4a5568">
-                  {ru ? Math.round(conv(point.price) / 1000) + "K \u20BD" : "$" + (point.price / 1000).toFixed(0) + "K"}
+                  {ru
+                    ? Math.round(conv(point.price) / 1000) + "K \u20BD"
+                    : "$" + (point.price / 1000).toFixed(0) + "K"}
                 </text>
                 <text x={x} y={320} textAnchor="middle" fontSize="10" fill="#718096">
                   {point.date}
@@ -324,7 +328,12 @@ export const PropertyComparison = ({ properties }) => {
     if (!sqft) return "-";
     const perSqft = Number(listingPrice) / Number(sqft);
     const display = ru ? Math.round(perSqft * getRate()) : perSqft;
-    return display.toLocaleString(ru ? "ru-RU" : "en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + (ru ? " \u20BD" : " \u0024");
+    return (
+      display.toLocaleString(ru ? "ru-RU" : "en-US", {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      }) + (ru ? " \u20BD" : " \u0024")
+    );
   };
   if (properties.length < 2) {
     return (
@@ -380,9 +389,7 @@ export const PropertyComparison = ({ properties }) => {
           <Tr>
             <Td fontWeight="bold">Price/Sq Ft</Td>
             {properties.map((property) => (
-              <Td key={property._id}>
-                {fmtSqft(property.listingPrice, property.squareFootage)}
-              </Td>
+              <Td key={property._id}>{fmtSqft(property.listingPrice, property.squareFootage)}</Td>
             ))}
           </Tr>
           <Tr>

@@ -48,10 +48,13 @@ export const InvestmentCalculator = ({ propertyPrice, isOpen, onClose }) => {
   const formatCurrency = (value) => {
     if (typeof value !== "number") return String(value ?? "");
     const ru = String(i18n?.language ?? "").startsWith("ru");
-    return (ru ? "\u20BD" : "\u0024") + value.toLocaleString(ru ? "ru-RU" : "en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+    return (
+      (ru ? "\u20BD" : "\u0024") +
+      value.toLocaleString(ru ? "ru-RU" : "en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
   };
 
   const [purchasePrice, setPurchasePrice] = useState(propertyPrice || 500000);
