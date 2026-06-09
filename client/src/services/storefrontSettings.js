@@ -9,6 +9,7 @@ export const fetchPublicStorefrontSettings = async () => {
     const response = await getApi("api/storefront-settings/public", {
       useCache: true,
       cacheKey: "public:storefront-settings",
+      silent: true,
     });
 
     return {

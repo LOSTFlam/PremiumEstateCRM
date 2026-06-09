@@ -149,7 +149,7 @@ function SignIn() {
         <Box me="auto">
           <Flex justify="space-between" align="center" w="100%">
             <Box>
-              <Heading color={textColor} fontSize="36px" mb="10px">
+              <Heading as="h1" color={textColor} fontSize="36px" mb="10px">
                 {t?.("auth.signIn.title")}
               </Heading>
               <Text mb="36px" ms="4px" color={textColorSecondary} fontWeight="400" fontSize="md">
