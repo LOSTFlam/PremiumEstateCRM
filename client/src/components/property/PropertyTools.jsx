@@ -37,12 +37,22 @@ import {
   FiPhone,
   FiCalendar,
 } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { formatPrice } from "views/public/catalog/catalogData";
 
 // Investment Calculator
 export const InvestmentCalculator = ({ propertyPrice, isOpen, onClose }) => {
+  const { i18n } = useTranslation();
   const bgColor = useColorModeValue("white", "gray.800");
   const _toast = useToast();
+  const formatCurrency = (value) => {
+    if (typeof value !== "number") return String(value ?? "");
+    const ru = String(i18n?.language ?? "").startsWith("ru");
+    return (ru ? "\u20BD" : "\u0024") + value.toLocaleString(ru ? "ru-RU" : "en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
 
   const [purchasePrice, setPurchasePrice] = useState(propertyPrice || 500000);
   const [downPayment, setDownPayment] = useState(100000);
@@ -182,7 +192,7 @@ export const InvestmentCalculator = ({ propertyPrice, isOpen, onClose }) => {
                     fontWeight="bold"
                     color={monthlyCashFlow >= 0 ? "green.500" : "red.500"}
                   >
-                    ${monthlyCashFlow.toFixed(2)}
+                    {formatCurrency(monthlyCashFlow)}
                   </Text>
                 </Box>
                 <Box flex={1} bg="white" p={4} borderRadius="lg" textAlign="center">

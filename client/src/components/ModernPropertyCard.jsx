@@ -11,7 +11,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { memo } from "react";
+
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
@@ -104,13 +104,13 @@ const assetBlocks = (property, t) => [
   },
 ];
 
-const ModernPropertyCard = memo(function ModernPropertyCard({
+const ModernPropertyCard = ({
   property,
   isFavorite,
   isInCompare,
   onFavoriteToggle,
   onCompareToggle,
-}) {
+}) => {
   const { t, i18n } = useTranslation();
   const toast = useToast();
   const status = normalizeStatus(property?.listingStatus, t);
@@ -470,6 +470,6 @@ const ModernPropertyCard = memo(function ModernPropertyCard({
       </Stack>
     </Box>
   );
-});
+};
 
 export default ModernPropertyCard;

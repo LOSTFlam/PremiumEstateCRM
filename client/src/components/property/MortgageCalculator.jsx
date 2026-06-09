@@ -32,9 +32,11 @@ import {
   Badge as _Badge,
   Icon,
 } from "@chakra-ui/react";
-import { FiDollarSign, FiPercent as _FiPercent, FiCalendar as _FiCalendar } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+import { FiDollarSign } from "react-icons/fi";
 
 export default function MortgageCalculator({ propertyPrice, isOpen, onClose }) {
+  const { i18n } = useTranslation();
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
@@ -99,10 +101,10 @@ export default function MortgageCalculator({ propertyPrice, isOpen, onClose }) {
 
   const formatCurrency = (value) => {
     if (typeof value !== "number") return value;
-    const i18nLang = typeof window !== "undefined"
+    const lang = String(i18n?.language ?? typeof window !== "undefined"
       ? (window.localStorage?.getItem("i18nextLng") || window.navigator?.language || "en")
-      : "en";
-    const isRussian = String(i18nLang).startsWith("ru");
+      : "en");
+    const isRussian = lang.startsWith("ru");
     const locale = isRussian ? "ru-RU" : "en-US";
     const currency = isRussian ? "RUB" : "USD";
     const displayValue = isRussian ? Math.round(value * getRate()) : value;

@@ -655,9 +655,6 @@ export const normalizeStatus = (status, t) => {
   );
 };
 
-export const placeholderImage =
-  "https://placehold.co/800x600/1a202c/ffffff?text=%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82";
-
 export const getPrimaryImage = (property) =>
   property?.propertyPhotos?.[0]?.img ||
   property?.floorPlans?.[0]?.img ||

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Box,
   Flex,
@@ -24,7 +24,9 @@ import {
   FiActivity,
   FiAward,
 } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { formatPrice } from "views/public/catalog/catalogData";
+import { getRate } from "services/exchangeRate";
 
 // Neighborhood Insights
 export const NeighborhoodInsights = () => {
@@ -197,6 +199,10 @@ export const NeighborhoodInsights = () => {
 
 // Price History Chart
 export const PriceHistory = () => {
+  const { i18n } = useTranslation();
+  const ru = String(i18n?.language ?? "").startsWith("ru");
+  const conv = (v) => ru ? Math.round(Number(v) * getRate()) : Number(v);
+  const fmt = (v) => conv(v).toLocaleString(ru ? "ru-RU" : "en-US", { maximumFractionDigits: 0 }) + (ru ? " \u20BD" : " \u0024");
   const priceHistory = [
     { date: "2020-01", price: 450000 },
     { date: "2020-06", price: 465000 },
@@ -256,7 +262,7 @@ export const PriceHistory = () => {
               <g key={index}>
                 <circle cx={x} cy={y} r="6" fill="#4299e1" />
                 <text x={x} y={y - 15} textAnchor="middle" fontSize="12" fill="#4a5568">
-                  ${(point.price / 1000).toFixed(0)}K
+                  {ru ? Math.round(conv(point.price) / 1000) + "K \u20BD" : "$" + (point.price / 1000).toFixed(0) + "K"}
                 </text>
                 <text x={x} y={320} textAnchor="middle" fontSize="10" fill="#718096">
                   {point.date}
@@ -273,8 +279,7 @@ export const PriceHistory = () => {
             Price Change (Last Year)
           </Text>
           <Text fontSize="xl" fontWeight="bold" color="green.500">
-            +$
-            {(priceHistory[priceHistory.length - 1].price - priceHistory[0].price).toLocaleString()}
+            +{fmt(priceHistory[priceHistory.length - 1].price - priceHistory[0].price)}
           </Text>
         </Box>
         <Box>
@@ -313,6 +318,14 @@ export const PriceHistory = () => {
 
 // Property Comparison
 export const PropertyComparison = ({ properties }) => {
+  const { i18n } = useTranslation();
+  const ru = String(i18n?.language ?? "").startsWith("ru");
+  const fmtSqft = (listingPrice, sqft) => {
+    if (!sqft) return "-";
+    const perSqft = Number(listingPrice) / Number(sqft);
+    const display = ru ? Math.round(perSqft * getRate()) : perSqft;
+    return display.toLocaleString(ru ? "ru-RU" : "en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + (ru ? " \u20BD" : " \u0024");
+  };
   if (properties.length < 2) {
     return (
       <Box p={8} textAlign="center">
@@ -368,10 +381,7 @@ export const PropertyComparison = ({ properties }) => {
             <Td fontWeight="bold">Price/Sq Ft</Td>
             {properties.map((property) => (
               <Td key={property._id}>
-                $
-                {property.squareFootage
-                  ? (property.listingPrice / property.squareFootage).toFixed(2)
-                  : "-"}
+                {fmtSqft(property.listingPrice, property.squareFootage)}
               </Td>
             ))}
           </Tr>
