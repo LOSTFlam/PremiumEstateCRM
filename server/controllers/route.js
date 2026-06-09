@@ -1,9 +1,17 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
+
+const DB_STATES = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
 
 // Health check endpoint
 router.get('/health/status', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  const dbState = mongoose.connection.readyState;
+  res.json({
+    status: dbState === 1 ? 'ok' : 'degraded',
+    db: DB_STATES[dbState] || 'unknown',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 const contactRoute = require('./contact/_routes')

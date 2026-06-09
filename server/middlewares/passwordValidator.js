@@ -9,7 +9,7 @@
  * - Not in password history (last 5 passwords)
  */
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Password complexity requirements
 const PASSWORD_CONFIG = {

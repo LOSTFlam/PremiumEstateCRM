@@ -1,6 +1,6 @@
 // Script to reset user password
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const User = require('./model/schema/user');

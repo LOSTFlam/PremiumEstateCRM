@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../model/schema/user');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { initializeLeadSchema } = require("../model/schema/lead");
 const { initializeContactSchema } = require("../model/schema/contact");
 const { initializePropertySchema } = require("../model/schema/property");
@@ -115,7 +115,7 @@ const connectDB = async (DATABASE_URL, DATABASE) => {
 
         // Console statement removed
     } catch (err) {
-        // Console statement removed
+        console.error(`[db] MongoDB connection failed: ${err?.message}`);
     }
 }
 module.exports = connectDB

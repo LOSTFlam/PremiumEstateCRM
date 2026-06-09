@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -34,17 +34,19 @@
     "mongoose": "^9.4.1",
     "multer": "^2.0.2",
     "nodemailer": "^8.0.5",
-    "nodemon": "^3.1.14",
     "pdfkit": "^0.18.0",
-    "puppeteer": "^24.40.0",
     "resend": "^6.11.0",
-    "sharp": "^0.34.5",
     "stripe": "^22.0.1",
     "ws": "^8.16.0"
   },
   "devDependencies": {
     "jest": "^30.3.0",
+    "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^24.40.0",
+    "sharp": "^0.34.5"
   },
   "overrides": {
     "tar": ">=7.5.11"

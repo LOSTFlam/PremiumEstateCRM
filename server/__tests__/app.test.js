@@ -28,7 +28,7 @@ describe("server app shell", () => {
   it("responds to GET /api/health/status", async () => {
     const res = await request(app).get("/api/health/status");
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe("ok");
+    expect(["ok", "degraded"]).toContain(res.body.status);
   });
 
   it("returns 404 for unknown API routes", async () => {

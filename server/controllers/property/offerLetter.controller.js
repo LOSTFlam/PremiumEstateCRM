@@ -1,7 +1,12 @@
 const path = require("path");
 const multer = require("multer");
 const ejs = require("ejs");
-const puppeteer = require("puppeteer");
+let puppeteer;
+try {
+  puppeteer = require("puppeteer");
+} catch {
+  puppeteer = null;
+}
 const moment = require("moment");
 const { default: mongoose } = require("mongoose");
 const { Lead } = require("../../model/schema/lead");
@@ -27,6 +32,9 @@ const offerLetterStorage = multer({
 
 const genrateOfferLetter = async (req, res) => {
   try {
+    if (!puppeteer) {
+      return res?.status(503)?.json({ error: "PDF generation is not available on this server (puppeteer not installed)" });
+    }
     const { id } = req?.params;
     const unit = JSON.parse(req?.body?.unit);
     unit.status = "Booked";
@@ -77,7 +85,7 @@ const genrateOfferLetter = async (req, res) => {
       currentDate: moment().format("DD/MM/yyyy"),
     });
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     const page = await browser.newPage();
     await page.setContent(htmlContnet, { waitUntil: "load" });
 

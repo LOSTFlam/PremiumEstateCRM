@@ -11,13 +11,19 @@ const isSrvDnsError = (error) => {
 
 const normalizeDbNameOption = (dbName) => (dbName ? { dbName } : {});
 
+const CONNECT_TIMEOUT = 10000;
+
 const connectWithFallback = async ({
   primaryUri,
   fallbackUri,
   dbName,
   context = "mongodb",
 }) => {
-  const primaryOptions = normalizeDbNameOption(dbName);
+  const primaryOptions = {
+    ...normalizeDbNameOption(dbName),
+    serverSelectionTimeoutMS: CONNECT_TIMEOUT,
+    connectTimeoutMS: CONNECT_TIMEOUT,
+  };
 
   try {
     await mongoose.connect(primaryUri, primaryOptions);
@@ -29,7 +35,11 @@ const connectWithFallback = async ({
 
     await mongoose.disconnect().catch(() => {});
 
-    const fallbackOptions = normalizeDbNameOption(dbName);
+    const fallbackOptions = {
+      ...normalizeDbNameOption(dbName),
+      serverSelectionTimeoutMS: CONNECT_TIMEOUT,
+      connectTimeoutMS: CONNECT_TIMEOUT,
+    };
     await mongoose.connect(fallbackUri, fallbackOptions);
 
     console.warn(

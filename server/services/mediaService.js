@@ -9,7 +9,12 @@
 
 const fs = require('fs').promises;
 const path = require('path');
-const sharp = require('sharp');  // Image processing library
+let sharp;
+try {
+  sharp = require('sharp');  // Image processing library
+} catch {
+  sharp = null;
+}
 const Property = require('../model/schema/property');
 
 // Base upload directories
@@ -375,15 +380,19 @@ const formatFileSize = (bytes) => {
  * @returns {Promise<{ path: string, size: number, originalSize: number }>}
  */
 const optimizeImage = async (inputPath, outputPath = null, options = {}) => {
+  if (!sharp) {
+    return { path: inputPath, size: 0, originalSize: 0, compressionRatio: '0%', message: 'sharp not available' };
+  }
+
   const {
     maxWidth = 1920,
     maxHeight = 1080,
     quality = 80,
     format = 'jpeg',
   } = options;
-  
+
   const output = outputPath || inputPath;
-  
+
   try {
     const originalStats = await fs.stat(inputPath);
     const originalSize = originalStats.size;
@@ -439,6 +448,9 @@ const generateThumbnails = async (inputPath, sizes = [
   { width: 400, height: 300, suffix: 'small' },
   { width: 800, height: 600, suffix: 'medium' },
 ]) => {
+  if (!sharp) {
+    return [];
+  }
   const thumbnails = [];
   const dir = path.dirname(inputPath);
   const name = path.basename(inputPath, path.extname(inputPath));
