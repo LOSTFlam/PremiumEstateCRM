@@ -309,19 +309,40 @@ export default function PublicOfferView() {
           <Grid templateColumns={{ base: "1fr", xl: "1.04fr 0.96fr" }} gap={8} alignItems="end">
             <GridItem>
               <Stack spacing={5} maxW="780px">
-                <Badge
-                  w="fit-content"
-                  px={4}
-                  py={1.5}
-                  borderRadius="full"
-                  bg="rgba(245,208,118,0.14)"
-                  color="#f5d076"
-                  border="1px solid rgba(245,208,118,0.24)"
-                  letterSpacing="0.12em"
-                  textTransform="uppercase"
-                >
-                  {normalizeStatus(property?.listingStatus, t)}
-                </Badge>
+                <HStack spacing={3} flexWrap="wrap">
+                  <Badge
+                    w="fit-content"
+                    px={4}
+                    py={1.5}
+                    borderRadius="full"
+                    bg="rgba(245,208,118,0.14)"
+                    color="#f5d076"
+                    border="1px solid rgba(245,208,118,0.24)"
+                    letterSpacing="0.12em"
+                    textTransform="uppercase"
+                  >
+                    {normalizeStatus(property?.listingStatus, t)}
+                  </Badge>
+                  <Badge
+                    w="fit-content"
+                    px={4}
+                    py={1.5}
+                    borderRadius="full"
+                    bg={
+                      property?.dealType === "rent"
+                        ? "rgba(104,211,225,0.16)"
+                        : "rgba(143,193,154,0.16)"
+                    }
+                    color={property?.dealType === "rent" ? "#9ae6f0" : "#bbdbbf"}
+                    border="1px solid rgba(227, 211, 184, 0.18)"
+                    letterSpacing="0.12em"
+                    textTransform="uppercase"
+                  >
+                    {property?.dealType === "rent"
+                      ? t?.("publicListing.dealRent") || "Аренда"
+                      : t?.("publicListing.dealSale") || "Продажа"}
+                  </Badge>
+                </HStack>
                 <Heading
                   as="h1"
                   fontSize={{ base: "4xl", md: "6xl" }}
@@ -383,7 +404,14 @@ export default function PublicOfferView() {
                   >
                     {t?.("publicListing.detailsTitle")}
                   </Text>
-                  <Heading size="xl">{formatPrice(property?.listingPrice, t)}</Heading>
+                  <Heading size="xl">
+                    {formatPrice(property?.listingPrice, t)}
+                    {property?.dealType === "rent" ? (
+                      <Text as="span" fontSize="lg" color="whiteAlpha.700" fontWeight="600">
+                        {t?.("publicListing.perMonth") || "/мес"}
+                      </Text>
+                    ) : null}
+                  </Heading>
                   <SimpleGrid columns={3} spacing={3}>
                     <Box
                       px={4}

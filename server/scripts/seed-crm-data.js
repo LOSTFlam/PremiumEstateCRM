@@ -160,6 +160,7 @@ const buildProperties = () =>
       propertyAddress: `${city}, District ${randInt(1, 25)}, building ${randInt(1, 150)}`,
       listingPrice: String(randInt(120000, 5500000)),
       propertyType: type,
+      dealType: idx % 3 === 0 ? "rent" : "sale",
       listingStatus: randomFrom(PROPERTY_STATUSES, idx),
       squareFootage: String(area),
       numberofBedrooms: bedrooms,
@@ -254,7 +255,7 @@ async function seedData() {
       const seed = propertySeeds[i];
       const owner = agents[i % agents.length] || admin;
       const publicSlug = seed.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      const photos = mapPhotos(seed.propertyType, `${publicSlug}-photos`, 4, now);
+      const photos = mapPhotos(seed.propertyType, `${publicSlug}-photos`, 3, now);
 
       // Use native collection to bypass strict schema limitations
       // (Property fields are dynamically extended via custom fields at runtime)

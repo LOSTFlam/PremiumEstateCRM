@@ -10,7 +10,8 @@ const populatePublicCreator = {
 
 const publicIndex = async (req, res) => {
   try {
-    const query = { deleted: false };
+    // $ne:true also covers legacy documents that miss the "deleted" flag
+    const query = { deleted: { $ne: true } };
 
     if (req.query.propertyType) {
       query.propertyType = { $regex: String(req.query.propertyType), $options: "i" };
@@ -46,7 +47,7 @@ const publicView = async (req, res) => {
 
     const property = await Property.findOne({
       _id: req.params.id,
-      deleted: false,
+      deleted: { $ne: true },
     })
       .populate(populatePublicCreator)
       .lean();
@@ -70,7 +71,7 @@ const publicViewBySlug = async (req, res) => {
     }
 
     const property = await Property.findOne({
-      deleted: false,
+      deleted: { $ne: true },
       $or: [{ publicSlug: slug }, { seoSlug: slug }],
     })
       .populate(populatePublicCreator)

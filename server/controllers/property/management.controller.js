@@ -29,8 +29,18 @@ const resolveUniqueSlug = async (input, excludedId = null) => {
   }
 };
 
+const buildOwnershipFilter = (req, id) => {
+  // $ne:true also covers legacy documents that miss the "deleted" flag
+  const filter = { _id: id, deleted: { $ne: true } };
+  // Non-super admins may only manage their own listings
+  if (req.user?.role !== "superAdmin") {
+    filter.createBy = req.user?.userId;
+  }
+  return filter;
+};
+
 const index = async (req, res) => {
-  const query = { ...req.query, deleted: false };
+  const query = { ...req.query, deleted: { $ne: true } };
 
   // Enforce ownership for non-super admins (server-side security)
   // Super admin may query any creator via ?createBy=...
@@ -53,6 +63,9 @@ const index = async (req, res) => {
 const add = async (req, res) => {
   try {
     req.body.createdDate = req.body.createdDate || new Date();
+    req.body.updatedDate = req.body.updatedDate || new Date();
+    // Explicitly publish the listing so it is always visible in the catalog
+    req.body.deleted = false;
     // Always set creator from the authenticated user (never trust client input)
     req.body.createBy = req.user?.userId;
 
@@ -80,11 +93,15 @@ const addMany = async (req, res) => {
 
 const edit = async (req, res) => {
   try {
-    const property = await Property.findById(req.params.id).lean();
+    const ownershipFilter = buildOwnershipFilter(req, req.params.id);
+    const property = await Property.findOne(ownershipFilter).lean();
 
     if (!property) {
       return res.status(404).json({ message: "no Data Found." });
     }
+
+    // Never allow reassigning the listing owner from the client
+    delete req.body.createBy;
 
     if (req.body.publicSlug || req.body.name || req.body.propertyAddress) {
       const slugSource =
@@ -102,7 +119,7 @@ const edit = async (req, res) => {
     }
 
     const result = await Property.updateOne(
-      { _id: req.params.id },
+      ownershipFilter,
       { $set: req.body },
     );
 
@@ -139,97 +156,73 @@ const view = async (req, res) => {
 };
 
 const deleteData = async (req, res) => {
-  const session = await Property.startSession();
-  session.startTransaction();
-  
   try {
-    // First, get the property data needed for cleanup
-    const property = await Property.findById(req.params.id).session(session).lean();
-    
+    // Soft delete is a single atomic update — no transaction required
+    // (transactions also break on standalone MongoDB without a replica set)
+    const property = await Property.findOneAndUpdate(
+      buildOwnershipFilter(req, req.params.id),
+      { $set: { deleted: true, updatedDate: new Date() } },
+      { returnDocument: "before" },
+    ).lean();
+
     if (!property) {
-      await session.abortTransaction();
-      session.endSession();
       return res.status(404).json({ message: "Property not found" });
     }
-    
-    // Soft-delete the property within the transaction
-    await Property.findByIdAndUpdate(req.params.id, {
-      deleted: true,
-    }, { session });
-    
-    // Commit the transaction first - file cleanup is non-critical for soft-delete
-    await session.commitTransaction();
-    session.endSession();
-    
-    // Clean up files after transaction commits
-    // This ensures DB consistency even if file cleanup fails
+
+    // Clean up files after the update; failures are non-critical
     let cleanupResult;
     try {
       cleanupResult = await cleanupPropertyFiles(property);
     } catch (cleanupError) {
-      // Console statement removed
-      // Don't fail the request - files can be cleaned up later by orphaned file cleanup
       cleanupResult = { error: "File cleanup failed, will be handled by periodic cleanup" };
     }
-    
+
     res.status(200).json({
       message: "Property deleted successfully",
       cleanup: cleanupResult,
     });
   } catch (err) {
-    await session.abortTransaction();
-    session.endSession();
-    // Console statement removed
-    res.status(404).json({ message: "error", err });
+    res.status(400).json({ message: "Failed to delete property" });
   }
 };
 
 const deleteMany = async (req, res) => {
-  const session = await Property.startSession();
-  session.startTransaction();
-  
   try {
     const propertyIds = req.body;
-    
-    // Get all properties to clean up associated files
-    const properties = await Property.find({ _id: { $in: propertyIds } }).session(session).lean();
-    
-    // Soft-delete all properties within the transaction
-    const result = await Property.updateMany(
-      { _id: { $in: propertyIds } },
-      { $set: { deleted: true } },
-    ).session(session);
-    
-    // Commit the transaction first - file cleanup is non-critical for soft-delete
-    await session.commitTransaction();
-    session.endSession();
-    
-    // Clean up files after transaction commits
-    // This ensures DB consistency even if file cleanup fails
+    const manyFilter = { _id: { $in: propertyIds } };
+    if (req.user?.role !== "superAdmin") {
+      manyFilter.createBy = req.user?.userId;
+    }
+
+    // Get all properties to clean up associated files (ownership enforced)
+    const properties = await Property.find(manyFilter).lean();
+
+    // Soft delete is an atomic updateMany — no transaction required
+    const result = await Property.updateMany(manyFilter, {
+      $set: { deleted: true, updatedDate: new Date() },
+    });
+
+    // Clean up files after the update; failures are non-critical
     const cleanupResults = [];
     for (const property of properties) {
       try {
         const cleanupResult = await cleanupPropertyFiles(property);
         cleanupResults.push({ id: property._id, cleanup: cleanupResult });
       } catch (cleanupError) {
-        // Console statement removed
         cleanupResults.push({
           id: property._id,
-          cleanup: { error: "File cleanup failed, will be handled by periodic cleanup" }
+          cleanup: { error: "File cleanup failed, will be handled by periodic cleanup" },
         });
       }
     }
-    
+
     res.status(200).json({
       message: "Properties deleted successfully",
       deletedCount: result.modifiedCount,
       cleanup: cleanupResults,
     });
   } catch (err) {
-    await session.abortTransaction();
-    session.endSession();
-    // Console statement removed
-    res.status(404).json({ message: "error", err });
+    res.status(400).json({ message: "Failed to delete properties" });
   }
 };
 

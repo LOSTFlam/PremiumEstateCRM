@@ -54,10 +54,15 @@ const propertyValidation = {
       .optional()
       .isIn(['House', 'Apartment', 'Land', 'Commercial'])
       .withMessage('Invalid property type'),
-    
+
+    body('dealType')
+      .optional()
+      .isIn(['sale', 'rent'])
+      .withMessage('Invalid deal type'),
+
     body('listingStatus')
       .optional()
-      .isIn(['Available', 'Sold', 'Pending', 'Blocked'])
+      .isIn(['Available', 'Active', 'New', 'Booked', 'Sold', 'Pending', 'Blocked'])
       .withMessage('Invalid status'),
     
     validate
@@ -81,6 +86,33 @@ const propertyValidation = {
       .optional()
       .isNumeric().withMessage('Price must be a number')
       .toFloat(),
+
+    body('numberofBedrooms')
+      .optional()
+      .isInt({ min: 0, max: 50 }).withMessage('Bedrooms must be between 0 and 50'),
+
+    body('numberofBathrooms')
+      .optional()
+      .isInt({ min: 0, max: 50 }).withMessage('Bathrooms must be between 0 and 50'),
+
+    body('squareFootage')
+      .optional()
+      .isNumeric().withMessage('Area must be a number'),
+
+    body('propertyType')
+      .optional()
+      .isIn(['House', 'Apartment', 'Land', 'Commercial'])
+      .withMessage('Invalid property type'),
+
+    body('dealType')
+      .optional()
+      .isIn(['sale', 'rent'])
+      .withMessage('Invalid deal type'),
+
+    body('listingStatus')
+      .optional()
+      .isIn(['Available', 'Active', 'New', 'Booked', 'Sold', 'Pending', 'Blocked'])
+      .withMessage('Invalid status'),
     
     validate
   ],

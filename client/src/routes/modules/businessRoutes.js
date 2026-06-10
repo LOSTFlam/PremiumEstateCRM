@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon } from "@chakra-ui/react";
-import { MdContacts, MdHome, MdLeaderboard } from "react-icons/md";
+import { MdContacts, MdHome, MdLeaderboard, MdOutlineAddHome } from "react-icons/md";
 import { LuBuilding2 } from "react-icons/lu";
 import { TbBulb, TbFileInvoice } from "react-icons/tb";
 import { RiAccountCircleFill } from "react-icons/ri";
@@ -9,6 +9,7 @@ import { ROLE_PATH } from "../../roles";
 import { createRoute } from "../../utils/routeHelpers";
 
 const MainDashboard = React.lazy(() => import("views/admin/default"));
+const MyListings = React.lazy(() => import("views/myListings"));
 const Lead = React.lazy(() => import("views/admin/lead"));
 const LeadView = React.lazy(() => import("views/admin/lead/View"));
 const LeadImport = React.lazy(() => import("views/admin/lead/components/LeadImport"));
@@ -38,6 +39,14 @@ export const businessRoutes = [
     path: "/dashboard",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: MainDashboard,
+  }),
+  createRoute({
+    name: "My Listings",
+    i18nKey: "navigation.myListings",
+    layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
+    path: "/my-listings",
+    icon: <Icon as={MdOutlineAddHome} width="20px" height="20px" color="inherit" />,
+    component: MyListings,
   }),
   createRoute({
     name: "Leads",

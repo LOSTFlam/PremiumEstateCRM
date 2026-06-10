@@ -41,6 +41,7 @@ const buildFiltersFromParams = (searchParams, forcedType = null, presetFilters =
     search: searchParams.get("search") || preset.search || "",
     status: searchParams.get("status") || preset.status || "all",
     type: forcedType || searchParams.get("type") || preset.type || "all",
+    dealType: searchParams.get("deal") || preset.dealType || "all",
     sortBy: searchParams.get("sort") || preset.sortBy || "latest",
     page: numberParam(searchParams.get("page"), 1),
     minPrice: searchParams.get("minPrice") || preset.minPrice || "",
@@ -63,6 +64,7 @@ const applyFiltersToParams = (filters) => {
   if (filters.search) params.set("search", filters.search);
   if (filters.status !== "all") params.set("status", filters.status);
   if (filters.type !== "all") params.set("type", filters.type);
+  if (filters.dealType && filters.dealType !== "all") params.set("deal", filters.dealType);
   if (filters.sortBy !== "latest") params.set("sort", filters.sortBy);
   if (Number(filters.page) > 1) params.set("page", String(filters.page));
   if (filters.minPrice) params.set("minPrice", String(filters.minPrice));

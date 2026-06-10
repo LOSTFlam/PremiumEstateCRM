@@ -60,6 +60,8 @@ const leadSchema = new mongoose.Schema({
 const initializeLeadSchema = async () => {
     const schemaFieldsData = await fetchSchemaFields();
     schemaFieldsData[0]?.fields?.forEach((item) => {
+        // Keep explicitly defined paths intact (schema.add would drop defaults)
+        if (leadSchema.path(item.name)) return;
         let fieldData;
 
         if (item.ref) {

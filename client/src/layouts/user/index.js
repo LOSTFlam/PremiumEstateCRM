@@ -19,7 +19,7 @@ import i18next from "i18next";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ROLE_PATH } from "../../roles";
 import newRoute from "routes.js";
-import { MdHome, MdLock } from "react-icons/md";
+import { MdHome, MdLock, MdOutlineAddHome } from "react-icons/md";
 import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../redux/slices/imageSlice";
@@ -30,12 +30,14 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { fetchModules } from "../../redux/slices/moduleSlice";
 
 const MainDashboard = React.lazy(() => import("views/admin/default"));
+const MyListings = React.lazy(() => import("views/myListings"));
 const SignInCentered = React.lazy(() => import("views/auth/signIn"));
 const Calender = React.lazy(() => import("views/admin/calender"));
 const UserView = React.lazy(() => import("views/admin/users/View"));
 
 const routeNameToI18nKey = {
   Dashboard: "navigation.dashboard",
+  "My Listings": "navigation.myListings",
   Properties: "navigation.properties",
   Leads: "navigation.leads",
   Contacts: "navigation.contacts",
@@ -144,6 +146,14 @@ export default function User(props) {
       path: "/dashboard",
       icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
       component: MainDashboard,
+    },
+    {
+      name: "My Listings",
+      i18nKey: "navigation.myListings",
+      layout: [ROLE_PATH.user],
+      path: "/my-listings",
+      icon: <Icon as={MdOutlineAddHome} width="20px" height="20px" color="inherit" />,
+      component: MyListings,
     },
     {
       name: "Sign In",

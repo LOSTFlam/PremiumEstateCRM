@@ -78,6 +78,8 @@ const contactSchema = new mongoose.Schema({
 const initializeContactSchema = async () => {
     const schemaFieldsData = await fetchSchemaFields();
     schemaFieldsData[0]?.fields?.forEach((item) => {
+        // Keep explicitly defined paths intact (schema.add would drop defaults)
+        if (contactSchema.path(item.name)) return;
         contactSchema.add({ [item.name]: item?.backendType });
     });
 };

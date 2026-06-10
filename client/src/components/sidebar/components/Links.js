@@ -33,6 +33,7 @@ export function SidebarLinks(props) {
 
   const routeNameToI18nKey = {
     Dashboard: "navigation.dashboard",
+    "My Listings": "navigation.myListings",
     Properties: "navigation.properties",
     Leads: "navigation.leads",
     Contacts: "navigation.contacts",

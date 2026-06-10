@@ -1,4 +1,14 @@
-export const createRoute = ({ name, layout, path, component, icon, under, parentName, both }) => ({
+export const createRoute = ({
+  name,
+  layout,
+  path,
+  component,
+  icon,
+  under,
+  parentName,
+  both,
+  i18nKey,
+}) => ({
   name,
   layout,
   path,
@@ -7,4 +17,5 @@ export const createRoute = ({ name, layout, path, component, icon, under, parent
   ...(under ? { under } : {}),
   ...(parentName ? { parentName } : {}),
   ...(both ? { both } : {}),
+  ...(i18nKey ? { i18nKey } : {}),
 });

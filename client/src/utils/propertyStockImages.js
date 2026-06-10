@@ -1,113 +1,20 @@
-const TYPE_PRESETS = {
-  house: [
-    {
-      title: "Дом",
-      subtitle: "Загородная резиденция",
-      primary: "#153c47",
-      secondary: "#7ca68b",
-      accent: "#c47a3d",
-    },
-    {
-      title: "Вилла",
-      subtitle: "Частный дом",
-      primary: "#243b32",
-      secondary: "#8db39b",
-      accent: "#c78d49",
-    },
-    {
-      title: "Таунхаус",
-      subtitle: "Семейный дом",
-      primary: "#0e4954",
-      secondary: "#6aa7a2",
-      accent: "#d0914f",
-    },
-  ],
+// Локальные стоковые фотографии недвижимости.
+// Файлы лежат в client/public/images/stock и отдаются с того же домена,
+// что и сайт, поэтому работают без VPN и внешних хостов (Unsplash и т.п.).
+const STOCK_FILES = {
+  house: ["/images/stock/house-1.jpg", "/images/stock/house-2.jpg", "/images/stock/house-3.jpg"],
   apartment: [
-    {
-      title: "Квартира",
-      subtitle: "Городская недвижимость",
-      primary: "#232d4b",
-      secondary: "#7187b9",
-      accent: "#ce8741",
-    },
-    {
-      title: "Апартаменты",
-      subtitle: "Панорама города",
-      primary: "#54313f",
-      secondary: "#c88ea5",
-      accent: "#8a6132",
-    },
-    {
-      title: "Студия",
-      subtitle: "Компактный формат",
-      primary: "#325844",
-      secondary: "#8db19b",
-      accent: "#cb8d56",
-    },
+    "/images/stock/apartment-1.jpg",
+    "/images/stock/apartment-2.jpg",
+    "/images/stock/apartment-3.jpg",
   ],
-  land: [
-    {
-      title: "Участок",
-      subtitle: "Земля под строительство",
-      primary: "#355d36",
-      secondary: "#9bbd77",
-      accent: "#a96c32",
-    },
-    {
-      title: "Земля",
-      subtitle: "Загородный участок",
-      primary: "#6a5d2c",
-      secondary: "#c5b96f",
-      accent: "#5d8440",
-    },
-    {
-      title: "Площадка",
-      subtitle: "Инвестиционный участок",
-      primary: "#5c4b2e",
-      secondary: "#c9b786",
-      accent: "#607f45",
-    },
-  ],
-  commercial: [
-    {
-      title: "Офис",
-      subtitle: "Коммерческое пространство",
-      primary: "#2d3448",
-      secondary: "#9aa4b7",
-      accent: "#be8047",
-    },
-    {
-      title: "Ритейл",
-      subtitle: "Торговое помещение",
-      primary: "#3b3140",
-      secondary: "#aa95b3",
-      accent: "#c88648",
-    },
-    {
-      title: "Бизнес",
-      subtitle: "Представительский этаж",
-      primary: "#283844",
-      secondary: "#9ab1bf",
-      accent: "#cf8b45",
-    },
-  ],
-  floorPlan: [
-    {
-      title: "План",
-      subtitle: "Планировка этажа",
-      primary: "#30555b",
-      secondary: "#ac9b77",
-      accent: "#5b7f5b",
-    },
-  ],
+  land: ["/images/stock/land-1.jpg", "/images/stock/land-2.jpg"],
+  commercial: ["/images/stock/commercial-1.jpg", "/images/stock/commercial-2.jpg"],
+  floorPlan: ["/images/stock/floorplan-1.jpg"],
   other: [
-    {
-      title: "Объект",
-      subtitle: "Premium Estate",
-      primary: "#1a202c",
-      secondary: "#243b32",
-      accent: "#d4af37",
-    },
+    "/images/stock/house-1.jpg",
+    "/images/stock/apartment-1.jpg",
+    "/images/stock/commercial-1.jpg",
   ],
 };
 
@@ -183,7 +90,15 @@ const deterministicIndex = (value = "", length = 1) => {
   return Math.abs(hash) % length;
 };
 
-export const inlinePropertyImage = ({ title, subtitle, primary, secondary, accent }) => {
+// Аварийный SVG-плейсхолдер (data URI) — отображается, если даже локальный
+// файл фотографии недоступен. Не требует сети вообще.
+export const inlinePropertyImage = ({
+  title = "Объект",
+  subtitle = "Premium Estate",
+  primary = "#1a202c",
+  secondary = "#243b32",
+  accent = "#d4af37",
+} = {}) => {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
       <defs>
@@ -210,12 +125,11 @@ export const inlinePropertyImage = ({ title, subtitle, primary, secondary, accen
 
 export const getStockImageForProperty = (propertyType, seed = "") => {
   const key = normalizePropertyTypeKey(propertyType);
-  const presets = TYPE_PRESETS[key] || TYPE_PRESETS.other;
-  const preset = presets[deterministicIndex(String(seed || propertyType || key), presets.length)];
-  return inlinePropertyImage(preset);
+  const files = STOCK_FILES[key] || STOCK_FILES.other;
+  return files[deterministicIndex(String(seed || propertyType || key), files.length)];
 };
 
-export const placeholderImage = getStockImageForProperty("other");
+export const placeholderImage = inlinePropertyImage();
 
 const getRuntimeOrigin = () => {
   if (typeof window !== "undefined" && window.location?.origin) {

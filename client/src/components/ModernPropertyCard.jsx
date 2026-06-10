@@ -46,6 +46,11 @@ const metricText = (value, fallback = "—") => {
   return String(value);
 };
 
+const dealTypeLabel = (property, t) =>
+  property?.dealType === "rent"
+    ? t?.("publicListing.dealRent") || "Аренда"
+    : t?.("publicListing.dealSale") || "Продажа";
+
 const propertyTypeLabel = (property, t) => {
   const key = property?.propertyTypeKey || normalizePropertyTypeKey(property?.propertyType);
   if (key === "house") return t?.("publicListing.houses") || "House";
@@ -231,6 +236,16 @@ const ModernPropertyCard = ({
           >
             {typeLabel}
           </Badge>
+          <Badge
+            px={3.5}
+            py={1.5}
+            borderRadius="full"
+            bg={property?.dealType === "rent" ? "rgba(104,211,225,0.18)" : "rgba(245,208,118,0.18)"}
+            color={property?.dealType === "rent" ? "#9ae6f0" : "#f5d076"}
+            border="1px solid rgba(227, 211, 184, 0.14)"
+          >
+            {dealTypeLabel(property, t)}
+          </Badge>
           {richListing ? (
             <Badge
               px={3.5}
@@ -322,9 +337,16 @@ const ModernPropertyCard = ({
                 color="white"
               >
                 {formatPrice(property?.listingPrice, t, i18n.language)}
+                {property?.dealType === "rent" ? (
+                  <Text as="span" fontSize="md" color="whiteAlpha.700" fontWeight="600">
+                    {t?.("publicListing.perMonth") || "/мес"}
+                  </Text>
+                ) : null}
               </Text>
               <Text color="whiteAlpha.700" fontSize="sm">
-                {t?.("publicListing.priceLabel") || "Price"}
+                {property?.dealType === "rent"
+                  ? t?.("publicListing.rentPriceLabel") || dealTypeLabel(property, t)
+                  : t?.("publicListing.priceLabel") || "Price"}
               </Text>
             </Stack>
             <Box

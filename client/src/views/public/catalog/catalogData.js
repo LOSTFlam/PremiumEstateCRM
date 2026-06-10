@@ -1,6 +1,9 @@
 import i18next from "i18next";
 import { normalizeUrl } from "../../../constant";
-import { inlinePropertyImage, placeholderImage as stockPlaceholderImage } from "utils/propertyStockImages";
+import {
+  getStockImageForProperty,
+  placeholderImage as stockPlaceholderImage,
+} from "utils/propertyStockImages";
 
 const EX_RATE_KEY = "premium_estate_usd_rub";
 const EX_RATE_TTL = 60 * 60 * 1000;
@@ -18,32 +21,21 @@ const getRubRate = () => {
   }
 };
 
-// Helper to create photo sets
-export const makePhotoSet = ({ title, subtitle, primary, secondary, accent }) => [
+// Helper to create photo sets from local stock photos
+// (served from the same origin, no VPN/external hosts needed)
+export const makePhotoSet = ({ title, subtitle }) => [
   {
-    img: inlinePropertyImage({ title, subtitle, primary, secondary, accent }),
+    img: getStockImageForProperty(title, `${title}-${subtitle}-1`),
     title,
     subtitle,
   },
   {
-    img: inlinePropertyImage({
-      title: subtitle,
-      subtitle: title,
-      primary: secondary,
-      secondary: accent,
-      accent: primary,
-    }),
+    img: getStockImageForProperty(title, `${title}-${subtitle}-2`),
     title,
     subtitle,
   },
   {
-    img: inlinePropertyImage({
-      title,
-      subtitle: `${title} ${subtitle}`,
-      primary: accent,
-      secondary: primary,
-      accent: secondary,
-    }),
+    img: getStockImageForProperty(title, `${title}-${subtitle}-3`),
     title,
     subtitle,
   },
@@ -250,8 +242,9 @@ export const samplePublicProperties = [
     _id: "sample-aurora-suites",
     name: "Апартаменты в Садовых кварталах",
     propertyType: "Apartment",
+    dealType: "rent",
     propertyAddress: "Москва, Комсомольский пр-т, 42",
-    listingPrice: "219000",
+    listingPrice: "2500",
     squareFootage: "76 м²",
     numberofBedrooms: 2,
     numberofBathrooms: 2,
@@ -333,8 +326,9 @@ export const samplePublicProperties = [
     _id: "sample-atrium-office",
     name: "Офисный этаж в Москва-Сити",
     propertyType: "Commercial",
+    dealType: "rent",
     propertyAddress: "Москва, Пресненская наб., 8, БЦ Город Столиц",
-    listingPrice: "510000",
+    listingPrice: "5800",
     squareFootage: "310 м²",
     numberofBedrooms: 0,
     numberofBathrooms: 3,
@@ -373,8 +367,9 @@ export const samplePublicProperties = [
     _id: "sample-garden-courtyard",
     name: "Семейная квартира у ботанического сада",
     propertyType: "Apartment",
+    dealType: "rent",
     propertyAddress: "Москва, Ботанический переулок, 16, корпус 3",
-    listingPrice: "287000",
+    listingPrice: "3200",
     squareFootage: "102 м²",
     numberofBedrooms: 3,
     numberofBathrooms: 2,

@@ -16,9 +16,10 @@ import {
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon, DownloadIcon, ViewIcon } from "@chakra-ui/icons";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
+import { placeholderImage } from "utils/propertyStockImages";
 
-const FALLBACK_IMG =
-  "https://placehold.co/800x600/1a202c/ffffff?text=%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82";
+// Локальный фолбэк без обращения к внешним хостам
+const FALLBACK_IMG = placeholderImage;
 
 function normalizeImages(images) {
   if (!Array.isArray(images)) return [];

@@ -35,24 +35,37 @@ const floorSchema = new mongoose.Schema({
 });
 
 const propertySchema = new mongoose.Schema({
-    // //1. basicPropertyInformation:
-    // propertyType: String,
-    // propertyAddress: String,
-    // listingPrice: String,
-    // squareFootage: String,
-    // numberofBedrooms: Number,
-    // numberofBathrooms: Number,
-    // yearBuilt: Number,
-    // propertyDescription: String,
-    // //2. Property Features and Amenities:
-    // lotSize: String,
-    // parkingAvailability: String,
-    // appliancesIncluded: String,
-    // heatingAndCoolingSystems: String,
-    // flooringType: String,
-    // exteriorFeatures: String,
-    // communityAmenities: String,
-    // //3. Media and Visuals:
+    // 1. Basic property information (explicit base fields so that
+    // listings created from the personal cabinets always persist,
+    // regardless of the CustomField collection state):
+    name: { type: String, trim: true },
+    propertyType: { type: String, trim: true, index: true },
+    dealType: {
+        type: String,
+        enum: ["sale", "rent"],
+        default: "sale",
+        index: true,
+    },
+    propertyAddress: { type: String, trim: true },
+    listingPrice: { type: String },
+    listingStatus: { type: String, trim: true },
+    squareFootage: { type: String },
+    numberofBedrooms: { type: Number, min: 0 },
+    numberofBathrooms: { type: Number, min: 0 },
+    yearBuilt: { type: Number },
+    propertyDescription: { type: String },
+    marketingDescription: { type: String },
+    // 2. Property features and amenities:
+    lotSize: { type: String },
+    parkingAvailability: { type: String },
+    appliancesIncluded: { type: String },
+    heatingAndCoolingSystems: { type: String },
+    flooringType: { type: String },
+    exteriorFeatures: { type: String },
+    communityAmenities: { type: String },
+    listingAgentOrTeam: { type: String },
+    listingDate: { type: String },
+    // 3. Media and visuals:
     propertyPhotos: [],
     virtualToursOrVideos: [],
     floorPlans: [],
@@ -171,6 +184,10 @@ propertySchema.index({ listingStatus: 1, deleted: 1 });  // Filter by listing st
 const initializePropertySchema = async () => {
     const schemaFieldsData = await fetchSchemaFields();
     schemaFieldsData[0]?.fields?.forEach((item) => {
+        // Never override explicitly defined paths: schema.add would replace
+        // the definition and drop defaults (e.g. deleted: false), which made
+        // newly created listings invisible in the public catalog.
+        if (propertySchema.path(item.name)) return;
         propertySchema.add({ [item.name]: item?.backendType });
     });
 };

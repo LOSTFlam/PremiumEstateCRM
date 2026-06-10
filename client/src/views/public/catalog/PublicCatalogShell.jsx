@@ -63,6 +63,10 @@ const shellCopy = {
     searchLabel: "Поиск",
     searchPlaceholder: "Адрес, тип, район, описание",
     typeLabel: "Тип объекта",
+    dealLabel: "Тип сделки",
+    dealAll: "Продажа и аренда",
+    dealSale: "Продажа",
+    dealRent: "Аренда",
     statusLabel: "Статус",
     bedroomsLabel: "Спальни от",
     bathroomsLabel: "Санузлы от",
@@ -126,6 +130,10 @@ const shellCopy = {
     searchLabel: "Search",
     searchPlaceholder: "Address, type, district, description",
     typeLabel: "Property type",
+    dealLabel: "Deal type",
+    dealAll: "Sale and rent",
+    dealSale: "For sale",
+    dealRent: "For rent",
     statusLabel: "Status",
     bedroomsLabel: "Bedrooms from",
     bathroomsLabel: "Bathrooms from",
@@ -202,6 +210,11 @@ const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) =
   const chips = [];
   if (filters.search) chips.push({ key: "search", label: filters.search });
   if (filters.type !== "all") chips.push({ key: "type", label: filters.type });
+  if (filters.dealType && filters.dealType !== "all")
+    chips.push({
+      key: "dealType",
+      label: filters.dealType === "rent" ? copy.dealRent : copy.dealSale,
+    });
   if (filters.status !== "all") chips.push({ key: "status", label: filters.status });
   if (filters.minPrice)
     chips.push({
@@ -316,6 +329,18 @@ const CatalogFiltersPanel = ({
           <option value="apartment">{copy.typeApartment}</option>
           <option value="land">{copy.typeLand}</option>
           <option value="commercial">{copy.typeCommercial}</option>
+        </Select>
+      </FormControl>
+      <FormControl>
+        <FormLabel color="whiteAlpha.860">{copy.dealLabel}</FormLabel>
+        <Select
+          value={filters.dealType}
+          onChange={(event) => updateFilters({ dealType: event.target.value })}
+          {...optionStyles}
+        >
+          <option value="all">{copy.dealAll}</option>
+          <option value="sale">{copy.dealSale}</option>
+          <option value="rent">{copy.dealRent}</option>
         </Select>
       </FormControl>
       <FormControl>

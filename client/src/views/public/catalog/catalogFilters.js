@@ -11,6 +11,7 @@ export const DEFAULT_PUBLIC_FILTERS = {
   search: "",
   status: "all",
   type: "all",
+  dealType: "all",
   sortBy: "latest",
   page: 1,
   minPrice: "",
@@ -26,6 +27,7 @@ export const DEFAULT_PUBLIC_FILTERS = {
 export const extractPresetFilters = (preset = {}) => ({
   status: preset.status || "all",
   type: preset.type || "all",
+  dealType: preset.dealType || "all",
   sortBy: preset.sortBy || "latest",
   minPrice: String(preset.minPrice ?? ""),
   maxPrice: String(preset.maxPrice ?? ""),
@@ -81,11 +83,14 @@ export const matchesPublicCatalogFilters = (property, filters = {}) => {
     ? property.featuredCollections
     : [];
 
+  const dealType = property?.dealType === "rent" ? "rent" : "sale";
+
   return (
     (!search || getSearchableText(property).includes(search)) &&
     (normalizedFilters.status === "all" ||
       status.includes(String(normalizedFilters.status).toLowerCase())) &&
     (normalizedFilters.type === "all" || propertyTypeKey === normalizedFilters.type) &&
+    (normalizedFilters.dealType === "all" || dealType === normalizedFilters.dealType) &&
     (!minPrice || price >= minPrice) &&
     (!maxPrice || price <= maxPrice) &&
     (normalizedFilters.bedrooms === "all" || bedrooms >= Number(normalizedFilters.bedrooms)) &&

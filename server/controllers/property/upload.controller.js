@@ -15,14 +15,14 @@ const createStorage = (uploadDir) =>
     }),
   });
 
-const mapUploadedFiles = (req, routePrefix, includeFilename = false) => {
-  const url = `${req.protocol}://${req.get("host")}`;
-  return req?.files.map((file) => ({
+const mapUploadedFiles = (req, routePrefix, includeFilename = false) =>
+  // Store relative URLs so images keep working regardless of the host
+  // the site is served from (domain, IP, localhost, proxy, etc.)
+  req?.files.map((file) => ({
     ...(includeFilename ? { filename: file.filename } : {}),
-    img: `${url}/api/property/${routePrefix}/${file.filename}`,
+    img: `/api/property/${routePrefix}/${file.filename}`,
     createOn: new Date(),
   }));
-};
 
 const createUploadHandler = ({ field, routePrefix }) => async (req, res) => {
   try {

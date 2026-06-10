@@ -372,6 +372,20 @@ export default function ModernHeader({ largeLogo = [] }) {
                   {t("auth.signIn.signInButton")}
                 </Button>
               )}
+
+              <Button
+                as={RouterLink}
+                to={isAuthenticated ? "/my-listings" : "/auth/sign-up"}
+                size="sm"
+                borderRadius="full"
+                px={4}
+                bg="linear-gradient(135deg, #f5d076 0%, #b97737 100%)"
+                color="#0b1320"
+                fontWeight="700"
+                _hover={{ opacity: 0.9 }}
+              >
+                {t("publicListing.postListing")}
+              </Button>
             </HStack>
 
             <IconButton
@@ -490,6 +504,17 @@ export default function ModernHeader({ largeLogo = [] }) {
                 </Button>
                 <Button as={RouterLink} to="/favorites" onClick={onClose} leftIcon={<FiHeart />}>
                   {t("publicListing.favoritesTitle") || t("publicListing.savedOffers")}
+                </Button>
+                <Button
+                  as={RouterLink}
+                  to={isAuthenticated ? "/my-listings" : "/auth/sign-up"}
+                  onClick={onClose}
+                  borderRadius="full"
+                  bg="linear-gradient(135deg, #f5d076 0%, #b97737 100%)"
+                  color="#0b1320"
+                  fontWeight="700"
+                >
+                  {t("publicListing.postListing")}
                 </Button>
               </Stack>
 
