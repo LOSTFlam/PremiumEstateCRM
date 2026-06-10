@@ -30,8 +30,18 @@ EMAIL_PORT=587
 EMAIL_USER=ваш-email@gmail.com
 EMAIL_PASS=пароль-приложения
 
+# Конфигурация Администратора (создаётся при первом запуске)
+ADMIN_PASSWORD=changeme123
+# Установите true один раз для сброса пароля superAdmin, затем уберите
+SYNC_ADMIN_PASSWORD=false
+ADMIN_EMAIL=admin@gmail.com
+ADMIN_FIRST_NAME=Premium
+ADMIN_LAST_NAME=Estate
+ADMIN_PHONE=7874263694
+
 # Конфигурация Загрузки Файлов
 MAX_FILE_SIZE=10485760
+# Локально: ./uploads | Amvera: /data/uploads (задаётся в amvera.yml)
 UPLOAD_PATH=./uploads
 
 # Логирование

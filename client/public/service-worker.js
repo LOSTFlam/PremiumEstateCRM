@@ -1,48 +1,46 @@
-const CACHE_NAME = 'premium-estate-v1';
-const RUNTIME_CACHE = 'premium-estate-runtime';
+const CACHE_NAME = 'premium-estate-v2';
+const RUNTIME_CACHE = 'premium-estate-runtime-v2';
 
-const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/static/js/main.js',
-  '/static/css/main.css',
-];
-
-const API_CACHE_NAME = 'premium-estate-api-v1';
-const API_CACHE_MAX_ITEMS = 50;
+const PRECACHE_URLS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches
+      .open(CACHE_NAME)
       .then((cache) => cache.addAll(PRECACHE_URLS))
       .then(() => self.skipWaiting())
-      .catch(() => {}) // Precache failure silently handled
+      .catch(() => {})
   );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE && name !== API_CACHE_NAME)
-          .map((name) => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((cacheNames) =>
+        Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME && name !== RUNTIME_CACHE)
+            .map((name) => caches.delete(name))
+        )
+      )
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
-  // Never cache webpack chunks - always go to network
-  if (event.request.url.includes('.chunk.js') || event.request.url.includes('/static/js/')) {
+  const url = new URL(event.request.url);
+
+  // API: always network — never cache auth, moderation, or catalog responses
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
-  if (event.request.url.includes('/api/')) {
-    event.respondWith(handleApiRequest(event.request));
+  // Vite hashed assets: network only
+  if (url.pathname.includes('/assets/')) {
     return;
   }
 
@@ -64,32 +62,6 @@ async function handleStaticRequest(request) {
     const fallbackResponse = await caches.match('/index.html');
     if (fallbackResponse) return fallbackResponse;
     return new Response('Offline', { status: 503 });
-  }
-}
-
-async function handleApiRequest(request) {
-  try {
-    const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
-      const cache = await caches.open(API_CACHE_NAME);
-      await trimCache(cache, API_CACHE_MAX_ITEMS);
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  } catch (error) {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) return cachedResponse;
-    return new Response(JSON.stringify({ error: 'Offline' }), {
-      status: 503,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-}
-
-async function trimCache(cache, maxItems) {
-  const keys = await cache.keys();
-  while (keys.length >= maxItems) {
-    await cache.delete(keys.shift());
   }
 }
 

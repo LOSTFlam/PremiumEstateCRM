@@ -17,17 +17,18 @@ try {
 }
 const Property = require('../model/schema/property');
 
-// Base upload directories
-const UPLOAD_DIRS = {
+const { resolveUploadPath, getUploadRoot } = require('../utils/uploadPaths');
+
+const getUploadDirs = () => ({
   property: {
-    photos: 'uploads/Property/PropertyPhotos',
-    virtualTours: 'uploads/Property/virtual-tours-or-videos',
-    floorPlans: 'uploads/Property/floor-plans',
-    documents: 'uploads/Property/property-documents',
+    photos: resolveUploadPath('Property', 'PropertyPhotos'),
+    virtualTours: resolveUploadPath('Property', 'virtual-tours-or-videos'),
+    floorPlans: resolveUploadPath('Property', 'floor-plans'),
+    documents: resolveUploadPath('Property', 'property-documents'),
   },
-  images: 'uploads/images',
-  general: 'uploads',
-};
+  images: resolveUploadPath('images'),
+  general: getUploadRoot(),
+});
 
 /**
  * Extract file paths from URLs stored in database
@@ -53,21 +54,22 @@ const extractFilePathFromUrl = (url) => {
     const match = pathname.match(/\/api\/(?:images|property)\/[^/]+\/(.+)$/);
     if (match) {
       const filename = match[1];
+      const dirs = getUploadDirs();
       // Determine base directory based on URL pattern
       if (pathname.includes('/api/images/')) {
-        return path.join(UPLOAD_DIRS.images, filename);
+        return path.join(dirs.images, filename);
       }
       if (pathname.includes('/property-photos/')) {
-        return path.join(UPLOAD_DIRS.property.photos, filename);
+        return path.join(dirs.property.photos, filename);
       }
       if (pathname.includes('/virtual-tours-or-videos/')) {
-        return path.join(UPLOAD_DIRS.property.virtualTours, filename);
+        return path.join(dirs.property.virtualTours, filename);
       }
       if (pathname.includes('/floor-plans/')) {
-        return path.join(UPLOAD_DIRS.property.floorPlans, filename);
+        return path.join(dirs.property.floorPlans, filename);
       }
       if (pathname.includes('/property-documents/')) {
-        return path.join(UPLOAD_DIRS.property.documents, filename);
+        return path.join(dirs.property.documents, filename);
       }
     }
     
@@ -308,14 +310,17 @@ const cleanupOrphanedFiles = async (options = {}) => {
   // Console statement removed
   
   // Only scan property-related directories by default
-  const directories = options.directories || [
-    UPLOAD_DIRS.property.photos,
-    UPLOAD_DIRS.property.virtualTours,
-    UPLOAD_DIRS.property.floorPlans,
-    UPLOAD_DIRS.property.documents,
-    UPLOAD_DIRS.images,
-    UPLOAD_DIRS.general,
-  ];
+  const directories = options.directories || (() => {
+    const dirs = getUploadDirs();
+    return [
+      dirs.property.photos,
+      dirs.property.virtualTours,
+      dirs.property.floorPlans,
+      dirs.property.documents,
+      dirs.images,
+      dirs.general,
+    ];
+  })();
   
   let deleted = 0;
   let errors = 0;
@@ -482,7 +487,7 @@ const generateThumbnails = async (inputPath, sizes = [
 };
 
 module.exports = {
-  UPLOAD_DIRS,
+  getUploadDirs,
   extractFilePathFromUrl,
   deleteFile,
   deletePropertyPhotos,

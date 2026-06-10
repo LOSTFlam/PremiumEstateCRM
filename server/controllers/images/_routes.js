@@ -1,6 +1,7 @@
 const express = require('express');
 const img = require('./imagesController.js');
 const { auth } = require('../../middlewares/auth');
+const { resolveUploadPath } = require('../../utils/uploadPaths');
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.put('/isActive/:id', auth, img.setActiveImg);
 router.post("/add-auth-logo-img", auth, img.upload.fields([{ name: 'authImg', maxCount: 1 }, { name: 'logoSmImg', maxCount: 1 }, { name: 'logoLgImg', maxCount: 1 }]), img.addAuthAndLogoImg);
 router.put("/change-auth-logo-img/:id", auth, img.upload.fields([{ name: 'authImg', maxCount: 1 }, { name: 'logoSmImg', maxCount: 1 }, { name: 'logoLgImg', maxCount: 1 }]), img.updateAuthAndLogoImg);
 
-router.use("/authImg", express.static('uploads/images'));
-router.use("/logoImg", express.static('uploads/images'));
+router.use("/authImg", express.static(resolveUploadPath('images')));
+router.use("/logoImg", express.static(resolveUploadPath('images')));
 
 module.exports = router;

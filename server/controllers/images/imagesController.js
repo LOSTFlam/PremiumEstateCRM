@@ -2,6 +2,9 @@ const Img = require('../../model/schema/imagesSchema');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const { resolveUploadPath } = require('../../utils/uploadPaths');
+
+const getImagesDir = () => resolveUploadPath('images');
 
 const index = async (req, res) => {
     const query = req.query;
@@ -40,7 +43,7 @@ const addAuthImg = async (req, res) => {
 
     } catch (err) {
         // Console statement removed
-        fs.unlinkSync(path.join(__dirname, '../../uploads/images/', req?.file?.filename));
+        fs.unlinkSync(path.join(getImagesDir(), req?.file?.filename));
         return res.status(400).json({ success: false, message: 'Failed to add auth image' });
     }
 };
@@ -53,7 +56,7 @@ const addAuthAndLogoImg = async (req, res) => {
         } else if (!req.files?.authImg) {
             req?.files && Object.values(req?.files).forEach((fileArray) => {
                 if (fileArray?.[0]?.filename) {
-                    const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                    const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                     fs.unlinkSync(filePath);
                 }
             });
@@ -63,7 +66,7 @@ const addAuthAndLogoImg = async (req, res) => {
         } else if (!req?.files?.logoLgImg && !req?.files?.logoSmImg) {
             req?.files && Object.values(req?.files).forEach((fileArray) => {
                 if (fileArray?.[0]?.filename) {
-                    const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                    const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                     fs.unlinkSync(filePath);
                 }
             });
@@ -98,7 +101,7 @@ const addAuthAndLogoImg = async (req, res) => {
 
         req?.files && Object.values(req?.files).forEach((fileArray) => {
             if (fileArray?.[0]?.filename) {
-                const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                 fs.unlinkSync(filePath);
             }
         });
@@ -126,13 +129,13 @@ const UpdateAuthImg = async (req, res) => {
             return res.send({ path: file, message: 'File uploaded successfully.' });
 
         } else {
-            fs.unlinkSync(path.join(__dirname, '../../uploads/images/', req?.file?.filename));
+            fs.unlinkSync(path.join(getImagesDir(), req?.file?.filename));
             return res.status(404).send({ success: false, message: 'No Data Found.' });
         }
 
     } catch (err) {
         // Console statement removed
-        fs.unlinkSync(path.join(__dirname, '../../uploads/images/', req?.file?.filename));
+        fs.unlinkSync(path.join(getImagesDir(), req?.file?.filename));
         return res.status(400).json({ success: false, message: 'Failed to update auth Image' });
     }
 };
@@ -168,7 +171,7 @@ const changeLogoImg = async (req, res) => {  // add, edit
         else {
             req?.files && Object.values(req?.files).forEach((fileArray) => {
                 if (fileArray?.[0]?.filename) {
-                    const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                    const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                     fs.unlinkSync(filePath);
                 }
             });
@@ -181,7 +184,7 @@ const changeLogoImg = async (req, res) => {  // add, edit
 
         req?.files && Object.values(req?.files).forEach((fileArray) => {
             if (fileArray?.[0]?.filename) {
-                const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                 fs.unlinkSync(filePath);
             }
         });
@@ -225,7 +228,7 @@ const updateAuthAndLogoImg = async (req, res) => {
         else {
             req?.files && Object.values(req?.files).forEach((fileArray) => {
                 if (fileArray?.[0]?.filename) {
-                    const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                    const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                     fs.unlinkSync(filePath);
                 }
             });
@@ -238,7 +241,7 @@ const updateAuthAndLogoImg = async (req, res) => {
 
         req?.files && Object.values(req?.files).forEach((fileArray) => {
             if (fileArray?.[0]?.filename) {
-                const filePath = path.join(__dirname, '../../uploads/images/', fileArray?.[0]?.filename);
+                const filePath = path.join(getImagesDir(), fileArray?.[0]?.filename);
                 fs.unlinkSync(filePath);
             }
         });
@@ -283,12 +286,12 @@ const deleteData = async (req, res) => {
 const upload = multer({
     storage: multer.diskStorage({
         destination: function (req, file, cb) {
-            const uploadDir = 'uploads/images/';
+            const uploadDir = getImagesDir();
             fs.mkdirSync(uploadDir, { recursive: true });
             cb(null, uploadDir);
         },
         filename: function (req, file, cb) {
-            const uploadDir = 'uploads/images';
+            const uploadDir = getImagesDir();
             const filePath = path.join(uploadDir, file.originalname);
 
             // Check if the file already exists in the destination directory

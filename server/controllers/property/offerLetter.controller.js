@@ -15,16 +15,19 @@ const { Property } = require("../../model/schema/property");
 const quotes = require("../../model/schema/quotes");
 const { ensureUploadDir, buildUniqueFilename, getOrdinalSuffix } = require("./utils");
 const { findPropertyAndFloor } = require("./units.service");
+const { resolveUploadPath } = require("../../utils/uploadPaths");
+
+const getOfferLetterDir = () => resolveUploadPath("offer-letter");
 
 const offerLetterStorage = multer({
   storage: multer.diskStorage({
     destination(req, file, cb) {
-      const uploadDir = "uploads/offer-letter";
+      const uploadDir = getOfferLetterDir();
       ensureUploadDir(uploadDir);
       cb(null, uploadDir);
     },
     filename(req, file, cb) {
-      const uploadDir = "uploads/offer-letter";
+      const uploadDir = getOfferLetterDir();
       cb(null, buildUniqueFilename(uploadDir, file.originalname));
     },
   }),

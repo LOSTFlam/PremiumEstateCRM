@@ -12,6 +12,9 @@ const { initWebSocket, broadcast } = require("./services/websocket");
 
 require("dotenv").config();
 
+const { ensureUploadRoot } = require("./utils/uploadPaths");
+ensureUploadRoot();
+
 const isTestEnvironment =
   process.env.NODE_ENV === "test" || Boolean(process.env.JEST_WORKER_ID);
 

@@ -2,6 +2,9 @@ const multer = require('multer');
 const DocumentSchema = require('../../model/schema/document')
 const fs = require('fs');
 const mongoose = require('mongoose');
+const { resolveUploadPath } = require('../../utils/uploadPaths');
+
+const getDocumentDir = () => resolveUploadPath('document');
 
 
 const index = async (req, res) => {
@@ -47,13 +50,13 @@ const index = async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const folderPath = 'uploads/document/';
+        const folderPath = getDocumentDir();
         fs.mkdirSync(folderPath, { recursive: true }); // Create the directory if it doesn't exist
         cb(null, folderPath);
     },
     filename: function (req, file, cb) {
-        const uploadDir = 'uploads/document/';
-        const filePath = uploadDir + file.originalname;
+        const uploadDir = getDocumentDir();
+        const filePath = path.join(uploadDir, file.originalname);
 
         if (fs.existsSync(filePath)) {
             // File with the same name already exists, generate a new filename

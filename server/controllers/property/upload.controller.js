@@ -56,10 +56,12 @@ const createUploadHandler = ({ field, routePrefix }) => async (req, res) => {
   }
 };
 
-const upload = createStorage("uploads/Property/PropertyPhotos");
-const virtualTours = createStorage("uploads/Property/virtual-tours-or-videos");
-const FloorPlansStorage = createStorage("uploads/Property/floor-plans");
-const PropertyDocumentsStorage = createStorage("uploads/Property/property-documents");
+const { resolveUploadPath } = require("../../utils/uploadPaths");
+
+const upload = createStorage(resolveUploadPath("Property", "PropertyPhotos"));
+const virtualTours = createStorage(resolveUploadPath("Property", "virtual-tours-or-videos"));
+const FloorPlansStorage = createStorage(resolveUploadPath("Property", "floor-plans"));
+const PropertyDocumentsStorage = createStorage(resolveUploadPath("Property", "property-documents"));
 
 const propertyPhoto = createUploadHandler({
   field: "propertyPhotos",

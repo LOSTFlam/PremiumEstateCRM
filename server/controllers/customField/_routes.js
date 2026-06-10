@@ -2,6 +2,7 @@ const express = require("express");
 const { auth } = require("../../middlewares/auth");
 const customField = require("./customField");
 const img = require('../../controllers/images/imagesController');
+const { resolveUploadPath } = require('../../utils/uploadPaths');
 
 const router = express.Router();
 
@@ -32,6 +33,6 @@ router.put('/change-table-field/:id', auth, customField.changeIsTableField);
 router.put('/change-table-fields', auth, customField.changeIsTableFields);
 router.put('/change-view-fields', auth, customField.changeIsViewFields);
 
-router.use("/icon", express.static('uploads/images'));
+router.use("/icon", express.static(resolveUploadPath('images')));
 
 module.exports = router;

@@ -6,7 +6,7 @@
  * - File optimization
  */
 
-const { cleanupOrphanedFiles, collectReferencedFiles, UPLOAD_DIRS } = require('../../services/mediaService');
+const { cleanupOrphanedFiles, collectReferencedFiles, getUploadDirs } = require('../../services/mediaService');
 const Property = require('../../model/schema/property');
 const Img = require('../../model/schema/imagesSchema');
 
@@ -45,7 +45,7 @@ const getMediaStats = async (req, res) => {
         propertiesWithDocs,
         totalPhotos: totalPhotos[0]?.total || 0,
         totalDocs: totalDocs[0]?.total || 0,
-        uploadDirs: Object.keys(UPLOAD_DIRS),
+        uploadDirs: Object.keys(getUploadDirs()),
       }
     });
   } catch (error) {

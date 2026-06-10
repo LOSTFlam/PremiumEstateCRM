@@ -4,6 +4,12 @@ meta:
     name: npm
     version: 20
 
+build:
+  # Installs workspace deps, then builds Vite client into client/dist
+  additionalCommands: npm run build:client
+
 run:
-  command: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=192" node server/index.js
+  # UPLOAD_PATH uses Amvera persistent volume (/data by default)
+  command: NODE_ENV=production NODE_OPTIONS="--max-old-space-size=512" UPLOAD_PATH=/data/uploads node server/index.js
   containerPort: 5001
+  persistenceMount: /data

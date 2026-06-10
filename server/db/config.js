@@ -104,8 +104,8 @@ const connectDB = async (DATABASE_URL, DATABASE) => {
                 const admin = adminExisting[0];
                 if (admin.deleted === true) {
                     await User.findByIdAndUpdate(admin._id, { deleted: false, password: hashedPassword, firstName, lastName, phoneNumber, username, updatedDate: new Date() });
-                } else {
-                    // Sync admin fields from env on every restart
+                } else if (process.env.SYNC_ADMIN_PASSWORD === 'true') {
+                    // Optional: reset superAdmin from env (set SYNC_ADMIN_PASSWORD=true once)
                     await User.findByIdAndUpdate(admin._id, { password: hashedPassword, firstName, lastName, phoneNumber, username, deleted: false, updatedDate: new Date() });
                 }
             }

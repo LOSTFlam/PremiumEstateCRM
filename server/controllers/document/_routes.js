@@ -1,6 +1,7 @@
 const express = require('express');
 const document = require('./document');
 const { auth } = require('../../middlewares/auth');
+const { resolveUploadPath } = require('../../utils/uploadPaths');
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.post('/addDocumentLead', auth, document.upload.array('files'), document.a
 router.get('/download/:id', document.downloadFile)
 router.post('/link-document/:id', document.LinkDocument)
 router.delete('/delete/:id', document.deleteFile)
-router.use('/images', express.static('uploads/document'));
+router.use('/images', express.static(resolveUploadPath('document')));
 
 
 module.exports = router

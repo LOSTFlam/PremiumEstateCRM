@@ -2,6 +2,7 @@ const express = require("express");
 const property = require("./property.facade");
 const { auth, authorize } = require("../../middlewares/auth");
 const { propertyValidation } = require("../../middlewares/validation");
+const { resolveUploadPath } = require("../../utils/uploadPaths");
 
 const router = express.Router();
 
@@ -67,17 +68,17 @@ router.post(
 
 router.use(
   "/property-documents",
-  express.static("uploads/Property/property-documents")
+  express.static(resolveUploadPath("Property", "property-documents"))
 );
-router.use("/offer-letter", express.static("uploads/offer-letter"));
-router.use("/floor-plans", express.static("uploads/Property/floor-plans"));
+router.use("/offer-letter", express.static(resolveUploadPath("offer-letter")));
+router.use("/floor-plans", express.static(resolveUploadPath("Property", "floor-plans")));
 router.use(
   "/virtual-tours-or-videos",
-  express.static("uploads/Property/virtual-tours-or-videos")
+  express.static(resolveUploadPath("Property", "virtual-tours-or-videos"))
 );
 router.use(
   "/property-photos",
-  express.static("uploads/Property/PropertyPhotos")
+  express.static(resolveUploadPath("Property", "PropertyPhotos"))
 );
 // router.post('/file', property.upload.array('file', 10), property.file)
 // router.post('/file', property.upload.single('file'), property.file)
