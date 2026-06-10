@@ -396,18 +396,44 @@ a.public-brand-button {
     text-transform: none !important;
   }
 
-  .landing-hero-search {
-    grid-template-columns: 1fr !important;
+  .landing-hero-panel {
+    overflow: hidden;
   }
 
-  .landing-hero-search .chakra-button {
-    width: 100%;
-    justify-content: center;
+  .landing-hero-search,
+  .landing-hero-search-actions {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  .landing-hero-search .chakra-input__group {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
   }
 
   .landing-hero-search .chakra-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
     height: 48px !important;
     font-size: 16px !important;
+    box-sizing: border-box;
+  }
+
+  .landing-hero-search-actions .chakra-button {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .landing-hero-search-actions .chakra-icon-button {
+    width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    flex-shrink: 0;
   }
 
   .landing-hero-trust {
@@ -458,13 +484,4 @@ a.public-brand-button {
     grid-template-columns: 1fr !important;
   }
 
-  .landing-hero-search {
-    grid-template-columns: 1fr !important;
-  }
-
-  .landing-hero-search .chakra-button,
-  .landing-hero-search .chakra-icon-button {
-    width: 100%;
-    max-width: 100%;
-  }
 }

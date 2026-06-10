@@ -16,7 +16,6 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  Tooltip,
   useBreakpointValue,
   usePrefersReducedMotion,
 } from "@chakra-ui/react";
@@ -54,6 +53,7 @@ const heroCopy = {
     description:
       "Понятные сегменты, быстрый поиск и спокойный маршрут от первого клика до звонка брокеру.",
     searchHint: "Адрес, тип объекта, район, сценарий жизни",
+    searchHintShort: "Адрес, тип или район",
     primary: "Открыть каталог",
     primaryShort: "Каталог",
     secondary: "Показать подборку ниже",
@@ -95,6 +95,7 @@ const heroCopy = {
     description:
       "The homepage now works as a real market entry point: clearer segments, faster search, live collections, and a calmer route from first click to broker contact.",
     searchHint: "Address, property type, district, lifestyle",
+    searchHintShort: "Address, type or area",
     primary: "Open catalog",
     primaryShort: "Catalog",
     secondary: "Preview below",
@@ -450,8 +451,8 @@ export default function ModernHero({
                   transform: panelRevealed ? "translateY(0)" : "translateY(40px)",
                 }}
               >
-                <Stack spacing={5}>
-                  <Stack spacing={1.5}>
+                <Stack spacing={5} w="100%" minW={0}>
+                  <Stack spacing={1.5} w="100%" minW={0}>
                     <Text
                       color="#f5d076"
                       fontSize="xs"
@@ -460,7 +461,7 @@ export default function ModernHero({
                     >
                       {copy.panelTitle}
                     </Text>
-                    <Text color="whiteAlpha.760" maxW="640px">
+                    <Text color="whiteAlpha.760" maxW="100%" wordBreak="break-word">
                       {copy.panelText}
                     </Text>
                   </Stack>
@@ -531,86 +532,140 @@ export default function ModernHero({
                     ))}
                   </SimpleGrid>
 
-                  <Grid
-                    className="landing-hero-search"
-                    templateColumns={{ base: "1fr", lg: "minmax(0,1fr) auto auto" }}
-                    gap={3}
-                    width="100%"
-                  >
-                    <InputGroup size="lg">
-                      <InputLeftElement pointerEvents="none">
-                        <FiSearch color="#d7c4a3" />
-                      </InputLeftElement>
-                      <Input
-                        value={searchQuery}
-                        onChange={(event) => setSearchQuery(event.target.value)}
-                        placeholder={copy.searchHint}
-                        color="white"
-                        borderColor="rgba(227, 211, 184, 0.14)"
-                        bg="rgba(255,255,255,0.05)"
-                        borderRadius="20px"
-                        h="60px"
-                        _placeholder={{ color: "whiteAlpha.500" }}
-                        _hover={{ borderColor: "rgba(245,208,118,0.28)" }}
-                        _focus={{
-                          borderColor: "rgba(245,208,118,0.42)",
-                          boxShadow: "0 0 0 1px rgba(245,208,118,0.18)",
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter") {
-                            onSearch?.();
-                          }
-                        }}
-                      />
-                    </InputGroup>
+                  {isCompactActions ? (
+                    <Stack className="landing-hero-search" spacing={3} w="100%" minW={0}>
+                      <InputGroup size="lg" w="100%" minW={0}>
+                        <InputLeftElement pointerEvents="none" h="48px">
+                          <FiSearch color="#d7c4a3" />
+                        </InputLeftElement>
+                        <Input
+                          value={searchQuery}
+                          onChange={(event) => setSearchQuery(event.target.value)}
+                          placeholder={copy.searchHintShort}
+                          color="white"
+                          borderColor="rgba(227, 211, 184, 0.14)"
+                          bg="rgba(255,255,255,0.05)"
+                          borderRadius="20px"
+                          h="48px"
+                          w="100%"
+                          minW={0}
+                          fontSize="16px"
+                          pl="44px"
+                          _placeholder={{ color: "whiteAlpha.500" }}
+                          _hover={{ borderColor: "rgba(245,208,118,0.28)" }}
+                          _focus={{
+                            borderColor: "rgba(245,208,118,0.42)",
+                            boxShadow: "0 0 0 1px rgba(245,208,118,0.18)",
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              onSearch?.();
+                            }
+                          }}
+                        />
+                      </InputGroup>
 
-                    <Button
-                      as={RouterLink}
-                      to={catalogHref}
-                      leftIcon={<FiSearch />}
-                      borderRadius="full"
-                      h={{ base: "48px", md: "60px" }}
-                      px={{ base: 5, md: 8 }}
-                      w={{ base: "100%", lg: "auto" }}
-                      maxW="100%"
-                      minW={0}
-                      fontSize={{ base: "sm", md: "md" }}
-                      bg={publicBrand.gradients.brass}
-                      color={publicBrand.colors.ink}
-                      fontWeight="700"
-                      _hover={{
-                        transform: "translateY(-1px)",
-                        boxShadow: publicBrand.shadows.glow,
-                      }}
-                    >
-                      {isCompactActions ? copy.primaryShort : copy.primary}
-                    </Button>
-
-                    {isCompactActions ? (
-                      <Tooltip label={copy.secondary} placement="top">
+                      <HStack className="landing-hero-search-actions" spacing={2} w="100%" minW={0}>
+                        <Button
+                          as={RouterLink}
+                          to={catalogHref}
+                          leftIcon={<FiSearch />}
+                          borderRadius="full"
+                          h="48px"
+                          flex={1}
+                          minW={0}
+                          px={4}
+                          fontSize="sm"
+                          bg={publicBrand.gradients.brass}
+                          color={publicBrand.colors.ink}
+                          fontWeight="700"
+                          _hover={{
+                            transform: "translateY(-1px)",
+                            boxShadow: publicBrand.shadows.glow,
+                          }}
+                        >
+                          {copy.primaryShort}
+                        </Button>
                         <IconButton
                           aria-label={copy.secondary}
                           icon={<FiChevronDown />}
                           onClick={onSearch}
                           borderRadius="full"
                           h="48px"
-                          w="100%"
-                          maxW="100%"
+                          w="48px"
+                          minW="48px"
+                          flexShrink={0}
                           bg="rgba(255,255,255,0.05)"
                           color="white"
                           border="1px solid rgba(227, 211, 184, 0.14)"
                           _hover={{ bg: "rgba(255,255,255,0.08)" }}
                         />
-                      </Tooltip>
-                    ) : (
+                      </HStack>
+                    </Stack>
+                  ) : (
+                    <Grid
+                      className="landing-hero-search"
+                      templateColumns="minmax(0, 1fr) auto auto"
+                      gap={3}
+                      w="100%"
+                      minW={0}
+                    >
+                      <InputGroup size="lg" w="100%" minW={0}>
+                        <InputLeftElement pointerEvents="none" h="60px">
+                          <FiSearch color="#d7c4a3" />
+                        </InputLeftElement>
+                        <Input
+                          value={searchQuery}
+                          onChange={(event) => setSearchQuery(event.target.value)}
+                          placeholder={copy.searchHint}
+                          color="white"
+                          borderColor="rgba(227, 211, 184, 0.14)"
+                          bg="rgba(255,255,255,0.05)"
+                          borderRadius="20px"
+                          h="60px"
+                          w="100%"
+                          minW={0}
+                          pl="44px"
+                          _placeholder={{ color: "whiteAlpha.500" }}
+                          _hover={{ borderColor: "rgba(245,208,118,0.28)" }}
+                          _focus={{
+                            borderColor: "rgba(245,208,118,0.42)",
+                            boxShadow: "0 0 0 1px rgba(245,208,118,0.18)",
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              onSearch?.();
+                            }
+                          }}
+                        />
+                      </InputGroup>
+
+                      <Button
+                        as={RouterLink}
+                        to={catalogHref}
+                        leftIcon={<FiSearch />}
+                        borderRadius="full"
+                        h="60px"
+                        px={8}
+                        flexShrink={0}
+                        bg={publicBrand.gradients.brass}
+                        color={publicBrand.colors.ink}
+                        fontWeight="700"
+                        _hover={{
+                          transform: "translateY(-1px)",
+                          boxShadow: publicBrand.shadows.glow,
+                        }}
+                      >
+                        {copy.primary}
+                      </Button>
+
                       <Button
                         onClick={onSearch}
                         rightIcon={<FiArrowRight />}
                         borderRadius="full"
                         h="60px"
                         px={8}
-                        w="auto"
-                        maxW="100%"
+                        flexShrink={0}
                         bg="rgba(255,255,255,0.05)"
                         color="white"
                         border="1px solid rgba(227, 211, 184, 0.14)"
@@ -618,8 +673,8 @@ export default function ModernHero({
                       >
                         {copy.secondary}
                       </Button>
-                    )}
-                  </Grid>
+                    </Grid>
+                  )}
 
                   <HStack
                     className="landing-hero-trust"
