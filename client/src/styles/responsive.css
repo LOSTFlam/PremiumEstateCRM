@@ -433,3 +433,38 @@ a.public-brand-button {
     grid-column: auto;
   }
 }
+
+/* Light public pages — readable text on cream panels */
+.public-page-light .offer-light-panel,
+.public-page-light .offer-light-panel .chakra-heading,
+.public-page-light .offer-light-panel .chakra-text,
+.public-page-light .offer-light-panel .chakra-stat__label,
+.public-page-light .offer-light-panel .chakra-stat__number {
+  color: #08111a;
+}
+
+.public-page-light .offer-light-panel .chakra-text[color*="gray"],
+.public-page-light .offer-light-panel .chakra-stat__label {
+  color: #68768a !important;
+}
+
+.public-page-light .offer-verification-item .chakra-text {
+  color: #08111a !important;
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .footer-contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-search {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-search .chakra-button,
+  .landing-hero-search .chakra-icon-button {
+    width: 100%;
+    max-width: 100%;
+  }
+}

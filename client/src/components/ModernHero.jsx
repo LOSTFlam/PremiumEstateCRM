@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Icon,
+  IconButton,
   Image,
   Input,
   InputGroup,
@@ -15,11 +16,21 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  Tooltip,
+  useBreakpointValue,
   usePrefersReducedMotion,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FiArrowRight, FiClock, FiHome, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiChevronDown,
+  FiClock,
+  FiHome,
+  FiSearch,
+  FiShield,
+  FiTrendingUp,
+} from "react-icons/fi";
 import { LuBuilding2, LuMapPin, LuSparkles, LuTrees } from "react-icons/lu";
 import {
   formatCompactPrice,
@@ -44,7 +55,9 @@ const heroCopy = {
       "Понятные сегменты, быстрый поиск и спокойный маршрут от первого клика до звонка брокеру.",
     searchHint: "Адрес, тип объекта, район, сценарий жизни",
     primary: "Открыть каталог",
+    primaryShort: "Каталог",
     secondary: "Показать подборку ниже",
+    secondaryShort: "Подборка",
     trustLine: ["Проверенные карточки", "Сравнение и подборка", "Прямая заявка на просмотр"],
     panelTitle: "С чего начать поиск",
     panelText: "Выберите сегмент, введите запрос и уйдите в каталог уже с нужным контекстом.",
@@ -83,7 +96,9 @@ const heroCopy = {
       "The homepage now works as a real market entry point: clearer segments, faster search, live collections, and a calmer route from first click to broker contact.",
     searchHint: "Address, property type, district, lifestyle",
     primary: "Open catalog",
+    primaryShort: "Catalog",
     secondary: "Preview below",
+    secondaryShort: "Browse",
     trustLine: ["Verified listings", "Compare and shortlist", "Direct viewing request"],
     panelTitle: "Start the search with structure",
     panelText:
@@ -175,6 +190,7 @@ export default function ModernHero({
   const prefersReducedMotion = usePrefersReducedMotion();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = heroCopy[locale];
+  const isCompactActions = useBreakpointValue({ base: true, md: false }) ?? true;
 
   const [titleRef, titleRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
   const [panelRef, panelRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
@@ -556,8 +572,9 @@ export default function ModernHero({
                       h={{ base: "48px", md: "60px" }}
                       px={{ base: 5, md: 8 }}
                       w={{ base: "100%", lg: "auto" }}
-                      whiteSpace="normal"
-                      lineHeight="1.25"
+                      maxW="100%"
+                      minW={0}
+                      fontSize={{ base: "sm", md: "md" }}
                       bg={publicBrand.gradients.brass}
                       color={publicBrand.colors.ink}
                       fontWeight="700"
@@ -566,25 +583,42 @@ export default function ModernHero({
                         boxShadow: publicBrand.shadows.glow,
                       }}
                     >
-                      {copy.primary}
+                      {isCompactActions ? copy.primaryShort : copy.primary}
                     </Button>
 
-                    <Button
-                      onClick={onSearch}
-                      rightIcon={<FiArrowRight />}
-                      borderRadius="full"
-                      h={{ base: "48px", md: "60px" }}
-                      px={{ base: 5, md: 8 }}
-                      w={{ base: "100%", lg: "auto" }}
-                      whiteSpace="normal"
-                      lineHeight="1.25"
-                      bg="rgba(255,255,255,0.05)"
-                      color="white"
-                      border="1px solid rgba(227, 211, 184, 0.14)"
-                      _hover={{ bg: "rgba(255,255,255,0.08)" }}
-                    >
-                      {copy.secondary}
-                    </Button>
+                    {isCompactActions ? (
+                      <Tooltip label={copy.secondary} placement="top">
+                        <IconButton
+                          aria-label={copy.secondary}
+                          icon={<FiChevronDown />}
+                          onClick={onSearch}
+                          borderRadius="full"
+                          h="48px"
+                          w="100%"
+                          maxW="100%"
+                          bg="rgba(255,255,255,0.05)"
+                          color="white"
+                          border="1px solid rgba(227, 211, 184, 0.14)"
+                          _hover={{ bg: "rgba(255,255,255,0.08)" }}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Button
+                        onClick={onSearch}
+                        rightIcon={<FiArrowRight />}
+                        borderRadius="full"
+                        h="60px"
+                        px={8}
+                        w="auto"
+                        maxW="100%"
+                        bg="rgba(255,255,255,0.05)"
+                        color="white"
+                        border="1px solid rgba(227, 211, 184, 0.14)"
+                        _hover={{ bg: "rgba(255,255,255,0.08)" }}
+                      >
+                        {copy.secondary}
+                      </Button>
+                    )}
                   </Grid>
 
                   <HStack

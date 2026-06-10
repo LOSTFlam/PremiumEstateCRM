@@ -81,6 +81,11 @@ body {
   color: var(--public-text);
 }
 
+.public-brand-shell.public-page-light {
+  background: #f3ede3;
+  color: #08111a;
+}
+
 .public-brand-panel {
   background: linear-gradient(160deg, rgba(18,29,43,0.98) 0%, rgba(22,35,52,0.96) 100%);
   border: 1px solid var(--public-line);

@@ -132,7 +132,12 @@ export default function ModernFooter() {
                     {t("publicListing.footerDescription")}
                   </Text>
 
-                  <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={4}>
+                  <SimpleGrid
+                    className="footer-contact-grid"
+                    columns={{ base: 1, md: 3 }}
+                    spacing={4}
+                    w="100%"
+                  >
                     {contactInfo.map((item) => (
                       <Box
                         key={item.text}
@@ -141,8 +146,10 @@ export default function ModernFooter() {
                         py={4}
                         bg="rgba(255,255,255,0.04)"
                         border="1px solid rgba(227, 211, 184, 0.12)"
+                        minW={0}
+                        w="100%"
                       >
-                        <HStack spacing={3} align="start">
+                        <Stack spacing={3} align="start" w="100%">
                           <Box
                             w="40px"
                             h="40px"
@@ -151,13 +158,21 @@ export default function ModernFooter() {
                             placeItems="center"
                             bg="rgba(245,208,118,0.12)"
                             color="#f5d076"
+                            flexShrink={0}
                           >
                             <Icon as={item.icon} />
                           </Box>
-                          <Text color="whiteAlpha.840" fontSize="sm" lineHeight="1.7">
+                          <Text
+                            color="whiteAlpha.840"
+                            fontSize="sm"
+                            lineHeight="1.6"
+                            wordBreak="break-word"
+                            overflowWrap="anywhere"
+                            w="100%"
+                          >
                             {item.text}
                           </Text>
-                        </HStack>
+                        </Stack>
                       </Box>
                     ))}
                   </SimpleGrid>

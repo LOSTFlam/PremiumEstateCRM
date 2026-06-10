@@ -1224,9 +1224,23 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                         <Text mt={3} color="whiteAlpha.800" noOfLines={3}>
                           {collection.text}
                         </Text>
-                        <HStack mt={5} color="#f5d076">
-                          <Icon as={MdArrowForward} />
-                          <Text fontWeight="700">{copy.openCollection}</Text>
+                        <HStack mt={5} color="#f5d076" spacing={2}>
+                          <Box
+                            as="span"
+                            display="grid"
+                            placeItems="center"
+                            w={{ base: "34px", sm: "auto" }}
+                            h={{ base: "34px", sm: "auto" }}
+                            borderRadius={{ base: "full", sm: "none" }}
+                            bg={{ base: "rgba(245,208,118,0.14)", sm: "transparent" }}
+                            border={{ base: "1px solid rgba(245,208,118,0.24)", sm: "none" }}
+                            aria-label={copy.openCollection}
+                          >
+                            <Icon as={MdArrowForward} />
+                          </Box>
+                          <Text fontWeight="700" display={{ base: "none", sm: "block" }}>
+                            {copy.openCollection}
+                          </Text>
                         </HStack>
                       </Box>
                     ))}

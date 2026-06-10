@@ -123,6 +123,7 @@ export default function PublicOfferView() {
   const pageBg = publicBrand.colors.paper;
   const cardBg = publicBrand.gradients.panelLight;
   const subtleBg = "rgba(244, 238, 229, 0.82)";
+  const ink = publicBrand.colors.ink;
   const mutedColor = publicBrand.colors.textSoft;
   const borderColor = "rgba(9,18,32,0.08)";
   const cardShadow = publicBrand.shadows.soft;
@@ -286,7 +287,14 @@ export default function PublicOfferView() {
   }
 
   return (
-    <Box className="public-brand-shell" minH="100vh" bg={pageBg} overflowX="hidden" maxW="100vw">
+    <Box
+      className="public-brand-shell public-page-light"
+      minH="100vh"
+      bg={pageBg}
+      color={ink}
+      overflowX="hidden"
+      maxW="100%"
+    >
       <Box
         bg={publicBrand.gradients.hero}
         color="white"
@@ -484,7 +492,7 @@ export default function PublicOfferView() {
         </Container>
       </Box>
 
-      <Container maxW="8xl" py={{ base: 6, md: 10 }}>
+      <Container maxW="8xl" py={{ base: 6, md: 10 }} color={ink}>
         <SeoMeta
           title={property?.seo?.title || property?.name || property?.propertyAddress}
           description={
@@ -629,37 +637,45 @@ export default function PublicOfferView() {
             <GridItem>
               <Stack spacing={6}>
                 <Box
+                  className="offer-light-panel"
                   bg={cardBg}
                   borderRadius="32px"
                   p={6}
                   boxShadow="sm"
                   borderWidth="1px"
                   borderColor={borderColor}
+                  color={ink}
                 >
                   <Stack spacing={4}>
                     <Badge w="fit-content" colorScheme="blackAlpha">
                       {t?.("publicListing.detailsTitle")}
                     </Badge>
-                    <Heading size="xl">{property?.name || property?.propertyAddress}</Heading>
+                    <Heading size="xl" color={ink}>
+                      {property?.name || property?.propertyAddress}
+                    </Heading>
                     <HStack color={mutedColor} align="start">
-                      <Icon as={MdOutlineLocationOn} mt={1} />
-                      <Text>{property?.propertyAddress || t?.("publicListing.notSpecified")}</Text>
+                      <Icon as={MdOutlineLocationOn} mt={1} flexShrink={0} />
+                      <Text color={mutedColor}>
+                        {property?.propertyAddress || t?.("publicListing.notSpecified")}
+                      </Text>
                     </HStack>
                     <Heading size="2xl" color="orange.500">
                       {formatPrice(property?.listingPrice, t)}
                     </Heading>
-                    <SimpleGrid columns={2} gap={4}>
+                    <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
                       <Box>
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.status")}
                         </Text>
-                        <Text fontWeight="700">{normalizeStatus(property?.listingStatus, t)}</Text>
+                        <Text fontWeight="700" color={ink}>
+                          {normalizeStatus(property?.listingStatus, t)}
+                        </Text>
                       </Box>
                       <Box>
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.propertyType")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {property?.propertyType || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
@@ -667,7 +683,7 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.yearBuilt")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {property?.yearBuilt || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
@@ -675,7 +691,7 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.updatedAt")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {formatDate(
                             property?.updatedDate || property?.updatedAt || property?.createdDate
                           ) || t?.("publicListing.notSpecified")}
@@ -685,7 +701,7 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.listingDate")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {formatDate(property?.listingDate) || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
@@ -693,7 +709,7 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.squareFootage")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {property?.squareFootage || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
@@ -701,7 +717,7 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.lotSize")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink}>
                           {property?.lotSize || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
@@ -709,34 +725,34 @@ export default function PublicOfferView() {
                         <Text fontSize="sm" color={mutedColor}>
                           {t?.("publicListing.parkingAvailability")}
                         </Text>
-                        <Text fontWeight="700">
+                        <Text fontWeight="700" color={ink} wordBreak="break-word">
                           {property?.parkingAvailability || t?.("publicListing.notSpecified")}
                         </Text>
                       </Box>
                     </SimpleGrid>
-                    <SimpleGrid columns={3} gap={3}>
+                    <SimpleGrid columns={{ base: 1, sm: 3 }} gap={3}>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <Stat>
-                          <StatLabel>
+                          <StatLabel color={mutedColor}>
                             {t?.("publicListing.photosCount", { count: photoCount })}
                           </StatLabel>
-                          <StatNumber>{photoCount}</StatNumber>
+                          <StatNumber color={ink}>{photoCount}</StatNumber>
                         </Stat>
                       </Box>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <Stat>
-                          <StatLabel>
+                          <StatLabel color={mutedColor}>
                             {t?.("publicListing.docsCount", { count: documentCount })}
                           </StatLabel>
-                          <StatNumber>{documentCount}</StatNumber>
+                          <StatNumber color={ink}>{documentCount}</StatNumber>
                         </Stat>
                       </Box>
                       <Box bg={subtleBg} borderRadius="20px" p={4}>
                         <Stat>
-                          <StatLabel>
+                          <StatLabel color={mutedColor}>
                             {t?.("publicListing.plansCount", { count: floorPlanCount })}
                           </StatLabel>
-                          <StatNumber>{floorPlanCount}</StatNumber>
+                          <StatNumber color={ink}>{floorPlanCount}</StatNumber>
                         </Stat>
                       </Box>
                     </SimpleGrid>
@@ -747,15 +763,19 @@ export default function PublicOfferView() {
                 </Box>
 
                 <Box
+                  className="offer-light-panel"
                   bg={cardBg}
                   borderRadius="32px"
                   p={6}
                   boxShadow="sm"
                   borderWidth="1px"
                   borderColor={borderColor}
+                  color={ink}
                 >
                   <Stack spacing={4}>
-                    <Heading size="md">{t?.("publicListing.verificationTitle")}</Heading>
+                    <Heading size="md" color={ink}>
+                      {t?.("publicListing.verificationTitle")}
+                    </Heading>
                     <Badge
                       w="fit-content"
                       colorScheme={
@@ -763,8 +783,11 @@ export default function PublicOfferView() {
                           ? "green"
                           : verification.status === "review"
                             ? "orange"
-                            : "gray"
+                            : "yellow"
                       }
+                      variant="solid"
+                      px={3}
+                      py={1}
                     >
                       {verification.status === "verified"
                         ? t?.("publicListing.verificationVerified")
@@ -774,8 +797,17 @@ export default function PublicOfferView() {
                     </Badge>
                     <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
                       {(verification.checklist || []).map((item, index) => (
-                        <Box key={`${item}-${index}`} bg={subtleBg} borderRadius="18px" p={3}>
-                          <Text>{verificationLabels[item] || item}</Text>
+                        <Box
+                          key={`${item}-${index}`}
+                          className="offer-verification-item"
+                          bg={subtleBg}
+                          borderRadius="18px"
+                          p={3}
+                          border="1px solid rgba(9,18,32,0.08)"
+                        >
+                          <Text color={ink} fontWeight="600" fontSize="sm" lineHeight="1.45">
+                            {verificationLabels[item] || item}
+                          </Text>
                         </Box>
                       ))}
                     </SimpleGrid>

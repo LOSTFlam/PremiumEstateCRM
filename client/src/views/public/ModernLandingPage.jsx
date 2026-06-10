@@ -784,11 +784,27 @@ export default function ModernLandingPage() {
                           </HStack>
                         ))}
                       </Stack>
-                      <HStack mt={5} spacing={2} color="#f5d076">
-                        <Text fontWeight="700" fontSize="sm">
+                      <HStack mt={5} spacing={2} color="#f5d076" justify="flex-start">
+                        <Text
+                          fontWeight="700"
+                          fontSize="sm"
+                          display={{ base: "none", sm: "block" }}
+                        >
                           {copy.collectionsOpen}
                         </Text>
-                        <FiArrowRight />
+                        <Box
+                          as="span"
+                          display="grid"
+                          placeItems="center"
+                          w={{ base: "34px", sm: "auto" }}
+                          h={{ base: "34px", sm: "auto" }}
+                          borderRadius={{ base: "full", sm: "none" }}
+                          bg={{ base: "rgba(245,208,118,0.14)", sm: "transparent" }}
+                          border={{ base: "1px solid rgba(245,208,118,0.24)", sm: "none" }}
+                          aria-label={copy.collectionsOpen}
+                        >
+                          <FiArrowRight />
+                        </Box>
                       </HStack>
                     </Box>
                   ))}

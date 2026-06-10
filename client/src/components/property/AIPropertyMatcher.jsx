@@ -3,10 +3,12 @@ import {
   Badge,
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Heading,
   HStack,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,6 +18,8 @@ import {
   Select,
   Stack,
   Text,
+  Tooltip,
+  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiSliders } from "react-icons/fi";
@@ -66,6 +70,7 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
   const [bedrooms, setBedrooms] = useState("all");
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const text = copy[locale];
+  const isCompactAction = useBreakpointValue({ base: true, md: false }) ?? true;
   const budgetOptions =
     locale === "ru"
       ? [
@@ -113,8 +118,15 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
         }
         boxShadow={darkVariant ? publicBrand.shadows.inset : publicBrand.shadows.soft}
       >
-        <HStack justify="space-between" align="start" spacing={4}>
-          <Box maxW="320px">
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          justify="space-between"
+          align={{ base: "stretch", md: "start" }}
+          gap={4}
+          w="100%"
+          minW={0}
+        >
+          <Box flex="1" minW={0} maxW="100%">
             <Badge
               mb={3}
               px={3}
@@ -128,23 +140,49 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
             >
               {text.badge}
             </Badge>
-            <Heading size="md">{text.title}</Heading>
-            <Text mt={2} color={darkVariant ? "whiteAlpha.760" : publicBrand.colors.textSoft}>
+            <Heading size="md" wordBreak="break-word">
+              {text.title}
+            </Heading>
+            <Text
+              mt={2}
+              color={darkVariant ? "whiteAlpha.760" : publicBrand.colors.textSoft}
+              lineHeight="1.65"
+              wordBreak="break-word"
+            >
               {text.subtitle}
             </Text>
           </Box>
-          <Button
-            leftIcon={<FiSliders />}
-            borderRadius="full"
-            bg={publicBrand.gradients.brass}
-            color={publicBrand.colors.ink}
-            fontWeight="700"
-            _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
-            onClick={onOpen}
-          >
-            {text.open}
-          </Button>
-        </HStack>
+          {isCompactAction ? (
+            <Tooltip label={text.open} placement="top">
+              <IconButton
+                alignSelf={{ base: "flex-end", md: "auto" }}
+                flexShrink={0}
+                aria-label={text.open}
+                icon={<FiSliders />}
+                borderRadius="full"
+                size="lg"
+                bg={publicBrand.gradients.brass}
+                color={publicBrand.colors.ink}
+                _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+                onClick={onOpen}
+              />
+            </Tooltip>
+          ) : (
+            <Button
+              flexShrink={0}
+              leftIcon={<FiSliders />}
+              borderRadius="full"
+              bg={publicBrand.gradients.brass}
+              color={publicBrand.colors.ink}
+              fontWeight="700"
+              whiteSpace="nowrap"
+              _hover={{ transform: "translateY(-1px)", boxShadow: publicBrand.shadows.glow }}
+              onClick={onOpen}
+            >
+              {text.open}
+            </Button>
+          )}
+        </Flex>
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
