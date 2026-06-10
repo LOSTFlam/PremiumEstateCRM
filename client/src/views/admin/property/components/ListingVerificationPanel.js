@@ -23,6 +23,7 @@ import {
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { putApi } from "services/api";
 import { extractApiErrorMessage } from "utils/errorMessages";
 import { normalizeModerationStatus, moderationStatusMeta } from "utils/moderationStatus";
@@ -61,6 +62,7 @@ const defaultChecklist = (property = {}) => {
 };
 
 export default function ListingVerificationPanel({ property, onUpdated, canManage = false }) {
+  const { t } = useTranslation();
   const toast = useToast();
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
   const subtleBg = useColorModeValue("gray.50", "whiteAlpha.100");
@@ -112,8 +114,8 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
   }, [property]);
 
   const status = useMemo(
-    () => moderationStatusMeta(form.verificationStatus),
-    [form.verificationStatus]
+    () => moderationStatusMeta(form.verificationStatus, t),
+    [form.verificationStatus, t]
   );
 
   const owner = property?.createBy;

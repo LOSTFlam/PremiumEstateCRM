@@ -1043,6 +1043,12 @@ export default function PropertyLandingPage() {
                             rightIcon={<MdArrowForward />}
                             borderRadius="18px"
                             onClick={() => navigate(`/propertyView/${featuredProperty?._id}`)}
+                            whiteSpace="normal"
+                            lineHeight="1.25"
+                            h="auto"
+                            minH="40px"
+                            py={2}
+                            maxW={{ base: "100%", md: "none" }}
                           >
                             {t?.("common.viewDetails")}
                           </Button>
@@ -1153,6 +1159,12 @@ export default function PropertyLandingPage() {
                             colorScheme="green"
                             rightIcon={<MdArrowForward />}
                             onClick={() => navigate(`/propertyView/${property?._id}`)}
+                            whiteSpace="normal"
+                            lineHeight="1.25"
+                            h="auto"
+                            minH="40px"
+                            py={2}
+                            w={{ base: "100%", sm: "auto" }}
                           >
                             {t?.("modules.dashboardHome.openProperty")}
                           </Button>

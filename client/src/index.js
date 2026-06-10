@@ -34,7 +34,6 @@ const PublicOfferView = lazy(() => import("views/public/catalog/View"));
 const PublicOfferViewBySlug = lazy(() => import("views/public/catalog/ViewBySlug"));
 const PublicCompareView = lazy(() => import("views/public/catalog/Compare"));
 const FavoritesPage = lazy(() => import("views/public/FavoritesPage"));
-const PropertyViewBySlug = lazy(() => import("views/admin/property/ViewBySlug"));
 const SeoCollectionPage = lazy(() => import("views/public/catalog/SeoCollectionPage"));
 const AnalyticsDashboard = lazy(() => import("views/admin/analytics/AnalyticsDashboard"));
 const LeadKanban = lazy(() => import("views/admin/leads/LeadKanban"));
@@ -412,7 +411,6 @@ export function AnimatedRoutes() {
           <Route path="/compare" element={<Navigate to="/offers/compare" replace />} />
           <Route path="/offers/:id" element={<PublicOfferView />} />
           <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
-          <Route path="/propertyView/:slug" element={<PropertyViewBySlug />} />
           <Route path="/auth/sign-up" element={<SignUp />} />
           <Route path="/auth/sign-in" element={<SignIn />} />
           <Route

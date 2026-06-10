@@ -1,1 +1,0 @@
-import{j as s,F as a}from"./index-_mroBopA.js";import"./vendor-charts-8I5hyNb7.js";const x=r=>{const{variant:o,children:e,...t}=r;return s.jsx(a,{h:"1px",w:"100%",bg:"rgba(135, 140, 189, 0.3)",...t})};export{x as H};

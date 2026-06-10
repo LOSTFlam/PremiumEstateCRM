@@ -489,13 +489,13 @@ const ModernPropertyCard = ({
           ))}
         </SimpleGrid>
 
-        <HStack justify="space-between" align="center" pt={1} spacing={3} minH="36px">
+        <HStack justify="space-between" align="center" pt={1} spacing={3} flexWrap="wrap" rowGap={2}>
           <Text
             color={publicBrand.colors.copper}
             fontSize="xs"
             fontWeight="700"
-            noOfLines={1}
-            flex={1}
+            noOfLines={2}
+            flex="1 1 140px"
             minW="0"
           >
             {richListing
@@ -508,10 +508,16 @@ const ModernPropertyCard = ({
             borderRadius="full"
             bg={publicBrand.colors.ink}
             color="white"
-            h="32px"
-            px={3}
+            h="auto"
+            minH="32px"
+            py={2}
+            px={4}
             fontSize="xs"
             flexShrink={0}
+            maxW="100%"
+            whiteSpace="normal"
+            lineHeight="1.25"
+            textAlign="center"
             transition="all 0.3s ease"
             _hover={{
               bg: publicBrand.colors.inkElevated,

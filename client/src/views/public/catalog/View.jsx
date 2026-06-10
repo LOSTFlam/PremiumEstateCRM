@@ -1317,6 +1317,12 @@ export default function PublicOfferView() {
                           size="sm"
                           colorScheme="orange"
                           variant="outline"
+                          whiteSpace="normal"
+                          lineHeight="1.25"
+                          h="auto"
+                          minH="36px"
+                          py={2}
+                          w="100%"
                         >
                           {t?.("publicListing.viewOffer")}
                         </Button>

@@ -64,6 +64,7 @@ import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 const View = () => {
   const user = useSelector((state) => state.user?.user) || JSON.parse(localStorage.getItem("user") || "null");
   const param = useParams();
+  const propertyId = param?.id || param?.slug;
   const textColor = useColorModeValue("gray.500", "white");
 
   const [data, setData] = useState();
@@ -212,11 +213,10 @@ const View = () => {
   const fetchData = async (i) => {
     setIsLoding(true);
     try {
-      // Try to fetch by ID first
-      let response = await getApi("api/property/view/", param?.id);
+      let response = await getApi("api/property/view/", propertyId);
+      let payload = response?.data ?? response;
 
-      // If not found and param.id looks like a slug, try to find by slug
-      if (!response?.data?.property && param?.id && !param.id.match(/^[0-9a-fA-F]{24}$/)) {
+      if (!payload?.property && propertyId && !propertyId.match(/^[0-9a-fA-F]{24}$/)) {
         const listResponse = await getApi("api/property/public");
         const properties = Array.isArray(listResponse)
           ? listResponse
@@ -224,19 +224,20 @@ const View = () => {
             ? listResponse.data
             : [];
         const propertyBySlug = properties.find(
-          (p) => p?.publicSlug === param?.id || p?.seo?.slug === param?.id
+          (p) => p?.publicSlug === propertyId || p?.seo?.slug === propertyId
         );
 
         if (propertyBySlug) {
           response = await getApi("api/property/view/", propertyBySlug._id);
+          payload = response?.data ?? response;
         }
       }
 
-      setData(response?.data?.property);
-      setAllData(response?.data);
-      setPhoneCall(response?.data?.phoneCall);
-      setEmailData(response?.data?.Emails);
-      setFilteredContacts(response?.data?.filteredContacts);
+      setData(payload?.property);
+      setAllData(payload);
+      setPhoneCall(payload?.phoneCall);
+      setEmailData(payload?.Emails);
+      setFilteredContacts(payload?.filteredContacts);
     } catch (error) {
       // Error fetching property
     } finally {
@@ -291,7 +292,7 @@ const View = () => {
     dispatch(fetchPropertyCustomFiled());
     fetchData();
     fetchCustomDataFields();
-  }, []);
+  }, [propertyId]);
 
   const [permission, emailAccess, callAccess] = HasAccess([
     "Properties",
@@ -453,7 +454,7 @@ const View = () => {
                   data={propertyData?.[0]}
                   fieldData={data}
                   fetchData={fetchData}
-                  editUrl={`api/property/edit/${param.id}`}
+                  editUrl={`api/property/edit/${propertyId}`}
                   moduleId={propertyData?.[0]?._id}
                   id="reports"
                 />
@@ -686,7 +687,7 @@ const View = () => {
                                 fetchData={fetchData}
                                 isOpen={floorPlans}
                                 onClose={setFloorPlans}
-                                id={param.id}
+                                id={propertyId}
                               />
                             </Flex>
                             <HSeparator />
