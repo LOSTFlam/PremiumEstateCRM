@@ -38,6 +38,7 @@ import {
   Text,
   Textarea,
   Tooltip,
+  useBreakpointValue,
   useColorModeValue,
   useDisclosure,
   useToast,
@@ -152,6 +153,10 @@ export default function MyListings() {
   const subtleText = useColorModeValue("gray.500", "gray.400");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
   const metricBg = useColorModeValue("gray.50", "whiteAlpha.100");
+  const accentGold = useColorModeValue("gold.600", "gold.400");
+  const accentSoft = useColorModeValue("rgba(212,175,55,0.08)", "rgba(212,175,55,0.12)");
+  const statShadow = useColorModeValue("sm", "none");
+  const drawerSize = useBreakpointValue({ base: "full", md: "lg" }) || "lg";
 
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -362,7 +367,15 @@ export default function MyListings() {
             {t("myListings.subtitle")}
           </Text>
         </Box>
-        <Button leftIcon={<MdAdd />} variant="brand" size="md" flexShrink={0} onClick={openCreate}>
+        <Button
+          leftIcon={<MdAdd />}
+          variant="brand"
+          size="md"
+          flexShrink={0}
+          w={{ base: "full", md: "auto" }}
+          borderRadius="full"
+          onClick={openCreate}
+        >
           {t("myListings.addListing")}
         </Button>
       </Flex>
@@ -377,16 +390,17 @@ export default function MyListings() {
           <Box
             key={stat.label}
             bg={cardBg}
-            borderRadius="20px"
+            borderRadius={{ base: "16px", md: "20px" }}
             border="1px solid"
             borderColor={borderColor}
-            px={5}
-            py={4}
+            px={{ base: 4, md: 5 }}
+            py={{ base: 3, md: 4 }}
+            boxShadow={statShadow}
           >
             <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" color={subtleText}>
               {stat.label}
             </Text>
-            <Text fontSize="2xl" fontWeight="800" mt={1}>
+            <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="800" mt={1} color={accentGold}>
               {isLoading ? "—" : stat.value}
             </Text>
           </Box>
@@ -425,12 +439,12 @@ export default function MyListings() {
             <Box
               key={listing._id}
               bg={cardBg}
-              borderRadius="24px"
+              borderRadius={{ base: "20px", md: "24px" }}
               border="1px solid"
               borderColor={borderColor}
               overflow="hidden"
               transition="all 0.25s ease"
-              _hover={{ transform: "translateY(-4px)", boxShadow: "lg" }}
+              _hover={{ transform: { base: "none", md: "translateY(-4px)" }, boxShadow: "lg" }}
             >
               <Box position="relative">
                 <Image
@@ -467,7 +481,7 @@ export default function MyListings() {
                   </HStack>
                 </Box>
 
-                <Text fontWeight="800" fontSize="xl" color="brand.500">
+                <Text fontWeight="800" fontSize="xl" color={accentGold}>
                   {formatPrice(listing?.listingPrice, t, i18n.language)}
                   {listing?.dealType === "rent" ? (
                     <Text as="span" fontSize="sm" color={subtleText} fontWeight="600">
@@ -497,7 +511,7 @@ export default function MyListings() {
                   ].map((metric) => (
                     <Box
                       key={metric.label}
-                      bg={metricBg}
+                      bg={accentSoft}
                       borderRadius="14px"
                       px={2.5}
                       py={2}
@@ -513,12 +527,13 @@ export default function MyListings() {
                   ))}
                 </SimpleGrid>
 
-                <HStack pt={1} spacing={2}>
+                <HStack className="my-listings-actions" pt={1} spacing={2} flexWrap="wrap">
                   <Button
                     size="sm"
                     leftIcon={<MdEdit />}
                     variant="outline"
-                    flex={1}
+                    flex={{ base: "1 1 100%", sm: 1 }}
+                    borderRadius="full"
                     onClick={() => openEdit(listing)}
                   >
                     {t("myListings.edit")}
@@ -551,7 +566,7 @@ export default function MyListings() {
         </SimpleGrid>
       )}
 
-      <Drawer isOpen={drawer.isOpen} onClose={closeDrawer} size="lg" placement="right">
+      <Drawer isOpen={drawer.isOpen} onClose={closeDrawer} size={drawerSize} placement="right">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">

@@ -38,6 +38,8 @@ import { useTranslation } from "react-i18next";
 import LeadCaptureForm from "components/property/LeadCaptureForm";
 import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
+import ModernHeader from "components/ModernHeader";
+import ModernFooter from "components/ModernFooter";
 import { publicBrand } from "views/public/publicBrand";
 import { formatPrice } from "./catalog/catalogData";
 
@@ -206,9 +208,15 @@ const PropertyDetailPage = () => {
   ];
 
   return (
-    <Box bg={publicBrand.gradients.page} minH="100vh" color="white">
+    <Box bg={publicBrand.gradients.page} minH="100vh" color="white" className="public-brand-shell">
+      <ModernHeader />
       {/* Hero Image */}
-      <Box position="relative" h={{ base: "400px", md: "600px" }} overflow="hidden">
+      <Box
+        position="relative"
+        h={{ base: "280px", sm: "360px", md: "600px" }}
+        overflow="hidden"
+        mt={{ base: "88px", md: 0 }}
+      >
         <Image
           src={property.images?.[0] || property.primaryImage}
           alt={property.name || property.propertyAddress}
@@ -223,7 +231,7 @@ const PropertyDetailPage = () => {
         />
 
         {/* Action Buttons */}
-        <HStack position="absolute" top={6} right={6} spacing={3}>
+        <HStack position="absolute" top={{ base: 4, md: 6 }} right={{ base: 4, md: 6 }} spacing={2}>
           <IconButton
             icon={<FiHeart />}
             onClick={handleFavoriteToggle}
@@ -247,8 +255,8 @@ const PropertyDetailPage = () => {
         {/* Status Badge */}
         <Badge
           position="absolute"
-          top={6}
-          left={6}
+          top={{ base: 4, md: 6 }}
+          left={{ base: 4, md: 6 }}
           px={4}
           py={2}
           borderRadius="full"
@@ -263,8 +271,11 @@ const PropertyDetailPage = () => {
         {property.images?.length > 1 && (
           <Button
             position="absolute"
-            bottom={6}
-            right={6}
+            bottom={{ base: 4, md: 6 }}
+            right={{ base: 4, md: 6 }}
+            left={{ base: 4, md: "auto" }}
+            w={{ base: "calc(100% - 32px)", md: "auto" }}
+            size={{ base: "sm", md: "md" }}
             leftIcon={<FiImage />}
             bg="rgba(255,255,255,0.9)"
             color="gray.800"
@@ -277,8 +288,8 @@ const PropertyDetailPage = () => {
       </Box>
 
       {/* Content */}
-      <Container maxW="8xl" py={10}>
-        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={10}>
+      <Container maxW="8xl" py={{ base: 6, md: 10 }} px={{ base: 4, md: 6 }}>
+        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={{ base: 6, md: 10 }}>
           {/* Main Content */}
           <Stack spacing={8}>
             {/* Title & Price */}
@@ -339,7 +350,7 @@ const PropertyDetailPage = () => {
             </Box>
 
             {/* Amenities */}
-            <SimpleGrid columns={2} spacing={4}>
+            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
               {amenities.map((amenity, idx) => (
                 <Box
                   key={idx}
@@ -529,6 +540,8 @@ const PropertyDetailPage = () => {
         property={property}
         type={leadFormType}
       />
+
+      <ModernFooter />
     </Box>
   );
 };

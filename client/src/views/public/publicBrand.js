@@ -51,6 +51,16 @@ export const publicBrand = {
     md: "22px",
     sm: "18px",
   },
+  fonts: {
+    display: '"Playfair Display", Georgia, serif',
+    sans: '"DM Sans", system-ui, sans-serif',
+  },
+  spacing: {
+    pageX: { base: 4, md: 6, xl: 8 },
+    pageTop: { base: 24, md: 28, xl: 32 },
+    sectionY: { base: 12, md: 16, xl: 20 },
+    cardPad: { base: 4, md: 5, lg: 6 },
+  },
 };
 
 export const publicBrandAssets = {

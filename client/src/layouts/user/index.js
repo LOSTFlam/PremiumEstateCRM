@@ -399,16 +399,16 @@ export default function User(props) {
                 />
               </Box>
             </Portal>
-            <Box pt={{ base: "150px", md: "95px", xl: "95px" }}>
+            <Box pt={{ base: "108px", md: "95px", xl: "95px" }}>
               {getRoute() ? (
                 <Box
+                  className="cabinet-content"
                   mx="auto"
-                  pe="20px"
+                  pe={{ base: "12px", md: "20px" }}
+                  ps={{ base: "12px", md: openSidebar ? "20px" : "20px" }}
                   minH="84vh"
-                  pt="50px"
-                  style={{
-                    padding: openSidebar ? "8px 20px 8px 20px" : "8px 20px",
-                  }}
+                  pt={{ base: "16px", md: "50px" }}
+                  pb={{ base: "24px", md: "8px" }}
                 >
                   <Suspense
                     fallback={

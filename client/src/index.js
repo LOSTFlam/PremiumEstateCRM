@@ -9,6 +9,7 @@ import "assets/css/App.css";
 import "assets/css/tailwind.css";
 import "styles/design-tokens.css";
 import "styles/premium-effects.css";
+import "styles/responsive.css";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Box, ChakraProvider, Container, Spinner, Stack, Text } from "@chakra-ui/react";
 import theme from "theme/theme";

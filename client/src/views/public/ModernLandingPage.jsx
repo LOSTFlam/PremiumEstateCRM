@@ -519,7 +519,7 @@ export default function ModernLandingPage() {
           py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,0.98) 0%, rgba(236,227,215,1) 100%)"
         >
-          <Container maxW="min(1640px, 96vw)">
+          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             <Stack spacing={10}>
               <Box
                 borderRadius="32px"
@@ -673,7 +673,7 @@ export default function ModernLandingPage() {
           py={{ base: 16, md: 20 }}
           bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
         >
-          <Container maxW="min(1640px, 96vw)">
+          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             <Stack spacing={8}>
               <Box>
                 <Badge
@@ -901,7 +901,7 @@ export default function ModernLandingPage() {
           py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,1) 0%, rgba(244,238,229,1) 100%)"
         >
-          <Container maxW="min(1640px, 96vw)">
+          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             <Stack spacing={10}>
               <Stack spacing={6} align="center" textAlign="center">
                 <Badge

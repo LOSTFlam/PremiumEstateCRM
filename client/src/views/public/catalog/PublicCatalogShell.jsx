@@ -198,9 +198,9 @@ const optionStyles = {
 const PAGE_MAX_W = "1920px";
 const PROPERTY_GRID_COLUMNS = { base: 1, md: 2, xl: 3, "2xl": 4 };
 const SURFACE_PANEL_PROPS = {
-  borderRadius: "34px",
-  px: { base: 6, md: 7, xl: 8 },
-  py: { base: 6, md: 7, xl: 8 },
+  borderRadius: { base: "24px", md: "30px", xl: "34px" },
+  px: { base: 4, md: 7, xl: 8 },
+  py: { base: 5, md: 7, xl: 8 },
   bg: "white",
   border: "1px solid rgba(9,18,32,0.08)",
   boxShadow: publicBrand.shadows.soft,
@@ -677,8 +677,9 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                 </Badge>
                 <Heading
                   as="h1"
-                  fontSize={{ base: "4xl", md: "6xl" }}
-                  lineHeight={{ base: "1.08", md: "0.98" }}
+                  className="catalog-hero-title"
+                  fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}
+                  lineHeight={{ base: "1.12", md: "0.98" }}
                   maxW="920px"
                 >
                   {title}
@@ -879,16 +880,24 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     </Text>
                   </Stack>
 
-                  <HStack spacing={3} flexWrap="wrap">
+                  <HStack
+                    className="catalog-toolbar"
+                    spacing={3}
+                    flexWrap="wrap"
+                    w={{ base: "full", md: "auto" }}
+                  >
                     <IconButton
                       display={{ base: "inline-flex", xl: "none" }}
                       aria-label={copy.filters}
                       icon={<FiFilter />}
                       onClick={onOpen}
                       borderRadius="full"
+                      minW="44px"
+                      minH="44px"
                     />
                     <Select
-                      maxW="260px"
+                      maxW={{ base: "100%", md: "260px" }}
+                      flex={{ base: 1, md: "none" }}
                       bg="white"
                       borderColor="rgba(9,18,32,0.08)"
                       borderRadius="18px"

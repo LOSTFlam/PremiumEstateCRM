@@ -19,16 +19,20 @@ export const buttonStyles = {
           borderRadius: "16px",
         }),
         brand: (props) => ({
-          bg: mode("brand.500", "brand.400")(props),
-          color: "white",
+          bg: mode("brand.400", "brand.400")(props),
+          color: mode("gray.900", "white")(props),
+          borderRadius: "full",
+          fontWeight: "700",
+          boxShadow: "0 8px 24px rgba(212, 175, 55, 0.22)",
           _focus: {
-            bg: mode("brand.500", "brand.400")(props),
+            bg: mode("brand.400", "brand.400")(props),
           },
           _active: {
-            bg: mode("brand.500", "brand.400")(props),
+            bg: mode("brand.500", "brand.500")(props),
           },
           _hover: {
-            bg: mode("brand.600", "brand.400")(props),
+            bg: mode("brand.500", "brand.300")(props),
+            transform: "translateY(-1px)",
           },
         }),
         darkBrand: (props) => ({

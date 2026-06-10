@@ -9,6 +9,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  usePrefersReducedMotion,
   useToast,
 } from "@chakra-ui/react";
 
@@ -124,6 +125,7 @@ const ModernPropertyCard = ({
   const richListing = isRichListing(property);
   const propertyHref = buildPropertyHref(property);
   const [imgError, setImgError] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const handleShare = async (event) => {
     event.preventDefault();
@@ -167,14 +169,16 @@ const ModernPropertyCard = ({
         transition: "opacity 0.5s ease",
         zIndex: 0,
       }}
-      _hover={{
-        _before: {
-          opacity: 1,
-        },
-        transform: "translateY(-12px) scale(1.02)",
-        boxShadow:
-          "0 20px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(212, 175, 55, 0.15), 0 0 80px rgba(255, 255, 255, 0.08)",
-      }}
+      _hover={
+        prefersReducedMotion
+          ? { boxShadow: "0 16px 48px rgba(0, 0, 0, 0.2)" }
+          : {
+              _before: { opacity: 1 },
+              transform: { base: "translateY(-4px)", md: "translateY(-12px) scale(1.02)" },
+              boxShadow:
+                "0 20px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(212, 175, 55, 0.15), 0 0 80px rgba(255, 255, 255, 0.08)",
+            }
+      }
     >
       <Box
         position="relative"
@@ -208,12 +212,13 @@ const ModernPropertyCard = ({
         />
 
         <HStack
+          className="property-badges"
           position="absolute"
-          top={4}
-          left={4}
+          top={{ base: 3, md: 4 }}
+          left={{ base: 3, md: 4 }}
           spacing={2}
           flexWrap="wrap"
-          maxW="calc(100% - 140px)"
+          maxW={{ base: "calc(100% - 100px)", md: "calc(100% - 140px)" }}
         >
           <Badge
             px={3.5}
@@ -260,7 +265,13 @@ const ModernPropertyCard = ({
           ) : null}
         </HStack>
 
-        <HStack position="absolute" top={4} right={4} spacing={2}>
+        <HStack
+          className="property-actions"
+          position="absolute"
+          top={{ base: 3, md: 4 }}
+          right={{ base: 3, md: 4 }}
+          spacing={2}
+        >
           <IconButton
             aria-label="Toggle favorite"
             icon={<FiHeart />}
@@ -326,8 +337,20 @@ const ModernPropertyCard = ({
           />
         </HStack>
 
-        <Stack position="absolute" left={4} right={4} bottom={4} spacing={3}>
-          <HStack justify="space-between" align="end" spacing={4}>
+        <Stack
+          position="absolute"
+          left={{ base: 3, md: 4 }}
+          right={{ base: 3, md: 4 }}
+          bottom={{ base: 3, md: 4 }}
+          spacing={3}
+        >
+          <HStack
+            justify="space-between"
+            align="end"
+            spacing={4}
+            flexWrap={{ base: "wrap", sm: "nowrap" }}
+            rowGap={2}
+          >
             <Stack spacing={1}>
               <Text
                 fontSize={{ base: "2xl", md: "3xl" }}
@@ -350,12 +373,13 @@ const ModernPropertyCard = ({
               </Text>
             </Stack>
             <Box
-              px={4}
-              py={3}
+              px={{ base: 3, md: 4 }}
+              py={{ base: 2, md: 3 }}
               borderRadius="22px"
               bg="rgba(7,12,20,0.54)"
               border="1px solid rgba(227, 211, 184, 0.14)"
               backdropFilter="blur(10px)"
+              display={{ base: "none", sm: "block" }}
             >
               <Text
                 color="whiteAlpha.600"
@@ -375,7 +399,7 @@ const ModernPropertyCard = ({
         </Stack>
       </Box>
 
-      <Stack p={6} spacing={5}>
+      <Stack className="property-body" p={publicBrand.spacing.cardPad} spacing={{ base: 4, md: 5 }}>
         <Stack spacing={3}>
           <Text
             fontSize="xl"
@@ -401,7 +425,7 @@ const ModernPropertyCard = ({
           </Text>
         </Stack>
 
-        <SimpleGrid columns={3} spacing={2}>
+        <SimpleGrid className="property-metrics" columns={3} spacing={2}>
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
@@ -424,7 +448,7 @@ const ModernPropertyCard = ({
           ))}
         </SimpleGrid>
 
-        <SimpleGrid columns={3} spacing={2}>
+        <SimpleGrid className="property-assets" columns={{ base: 1, sm: 3 }} spacing={2}>
           {assetBlocks(property, t).map((asset) => (
             <HStack
               key={asset.label}

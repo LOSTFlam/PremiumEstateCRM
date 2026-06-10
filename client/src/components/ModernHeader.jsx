@@ -127,6 +127,7 @@ export default function ModernHeader({ largeLogo = [] }) {
   return (
     <>
       <Box
+        className="public-header-wrap"
         position="fixed"
         top="0"
         left="0"
@@ -232,7 +233,12 @@ export default function ModernHeader({ largeLogo = [] }) {
               </HStack>
             </RouterLink>
 
-            <HStack spacing={2} display={{ base: "none", xl: "flex" }}>
+            <HStack
+              spacing={1}
+              display={{ base: "none", lg: "flex" }}
+              className="header-nav-scroll"
+              flexShrink={1}
+            >
               {navLinks.map((link) => {
                 const active = isActivePath(link.href);
                 return (
@@ -243,8 +249,11 @@ export default function ModernHeader({ largeLogo = [] }) {
                     position="relative"
                     color="whiteAlpha.600"
                     fontWeight="500"
-                    px={3}
-                    fontSize="sm"
+                    px={{ base: 2, xl: 3 }}
+                    fontSize={{ base: "xs", xl: "sm" }}
+                    minH="40px"
+                    whiteSpace="nowrap"
+                    flexShrink={0}
                     bg="transparent"
                     _hover={{ color: "white", bg: "transparent" }}
                     _after={
@@ -268,7 +277,7 @@ export default function ModernHeader({ largeLogo = [] }) {
               })}
             </HStack>
 
-            <HStack spacing={1.5} display={{ base: "none", lg: "flex" }}>
+            <HStack spacing={1.5} display={{ base: "none", md: "flex" }} flexShrink={0}>
               {/* Theme Toggle */}
               <ThemeToggle />
 
@@ -376,13 +385,15 @@ export default function ModernHeader({ largeLogo = [] }) {
               <Button
                 as={RouterLink}
                 to={isAuthenticated ? "/my-listings" : "/auth/sign-up"}
-                size="sm"
+                size={{ base: "sm", md: "sm" }}
                 borderRadius="full"
-                px={4}
+                px={{ base: 3, md: 4 }}
+                display={{ base: "none", sm: "inline-flex" }}
                 bg="linear-gradient(135deg, #f5d076 0%, #b97737 100%)"
                 color="#0b1320"
                 fontWeight="700"
-                _hover={{ opacity: 0.9 }}
+                fontSize={{ base: "xs", md: "sm" }}
+                _hover={{ opacity: 0.9, transform: "translateY(-1px)" }}
               >
                 {t("publicListing.postListing")}
               </Button>
@@ -395,6 +406,10 @@ export default function ModernHeader({ largeLogo = [] }) {
               onClick={isOpen ? onClose : onOpen}
               variant="ghost"
               color="white"
+              size="lg"
+              minW="44px"
+              minH="44px"
+              borderRadius="full"
               _hover={{ bg: "whiteAlpha.100" }}
             />
           </Flex>

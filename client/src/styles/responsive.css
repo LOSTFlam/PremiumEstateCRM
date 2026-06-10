@@ -1,0 +1,205 @@
+/* Premium Estate — responsive & touch-friendly polish */
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --touch-min: 44px;
+  --page-gutter: clamp(12px, 3.2vw, 32px);
+  --section-gap: clamp(24px, 5vw, 64px);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(88px + var(--safe-top));
+}
+
+body {
+  overflow-x: clip;
+}
+
+/* Touch targets — public surfaces & primary actions */
+.public-header-wrap .chakra-button,
+.public-header-wrap .chakra-icon-button,
+.public-brand-shell .chakra-button,
+.property-card .chakra-icon-button,
+a.public-brand-button {
+  min-height: var(--touch-min);
+}
+
+.public-header-wrap .chakra-icon-button,
+.property-card .chakra-icon-button {
+  min-width: var(--touch-min);
+}
+
+/* Public pages */
+.public-page-shell {
+  padding-left: max(var(--page-gutter), var(--safe-left));
+  padding-right: max(var(--page-gutter), var(--safe-right));
+}
+
+.public-page-section {
+  padding-top: var(--section-gap);
+  padding-bottom: var(--section-gap);
+}
+
+/* Property cards */
+.property-card {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .property-card .property-image-wrapper img {
+    height: 210px !important;
+  }
+
+  .property-card .property-badges {
+    max-width: calc(100% - 96px);
+    gap: 6px !important;
+  }
+
+  .property-card .property-badges .chakra-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .property-card .property-actions {
+    gap: 6px !important;
+  }
+
+  .property-card .property-actions .chakra-icon-button {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .property-card .property-body {
+    padding: 16px !important;
+  }
+
+  .property-card .property-metrics {
+    gap: 6px !important;
+  }
+
+  .property-card .property-metrics > * {
+    padding: 10px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .property-card .property-assets {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Header scrollable nav on tablets */
+.header-nav-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  max-width: min(52vw, 520px);
+}
+
+.header-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cabinet content area */
+.cabinet-content {
+  padding-left: max(12px, var(--safe-left));
+  padding-right: max(12px, var(--safe-right));
+}
+
+@media (max-width: 767px) {
+  .cabinet-content {
+    padding-left: max(8px, var(--safe-left));
+    padding-right: max(8px, var(--safe-right));
+    padding-top: 8px !important;
+  }
+
+  .cabinet-content .chakra-simple-grid {
+    gap: 12px;
+  }
+
+  .my-listings-actions {
+    flex-wrap: wrap;
+  }
+
+  .my-listings-actions .chakra-button {
+    flex: 1 1 100%;
+  }
+
+  .my-listings-actions .chakra-icon-button {
+    flex: 1 1 calc(50% - 4px);
+  }
+}
+
+/* Catalog filter drawer */
+@media (max-width: 479px) {
+  .catalog-hero-title {
+    font-size: 2rem !important;
+    line-height: 1.12 !important;
+  }
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .catalog-toolbar > * {
+    width: 100%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .property-card:hover,
+  .property-card:focus-visible {
+    transform: none !important;
+  }
+
+  .logo-container:hover,
+  .logo-image {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Safe area for fixed header */
+.public-header-wrap {
+  padding-top: max(8px, var(--safe-top));
+  padding-left: max(8px, var(--safe-left));
+  padding-right: max(8px, var(--safe-right));
+}
+
+/* Drawer full bleed on phones */
+@media (max-width: 479px) {
+  .chakra-drawer__content {
+    border-top-left-radius: 24px !important;
+    border-top-right-radius: 24px !important;
+  }
+}
+
+/* Button groups stack on narrow screens */
+@media (max-width: 639px) {
+  .stack-on-mobile.chakra-stack,
+  .stack-on-mobile.chakra-hstack {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .stack-on-mobile .chakra-button {
+    width: 100%;
+  }
+}

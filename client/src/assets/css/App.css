@@ -122,10 +122,26 @@ body {
   color: #08111a;
   border: 1px solid rgba(243,217,161,0.38);
   box-shadow: var(--public-shadow-glow);
+  border-radius: 999px;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .public-brand-button:hover {
   transform: translateY(-1px);
+  box-shadow: 0 18px 48px rgba(185, 119, 55, 0.28);
+}
+
+@media (max-width: 767px) {
+  .public-brand-panel,
+  .public-brand-panel-light {
+    border-radius: 22px;
+  }
+
+  .public-brand-kicker {
+    letter-spacing: 0.22em;
+    font-size: 10px;
+  }
 }
 
 .public-brand-outline {
