@@ -24,6 +24,7 @@ import {
 import Card from "components/card/Card";
 import { useEffect, useMemo, useState } from "react";
 import { putApi } from "services/api";
+import { extractApiErrorMessage } from "utils/errorMessages";
 import { normalizeModerationStatus, moderationStatusMeta } from "utils/moderationStatus";
 
 const verificationOptions = [
@@ -159,7 +160,10 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
       toast({ title: "Объявление одобрено и опубликовано", status: "success" });
       onUpdated?.();
     } catch (error) {
-      toast({ title: "Не удалось одобрить объявление", status: "error" });
+      toast({
+        title: extractApiErrorMessage(error, "ru") || "Не удалось одобрить объявление",
+        status: "error",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -190,7 +194,10 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
       });
       onUpdated?.();
     } catch (error) {
-      toast({ title: "Не удалось отклонить объявление", status: "error" });
+      toast({
+        title: extractApiErrorMessage(error, "ru") || "Не удалось отклонить объявление",
+        status: "error",
+      });
     } finally {
       setIsSaving(false);
     }

@@ -79,7 +79,7 @@ const Index = () => {
     }
 
     const actionHeader = {
-      Header: "Action",
+      Header: t?.("modules.contact.actions.action") || t?.("common.actions"),
       accessor: "action",
       isSortable: false,
       center: true,
@@ -237,7 +237,7 @@ const Index = () => {
         {!isLoding && (
           <GridItem colSpan={6}>
             <CommonCheckTable
-              title={"Contacts"}
+              title="Contacts"
               isLoding={isLoding}
               columnData={columns ?? []}
               // dataColumn={dataColumn ?? []}

@@ -22,11 +22,11 @@ import AddEmailHistory from "./add";
 import { useDispatch } from "react-redux";
 import { fetchEmailsData } from "../../../redux/slices/emailsSlice";
 import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+import { useCrmLabels } from "hooks/useCrmLabels";
 
 const Index = (_props) => {
-  const { t } = useTranslation();
-  const title = "Email";
+  const { t, tr } = useCrmLabels();
+  const title = tr("Email");
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [_selectedId, setDelete] = useState(false);
@@ -42,7 +42,7 @@ const Index = (_props) => {
   const [searchedData, setSearchedData] = useState([]);
   const [permission, leadAccess, contactAccess] = HasAccess(["Emails", "Leads", "Contacts"]);
   const actionHeader = {
-    Header: "Action",
+    Header: tr("Action"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -60,7 +60,7 @@ const Index = (_props) => {
                 onClick={() => navigate(`/Email/${row?.values?._id}`)}
                 icon={<ViewIcon mb={"2px"} fontSize={15} />}
               >
-                View
+                {tr("View")}
               </MenuItem>
             )}
             {row?.original?.createByContact && contactAccess?.view ? (
@@ -77,7 +77,7 @@ const Index = (_props) => {
                 icon={row?.original?.createByContact && <IoIosContact fontSize={15} />}
               >
                 {" "}
-                {row?.original?.createByContact && contactAccess?.view && "contact"}
+                {row?.original?.createByContact && contactAccess?.view && tr("contact")}
               </MenuItem>
             ) : (
               ""
@@ -95,7 +95,7 @@ const Index = (_props) => {
                   )
                 }
               >
-                {row?.original?.createByLead && leadAccess?.view && "lead"}
+                {row?.original?.createByLead && leadAccess?.view && tr("lead")}
               </MenuItem>
             ) : (
               ""

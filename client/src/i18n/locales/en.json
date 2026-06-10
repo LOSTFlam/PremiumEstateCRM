@@ -177,6 +177,16 @@
     "invalidNumber": "Enter a number",
     "perMonth": "/mo"
   },
+  "moderationQueue": {
+    "title": "Listing moderation",
+    "subtitle": "Review user listings before they appear on the public site",
+    "refresh": "Refresh",
+    "emptyTitle": "Queue is empty",
+    "emptyHint": "New listings submitted for review will appear here",
+    "review": "Review",
+    "author": "Author",
+    "submitted": "Submitted"
+  },
   "publicListing": {
     "heroBadge": "Premium showcase",
     "heroTitle": "Discover houses, apartments, land plots and commercial properties curated for modern living",
@@ -1018,6 +1028,7 @@
       "addNew": "Create Template",
       "edit": "Edit Template",
       "delete": "Delete Template",
+      "view": "View",
       "name": "Template Name",
       "subject": "Subject",
       "actions": "Actions"

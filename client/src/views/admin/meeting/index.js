@@ -25,7 +25,7 @@ import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { t } = useTranslation();
-  const title = "Meeting";
+  const title = t("modules.meeting.title");
   const navigate = useNavigate();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,7 +43,7 @@ const Index = () => {
   const dispatch = useDispatch();
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.meeting.actions"),
     isSortable: false,
     center: true,
     cell: ({ row }) => (
@@ -60,7 +60,7 @@ const Index = () => {
                 onClick={() => navigate(`/metting/${row?.values?._id}`)}
                 icon={<ViewIcon fontSize={15} />}
               >
-                View
+                {t("modules.meeting.view")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -73,7 +73,7 @@ const Index = () => {
                 }}
                 icon={<DeleteIcon fontSize={15} />}
               >
-                Delete
+                {t("modules.meeting.delete")}
               </MenuItem>
             )}
           </MenuList>

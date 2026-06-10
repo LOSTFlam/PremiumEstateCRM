@@ -94,15 +94,6 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === "production" ? 5 : 1000,
-  message: {
-    success: false,
-    message: "Too many authentication attempts, please try again later.",
-  },
-});
-
 // Middleware
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
@@ -132,9 +123,6 @@ app.use(
     exposedHeaders: ["Access-Control-Allow-Origin", "X-Total-Count"],
   }),
 );
-
-// Apply auth limiter to auth routes
-app.use("/api/user", authLimiter);
 
 // Apply audit logging
 app.use("/api/user", auditLog);

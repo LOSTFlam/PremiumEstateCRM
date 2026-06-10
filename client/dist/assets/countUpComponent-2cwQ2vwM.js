@@ -1,1 +1,0 @@
-import{j as p}from"./index-BOQ4x2Rn.js";import{a as o}from"./vendor-charts-8I5hyNb7.js";function f({targetNumber:n}){const[t,s]=o.useState(0);return o.useEffect(()=>{const e=setInterval(()=>{t<n&&s(r=>r+1)},n>500?0:20);return()=>{clearInterval(e)}},[t,n]),p.jsx("span",{children:typeof n=="number"?t:n})}export{f as C};

@@ -53,7 +53,7 @@ const Task = () => {
     setSelectedId(row?.values?._id);
   };
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.task.actions"),
     isSortable: false,
     center: true,
     cell: ({ row }) => (
@@ -69,7 +69,7 @@ const Task = () => {
                 icon={<EditIcon fontSize={15} mb={1} />}
                 onClick={() => handleEditOpen(row)}
               >
-                Edit
+                {t("modules.task.edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -79,7 +79,7 @@ const Task = () => {
                 icon={<ViewIcon mb={1} fontSize={15} />}
                 onClick={() => handleViewOpen(row?.values?._id)}
               >
-                View
+                {t("modules.task.view")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -92,7 +92,7 @@ const Task = () => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.task.delete")}
               </MenuItem>
             )}
           </MenuList>
@@ -263,7 +263,7 @@ const Task = () => {
   return (
     <div>
       <CommonCheckTable
-        title={"Tasks"}
+        title="Tasks"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}

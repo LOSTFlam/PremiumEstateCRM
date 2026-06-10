@@ -17,6 +17,7 @@ import { FiHeart, FiShare2, FiDownload, FiTrash2, FiGrid, FiList } from "react-i
 import { MdCompareArrows } from "react-icons/md";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import { getApi } from "services/api";
+import { extractCollection } from "utils/normalizeResponse";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
 import {
@@ -126,7 +127,7 @@ const FavoritesPage = () => {
       const response = await getApi(`api/property/public/by-ids?ids=${storedIds.join(",")}`, {
         silent: true,
       });
-      const remoteFavorites = Array.isArray(response?.data) ? response.data : [];
+      const remoteFavorites = extractCollection(response);
 
       if (remoteFavorites.length > 0) {
         setFavorites(remoteFavorites);

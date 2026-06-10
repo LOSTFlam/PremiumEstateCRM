@@ -55,7 +55,7 @@ const Index = () => {
 
   // Action header for table
   const actionHeader = {
-    Header: "Action",
+    Header: safeT("modules.property.actions.action", safeT("common.actions", "Actions")),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -211,7 +211,7 @@ const Index = () => {
         {!isLoding && (
           <GridItem colSpan={6}>
             <CommonCheckTable
-              title={"Properties"}
+              title="Properties"
               isLoding={isLoding}
               columnData={columns ?? []}
               // dataColumn={dataColumn ?? []}

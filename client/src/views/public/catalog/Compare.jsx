@@ -23,6 +23,7 @@ import { FiX, FiCheck, FiDownload, FiArrowLeft } from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import { LuMapPin, LuBuilding2, LuTrees } from "react-icons/lu";
 import { getApi } from "services/api";
+import { extractCollection } from "utils/normalizeResponse";
 import { useTranslation } from "react-i18next";
 import { publicBrand } from "views/public/publicBrand";
 import { formatPrice, getPrimaryImage, normalizePropertyTypeKey } from "./catalogData";
@@ -170,7 +171,7 @@ const ComparePage = () => {
       const response = await getApi(`api/property/public/by-ids?ids=${idList.join(",")}`, {
         silent: true,
       });
-      const remoteProperties = Array.isArray(response?.data) ? response.data : [];
+      const remoteProperties = extractCollection(response);
 
       if (remoteProperties.length > 0) {
         setProperties(remoteProperties);

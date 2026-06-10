@@ -62,7 +62,7 @@ import ListingVerificationPanel from "./components/ListingVerificationPanel";
 import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 
 const View = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = useSelector((state) => state.user?.user) || JSON.parse(localStorage.getItem("user") || "null");
   const param = useParams();
   const textColor = useColorModeValue("gray.500", "white");
 

@@ -51,6 +51,9 @@ import {
 } from "../../redux/slices/advanceSearchSlice";
 import { commonUtils } from "utils/utils";
 import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
+
+const isActionColumn = (col) => col?.accessor === "action";
 
 const CommonCheckTable = (props) => {
   const {
@@ -88,8 +91,9 @@ const CommonCheckTable = (props) => {
   } = props;
   const { dataLength } = props;
   const { handleSearchType } = props;
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRu = i18n.language?.startsWith("ru");
+  const tr = (text) => translateCrmText(text, { t, language: i18n.language });
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
@@ -399,7 +403,7 @@ const CommonCheckTable = (props) => {
   useEffect(() => {
     if (columns) {
       let tempCsvColumns = columns
-        ?.filter((col) => col?.Header !== "#" && col?.Header !== "Action")
+        ?.filter((col) => col?.Header !== "#" && !isActionColumn(col))
         ?.map((field) => ({
           Header: field?.Header,
           accessor: field?.accessor,
@@ -423,7 +427,7 @@ const CommonCheckTable = (props) => {
                   textTransform={"capitalize"}
                   alignItems="center"
                 >
-                  {title} ({dataLength || data?.length})
+                  {tr(title)} ({dataLength || data?.length})
                 </Flex>
               )}
               {customSearch !== false && (
@@ -453,7 +457,7 @@ const CommonCheckTable = (props) => {
                       size="sm"
                       onClick={() => setAdvaceSearch(true)}
                     >
-                      Advance Search
+                      {tr("Advance Search")}
                     </Button>
                   )}
               {searchDisplay || displaySearchData ? (
@@ -464,7 +468,7 @@ const CommonCheckTable = (props) => {
                   ms={2}
                   onClick={() => handleClear()}
                 >
-                  Clear
+                  {tr("Clear")}
                 </Button>
               ) : (
                 ""
@@ -506,11 +510,11 @@ const CommonCheckTable = (props) => {
                 </MenuButton>
                 <MenuList minW={"fit-content"} transform={"translate(1670px, 60px)"} zIndex={2}>
                   <MenuItem onClick={() => setManageColumnsModel(true)} width={"165px"}>
-                    {isRu ? "Настроить колонки" : "Manage Columns"}
+                    {tr("Manage Columns")}
                   </MenuItem>
                   {typeof setIsImport === "function" && (
                     <MenuItem width={"165px"} onClick={() => setIsImport(true)}>
-                      {isRu ? "Импорт данных" : `Import ${title}`}
+                      {isRu ? tr("Import data") : `${tr("Import")} ${tr(title)}`}
                     </MenuItem>
                   )}
                   {exportColumn !== false && allData && allData?.length > 0 && (
@@ -675,7 +679,7 @@ const CommonCheckTable = (props) => {
                               data = (
                                 <Flex
                                   align="center"
-                                  justifyContent={item?.Header === "Action" ? "center" : "start"}
+                                  justifyContent={isActionColumn(item) ? "center" : "start"}
                                 >
                                   {wrapWithText ? (
                                     <Text color={textColor} fontSize="sm" fontWeight="700">

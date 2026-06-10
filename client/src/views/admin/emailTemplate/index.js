@@ -10,10 +10,10 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import CommonDeleteModel from "components/commonDeleteModel";
 import { fetchEmailTempData } from "../../../redux/slices/emailTempSlice";
-import { useTranslation } from "react-i18next";
+import { useCrmLabels } from "hooks/useCrmLabels";
 
 const Index = () => {
-  const { t } = useTranslation();
+  const { t, tr } = useCrmLabels();
   const [action, setAction] = useState(false);
   const [selectedValues, setSelectedValues] = useState([]);
   // const [advanceSearch, setAdvanceSearch] = useState(false);
@@ -35,7 +35,7 @@ const Index = () => {
   };
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.emailTemplate.actions") || tr("Action"),
     isSortable: false,
     center: true,
     cell: ({ row }) => (
@@ -51,7 +51,7 @@ const Index = () => {
                 icon={<EditIcon fontSize={15} mb={1} />}
                 onClick={() => handleEditOpen(row)}
               >
-                Edit
+                {t("modules.emailTemplate.edit") || tr("Edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -61,7 +61,7 @@ const Index = () => {
                 icon={<ViewIcon fontSize={15} mb={1} />}
                 onClick={() => navigate(`/email-template/${row?.values?._id}`)}
               >
-                View
+                {t("modules.emailTemplate.view") || tr("View")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -74,7 +74,7 @@ const Index = () => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.emailTemplate.delete") || tr("Delete")}
               </MenuItem>
             )}
           </MenuList>
@@ -167,7 +167,7 @@ const Index = () => {
   return (
     <div>
       <CommonCheckTable
-        title={"Email Template"}
+        title="Email Template"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}

@@ -10,13 +10,18 @@ import { Flex, useBreakpointValue, useDisclosure as _useDisclosure } from "@chak
 import EventView from "views/admin/task/eventView";
 import MeetingView from "views/admin/meeting/meetingView";
 import CallView from "views/admin/phoneCall/callView";
-import { GoDotFill } from "react-icons/go";
+import { useTranslation } from "react-i18next";
+import { translateCrmText } from "i18n/crmDictionary";
+import ruLocale from "@fullcalendar/core/locales/ru";
 import EmailView from "views/admin/emailHistory/emailView";
 import { HasAccess } from "../../../../redux/accessUtils";
 import AddEdit from "views/admin/task/components/AddEdit";
 
 const Calender = (props) => {
   const { data, fetchData } = props;
+  const { i18n } = useTranslation();
+  const tr = (text) => translateCrmText(text, { language: i18n.language });
+  const isRu = i18n.language?.startsWith("ru");
   const [eventView, setEventView] = useState(false);
   const [meetingView, setMeetingView] = useState(false);
   const [callView, setCallView] = useState(false);
@@ -103,17 +108,17 @@ const Calender = (props) => {
         <div style={{ display: "flex", justifyContent: "end" }}>
           {(callAccess?.create || user?.role === "superAdmin") && (
             <Flex alignItems={"center"} fontSize={"14px"} marginRight={"10px"}>
-              <GoDotFill color="green" fontSize={"18px"} /> Calls
+              <GoDotFill color="green" fontSize={"18px"} /> {tr("Calls")}
             </Flex>
           )}
           {(meetingAccess?.create || user?.role === "superAdmin") && (
             <Flex alignItems={"center"} fontSize={"14px"} marginRight={"10px"}>
-              <GoDotFill color="red" fontSize={"18px"} /> Meetings
+              <GoDotFill color="red" fontSize={"18px"} /> {tr("Meetings")}
             </Flex>
           )}
           {(emailAccess?.create || user?.role === "superAdmin") && (
             <Flex alignItems={"center"} fontSize={"14px"}>
-              <GoDotFill color="blue" fontSize={"18px"} /> Emails
+              <GoDotFill color="blue" fontSize={"18px"} /> {tr("Emails")}
             </Flex>
           )}
         </div>
@@ -129,17 +134,18 @@ const Calender = (props) => {
             right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,multiMonthFourMonth",
           }}
           eventClick={handleEventClick}
+          locale={isRu ? ruLocale : undefined}
           buttonText={{
-            today: "Today",
-            dayGridMonth: "Month",
-            timeGridWeek: "Week",
-            timeGridDay: "Day",
-            listWeek: "List",
+            today: tr("Today"),
+            dayGridMonth: tr("Month"),
+            timeGridWeek: tr("Week"),
+            timeGridDay: tr("Day"),
+            listWeek: tr("List"),
           }}
           views={{
             multiMonthFourMonth: {
               type: "multiMonth",
-              buttonText: "Multi Month",
+              buttonText: tr("Multi Month"),
               duration: {
                 months: useBreakpointValue({ base: 4, lg: 4, xl: 6 }),
               },

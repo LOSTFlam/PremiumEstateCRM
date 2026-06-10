@@ -16,8 +16,8 @@ export const RoleProvider = ({ children }) => {
       // Call API here
       // Example using fetch:
       if (user) {
-        const response = await getApi(`api/user/view/${user?._id}`);
-        setRoleData(response?.data?.roles);
+        const response = await getApi(`api/user/view/${user?._id}`, { silent: true });
+        setRoleData(response?.roles ?? response?.data?.roles ?? null);
       }
     };
     loadData();

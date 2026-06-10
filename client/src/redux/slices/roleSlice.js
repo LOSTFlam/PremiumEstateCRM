@@ -11,8 +11,8 @@ const initialState = {
 
 // Create an asynchronous thunk
 export const fetchRoles = createAsyncThunk("roles/fetchRoles", async (userId) => {
-  const response = await getApi(`api/user/view/${userId}`);
-  return response.data;
+  const response = await getApi(`api/user/view/${userId}`, { silent: true });
+  return response;
 });
 
 // Create a slice with reducers and the initial state

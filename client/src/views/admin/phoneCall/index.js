@@ -22,10 +22,10 @@ import CallAdvanceSearch from "./components/callAdvanceSearch";
 import { fetchPhoneCallData } from "../../../redux/slices/phoneCallSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+import { useCrmLabels } from "hooks/useCrmLabels";
 
 const Index = (_props) => {
-  const { t } = useTranslation();
+  const { t, tr } = useCrmLabels();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [, setDelete] = useState(false);
@@ -42,7 +42,7 @@ const Index = (_props) => {
 
   const [permission, leadAccess, contactAccess] = HasAccess(["Calls", "Leads", "Contacts"]);
   const actionHeader = {
-    Header: "Action",
+    Header: tr("Action"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -60,7 +60,7 @@ const Index = (_props) => {
                 onClick={() => navigate(`/phone-call/${row?.values._id}`)}
                 icon={<ViewIcon mb={"2px"} fontSize={15} />}
               >
-                View
+                {tr("View")}
               </MenuItem>
             )}
             {row?.original?.createByContact && contactAccess?.view ? (
@@ -77,7 +77,7 @@ const Index = (_props) => {
                 icon={row?.original.createByContact && <IoIosContact fontSize={15} />}
               >
                 {" "}
-                {row?.original.createByContact && contactAccess?.view && "contact"}
+                {row?.original.createByContact && contactAccess?.view && tr("contact")}
               </MenuItem>
             ) : (
               ""
@@ -95,7 +95,7 @@ const Index = (_props) => {
                   )
                 }
               >
-                {row?.original.createByLead && leadAccess?.view && "lead"}
+                {row?.original.createByLead && leadAccess?.view && tr("lead")}
               </MenuItem>
             ) : (
               ""
@@ -219,7 +219,7 @@ const Index = (_props) => {
   return (
     <div>
       <CommonCheckTable
-        title={"Calls"}
+        title="Calls"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}

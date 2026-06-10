@@ -27,7 +27,7 @@ import { useTranslation } from "react-i18next";
 
 const Index = (_props) => {
   const { t } = useTranslation();
-  const title = "Opprtunities";
+  const title = t("modules.opportunity.title");
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);
@@ -50,7 +50,7 @@ const Index = (_props) => {
   const [permission, accountAccess] = HasAccess(["Opportunities", "Account"]);
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.opportunity.actions"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -71,7 +71,7 @@ const Index = (_props) => {
                   setSelectedId(row?.values?._id);
                 }}
               >
-                Edit
+                {t("modules.opportunity.edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -83,7 +83,7 @@ const Index = (_props) => {
                   navigate(`/opportunitiesView/${row?.values?._id}`);
                 }}
               >
-                View
+                {t("modules.opportunity.view")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -96,7 +96,7 @@ const Index = (_props) => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.opportunity.delete")}
               </MenuItem>
             )}
           </MenuList>

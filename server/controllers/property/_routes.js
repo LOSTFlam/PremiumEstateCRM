@@ -6,6 +6,7 @@ const { propertyValidation } = require("../../middlewares/validation");
 const router = express.Router();
 
 router.get("/public", property.publicIndex);
+router.get("/public/by-ids", property.publicByIds);
 router.get("/public/slug/:slug", property.publicViewBySlug);
 router.get("/public/:id", property.publicView);
 

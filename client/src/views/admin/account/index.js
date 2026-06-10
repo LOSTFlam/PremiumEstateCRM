@@ -52,7 +52,7 @@ const Index = (_props) => {
   const [permission] = HasAccess(["Account"]);
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.account.actions"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -73,7 +73,7 @@ const Index = (_props) => {
                   setSelectedId(row?.values?._id);
                 }}
               >
-                Edit
+                {t("modules.account.edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -85,7 +85,7 @@ const Index = (_props) => {
                   navigate(`/accountView/${row?.values?._id}`);
                 }}
               >
-                View
+                {t("modules.account.view")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -98,7 +98,7 @@ const Index = (_props) => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.account.delete")}
               </MenuItem>
             )}
           </MenuList>
@@ -433,7 +433,7 @@ const Index = (_props) => {
   return (
     <div>
       <CommonCheckTable
-        title={"Account"}
+        title="Account"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}

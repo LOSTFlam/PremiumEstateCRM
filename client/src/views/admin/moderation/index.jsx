@@ -17,6 +17,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { MdGavel, MdOpenInNew, MdRefresh } from "react-icons/md";
 import { LuMapPin } from "react-icons/lu";
 
+import { useTranslation } from "react-i18next";
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
 import { normalizeModerationStatus, moderationStatusMeta } from "utils/moderationStatus";
@@ -27,6 +28,7 @@ const primaryImage = (listing) =>
   listing?.propertyPhotos?.[0]?.img || listing?.propertyPhotos?.[0] || placeholderImage;
 
 export default function ModerationQueue() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const cardBg = useColorModeValue("white", "navy.700");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
@@ -59,18 +61,16 @@ export default function ModerationQueue() {
           <HStack spacing={3} mb={2}>
             <Icon as={MdGavel} boxSize={7} color={accentGold} />
             <Text fontSize="2xl" fontWeight="800">
-              Модерация объявлений
+              {t("moderationQueue.title")}
             </Text>
             <Badge colorScheme="orange" borderRadius="full" px={3}>
               {pendingCount}
             </Badge>
           </HStack>
-          <Text color={subtleText}>
-            Проверяйте новые объявления пользователей перед публикацией на сайте
-          </Text>
+          <Text color={subtleText}>{t("moderationQueue.subtitle")}</Text>
         </Box>
         <Button leftIcon={<MdRefresh />} variant="outline" onClick={fetchQueue}>
-          Обновить
+          {t("moderationQueue.refresh")}
         </Button>
       </Flex>
 
@@ -90,10 +90,10 @@ export default function ModerationQueue() {
           textAlign="center"
         >
           <Text fontWeight="700" fontSize="lg">
-            Очередь пуста
+            {t("moderationQueue.emptyTitle")}
           </Text>
           <Text color={subtleText} mt={2}>
-            Новые объявления, отправленные на проверку, появятся здесь
+            {t("moderationQueue.emptyHint")}
           </Text>
         </Box>
       ) : (
@@ -140,7 +140,7 @@ export default function ModerationQueue() {
                   </Text>
                   <Box>
                     <Text fontSize="sm" color={subtleText}>
-                      Автор
+                      {t("moderationQueue.author")}
                     </Text>
                     <Text fontWeight="600">
                       {ownerName || owner?.username || owner?.email || "—"}
@@ -157,7 +157,7 @@ export default function ModerationQueue() {
                       colorScheme="green"
                       onClick={() => navigate(`/propertyView/${listing._id}`)}
                     >
-                      Проверить
+                      {t("moderationQueue.review")}
                     </Button>
                     <Button
                       as={RouterLink}

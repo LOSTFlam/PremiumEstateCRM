@@ -31,7 +31,8 @@ export const ROUTE_I18N_KEY_BY_NAME = {
   Module: "navigation.modules",
   Validation: "navigation.validations",
   "Change Images": "navigation.changeImages",
-  "Bank Details": "navigation.bankDetails",
+  "My Listings": "navigation.myListings",
+  Moderation: "navigation.moderation",
 };
 
 const COMMON_I18N_KEY_BY_TEXT = {
@@ -72,6 +73,7 @@ const COMMON_I18N_KEY_BY_TEXT = {
   Columns: "common.columns",
   "Select Columns": "common.selectColumns",
   Select: "common.select",
+  Clear: "common.reset",
   "No Data Found": "common.noData",
   "No data found": "common.noData",
   "No Results": "common.noResults",
@@ -98,6 +100,7 @@ const FIELD_I18N_KEY_BY_TEXT = {
   "Last Name": "fields.lastName",
   "Full Name": "fields.fullName",
   "Phone Number": "fields.phoneNumber",
+  Description: "common.description",
   "Role Name": "fields.roleName",
   Role: "fields.role",
   Campaign: "fields.campaign",
@@ -333,6 +336,82 @@ const DIRECT_TRANSLATIONS = {
   "Property Documents": {
     en: "Property Documents",
     ru: "Документы объекта",
+  },
+  Clear: {
+    en: "Clear",
+    ru: "Сбросить",
+  },
+  Today: {
+    en: "Today",
+    ru: "Сегодня",
+  },
+  Month: {
+    en: "Month",
+    ru: "Месяц",
+  },
+  Week: {
+    en: "Week",
+    ru: "Неделя",
+  },
+  Day: {
+    en: "Day",
+    ru: "День",
+  },
+  List: {
+    en: "List",
+    ru: "Список",
+  },
+  "Multi Month": {
+    en: "Multi Month",
+    ru: "Несколько месяцев",
+  },
+  Calls: {
+    en: "Calls",
+    ru: "Звонки",
+  },
+  Meetings: {
+    en: "Meetings",
+    ru: "Встречи",
+  },
+  Emails: {
+    en: "Emails",
+    ru: "Письма",
+  },
+  contact: {
+    en: "Contact",
+    ru: "Контакт",
+  },
+  lead: {
+    en: "Lead",
+    ru: "Лид",
+  },
+  "Opportunity Project": {
+    en: "Opportunity Project",
+    ru: "Проект сделки",
+  },
+  Email: {
+    en: "Email",
+    ru: "Письма",
+  },
+  Reports: {
+    en: "Reports",
+    ru: "Отчёты",
+  },
+  Invoice: {
+    en: "Invoice",
+    ru: "Счёт",
+  },
+  "Convert To Invoice": {
+    en: "Convert To Invoice",
+    ru: "Преобразовать в счёт",
+  },
+  "Quote Number": {
+    en: "Quote Number",
+    ru: "Номер предложения",
+  },
+  "Import data": {
+    en: "Import data",
+    ru: "Импорт данных",
   },
 };
 

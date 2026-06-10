@@ -16,7 +16,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
+import { useCrmLabels } from "hooks/useCrmLabels";
 import { deleteManyApi } from "services/api";
 import CommonDeleteModel from "../../../components/commonDeleteModel";
 import CommonCheckTable from "../../../components/reactTable/checktable";
@@ -29,7 +29,7 @@ import Preview from "./preview";
 import { TbFileInvoice } from "react-icons/tb";
 
 const Index = (_props) => {
-  const { t } = useTranslation();
+  const { t, tr } = useCrmLabels();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);
@@ -55,7 +55,7 @@ const Index = (_props) => {
   const [permission, accountAccess, contactAccess] = HasAccess(["Invoices", "Account", "Contacts"]);
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.invoice.actions"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -76,7 +76,7 @@ const Index = (_props) => {
                   setSelectedId(row?.values?._id);
                 }}
               >
-                Edit
+                {t("modules.invoice.edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -88,7 +88,7 @@ const Index = (_props) => {
                   navigate(`/invoicesView/${row?.values?._id}`);
                 }}
               >
-                View
+                {t("modules.invoice.view")}
               </MenuItem>
             )}
             <MenuItem
@@ -100,7 +100,7 @@ const Index = (_props) => {
                 setIsOpenPreview(true);
               }}
             >
-              Invoice
+              {tr("Invoice")}
             </MenuItem>
             {permission?.delete && (
               <MenuItem
@@ -112,7 +112,7 @@ const Index = (_props) => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.invoice.delete")}
               </MenuItem>
             )}
           </MenuList>
@@ -643,7 +643,7 @@ const Index = (_props) => {
   return (
     <div>
       <CommonCheckTable
-        title={"Invoices"}
+        title="Invoices"
         isLoding={isLoding}
         columnData={columns ?? []}
         // dataColumn={dataColumn ?? []}

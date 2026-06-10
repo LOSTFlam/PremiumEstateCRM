@@ -66,6 +66,7 @@ export function SidebarLinks(props) {
     Validation: "navigation.validations",
     "Change Images": "navigation.changeImages",
     "Bank Details": "navigation.bankDetails",
+    Moderation: "navigation.moderation",
   };
 
   const getRouteLabel = (route) => {

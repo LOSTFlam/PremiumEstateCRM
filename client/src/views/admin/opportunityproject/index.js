@@ -22,8 +22,11 @@ import { fetchOpportunityProjectData } from "../../../redux/slices/opportunitypr
 import Editopportunityproject from "./Editopportunityproject";
 import ImportModal from "./components/ImportModal";
 
+import { useCrmLabels } from "hooks/useCrmLabels";
+
 const Index = () => {
-  const title = "Opportunity Project";
+  const { t, tr } = useCrmLabels();
+  const title = t("modules.opportunityProject.title") || tr("Opportunity Project");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [permission] = HasAccess(["Opportunity Project"]);
@@ -49,7 +52,7 @@ const Index = () => {
   };
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.opportunityProject.actions") || tr("Action"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -71,7 +74,7 @@ const Index = () => {
                   setSelectedId(row?.values?._id);
                 }}
               >
-                Edit
+                {t("modules.opportunityProject.edit") || tr("Edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -85,7 +88,7 @@ const Index = () => {
                   });
                 }}
               >
-                View
+                {tr("View")}
               </MenuItem>
             )}
             {permission?.delete && (
@@ -98,7 +101,7 @@ const Index = () => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.opportunityProject.delete") || tr("Delete")}
               </MenuItem>
             )}
           </MenuList>

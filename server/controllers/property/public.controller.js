@@ -12,7 +12,11 @@ const populatePublicCreator = {
 const publicIndex = async (req, res) => {
   try {
     // $ne:true also covers legacy documents that miss the "deleted" flag
-    const query = { deleted: { $ne: true } };
+    const query = {
+      deleted: { $ne: true },
+      verificationStatus: { $in: LEGACY_APPROVED },
+      listingStatus: { $ne: "Blocked" },
+    };
 
     if (req.query.propertyType) {
       query.propertyType = { $regex: String(req.query.propertyType), $options: "i" };
@@ -74,6 +78,40 @@ const publicView = async (req, res) => {
   }
 };
 
+const publicByIds = async (req, res) => {
+  try {
+    const rawIds = String(req.query.ids || "")
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+
+    const objectIds = rawIds.filter((id) => isValidObjectId(id));
+    if (!objectIds.length) {
+      return res.status(200).json([]);
+    }
+
+    const properties = await Property.find({
+      _id: { $in: objectIds },
+      deleted: { $ne: true },
+      verificationStatus: { $in: LEGACY_APPROVED },
+      listingStatus: { $ne: "Blocked" },
+    })
+      .populate({
+        ...populatePublicCreator,
+        select: "firstName lastName username phoneNumber role isBlocked",
+      })
+      .lean();
+
+    const normalized = properties
+      .filter((item) => item?.createBy && !item.createBy.isBlocked)
+      .map(normalizePublicProperty);
+
+    res.status(200).json(normalized);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch public properties by ids" });
+  }
+};
+
 const publicViewBySlug = async (req, res) => {
   try {
     const slug = String(req.params.slug || "").trim();
@@ -106,6 +144,7 @@ const publicViewBySlug = async (req, res) => {
 
 module.exports = {
   publicIndex,
+  publicByIds,
   publicView,
   publicViewBySlug,
 };

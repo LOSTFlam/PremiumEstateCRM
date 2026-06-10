@@ -25,7 +25,10 @@ import ImportModal from "./components/ImportModel";
 import { fetchQuotesData } from "../../../redux/slices/quotesSlice";
 import { TbFileInvoice } from "react-icons/tb";
 
+import { useCrmLabels } from "hooks/useCrmLabels";
+
 const Index = (_props) => {
+  const { t, tr } = useCrmLabels();
   const [action, setAction] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedValues, setSelectedValues] = useState([]);
@@ -47,7 +50,7 @@ const Index = (_props) => {
   const [permission, accountAccess, contactAccess] = HasAccess(["Quotes", "Account", "Contacts"]);
 
   const actionHeader = {
-    Header: "Action",
+    Header: t("modules.quote.actions"),
     accessor: "action",
     isSortable: false,
     center: true,
@@ -68,7 +71,7 @@ const Index = (_props) => {
                   setSelectedId(row?.values?._id);
                 }}
               >
-                Edit
+                {t("modules.quote.edit")}
               </MenuItem>
             )}
             {permission?.view && (
@@ -80,7 +83,7 @@ const Index = (_props) => {
                   navigate(`/quotesView/${row?.values?._id}`);
                 }}
               >
-                View
+                {t("modules.quote.view")}
               </MenuItem>
             )}
             <MenuItem
@@ -91,7 +94,7 @@ const Index = (_props) => {
                 convertToInvoice(row?.values?._id);
               }}
             >
-              Convert To Invoice
+              {tr("Convert To Invoice")}
             </MenuItem>
             {permission?.delete && (
               <MenuItem
@@ -103,7 +106,7 @@ const Index = (_props) => {
                   setSelectedValues([row?.values?._id]);
                 }}
               >
-                Delete
+                {t("modules.quote.delete")}
               </MenuItem>
             )}
           </MenuList>
@@ -114,7 +117,7 @@ const Index = (_props) => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: "Quote Number",
+      Header: tr("Quote Number"),
       accessor: "quoteNumber",
       isSortable: false,
       width: 10,
@@ -714,7 +717,7 @@ const Index = (_props) => {
   return (
     <div>
       <CommonCheckTable
-        title={"Quotes"}
+        title="Quotes"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}

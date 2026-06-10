@@ -4,11 +4,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getApi } from "services/api";
 import ReportChart from "./components/reportChart";
 import CommonCheckTable from "components/reactTable/checktable";
-import { useTranslation } from "react-i18next";
+import { useCrmLabels } from "hooks/useCrmLabels";
 
 const Report = () => {
-  const { t } = useTranslation();
-  const title = "Reports";
+  const { t, tr } = useCrmLabels();
+  const title = tr("Reports");
   const [data, setData] = useState([]);
   const [isLoding, setIsLoding] = useState(false);
   // const [selectedColumns, setSelectedColumns] = useState([]);

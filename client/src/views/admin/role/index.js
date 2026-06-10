@@ -7,7 +7,10 @@ import { useNavigate } from "react-router-dom";
 import RoleModal from "./components/roleModal";
 import AddRole from "./Add";
 
+import { useCrmLabels } from "hooks/useCrmLabels";
+
 const Index = () => {
+  const { tr } = useCrmLabels();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [roleModal, setRoleModal] = useState(false);
   const [access, setAccess] = useState([]);
@@ -27,7 +30,7 @@ const Index = () => {
       display: false,
     },
     {
-      Header: "Role Name",
+      Header: tr("Role Name"),
       accessor: "roleName",
       cell: (cell) => (
         <Text
@@ -53,7 +56,7 @@ const Index = () => {
         </Text>
       ),
     },
-    { Header: "Description", accessor: "description" },
+    { Header: tr("Description"), accessor: "description" },
   ];
   const rowColumns = [
     {
@@ -89,7 +92,7 @@ const Index = () => {
   return (
     <div>
       <CommonCheckTable
-        title={"Roles"}
+        title="Roles"
         isLoding={isLoding}
         columnData={columns ?? []}
         // dataColumn={columns ?? []}

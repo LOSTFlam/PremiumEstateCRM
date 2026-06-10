@@ -10,7 +10,10 @@ import UserAdvanceSearch from "./components/userAdvanceSearch";
 import CommonDeleteModel from "components/commonDeleteModel";
 import AddEditUser from "./AddEditUser";
 
+import { useCrmLabels } from "hooks/useCrmLabels";
+
 const Index = () => {
+  const { tr } = useCrmLabels();
   const [action, setAction] = useState(false);
   const [editData, setEditData] = useState({});
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +33,7 @@ const Index = () => {
   const tableColumns = [
     { Header: "#", accessor: "_id", isSortable: false, width: 10 },
     {
-      Header: "Email Id",
+      Header: tr("Email Id"),
       accessor: "username",
       cell: (cell) => (
         <Link to={`/userView/${cell?.row?.values?._id}`}>
@@ -48,11 +51,11 @@ const Index = () => {
         </Link>
       ),
     },
-    { Header: "First Name", accessor: "firstName" },
-    { Header: "Last Name", accessor: "lastName" },
-    { Header: "Role", accessor: "role" },
+    { Header: tr("First Name"), accessor: "firstName" },
+    { Header: tr("Last Name"), accessor: "lastName" },
+    { Header: tr("Role"), accessor: "role" },
     {
-      Header: "Action",
+      Header: tr("Action"),
       accessor: "action",
       isSortable: false,
       center: true,
@@ -73,7 +76,7 @@ const Index = () => {
                 }}
                 icon={<EditIcon mb={1} fontSize={15} />}
               >
-                Edit
+                {tr("Edit")}
               </MenuItem>
               <MenuItem
                 py={2.5}
@@ -81,7 +84,7 @@ const Index = () => {
                 onClick={() => navigate(`/userView/${row?.values._id}`)}
                 icon={<ViewIcon mb={1} fontSize={15} />}
               >
-                View
+                {tr("View")}
               </MenuItem>
               {row?.original?.role === "superAdmin" ? (
                 ""
@@ -95,7 +98,7 @@ const Index = () => {
                   }}
                   icon={<DeleteIcon fontSize={15} />}
                 >
-                  Delete
+                  {tr("Delete")}
                 </MenuItem>
               )}
             </MenuList>
@@ -147,7 +150,7 @@ const Index = () => {
   return (
     <div>
       <CommonCheckTable
-        title={"Users"}
+        title="Users"
         isLoding={isLoding}
         columnData={tableColumns ?? []}
         // dataColumn={dataColumn ?? []}
