@@ -1,0 +1,1 @@
+import{t as n}from"./crmDictionary-BcMBW5Dn.js";import{u as o}from"./useTranslation-BsKFU9dJ.js";const m=()=>{const{t,i18n:a}=o(),r={t,language:a.language};return{t,i18n:a,labelOptions:r,tr:s=>n(s,r)}};export{m as u};

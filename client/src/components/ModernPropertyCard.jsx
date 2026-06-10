@@ -150,6 +150,8 @@ const ModernPropertyCard = ({
       className="property-card"
       borderRadius={{ base: "30px", md: "40px", xl: "44px" }}
       overflow="hidden"
+      maxW="100%"
+      minW={0}
       bg={publicBrand.gradients.panelLight}
       border="1px solid rgba(9,18,32,0.06)"
       boxShadow="0 10px 36px rgba(0, 0, 0, 0.14), 0 0 26px rgba(212, 175, 55, 0.09)"
@@ -351,13 +353,15 @@ const ModernPropertyCard = ({
             flexWrap={{ base: "wrap", sm: "nowrap" }}
             rowGap={2}
           >
-            <Stack spacing={1}>
+            <Stack spacing={1} minW={0} flex={1}>
               <Text
-                fontSize={{ base: "2xl", md: "3xl" }}
+                className="property-price"
+                fontSize={{ base: "xl", md: "2xl", xl: "3xl" }}
                 fontWeight="700"
-                lineHeight="1"
+                lineHeight="1.1"
                 letterSpacing="-0.04em"
                 color="white"
+                wordBreak="break-word"
               >
                 {formatPrice(property?.listingPrice, t, i18n.language)}
                 {property?.dealType === "rent" ? (
@@ -425,7 +429,7 @@ const ModernPropertyCard = ({
           </Text>
         </Stack>
 
-        <SimpleGrid className="property-metrics" columns={3} spacing={2}>
+        <SimpleGrid className="property-metrics" columns={{ base: 2, sm: 3 }} spacing={2} minChildWidth="0">
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
@@ -489,7 +493,15 @@ const ModernPropertyCard = ({
           ))}
         </SimpleGrid>
 
-        <HStack justify="space-between" align="center" pt={1} spacing={3} flexWrap="wrap" rowGap={2}>
+        <HStack
+          className="property-footer"
+          justify="space-between"
+          align="center"
+          pt={1}
+          spacing={3}
+          flexWrap="wrap"
+          rowGap={2}
+        >
           <Text
             color={publicBrand.colors.copper}
             fontSize="xs"

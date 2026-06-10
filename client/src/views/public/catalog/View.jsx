@@ -286,7 +286,7 @@ export default function PublicOfferView() {
   }
 
   return (
-    <Box minH="100vh" bg={pageBg}>
+    <Box className="public-brand-shell" minH="100vh" bg={pageBg} overflowX="hidden" maxW="100vw">
       <Box
         bg={publicBrand.gradients.hero}
         color="white"
@@ -345,8 +345,10 @@ export default function PublicOfferView() {
                 </HStack>
                 <Heading
                   as="h1"
-                  fontSize={{ base: "4xl", md: "6xl" }}
-                  lineHeight={{ base: "1.08", md: "0.98" }}
+                  className="offer-hero-title"
+                  fontSize={{ base: "2xl", sm: "3xl", md: "5xl", lg: "6xl" }}
+                  lineHeight={{ base: "1.12", md: "0.98" }}
+                  wordBreak="break-word"
                 >
                   {property?.name || property?.propertyAddress}
                 </Heading>

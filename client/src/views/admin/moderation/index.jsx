@@ -141,7 +141,14 @@ export default function ModerationQueue() {
   };
 
   return (
-    <Box pt={{ base: "110px", md: "80px", xl: "80px" }} px={{ base: 4, md: 6 }} pb={10}>
+    <Box
+      className="cabinet-content"
+      pt={{ base: "100px", md: "80px", xl: "80px" }}
+      px={{ base: 3, md: 6 }}
+      pb={10}
+      maxW="100vw"
+      overflowX="hidden"
+    >
       <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} mb={6}>
         <Box>
           <HStack spacing={3} mb={2}>

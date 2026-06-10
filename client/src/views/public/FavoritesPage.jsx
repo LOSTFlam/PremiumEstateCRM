@@ -279,7 +279,15 @@ const FavoritesPage = () => {
   }
 
   return (
-    <Box minH="100vh" bg={publicBrand.gradients.page} color="white" py={10}>
+    <Box
+      className="public-brand-shell"
+      minH="100vh"
+      bg={publicBrand.gradients.page}
+      color="white"
+      py={10}
+      overflowX="hidden"
+      maxW="100vw"
+    >
       <Container maxW="8xl">
         <Stack spacing={8}>
           {/* Header */}

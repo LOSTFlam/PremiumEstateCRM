@@ -458,6 +458,7 @@ export default function ModernLandingPage() {
 
   return (
     <Box
+      className="public-brand-shell"
       minH="100vh"
       position="relative"
       bg={publicBrand.gradients.page}
@@ -547,7 +548,8 @@ export default function ModernLandingPage() {
                     </Badge>
                     <Heading
                       color={publicBrand.colors.ink}
-                      fontSize={{ base: "3xl", md: "5xl" }}
+                      fontSize={{ base: "2xl", sm: "3xl", md: "5xl" }}
+                      wordBreak="break-word"
                       lineHeight="1.05"
                       mt={4}
                     >
@@ -689,7 +691,12 @@ export default function ModernLandingPage() {
                 >
                   {copy.collectionsBadge}
                 </Badge>
-                <Heading color="white" fontSize={{ base: "3xl", md: "5xl" }} lineHeight="1.05">
+                <Heading
+                  color="white"
+                  fontSize={{ base: "2xl", sm: "3xl", md: "5xl" }}
+                  lineHeight="1.08"
+                  wordBreak="break-word"
+                >
                   {copy.collectionsTitle}
                 </Heading>
                 <Text

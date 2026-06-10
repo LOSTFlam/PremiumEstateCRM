@@ -1,1 +1,0 @@
-import{o as c,bf as i,aB as x,bH as h,bg as l,j as f,p as g,aK as p}from"./index-oPy290T3.js";const T=["h","minH","height","minHeight"],u=c((a,e)=>{const s=i("Textarea",a),{className:r,rows:t,...o}=x(a),m=h(o),n=t?l(s,T):s;return f.jsx(g.textarea,{ref:e,rows:t,...m,className:p("chakra-textarea",r),__css:n})});u.displayName="Textarea";export{u as T};

@@ -203,3 +203,139 @@ a.public-brand-button {
     width: 100%;
   }
 }
+
+/* === Mobile readability — prevent horizontal overflow === */
+#root {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@media (max-width: 767px) {
+  .public-brand-shell,
+  .public-page-shell {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .public-brand-shell .chakra-heading,
+  .public-brand-shell .chakra-text,
+  .property-card .chakra-text,
+  .cabinet-content .chakra-heading,
+  .cabinet-content .chakra-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+
+  .public-brand-shell .chakra-button,
+  .cabinet-content .chakra-button {
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+    height: auto;
+    min-height: var(--touch-min);
+    max-width: 100%;
+  }
+
+  .public-brand-shell .chakra-badge,
+  .property-card .chakra-badge {
+    white-space: normal;
+    word-break: break-word;
+    max-width: 100%;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .catalog-hero-title {
+    font-size: 1.75rem !important;
+    line-height: 1.18 !important;
+  }
+
+  .offer-hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .property-card {
+    max-width: 100%;
+  }
+
+  .property-card .property-price {
+    font-size: 1.35rem !important;
+    line-height: 1.15 !important;
+    word-break: break-word;
+    max-width: 100%;
+  }
+
+  .property-card .property-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .property-card .property-metrics .chakra-text {
+    font-size: 10px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .property-card .property-footer {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .property-card .property-footer .chakra-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .catalog-toolbar-actions {
+    width: 100%;
+    gap: 10px !important;
+  }
+
+  .catalog-toolbar-actions .chakra-button {
+    flex: 1 1 100%;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .catalog-stat-grid .chakra-stat__number {
+    font-size: 1.35rem !important;
+    word-break: break-word;
+  }
+
+  .cabinet-content .chakra-simple-grid,
+  .cabinet-content .chakra-grid {
+    min-width: 0;
+  }
+
+  .cabinet-content .chakra-card,
+  .cabinet-content .chakra-box {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* React table horizontal scroll instead of page overflow */
+  .cabinet-content .table-scroll-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 389px) {
+  .catalog-hero-title {
+    font-size: 1.5rem !important;
+  }
+
+  .offer-hero-title {
+    font-size: 1.55rem !important;
+  }
+
+  .property-card .property-badges {
+    max-width: calc(100% - 84px);
+  }
+
+  .property-card .property-price {
+    font-size: 1.2rem !important;
+  }
+}

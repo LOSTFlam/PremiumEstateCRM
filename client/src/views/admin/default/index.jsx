@@ -1048,7 +1048,8 @@ export default function PropertyLandingPage() {
                             h="auto"
                             minH="40px"
                             py={2}
-                            maxW={{ base: "100%", md: "none" }}
+                            w={{ base: "100%", md: "auto" }}
+                            maxW="100%"
                           >
                             {t?.("common.viewDetails")}
                           </Button>

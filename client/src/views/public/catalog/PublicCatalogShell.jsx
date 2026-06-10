@@ -636,7 +636,14 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
   };
 
   return (
-    <Box minH="100vh" bg={publicBrand.colors.paper} color={publicBrand.colors.ink}>
+    <Box
+      className="public-brand-shell"
+      minH="100vh"
+      bg={publicBrand.colors.paper}
+      color={publicBrand.colors.ink}
+      overflowX="hidden"
+      maxW="100vw"
+    >
       <Box bg={publicBrand.gradients.hero} color="white" position="relative" overflow="hidden">
         <Box
           position="absolute"
@@ -692,14 +699,18 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                 >
                   {subtitle}
                 </Text>
-                <Flex wrap="wrap" gap={3}>
+                <Flex wrap="wrap" gap={3} className="catalog-toolbar-actions">
                   <Button
                     bg={publicBrand.gradients.brass}
                     color={publicBrand.colors.ink}
-                    size="lg"
+                    size={{ base: "md", md: "lg" }}
                     onClick={handleSaveSearch}
                     leftIcon={<FiBookmark />}
                     borderRadius="full"
+                    whiteSpace="normal"
+                    h="auto"
+                    minH="44px"
+                    py={2}
                   >
                     {copy.saveSearch}
                   </Button>
@@ -710,6 +721,11 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     onClick={handleCopyLink}
                     leftIcon={<FiLink />}
                     borderRadius="full"
+                    size={{ base: "md", md: "lg" }}
+                    whiteSpace="normal"
+                    h="auto"
+                    minH="44px"
+                    py={2}
                   >
                     {copy.copyLink}
                   </Button>
@@ -719,6 +735,11 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     variant="ghost"
                     color="white"
                     leftIcon={<MdCompareArrows />}
+                    size={{ base: "md", md: "lg" }}
+                    whiteSpace="normal"
+                    h="auto"
+                    minH="44px"
+                    py={2}
                   >
                     {compareIds.length} {copy.compareLabel}
                   </Button>
@@ -728,6 +749,11 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     variant="ghost"
                     color="white"
                     leftIcon={<MdFavoriteBorder />}
+                    size={{ base: "md", md: "lg" }}
+                    whiteSpace="normal"
+                    h="auto"
+                    minH="44px"
+                    py={2}
                   >
                     {favoriteIds.length} {copy.favoritesLabel}
                   </Button>
@@ -783,7 +809,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
 
             <GridItem>
               <Stack spacing={5}>
-                <SimpleGrid columns={{ base: 1, sm: 2, xl: 1 }} spacing={4}>
+                <SimpleGrid className="catalog-stat-grid" columns={{ base: 1, sm: 2, xl: 1 }} spacing={4}>
                   {[
                     { label: copy.resultsLabel, value: stats.totalLabel },
                     { label: copy.richLabel, value: String(stats.rich) },

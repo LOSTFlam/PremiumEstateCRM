@@ -363,7 +363,8 @@ export default function ModernHero({
 
                 <Heading
                   as="h1"
-                  fontSize={{ base: "3xl", md: "5xl", xl: "6xl", "2xl": "7xl" }}
+                  fontSize={{ base: "2xl", sm: "3xl", md: "5xl", xl: "6xl", "2xl": "7xl" }}
+                  wordBreak="break-word"
                   lineHeight={{ base: "1.04", md: "0.94" }}
                   letterSpacing="-0.05em"
                   maxW="940px"
