@@ -459,7 +459,7 @@ const View = () => {
                 />
                 <ListingVerificationPanel
                   property={data}
-                  canManage={user?.role === "superAdmin" || permission?.update}
+                  canManage={user?.role === "superAdmin"}
                   onUpdated={() => fetchData(selectedTab)}
                 />
                 {filteredContacts?.length > 0 && (

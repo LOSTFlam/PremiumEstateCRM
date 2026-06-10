@@ -1,6 +1,6 @@
 const express = require('express');
 const user = require('./user');
-const { auth } = require('../../middlewares/auth');
+const { auth, authorize } = require('../../middlewares/auth');
 const { userValidation } = require("../../middlewares/validation");
 const { rateLimiter } = require('../../middlewares/rateLimiter');
 
@@ -18,6 +18,8 @@ router.get('/view/:id', auth, user.view)
 router.delete('/delete/:id', auth, user.deleteData)
 router.put('/edit/:id', auth, user.edit)
 router.put('/change-roles/:id', auth, user.changeRoles)
+router.put('/block/:id', auth, authorize('superAdmin'), user.blockUser)
+router.put('/unblock/:id', auth, authorize('superAdmin'), user.unblockUser)
 
 
 

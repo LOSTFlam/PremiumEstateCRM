@@ -18,7 +18,9 @@ const getCachedUser = async (userId) => {
   
   // Cache miss or expired - fetch from DB
   // Errors from User.findById will propagate to the caller
-  const user = await User.findById(userId).select("+deleted +lockedUntil +lastActiveAt").lean();
+  const user = await User.findById(userId)
+    .select("+deleted +lockedUntil +lastActiveAt +isBlocked +blockReason")
+    .lean();
   if (user) {
     // Prevent unbounded cache growth
     if (userCache.size >= MAX_CACHE_SIZE) {
@@ -120,6 +122,13 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: "Authentication failed. User not found or deleted." });
     }
     
+    if (user.isBlocked) {
+      return res.status(403).json({
+        message: user.blockReason || "Your account has been blocked by an administrator",
+        blocked: true,
+      });
+    }
+
     // Check if account is locked due to failed login attempts
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       const lockoutMinutes = Math.ceil((user.lockedUntil - new Date()) / 60000);
@@ -129,11 +138,11 @@ const auth = async (req, res, next) => {
       });
     }
     
-    // Check session timeout (30 minutes)
-    if (!isSessionActive(user.lastActiveAt)) {
+    // Fresh accounts may not have lastActiveAt yet — allow first authenticated request
+    if (user.lastActiveAt && !isSessionActive(user.lastActiveAt)) {
       return res.status(401).json({
         message: "Session expired. Please login again.",
-        sessionTimeout: SESSION_TIMEOUT / 60000,  // Return timeout in minutes
+        sessionTimeout: SESSION_TIMEOUT / 60000,
       });
     }
     

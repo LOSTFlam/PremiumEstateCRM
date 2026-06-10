@@ -101,8 +101,25 @@ const propertySchema = new mongoose.Schema({
     },
     verificationStatus: {
         type: String,
-        default: "pending",
-        index: true,  // Index for filtering by verification status
+        default: "draft",
+        index: true,
+    },
+    rejectionReason: {
+        type: String,
+        default: "",
+    },
+    moderationSubmittedAt: {
+        type: Date,
+        default: null,
+    },
+    moderationReviewedAt: {
+        type: Date,
+        default: null,
+    },
+    moderationReviewedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
     },
     verificationScore: {
         type: Number,

@@ -24,6 +24,7 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { postApi } from "services/api";
 import { signUpSchema } from "schema";
+import { extractApiErrorMessage } from "utils/errorMessages";
 import { toast } from "react-toastify";
 import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -79,32 +80,15 @@ function SignUp() {
     try {
       setIsLoading(true);
 
-      // Generate username from email (part before @)
-      const username = values.email.split("@")[0];
-
       const payload = {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
-        username: username, // Required field for backend
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
         password: values.password,
-        role: "user",
       };
 
       const result = await postApi("/api/user/register", payload, false);
 
-      // Check if it's an error object
-      if (result?.response) {
-        // It's an error response
-        const errorMsg =
-          result.response?.data?.error || result.response?.data?.message || "Registration failed";
-        // Error handled silently
-        toast.error(errorMsg);
-        setIsLoading(false);
-        return;
-      }
-
-      // Check for successful registration (status 200 or 201)
       if (
         result &&
         (result.status === 200 || result.status === 201) &&
@@ -137,12 +121,17 @@ function SignUp() {
           window.location.href = "/dashboard";
         }, 500);
       } else {
-        // Error handled silently
-        toast.error("Registration failed. Please try again.");
+        toast.error(
+          t?.("auth.signUp.registrationFailed") || "Registration failed. Please try again."
+        );
       }
     } catch (e) {
-      // Error handled silently
-      toast.error(e?.response?.data?.error || e?.message || "Registration failed");
+      const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+      toast.error(
+        extractApiErrorMessage(e, locale) ||
+          t?.("auth.signUp.registrationFailed") ||
+          "Registration failed"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -334,6 +323,11 @@ function SignUp() {
               {errors?.password && touched?.password && (
                 <FormErrorMessage>{errors?.password}</FormErrorMessage>
               )}
+              <Text mt={1} fontSize="xs" color={textColorSecondary}>
+                {i18n.language?.startsWith("ru")
+                  ? "Мин. 8 символов: заглавная, строчная, цифра, спецсимвол; без последовательностей (123, abc) и повторов (aaa)"
+                  : "Min. 8 chars: upper, lower, number, special; no sequences (123, abc) or repeats (aaa)"}
+              </Text>
             </FormControl>
 
             <FormControl isInvalid={errors?.confirmPassword && touched?.confirmPassword} mb="24px">

@@ -84,23 +84,31 @@ const register = async (req, res, next) => {
     const { email, username, password, firstName, lastName, phoneNumber, roles } = req.body;
 
     const normalizedEmail = email ? normalizeIdentity(email) : null;
-    const finalUsername = normalizeIdentity(username || (normalizedEmail ? normalizedEmail.split("@")[0] : ""));
+    const baseUsername = normalizeIdentity(
+      normalizedEmail || username || (normalizedEmail ? normalizedEmail.split("@")[0] : "")
+    );
 
-    if (!finalUsername) {
+    if (!baseUsername) {
       return res.status(400).json({ message: "Username or email is required" });
     }
 
-    const existingUser = await User.findOne({
-      $or: [
-        { username: finalUsername },
-        ...(normalizedEmail ? [{ email: normalizedEmail }] : []),
-      ],
-    });
+    if (normalizedEmail) {
+      const existingByEmail = await User.findOne({ email: normalizedEmail });
+      if (existingByEmail) {
+        return res
+          .status(409)
+          .json({ message: "User already exists. Please try another email." });
+      }
+    }
 
-    if (existingUser) {
-      return res
-        .status(401)
-        .json({ message: "User already exist please try another email" });
+    let finalUsername = baseUsername;
+    let suffix = 1;
+    while (await User.findOne({ username: finalUsername })) {
+      finalUsername = `${baseUsername}-${suffix}`;
+      suffix += 1;
+      if (suffix > 50) {
+        return res.status(409).json({ message: "Unable to generate a unique username" });
+      }
     }
 
     // Validate password complexity
@@ -113,6 +121,7 @@ const register = async (req, res, next) => {
     }
 
     const hashedPassword = await hashPassword(password);
+    const now = new Date();
     const newUser = new User({
       username: finalUsername,
       email: normalizedEmail,
@@ -122,8 +131,10 @@ const register = async (req, res, next) => {
       lastName: String(lastName || "").trim(),
       phoneNumber,
       role: "user",
-      passwordHistory: [{ password: hashedPassword }],  // Store initial password
-      lastPasswordChange: new Date(),
+      passwordHistory: [{ password: hashedPassword }],
+      lastPasswordChange: now,
+      lastActiveAt: now,
+      lastLoginAt: now,
     });
 
     await newUser.save();
@@ -290,7 +301,7 @@ const login = async (req, res, next) => {
         { email: loginIdentifier }
       ]
     })
-      .select("+password +lockedUntil +failedLoginAttempts")
+      .select("+password +lockedUntil +failedLoginAttempts +isBlocked +blockReason")
       .populate({
         path: "roles",
       });
@@ -300,6 +311,13 @@ const login = async (req, res, next) => {
         .status(401)
         .json({ error: "Authentication failed, invalid username" });
       return;
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({
+        error: user.blockReason || "Your account has been blocked by an administrator",
+        blocked: true,
+      });
     }
 
     // Check if account is locked
@@ -536,6 +554,67 @@ const logout = async (req, res) => {
     .json({ message: "Logged out successfully" });
 };
 
+const blockUser = async (req, res, next) => {
+  try {
+    const reason = String(req.body?.reason || req.body?.blockReason || "").trim();
+    if (!reason) {
+      return res.status(400).json({ message: "Block reason is required" });
+    }
+
+    const target = await User.findOne({ _id: req.params.id, deleted: false }).lean();
+    if (!target) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (target.role === "superAdmin") {
+      return res.status(403).json({ message: "Cannot block a super admin account" });
+    }
+
+    const now = new Date();
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          isBlocked: true,
+          blockReason: reason,
+          blockedAt: now,
+          blockedBy: req.user.userId,
+        },
+      }
+    );
+    invalidateUserCache(String(req.params.id));
+
+    res.status(200).json({ message: "User blocked successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const unblockUser = async (req, res, next) => {
+  try {
+    const target = await User.findOne({ _id: req.params.id, deleted: false }).lean();
+    if (!target) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          isBlocked: false,
+          blockReason: "",
+          blockedAt: null,
+          blockedBy: null,
+        },
+      }
+    );
+    invalidateUserCache(String(req.params.id));
+
+    res.status(200).json({ message: "User unblocked successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -549,4 +628,6 @@ module.exports = {
   deleteData,
   edit,
   changeRoles,
+  blockUser,
+  unblockUser,
 };

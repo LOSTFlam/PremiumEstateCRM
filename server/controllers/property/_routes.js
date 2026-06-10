@@ -1,6 +1,6 @@
 const express = require("express");
 const property = require("./property.facade");
-const { auth } = require("../../middlewares/auth");
+const { auth, authorize } = require("../../middlewares/auth");
 const { propertyValidation } = require("../../middlewares/validation");
 
 const router = express.Router();
@@ -26,7 +26,10 @@ router.post(
   property.genrateOfferLetter
 );
 
-router.put("/verify/:id", auth, property.verifyListing);
+router.get("/moderation-queue", auth, authorize("superAdmin"), property.moderationQueue);
+router.put("/submit/:id", auth, property.submitForReview);
+router.put("/withdraw/:id", auth, property.withdrawFromReview);
+router.put("/verify/:id", auth, authorize("superAdmin"), property.verifyListing);
 router.get("/view/:id", auth, property.view);
 router.put("/edit/:id", auth, propertyValidation.update, property.edit);
 router.delete("/delete/:id", auth, propertyValidation.delete, property.deleteData);

@@ -68,6 +68,24 @@ const user = new mongoose.Schema({
         type: Date,
         default: null,
     },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+        index: true,
+    },
+    blockReason: {
+        type: String,
+        default: "",
+    },
+    blockedAt: {
+        type: Date,
+        default: null,
+    },
+    blockedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null,
+    },
     emailsent: { type: Number, default: 0 },
     textsent: { type: Number, default: 0 },
     outboundcall: { type: Number, default: 0 },

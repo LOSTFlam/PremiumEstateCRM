@@ -27,13 +27,22 @@ const buildVerificationState = (property) => {
     ? property.verificationChecklist
     : buildVerificationChecklist(property);
 
-  const fallbackStatus = checklist.length >= 5 ? "verified" : checklist.length >= 3 ? "review" : "pending";
+  const rawStatus = property?.verificationStatus || "draft";
+  const normalizedStatus =
+    rawStatus === "verified"
+      ? "approved"
+      : rawStatus === "review"
+        ? "pending"
+        : rawStatus;
 
   return {
-    status: property?.verificationStatus || fallbackStatus,
+    status: normalizedStatus,
     score: Number(property?.verificationScore || Math.min(checklist.length * 20, 100)),
     checklist,
     notes: property?.verificationNotes || "",
+    rejectionReason: property?.rejectionReason || "",
+    submittedAt: property?.moderationSubmittedAt || null,
+    reviewedAt: property?.moderationReviewedAt || null,
     updatedAt: property?.verificationUpdatedAt || property?.updatedDate || property?.createdDate || null,
   };
 };

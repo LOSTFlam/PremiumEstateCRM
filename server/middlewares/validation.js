@@ -29,21 +29,34 @@ const propertyValidation = {
       .isLength({ max: 500 }).withMessage('Address must be less than 500 characters'),
     
     body('listingPrice')
-      .optional()
-      .isNumeric().withMessage('Price must be a number')
-      .toFloat(),
+      .optional({ values: 'null' })
+      .custom((value) => {
+        if (value === undefined || value === null || value === '') return true;
+        const parsed = Number(String(value).replace(/[^\d.]/g, ''));
+        if (!Number.isFinite(parsed) || parsed < 0) {
+          throw new Error('Price must be a positive number');
+        }
+        return true;
+      }),
     
     body('numberofBedrooms')
-      .optional()
+      .optional({ values: 'null' })
       .isInt({ min: 0, max: 50 }).withMessage('Bedrooms must be between 0 and 50'),
     
     body('numberofBathrooms')
-      .optional()
+      .optional({ values: 'null' })
       .isInt({ min: 0, max: 50 }).withMessage('Bathrooms must be between 0 and 50'),
     
     body('squareFootage')
-      .optional()
-      .isNumeric().withMessage('Area must be a number'),
+      .optional({ values: 'null' })
+      .custom((value) => {
+        if (value === undefined || value === null || value === '') return true;
+        const parsed = Number(String(value).replace(/[^\d.]/g, ''));
+        if (!Number.isFinite(parsed) || parsed <= 0) {
+          throw new Error('Area must be a positive number');
+        }
+        return true;
+      }),
     
     body('yearBuilt')
       .optional()
@@ -175,6 +188,7 @@ const userValidation = {
 
     body("username")
       .optional({ values: "falsy" })
+      .if((value, { req }) => !req.body?.email)
       .trim()
       .isLength({ min: 2, max: 100 })
       .withMessage("Username must be between 2 and 100 characters"),

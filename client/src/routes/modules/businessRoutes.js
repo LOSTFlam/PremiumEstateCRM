@@ -1,6 +1,6 @@
 import React from "react";
 import { Icon } from "@chakra-ui/react";
-import { MdContacts, MdHome, MdLeaderboard, MdOutlineAddHome } from "react-icons/md";
+import { MdContacts, MdGavel, MdHome, MdLeaderboard, MdOutlineAddHome } from "react-icons/md";
 import { LuBuilding2 } from "react-icons/lu";
 import { TbBulb, TbFileInvoice } from "react-icons/tb";
 import { RiAccountCircleFill } from "react-icons/ri";
@@ -20,6 +20,7 @@ const Property = React.lazy(() => import("views/admin/property"));
 const PropertyView = React.lazy(() => import("views/admin/property/View"));
 const PropertyImport = React.lazy(() => import("views/admin/property/components/PropertyImport"));
 const PropertyPhotos = React.lazy(() => import("views/admin/property/PropertyPhotos"));
+const ModerationQueue = React.lazy(() => import("views/admin/moderation"));
 const Opportunities = React.lazy(() => import("views/admin/opportunities"));
 const OpportunitiesView = React.lazy(() => import("views/admin/opportunities/View"));
 const OpportunitiesImport = React.lazy(
@@ -94,6 +95,14 @@ export const businessRoutes = [
     parentName: "Contacts",
     path: "/contactImport",
     component: ContactImport,
+  }),
+  createRoute({
+    name: "Moderation",
+    i18nKey: "navigation.moderation",
+    layout: [ROLE_PATH.superAdmin],
+    path: "/moderation",
+    icon: <Icon as={MdGavel} width="20px" height="20px" color="inherit" />,
+    component: ModerationQueue,
   }),
   createRoute({
     name: "Properties",

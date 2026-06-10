@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   AlertDialog,
   AlertDialogBody,
   AlertDialogContent,
@@ -59,13 +62,21 @@ import {
 import { LuBuilding2, LuMapPin } from "react-icons/lu";
 
 import { deleteApi, getApi, postApi, putApi, clearApiCache } from "services/api";
+import { extractCollection } from "utils/normalizeResponse";
+import { extractApiErrorMessage } from "utils/errorMessages";
+import {
+  isListingPublic,
+  moderationStatusMeta,
+  MODERATION_STATUS,
+  normalizeModerationStatus,
+} from "utils/moderationStatus";
 import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 import { formatPrice, normalizePropertyMedia } from "views/public/catalog/catalogData";
 import { placeholderImage } from "utils/propertyStockImages";
 
 const DEAL_TYPES = ["sale", "rent"];
 const PROPERTY_TYPES = ["Apartment", "House", "Land", "Commercial"];
-const STATUSES = ["Available", "Booked", "Sold", "Blocked"];
+const STATUSES = ["Available", "Booked", "Sold"];
 
 const emptyForm = {
   name: "",
@@ -204,8 +215,8 @@ export default function MyListings() {
   const fetchListings = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await getApi("api/property/");
-      const data = Array.isArray(response?.data) ? response.data : [];
+      const response = await getApi("api/property/", { useCache: false });
+      const data = extractCollection(response);
       setListings(data.map(normalizePropertyMedia));
     } catch (error) {
       toast({ title: t("myListings.loadError"), status: "error", duration: 4000 });
@@ -222,11 +233,21 @@ export default function MyListings() {
     const total = listings.length;
     const sale = listings.filter((item) => (item?.dealType || "sale") === "sale").length;
     const rent = listings.filter((item) => item?.dealType === "rent").length;
-    const available = listings.filter(
-      (item) => !item?.listingStatus || ["Available", "Active", "New"].includes(item.listingStatus)
+    const approved = listings.filter(
+      (item) => normalizeModerationStatus(item) === MODERATION_STATUS.APPROVED
     ).length;
-    return { total, sale, rent, available };
+    const pending = listings.filter(
+      (item) => normalizeModerationStatus(item) === MODERATION_STATUS.PENDING
+    ).length;
+    return { total, sale, rent, approved, pending };
   }, [listings]);
+
+  const editingListing = useMemo(
+    () => listings.find((item) => item._id === editingId) || null,
+    [listings, editingId]
+  );
+  const editingModerationStatus = normalizeModerationStatus(editingListing);
+  const isPendingModeration = editingModerationStatus === MODERATION_STATUS.PENDING;
 
   const validationSchema = useMemo(
     () =>
@@ -262,15 +283,14 @@ export default function MyListings() {
           }
           setEditingId(createdId);
           setEditingPhotos([]);
-          toast({ title: t("myListings.created"), status: "success", duration: 3500 });
+          toast({ title: t("myListings.createdDraft"), status: "success", duration: 3500 });
         }
         clearApiCache("public:");
+        clearApiCache("api/property");
         await fetchListings();
       } catch (error) {
-        const message =
-          error?.response?.data?.error ||
-          error?.response?.data?.errors?.[0]?.message ||
-          t("myListings.saveError");
+        const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+        const message = extractApiErrorMessage(error, locale) || t("myListings.saveError");
         toast({ title: message, status: "error", duration: 4000 });
       } finally {
         setIsSaving(false);
@@ -306,6 +326,48 @@ export default function MyListings() {
     deleteDialog.onOpen();
   };
 
+  const handleSubmitForReview = async () => {
+    if (!editingId) return;
+    try {
+      setIsSaving(true);
+      await putApi(`api/property/submit/${editingId}`, {});
+      toast({ title: t("myListings.submitted"), status: "success", duration: 3500 });
+      clearApiCache("public:");
+      clearApiCache("api/property");
+      await fetchListings();
+      closeDrawer();
+    } catch (error) {
+      const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+      toast({
+        title: extractApiErrorMessage(error, locale) || t("myListings.submitError"),
+        status: "error",
+        duration: 4000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!editingId) return;
+    try {
+      setIsSaving(true);
+      await putApi(`api/property/withdraw/${editingId}`, {});
+      toast({ title: t("myListings.withdrawn"), status: "info", duration: 3000 });
+      clearApiCache("api/property");
+      await fetchListings();
+    } catch (error) {
+      const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+      toast({
+        title: extractApiErrorMessage(error, locale) || t("myListings.withdrawError"),
+        status: "error",
+        duration: 4000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!deleteTarget?._id) return;
     try {
@@ -313,6 +375,7 @@ export default function MyListings() {
       await deleteApi("api/property/delete/", deleteTarget._id);
       toast({ title: t("myListings.deletedToast"), status: "info", duration: 2500 });
       clearApiCache("public:");
+      clearApiCache("api/property");
       setListings((prev) => prev.filter((item) => item._id !== deleteTarget._id));
     } catch (error) {
       toast({ title: t("myListings.deleteError"), status: "error", duration: 4000 });
@@ -383,9 +446,9 @@ export default function MyListings() {
       <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} mb={6}>
         {[
           { label: t("myListings.statsTotal"), value: stats.total },
-          { label: t("myListings.statsAvailable"), value: stats.available },
+          { label: t("myListings.statsApproved"), value: stats.approved },
+          { label: t("myListings.statsPending"), value: stats.pending },
           { label: t("myListings.statsSale"), value: stats.sale },
-          { label: t("myListings.statsRent"), value: stats.rent },
         ].map((stat) => (
           <Box
             key={stat.label}
@@ -435,134 +498,163 @@ export default function MyListings() {
         </Box>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={5}>
-          {listings.map((listing) => (
-            <Box
-              key={listing._id}
-              bg={cardBg}
-              borderRadius={{ base: "20px", md: "24px" }}
-              border="1px solid"
-              borderColor={borderColor}
-              overflow="hidden"
-              transition="all 0.25s ease"
-              _hover={{ transform: { base: "none", md: "translateY(-4px)" }, boxShadow: "lg" }}
-            >
-              <Box position="relative">
-                <Image
-                  src={primaryImage(listing)}
-                  alt={listing?.name || ""}
-                  h="190px"
-                  w="100%"
-                  objectFit="cover"
-                  fallbackSrc={placeholderImage}
-                />
-                <HStack position="absolute" top={3} left={3} spacing={2}>
-                  <Badge colorScheme={listing?.dealType === "rent" ? "cyan" : "yellow"}>
-                    {dealLabel(listing?.dealType)}
-                  </Badge>
-                  <Badge colorScheme={statusColorScheme[listing?.listingStatus] || "gray"}>
-                    {statusLabel(listing?.listingStatus)}
-                  </Badge>
-                </HStack>
-                <Badge position="absolute" top={3} right={3} colorScheme="blackAlpha">
-                  {typeLabel(listing?.propertyType)}
-                </Badge>
-              </Box>
+          {listings.map((listing) => {
+            const moderationStatus = normalizeModerationStatus(listing);
+            const moderation = moderationStatusMeta(moderationStatus, t);
+            const rejectionReason =
+              listing?.rejectionReason || listing?.verification?.rejectionReason || "";
 
-              <Stack p={5} spacing={3}>
-                <Box>
-                  <Text fontWeight="800" fontSize="lg" noOfLines={1}>
-                    {listing?.name || listing?.propertyAddress}
-                  </Text>
-                  <HStack spacing={1.5} color={subtleText} mt={1}>
-                    <Icon as={LuMapPin} boxSize="14px" />
-                    <Text fontSize="sm" noOfLines={1}>
-                      {listing?.propertyAddress || "—"}
-                    </Text>
+            return (
+              <Box
+                key={listing._id}
+                bg={cardBg}
+                borderRadius={{ base: "20px", md: "24px" }}
+                border="1px solid"
+                borderColor={borderColor}
+                overflow="hidden"
+                transition="all 0.25s ease"
+                _hover={{ transform: { base: "none", md: "translateY(-4px)" }, boxShadow: "lg" }}
+              >
+                <Box position="relative">
+                  <Image
+                    src={primaryImage(listing)}
+                    alt={listing?.name || ""}
+                    h="190px"
+                    w="100%"
+                    objectFit="cover"
+                    fallbackSrc={placeholderImage}
+                  />
+                  <HStack
+                    position="absolute"
+                    top={3}
+                    left={3}
+                    spacing={2}
+                    flexWrap="wrap"
+                    maxW="80%"
+                  >
+                    <Badge colorScheme={listing?.dealType === "rent" ? "cyan" : "yellow"}>
+                      {dealLabel(listing?.dealType)}
+                    </Badge>
+                    <Badge colorScheme={moderation.colorScheme}>{moderation.label}</Badge>
+                    {moderationStatus === MODERATION_STATUS.APPROVED ? (
+                      <Badge colorScheme={statusColorScheme[listing?.listingStatus] || "gray"}>
+                        {statusLabel(listing?.listingStatus)}
+                      </Badge>
+                    ) : null}
                   </HStack>
+                  <Badge position="absolute" top={3} right={3} colorScheme="blackAlpha">
+                    {typeLabel(listing?.propertyType)}
+                  </Badge>
                 </Box>
 
-                <Text fontWeight="800" fontSize="xl" color={accentGold}>
-                  {formatPrice(listing?.listingPrice, t, i18n.language)}
-                  {listing?.dealType === "rent" ? (
-                    <Text as="span" fontSize="sm" color={subtleText} fontWeight="600">
-                      {" "}
-                      {t("myListings.perMonth")}
+                <Stack p={5} spacing={3}>
+                  <Box>
+                    <Text fontWeight="800" fontSize="lg" noOfLines={1}>
+                      {listing?.name || listing?.propertyAddress}
                     </Text>
-                  ) : null}
-                </Text>
-
-                <SimpleGrid columns={3} spacing={2}>
-                  {[
-                    {
-                      icon: MdMeetingRoom,
-                      label: t("myListings.bedrooms"),
-                      value: listing?.numberofBedrooms,
-                    },
-                    {
-                      icon: MdBathtub,
-                      label: t("myListings.bathrooms"),
-                      value: listing?.numberofBathrooms,
-                    },
-                    {
-                      icon: MdOutlineSquareFoot,
-                      label: t("myListings.area"),
-                      value: listing?.squareFootage,
-                    },
-                  ].map((metric) => (
-                    <Box
-                      key={metric.label}
-                      bg={accentSoft}
-                      borderRadius="14px"
-                      px={2.5}
-                      py={2}
-                      textAlign="center"
-                    >
-                      <Icon as={metric.icon} boxSize="16px" color={subtleText} />
-                      <Text fontWeight="700" fontSize="sm" mt={0.5}>
-                        {metric.value === 0 || metric.value
-                          ? String(metric.value).replace(/[^\d.]/g, "") || "—"
-                          : "—"}
+                    <HStack spacing={1.5} color={subtleText} mt={1}>
+                      <Icon as={LuMapPin} boxSize="14px" />
+                      <Text fontSize="sm" noOfLines={1}>
+                        {listing?.propertyAddress || "—"}
                       </Text>
-                    </Box>
-                  ))}
-                </SimpleGrid>
+                    </HStack>
+                  </Box>
 
-                <HStack className="my-listings-actions" pt={1} spacing={2} flexWrap="wrap">
-                  <Button
-                    size="sm"
-                    leftIcon={<MdEdit />}
-                    variant="outline"
-                    flex={{ base: "1 1 100%", sm: 1 }}
-                    borderRadius="full"
-                    onClick={() => openEdit(listing)}
-                  >
-                    {t("myListings.edit")}
-                  </Button>
-                  <Tooltip label={t("myListings.openOnSite")}>
-                    <IconButton
-                      as={RouterLink}
-                      to={`/offers/${listing._id}`}
-                      target="_blank"
+                  <Text fontWeight="800" fontSize="xl" color={accentGold}>
+                    {formatPrice(listing?.listingPrice, t, i18n.language)}
+                    {listing?.dealType === "rent" ? (
+                      <Text as="span" fontSize="sm" color={subtleText} fontWeight="600">
+                        {" "}
+                        {t("myListings.perMonth")}
+                      </Text>
+                    ) : null}
+                  </Text>
+
+                  {moderationStatus === MODERATION_STATUS.REJECTED && rejectionReason ? (
+                    <Alert status="error" borderRadius="14px" py={2}>
+                      <AlertIcon boxSize={4} />
+                      <AlertDescription fontSize="sm">
+                        <Text fontWeight="700">{t("myListings.rejectionReason")}</Text>
+                        {rejectionReason}
+                      </AlertDescription>
+                    </Alert>
+                  ) : null}
+
+                  <SimpleGrid columns={3} spacing={2}>
+                    {[
+                      {
+                        icon: MdMeetingRoom,
+                        label: t("myListings.bedrooms"),
+                        value: listing?.numberofBedrooms,
+                      },
+                      {
+                        icon: MdBathtub,
+                        label: t("myListings.bathrooms"),
+                        value: listing?.numberofBathrooms,
+                      },
+                      {
+                        icon: MdOutlineSquareFoot,
+                        label: t("myListings.area"),
+                        value: listing?.squareFootage,
+                      },
+                    ].map((metric) => (
+                      <Box
+                        key={metric.label}
+                        bg={accentSoft}
+                        borderRadius="14px"
+                        px={2.5}
+                        py={2}
+                        textAlign="center"
+                      >
+                        <Icon as={metric.icon} boxSize="16px" color={subtleText} />
+                        <Text fontWeight="700" fontSize="sm" mt={0.5}>
+                          {metric.value === 0 || metric.value
+                            ? String(metric.value).replace(/[^\d.]/g, "") || "—"
+                            : "—"}
+                        </Text>
+                      </Box>
+                    ))}
+                  </SimpleGrid>
+
+                  <HStack className="my-listings-actions" pt={1} spacing={2} flexWrap="wrap">
+                    <Button
                       size="sm"
+                      leftIcon={<MdEdit />}
                       variant="outline"
-                      aria-label={t("myListings.openOnSite")}
-                      icon={<MdOpenInNew />}
-                    />
-                  </Tooltip>
-                  <Tooltip label={t("myListings.delete")}>
-                    <IconButton
-                      size="sm"
-                      colorScheme="red"
-                      variant="outline"
-                      aria-label={t("myListings.delete")}
-                      icon={<MdDelete />}
-                      onClick={() => confirmDelete(listing)}
-                    />
-                  </Tooltip>
-                </HStack>
-              </Stack>
-            </Box>
-          ))}
+                      flex={{ base: "1 1 100%", sm: 1 }}
+                      borderRadius="full"
+                      onClick={() => openEdit(listing)}
+                    >
+                      {t("myListings.edit")}
+                    </Button>
+                    {isListingPublic(listing) ? (
+                      <Tooltip label={t("myListings.openOnSite")}>
+                        <IconButton
+                          as={RouterLink}
+                          to={`/offers/${listing._id}`}
+                          target="_blank"
+                          size="sm"
+                          variant="outline"
+                          aria-label={t("myListings.openOnSite")}
+                          icon={<MdOpenInNew />}
+                        />
+                      </Tooltip>
+                    ) : null}
+                    <Tooltip label={t("myListings.delete")}>
+                      <IconButton
+                        size="sm"
+                        colorScheme="red"
+                        variant="outline"
+                        aria-label={t("myListings.delete")}
+                        icon={<MdDelete />}
+                        onClick={() => confirmDelete(listing)}
+                      />
+                    </Tooltip>
+                  </HStack>
+                </Stack>
+              </Box>
+            );
+          })}
         </SimpleGrid>
       )}
 
@@ -573,8 +665,54 @@ export default function MyListings() {
             {editingId ? t("myListings.editListing") : t("myListings.newListing")}
           </DrawerHeader>
           <DrawerBody py={5}>
+            {editingListing ? (
+              <Alert
+                status={
+                  editingModerationStatus === MODERATION_STATUS.REJECTED
+                    ? "error"
+                    : editingModerationStatus === MODERATION_STATUS.PENDING
+                      ? "warning"
+                      : editingModerationStatus === MODERATION_STATUS.APPROVED
+                        ? "success"
+                        : "info"
+                }
+                borderRadius="16px"
+                mb={4}
+              >
+                <AlertIcon />
+                <Box>
+                  <Text fontWeight="700">
+                    {moderationStatusMeta(editingModerationStatus, t).label}
+                  </Text>
+                  {editingModerationStatus === MODERATION_STATUS.PENDING ? (
+                    <Text fontSize="sm">{t("myListings.pendingHint")}</Text>
+                  ) : null}
+                  {editingModerationStatus === MODERATION_STATUS.REJECTED &&
+                  (editingListing?.rejectionReason ||
+                    editingListing?.verification?.rejectionReason) ? (
+                    <Text fontSize="sm" mt={1}>
+                      {t("myListings.rejectionReason")}:{" "}
+                      {editingListing?.rejectionReason ||
+                        editingListing?.verification?.rejectionReason}
+                    </Text>
+                  ) : null}
+                  {editingModerationStatus === MODERATION_STATUS.DRAFT ? (
+                    <Text fontSize="sm">{t("myListings.draftHint")}</Text>
+                  ) : null}
+                </Box>
+              </Alert>
+            ) : (
+              <Alert status="info" borderRadius="16px" mb={4}>
+                <AlertIcon />
+                <Text fontSize="sm">{t("myListings.newListingHint")}</Text>
+              </Alert>
+            )}
             <form id="my-listing-form" onSubmit={formik.handleSubmit}>
-              <Stack spacing={4}>
+              <Stack
+                spacing={4}
+                opacity={isPendingModeration ? 0.65 : 1}
+                pointerEvents={isPendingModeration ? "none" : "auto"}
+              >
                 <FormControl isInvalid={fieldError("name")} isRequired>
                   <FormLabel fontSize="sm" mb="6px">
                     {t("myListings.name")}
@@ -754,25 +892,41 @@ export default function MyListings() {
               </Stack>
             </form>
           </DrawerBody>
-          <DrawerFooter borderTopWidth="1px" gap={3}>
+          <DrawerFooter borderTopWidth="1px" gap={3} flexWrap="wrap">
             <Button variant="outline" onClick={closeDrawer}>
               {t("myListings.close")}
             </Button>
-            <Button
-              variant="brand"
-              type="submit"
-              form="my-listing-form"
-              isDisabled={isSaving}
-              minW="160px"
-            >
-              {isSaving ? (
-                <Spinner size="sm" />
-              ) : editingId ? (
-                t("myListings.save")
-              ) : (
-                t("myListings.saveAndPhotos")
-              )}
-            </Button>
+            {editingId && isPendingModeration ? (
+              <Button variant="outline" onClick={handleWithdraw} isLoading={isSaving}>
+                {t("myListings.withdraw")}
+              </Button>
+            ) : null}
+            {!isPendingModeration ? (
+              <Button
+                variant="brand"
+                type="submit"
+                form="my-listing-form"
+                isDisabled={isSaving}
+                minW="160px"
+              >
+                {isSaving ? (
+                  <Spinner size="sm" />
+                ) : editingId ? (
+                  t("myListings.saveDraft")
+                ) : (
+                  t("myListings.saveAndPhotos")
+                )}
+              </Button>
+            ) : null}
+            {editingId &&
+            !isPendingModeration &&
+            [MODERATION_STATUS.DRAFT, MODERATION_STATUS.REJECTED].includes(
+              editingModerationStatus
+            ) ? (
+              <Button colorScheme="green" onClick={handleSubmitForReview} isLoading={isSaving}>
+                {t("myListings.submitForReview")}
+              </Button>
+            ) : null}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

@@ -1,4 +1,5 @@
 const { Property } = require("../../model/schema/property");
+const { LEGACY_APPROVED } = require("../../constants/moderation");
 const { normalizePublicProperty } = require("./utils");
 const { isValidObjectId } = require("mongoose");
 
@@ -18,11 +19,16 @@ const publicIndex = async (req, res) => {
     }
 
     const properties = await Property.find(query)
-      .populate(populatePublicCreator)
+      .populate({
+        ...populatePublicCreator,
+        select: "firstName lastName username phoneNumber role isBlocked",
+      })
       .sort({ updatedDate: -1, createdDate: -1 })
       .lean();
 
-    let normalized = properties.map(normalizePublicProperty);
+    let normalized = properties
+      .filter((item) => item?.createBy && !item.createBy.isBlocked)
+      .map(normalizePublicProperty);
 
     if (req.query.verificationStatus) {
       normalized = normalized.filter((item) => item?.verification?.status === req.query.verificationStatus);
@@ -48,11 +54,16 @@ const publicView = async (req, res) => {
     const property = await Property.findOne({
       _id: req.params.id,
       deleted: { $ne: true },
+      verificationStatus: { $in: LEGACY_APPROVED },
+      listingStatus: { $ne: "Blocked" },
     })
-      .populate(populatePublicCreator)
+      .populate({
+        ...populatePublicCreator,
+        select: "firstName lastName username phoneNumber role isBlocked",
+      })
       .lean();
 
-    if (!property) {
+    if (!property || !property.createBy || property.createBy.isBlocked) {
       return res.status(404).json({ message: "no Data Found." });
     }
 
@@ -72,12 +83,17 @@ const publicViewBySlug = async (req, res) => {
 
     const property = await Property.findOne({
       deleted: { $ne: true },
+      verificationStatus: { $in: LEGACY_APPROVED },
+      listingStatus: { $ne: "Blocked" },
       $or: [{ publicSlug: slug }, { seoSlug: slug }],
     })
-      .populate(populatePublicCreator)
+      .populate({
+        ...populatePublicCreator,
+        select: "firstName lastName username phoneNumber role isBlocked",
+      })
       .lean();
 
-    if (!property) {
+    if (!property || !property.createBy || property.createBy.isBlocked) {
       return res.status(404).json({ message: "no Data Found." });
     }
 

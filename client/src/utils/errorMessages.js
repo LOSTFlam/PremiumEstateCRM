@@ -88,11 +88,33 @@ export const getErrorMessage = (category, key, locale = "en") => {
   return messages[category]?.[key] || messages.common?.unknownError || "An error occurred";
 };
 
+export const extractApiErrorMessage = (error, locale = "en") => {
+  if (!error) return getErrorMessage("common", "unknownError", locale);
+
+  const data = error.response?.data;
+  if (Array.isArray(data?.errors) && data.errors.length) {
+    return data.errors
+      .map((item) => item?.message || item?.msg)
+      .filter(Boolean)
+      .join(". ");
+  }
+  if (Array.isArray(data?.errors) && typeof data.errors[0] === "string") {
+    return data.errors.join(". ");
+  }
+
+  return (
+    data?.message ||
+    data?.error ||
+    error.message ||
+    getErrorMessage("common", "unknownError", locale)
+  );
+};
+
 export const getLocalizedError = (error, locale = "en") => {
   if (!error) return getErrorMessage("common", "unknownError", locale);
 
   const status = error.response?.status;
-  const message = error.response?.data?.message || error.response?.data?.error || error.message;
+  const message = extractApiErrorMessage(error, locale);
 
   if (status === 401) {
     if (message?.includes("expired") || message?.includes("Session")) {
@@ -131,4 +153,4 @@ export const getLocalizedError = (error, locale = "en") => {
   return message || getErrorMessage("common", "unknownError", locale);
 };
 
-export default { getErrorMessage, getLocalizedError, ERROR_MESSAGES };
+export default { getErrorMessage, getLocalizedError, extractApiErrorMessage, ERROR_MESSAGES };

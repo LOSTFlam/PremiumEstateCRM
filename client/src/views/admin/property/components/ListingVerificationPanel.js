@@ -1,11 +1,16 @@
 import {
+  Alert,
+  AlertIcon,
   Badge,
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControl,
+  FormHelperText,
   FormLabel,
   Grid,
+  HStack,
   Input,
   Link,
   Select,
@@ -19,6 +24,7 @@ import {
 import Card from "components/card/Card";
 import { useEffect, useMemo, useState } from "react";
 import { putApi } from "services/api";
+import { normalizeModerationStatus, moderationStatusMeta } from "utils/moderationStatus";
 
 const verificationOptions = [
   { value: "address", label: "Адрес подтвержден" },
@@ -53,18 +59,15 @@ const defaultChecklist = (property = {}) => {
   return checklist;
 };
 
-const statusMeta = {
-  pending: { colorScheme: "gray", label: "Ожидает модерации" },
-  review: { colorScheme: "orange", label: "На проверке" },
-  verified: { colorScheme: "green", label: "Проверено" },
-};
-
 export default function ListingVerificationPanel({ property, onUpdated, canManage = false }) {
   const toast = useToast();
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
   const subtleBg = useColorModeValue("gray.50", "whiteAlpha.100");
   const mutedColor = useColorModeValue("gray.600", "gray.300");
   const [isSaving, setIsSaving] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [blockUser, setBlockUser] = useState(false);
+  const [userBlockReason, setUserBlockReason] = useState("");
   const [form, setForm] = useState({
     verificationStatus: "pending",
     verificationScore: 0,
@@ -88,8 +91,7 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
           : defaultChecklist(property);
 
     setForm({
-      verificationStatus:
-        property?.verificationStatus || property?.verification?.status || "pending",
+      verificationStatus: normalizeModerationStatus(property),
       verificationScore: Number(
         property?.verificationScore ??
           property?.verification?.score ??
@@ -105,12 +107,16 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
         ? property.featuredCollections
         : [],
     });
+    setRejectionReason(property?.rejectionReason || property?.verification?.rejectionReason || "");
   }, [property]);
 
   const status = useMemo(
-    () => statusMeta[form.verificationStatus] || statusMeta.pending,
+    () => moderationStatusMeta(form.verificationStatus),
     [form.verificationStatus]
   );
+
+  const owner = property?.createBy;
+  const ownerName = [owner?.firstName, owner?.lastName].filter(Boolean).join(" ").trim();
   const publicUrl = useMemo(() => {
     if (!property?._id || typeof window === "undefined") return "";
     return window.location.origin + "/offers/" + property._id;
@@ -131,28 +137,71 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
     }));
   };
 
-  const handleSave = async () => {
+  const saveModeration = async (payload) => {
+    const response = await putApi("api/property/verify/" + property._id, {
+      verificationScore: Number(form.verificationScore) || 0,
+      verificationNotes: form.verificationNotes,
+      verificationChecklist: form.verificationChecklist,
+      seoTitle: form.seoTitle,
+      seoDescription: form.seoDescription,
+      seoKeywords: form.seoKeywords,
+      publicSlug: form.publicSlug,
+      featuredCollections: form.featuredCollections,
+      ...payload,
+    });
+    return response;
+  };
+
+  const handleApprove = async () => {
     try {
       setIsSaving(true);
-      const response = await putApi("api/property/verify/" + property._id, {
-        verificationStatus: form.verificationStatus,
-        verificationScore: Number(form.verificationScore) || 0,
-        verificationNotes: form.verificationNotes,
-        verificationChecklist: form.verificationChecklist,
-        seoTitle: form.seoTitle,
-        seoDescription: form.seoDescription,
-        seoKeywords: form.seoKeywords,
-        publicSlug: form.publicSlug,
-        featuredCollections: form.featuredCollections,
+      await saveModeration({ decision: "approve" });
+      toast({ title: "Объявление одобрено и опубликовано", status: "success" });
+      onUpdated?.();
+    } catch (error) {
+      toast({ title: "Не удалось одобрить объявление", status: "error" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!rejectionReason.trim()) {
+      toast({
+        title: "Укажите причину отклонения — она будет показана пользователю",
+        status: "warning",
       });
+      return;
+    }
 
-      if (response?.status === 200) {
-        toast({ title: "Карточка обновлена", status: "success" });
-        onUpdated?.();
-        return;
-      }
+    try {
+      setIsSaving(true);
+      await saveModeration({
+        decision: "reject",
+        rejectionReason: rejectionReason.trim(),
+        blockUser,
+        userBlockReason: userBlockReason.trim() || rejectionReason.trim(),
+      });
+      toast({
+        title: blockUser
+          ? "Объявление отклонено, пользователь заблокирован"
+          : "Объявление отклонено",
+        status: "info",
+      });
+      onUpdated?.();
+    } catch (error) {
+      toast({ title: "Не удалось отклонить объявление", status: "error" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-      toast({ title: "Не удалось сохранить изменения", status: "error" });
+  const handleSaveMeta = async () => {
+    try {
+      setIsSaving(true);
+      await saveModeration({ verificationStatus: form.verificationStatus });
+      toast({ title: "Настройки сохранены", status: "success" });
+      onUpdated?.();
     } catch (error) {
       toast({ title: "Не удалось сохранить изменения", status: "error" });
     } finally {
@@ -172,45 +221,108 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
         >
           <Box>
             <Text fontSize="xl" fontWeight="700">
-              Верификация и SEO
+              Модерация объявления
             </Text>
             <Text color={mutedColor} mt={1}>
-              Управление статусом доверия объявления, SEO-метаданными и подборками для посадочных
-              страниц.
+              Одобрите объявление для публикации на сайте или отклоните с указанием причины
             </Text>
           </Box>
           <Stack spacing={2} align={{ base: "flex-start", md: "flex-end" }}>
             <Badge colorScheme={status.colorScheme} px={3} py={1} borderRadius="full">
               {status.label}
             </Badge>
-            {publicUrl ? (
+            {publicUrl && form.verificationStatus === "approved" ? (
               <Link href={publicUrl} isExternal color="brand.500" fontWeight="600">
-                Открыть публичную карточку
+                Открыть на сайте
               </Link>
             ) : null}
           </Stack>
         </Box>
 
+        <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" bg={subtleBg} p={4}>
+          <Text fontWeight="600" mb={1}>
+            Автор объявления
+          </Text>
+          <Text>{ownerName || owner?.username || owner?.email || "—"}</Text>
+          {owner?.isBlocked ? (
+            <Badge mt={2} colorScheme="red">
+              Пользователь заблокирован
+            </Badge>
+          ) : null}
+        </Box>
+
         {!canManage ? (
-          <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" bg={subtleBg} p={4}>
-            <Text color={mutedColor}>
-              У вас нет прав на изменение verified-статуса и SEO-настроек этого объявления.
+          <Alert status="info" borderRadius="16px">
+            <AlertIcon />У вас нет прав на модерацию этого объявления.
+          </Alert>
+        ) : null}
+
+        {canManage ? (
+          <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" p={4}>
+            <Text fontWeight="700" mb={3}>
+              Быстрые действия
             </Text>
+            <HStack spacing={3} flexWrap="wrap">
+              <Button colorScheme="green" onClick={handleApprove} isLoading={isSaving}>
+                Одобрить
+              </Button>
+              <Button
+                colorScheme="red"
+                variant="outline"
+                onClick={handleReject}
+                isLoading={isSaving}
+              >
+                Отклонить
+              </Button>
+            </HStack>
+            <FormControl mt={4} isRequired>
+              <FormLabel>Причина отклонения (видна пользователю)</FormLabel>
+              <Textarea
+                rows={3}
+                value={rejectionReason}
+                onChange={(event) => setRejectionReason(event.target.value)}
+                placeholder="Например: фотографии не соответствуют объекту, укажите реальный адрес"
+              />
+              <FormHelperText>
+                Обязательна при отклонении. Пользователь увидит её в разделе «Мои объявления».
+              </FormHelperText>
+            </FormControl>
+            <Stack mt={4} spacing={3}>
+              <Checkbox
+                isChecked={blockUser}
+                onChange={(event) => setBlockUser(event.target.checked)}
+              >
+                Также заблокировать пользователя
+              </Checkbox>
+              {blockUser ? (
+                <FormControl>
+                  <FormLabel>Причина блокировки аккаунта</FormLabel>
+                  <Input
+                    value={userBlockReason}
+                    onChange={(event) => setUserBlockReason(event.target.value)}
+                    placeholder="Если пусто — будет использована причина отклонения"
+                  />
+                </FormControl>
+              ) : null}
+            </Stack>
           </Box>
         ) : null}
+
+        <Divider />
 
         <SimpleGrid columns={{ base: 1, xl: 2 }} spacing={5}>
           <Stack spacing={4}>
             <FormControl>
-              <FormLabel>Статус проверки</FormLabel>
+              <FormLabel>Статус модерации</FormLabel>
               <Select
                 value={form.verificationStatus}
                 onChange={(event) => updateField("verificationStatus", event.target.value)}
                 isDisabled={!canManage}
               >
-                <option value="pending">Ожидает модерации</option>
-                <option value="review">На проверке</option>
-                <option value="verified">Проверено</option>
+                <option value="draft">Черновик</option>
+                <option value="pending">На модерации</option>
+                <option value="approved">Одобрено</option>
+                <option value="rejected">Отклонено</option>
               </Select>
             </FormControl>
             <FormControl>
@@ -225,18 +337,18 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Комментарий модерации</FormLabel>
+              <FormLabel>Внутренний комментарий</FormLabel>
               <Textarea
-                rows={5}
+                rows={4}
                 value={form.verificationNotes}
                 onChange={(event) => updateField("verificationNotes", event.target.value)}
                 isDisabled={!canManage}
-                placeholder="Что проверено, что ещё нужно загрузить, какие данные нужно уточнить"
+                placeholder="Заметки для администраторов, не видны пользователю"
               />
             </FormControl>
             <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" p={4}>
               <Text fontWeight="600" mb={3}>
-                Чеклист доверия
+                Чеклист проверки
               </Text>
               <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={3}>
                 {verificationOptions.map((item) => (
@@ -260,7 +372,6 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
                 value={form.seoTitle}
                 onChange={(event) => updateField("seoTitle", event.target.value)}
                 isDisabled={!canManage}
-                placeholder="Например: Дом у леса в Подмосковье | Название агентства"
               />
             </FormControl>
             <FormControl>
@@ -270,7 +381,6 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
                 value={form.seoDescription}
                 onChange={(event) => updateField("seoDescription", event.target.value)}
                 isDisabled={!canManage}
-                placeholder="Короткое описание для поисковой выдачи и социальных карточек"
               />
             </FormControl>
             <FormControl>
@@ -279,7 +389,6 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
                 value={form.seoKeywords}
                 onChange={(event) => updateField("seoKeywords", event.target.value)}
                 isDisabled={!canManage}
-                placeholder="дом, купить дом, загородная недвижимость, москва"
               />
             </FormControl>
             <FormControl>
@@ -288,7 +397,6 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
                 value={form.publicSlug}
                 onChange={(event) => updateField("publicSlug", event.target.value)}
                 isDisabled={!canManage}
-                placeholder="dom-u-lesa-v-podmoskove"
               />
             </FormControl>
             <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" p={4}>
@@ -307,34 +415,17 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
                   </Checkbox>
                 ))}
               </Grid>
-              <Text mt={3} color={mutedColor} fontSize="sm">
-                Отмеченные подборки получают этот объект на SEO-лендингах даже если он не подходит
-                под автоматические правила.
-              </Text>
             </Box>
           </Stack>
         </SimpleGrid>
 
-        <Box borderWidth="1px" borderColor={borderColor} borderRadius="16px" bg={subtleBg} p={4}>
-          <Text fontWeight="600" mb={2}>
-            Памятка по воронке
-          </Text>
-          <Text color={mutedColor}>
-            После сохранения объект получает verified-статус для публичной витрины, может попадать
-            на SEO-страницы подборок и использоваться в публичных лид-формах с агентом.
-          </Text>
-        </Box>
-
-        <Box display="flex" justifyContent="flex-end">
-          <Button
-            colorScheme="green"
-            onClick={handleSave}
-            isLoading={isSaving}
-            isDisabled={!canManage}
-          >
-            Сохранить модерацию
-          </Button>
-        </Box>
+        {canManage ? (
+          <Box display="flex" justifyContent="flex-end">
+            <Button variant="outline" onClick={handleSaveMeta} isLoading={isSaving}>
+              Сохранить SEO и статус
+            </Button>
+          </Box>
+        ) : null}
       </Stack>
     </Card>
   );

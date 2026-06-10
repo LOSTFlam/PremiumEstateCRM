@@ -49,7 +49,10 @@ class AIRecommendationService {
     const lead = await Lead.findById(leadId);
     if (!lead) return [];
 
-    const properties = await Property.find({ verificationStatus: 'verified', deleted: false }).lean();
+    const properties = await Property.find({
+      verificationStatus: { $in: ['approved', 'verified'] },
+      deleted: false,
+    }).lean();
 
     const scored = properties.map(p => ({
       ...p,

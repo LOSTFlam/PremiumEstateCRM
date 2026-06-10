@@ -283,7 +283,7 @@ async function seedData() {
                 createOn: now,
               },
             ],
-            verificationStatus: "verified",
+            verificationStatus: "approved",
             verificationScore: 90 + i,
             featuredCollections: ["verified", "family-homes"],
             updatedDate: now,
