@@ -339,3 +339,57 @@ a.public-brand-button {
     font-size: 1.2rem !important;
   }
 }
+
+/* Landing page hero — phones */
+@media (max-width: 767px) {
+  .landing-hero,
+  .landing-hero-panel,
+  .landing-hero-segments > *,
+  .landing-hero-stats > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .landing-hero-title {
+    font-size: 1.35rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .landing-hero-kicker {
+    letter-spacing: 0.02em !important;
+    text-transform: none !important;
+  }
+
+  .landing-hero-search {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-search .chakra-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .landing-hero-search .chakra-input {
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  .landing-hero-trust {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .landing-hero-stat-value {
+    font-size: 1.15rem !important;
+  }
+
+  .landing-market-stats {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 479px) and (min-width: 390px) {
+  .landing-market-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

@@ -44,7 +44,13 @@ import {
 } from "utils/storefrontPresets";
 import { fetchPublicCatalog } from "./catalog/catalogService";
 import { countCatalogProperties, extractPresetFilters } from "./catalog/catalogFilters";
-import { formatPrice, isRichListing, parsePrice, placeholderImage } from "./catalog/catalogData";
+import {
+  formatCompactPrice,
+  formatPrice,
+  isRichListing,
+  parsePrice,
+  placeholderImage,
+} from "./catalog/catalogData";
 import { getRate } from "services/exchangeRate";
 import { getSeoCollectionConfig } from "./catalog/seoCollections";
 import {
@@ -77,10 +83,9 @@ const resultsText = (language) =>
 const landingCopy = {
   ru: {
     marketBadge: "Маршруты спроса",
-    marketTitle:
-      "Главная теперь ведет не только в красивые карточки, но и в нужный сценарий поиска.",
+    marketTitle: "Быстрые входы в нужный сценарий поиска",
     marketText:
-      "По примеру сильных порталов мы собрали быстрые входы в частые запросы: семейный дом, городская квартира, проверенная витрина, инвестиционные участки и премиальная коммерция.",
+      "Семейный дом, городская квартира, проверенная витрина, участки и премиальная коммерция — каждый маршрут на отдельной странице.",
     marketOpen: "Открыть маршрут",
     marketStats: "Живые сигналы витрины",
     collectionsBadge: "Редакционные подборки",
@@ -356,10 +361,10 @@ export default function ModernLandingPage() {
       {
         key: "average",
         label: locale === "ru" ? "Средний бюджет" : "Average ticket",
-        value: formatPrice(averagePrice, t),
+        value: formatCompactPrice(averagePrice, t, i18n.language),
       },
     ],
-    [averagePrice, locale, newCount, properties.length, richCount, t]
+    [averagePrice, i18n.language, locale, newCount, properties.length, richCount, t]
   );
 
   const collectionCards = useMemo(() => {
@@ -574,13 +579,19 @@ export default function ModernLandingPage() {
                     </Text>
                   </Box>
 
-                  <SimpleGrid columns={{ base: 2, md: 4 }} spacing={5}>
+                  <SimpleGrid
+                    className="landing-market-stats"
+                    columns={{ base: 1, sm: 2, md: 4 }}
+                    spacing={{ base: 3, md: 5 }}
+                    minChildWidth="0"
+                  >
                     {marketStats.map((item) => (
                       <Box
                         key={item.key}
                         borderRadius="26px"
                         px={4}
                         py={4}
+                        minW={0}
                         bg="rgba(212,175,55,0.04)"
                         border="1px solid rgba(212,175,55,0.12)"
                       >
@@ -596,7 +607,9 @@ export default function ModernLandingPage() {
                           mt={2}
                           color={publicBrand.colors.ink}
                           fontWeight="700"
-                          fontSize={{ base: "xl", md: "2xl" }}
+                          fontSize={{ base: "lg", md: "2xl" }}
+                          lineHeight="1.2"
+                          wordBreak="break-word"
                         >
                           {item.value}
                         </Text>
@@ -651,14 +664,28 @@ export default function ModernLandingPage() {
                         {route.count}
                       </Text>
                     </HStack>
-                    <Heading mt={5} size="md" color={publicBrand.colors.ink}>
+                    <Heading
+                      mt={5}
+                      size="md"
+                      color={publicBrand.colors.ink}
+                      fontSize={{ base: "md", md: "lg" }}
+                      lineHeight="1.25"
+                      wordBreak="break-word"
+                    >
                       {route.title}
                     </Heading>
-                    <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                    <Text
+                      mt={3}
+                      color={publicBrand.colors.textSoft}
+                      lineHeight="1.65"
+                      fontSize={{ base: "sm", md: "md" }}
+                      noOfLines={4}
+                      wordBreak="break-word"
+                    >
                       {route.text}
                     </Text>
-                    <HStack mt={5} spacing={2} color={publicBrand.colors.copper}>
-                      <Text fontWeight="700" fontSize="sm">
+                    <HStack mt={5} spacing={2} color={publicBrand.colors.copper} flexWrap="wrap">
+                      <Text fontWeight="700" fontSize="sm" wordBreak="break-word">
                         {copy.marketOpen}
                       </Text>
                       <FiArrowRight />

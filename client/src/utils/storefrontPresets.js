@@ -189,7 +189,7 @@ const PRESET_META = {
     badge: { ru: "Частные резиденции", en: "Private residences" },
     title: { ru: "Дома, виллы и таунхаусы", en: "Houses, villas, and townhouses" },
     description: {
-      ru: "Отдельная страница для загородных и городских домов с возможностью настроить спальни, санузлы и другие признаки прямо из CRM.",
+      ru: "Дома и виллы: отдельная страница с фильтрами по спальням и санузлам.",
       en: "A dedicated page for houses and villas with CRM-controlled defaults for bedrooms, bathrooms, and other filters.",
     },
     adminLabel: { ru: "Дома", en: "Houses" },
@@ -199,7 +199,7 @@ const PRESET_META = {
     badge: { ru: "Городская витрина", en: "Urban inventory" },
     title: { ru: "Квартиры и резиденции", en: "Apartments and residences" },
     description: {
-      ru: "Городские объекты для жизни, аренды и инвестиций, собранные в отдельную страницу.",
+      ru: "Квартиры для жизни, аренды и инвестиций — на отдельной странице.",
       en: "Urban inventory for living, rental income, and investment, collected into a dedicated page.",
     },
     adminLabel: { ru: "Квартиры", en: "Apartments" },
@@ -212,7 +212,7 @@ const PRESET_META = {
       en: "Plots for development and construction",
     },
     description: {
-      ru: "Земельные предложения со своими фильтрами и отдельным сценарием просмотра.",
+      ru: "Участки с отдельными фильтрами и удобным просмотром.",
       en: "Land offers with their own filter defaults and a separate browsing scenario.",
     },
     adminLabel: { ru: "Участки", en: "Plots" },
@@ -222,7 +222,7 @@ const PRESET_META = {
     badge: { ru: "Коммерческий блок", en: "Commercial block" },
     title: { ru: "Коммерческая недвижимость", en: "Commercial real estate" },
     description: {
-      ru: "Офисы, шоурумы и коммерческие площади с собственной страницей и настраиваемыми фильтрами.",
+      ru: "Офисы и коммерческие площади — отдельная витрина с фильтрами.",
       en: "Offices, showrooms, and business spaces with their own page and configurable filter defaults.",
     },
     adminLabel: { ru: "Коммерция", en: "Commercial" },

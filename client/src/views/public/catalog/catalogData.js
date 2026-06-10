@@ -634,6 +634,21 @@ export const formatPrice = (value, t, language = runtimeLanguage()) => {
   return amount.toLocaleString("en-US") + " \u0024";
 };
 
+export const formatCompactPrice = (value, t, language = runtimeLanguage()) => {
+  const amount = parsePrice(value);
+  if (!amount) return formatPrice(value, t, language);
+  const isRussian = isRu(language);
+  const locale = isRussian ? "ru-RU" : "en-US";
+  const currency = isRussian ? "RUB" : "USD";
+  const converted = isRussian ? Math.round(amount * getRubRate()) : amount;
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(converted);
+};
+
 export const formatDate = (value, language = runtimeLanguage()) => {
   if (!value) return "-";
   const parsed = new Date(value);

@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { FiArrowRight, FiClock, FiHome, FiSearch, FiShield, FiTrendingUp } from "react-icons/fi";
 import { LuBuilding2, LuMapPin, LuSparkles, LuTrees } from "react-icons/lu";
 import {
+  formatCompactPrice,
   formatPrice,
   getPhotoCount,
   getPrimaryImage,
@@ -36,11 +37,11 @@ import { useScrollReveal } from "hooks/useScrollReveal";
 const heroCopy = {
   ru: {
     eyebrow: "Агентский маркетплейс",
-    kicker: "Структурированный поиск, сильная карточка и прямой путь к показу",
-    title: "Подберите объект как на сильном портале,",
-    accent: "но с личным сопровождением агентства",
+    kicker: "Структурированный поиск и прямой путь к показу",
+    title: "Подберите объект как на портале",
+    accent: "с сопровождением агентства",
     description:
-      "Главная теперь работает как настоящая входная точка в рынок: понятные сегменты, быстрый поиск, живые подборки и спокойный маршрут от первого клика до звонка брокеру.",
+      "Понятные сегменты, быстрый поиск и спокойный маршрут от первого клика до звонка брокеру.",
     searchHint: "Адрес, тип объекта, район, сценарий жизни",
     primary: "Открыть каталог",
     secondary: "Показать подборку ниже",
@@ -248,7 +249,11 @@ export default function ModernHero({
   const highlightStats = [
     { label: copy.statsCatalog, value: String(properties?.length || 0), icon: FiTrendingUp },
     { label: copy.statsRich, value: String(richCount || 0), icon: FiShield },
-    { label: copy.statsAverage, value: formatPrice(averagePrice, t), icon: LuSparkles },
+    {
+      label: copy.statsAverage,
+      value: formatCompactPrice(averagePrice, t, locale),
+      icon: LuSparkles,
+    },
   ];
 
   const routeCards = useMemo(
@@ -294,11 +299,13 @@ export default function ModernHero({
 
   return (
     <Box
+      className="landing-hero"
       position="relative"
       overflow="hidden"
       pt={{ base: 24, md: 30, xl: 36 }}
       pb={{ base: 14, md: 18, xl: 22 }}
       bg={publicBrand.gradients.hero}
+      maxW="100vw"
     >
       <Box
         position="absolute"
@@ -318,7 +325,14 @@ export default function ModernHero({
         bg="radial-gradient(circle, rgba(212,175,55,0.24) 0%, rgba(212,175,55,0) 72%)"
       />
 
-      <Box position="relative" zIndex={1} maxW="1560px" mx="auto" px={{ base: 4, md: 8, xl: 10 }}>
+      <Box
+        position="relative"
+        zIndex={1}
+        maxW="1560px"
+        mx="auto"
+        px={{ base: 3, sm: 4, md: 8, xl: 10 }}
+        minW={0}
+      >
         <Grid
           templateColumns={{ base: "1fr", xl: "1fr" }}
           gap={{ base: 8, xl: 10 }}
@@ -338,36 +352,47 @@ export default function ModernHero({
                   transform: titleRevealed ? "translateY(0)" : "translateY(40px)",
                 }}
               >
-                <HStack spacing={3} flexWrap="wrap">
+                <Stack spacing={2} align="flex-start" maxW="100%">
                   <Badge
+                    className="landing-hero-eyebrow"
                     px={4}
                     py={1.5}
                     borderRadius="full"
                     bg="rgba(245,208,118,0.14)"
                     border="1px solid rgba(245,208,118,0.26)"
                     color="#f5d076"
-                    letterSpacing="0.14em"
+                    letterSpacing="0.1em"
                     textTransform="uppercase"
+                    fontSize="xs"
+                    whiteSpace="normal"
+                    textAlign="left"
+                    lineHeight="1.4"
+                    maxW="100%"
                   >
                     {copy.eyebrow}
                   </Badge>
                   <Text
+                    className="landing-hero-kicker"
                     color="whiteAlpha.760"
-                    fontSize="sm"
-                    letterSpacing="0.12em"
-                    textTransform="uppercase"
+                    fontSize={{ base: "xs", sm: "sm" }}
+                    letterSpacing={{ base: "0.02em", md: "0.1em" }}
+                    textTransform={{ base: "none", md: "uppercase" }}
+                    lineHeight="1.5"
+                    wordBreak="break-word"
+                    maxW="100%"
                   >
                     {copy.kicker}
                   </Text>
-                </HStack>
+                </Stack>
 
                 <Heading
                   as="h1"
-                  fontSize={{ base: "2xl", sm: "3xl", md: "5xl", xl: "6xl", "2xl": "7xl" }}
+                  className="landing-hero-title"
+                  fontSize={{ base: "xl", sm: "2xl", md: "4xl", xl: "5xl", "2xl": "6xl" }}
                   wordBreak="break-word"
-                  lineHeight={{ base: "1.04", md: "0.94" }}
-                  letterSpacing="-0.05em"
-                  maxW="940px"
+                  lineHeight={{ base: "1.15", md: "0.98" }}
+                  letterSpacing={{ base: "-0.02em", md: "-0.05em" }}
+                  maxW="100%"
                 >
                   {copy.title}
                   <Text as="span" display="block" className="text-gradient-animated" mt={2}>
@@ -376,10 +401,11 @@ export default function ModernHero({
                 </Heading>
 
                 <Text
+                  className="landing-hero-description"
                   color="whiteAlpha.800"
-                  fontSize={{ base: "lg", md: "xl" }}
-                  maxW="760px"
-                  lineHeight="1.9"
+                  fontSize={{ base: "sm", sm: "md", md: "lg" }}
+                  maxW="100%"
+                  lineHeight={{ base: "1.65", md: "1.85" }}
                 >
                   {copy.description}
                 </Text>
@@ -387,10 +413,12 @@ export default function ModernHero({
 
               <Box
                 ref={panelRef}
-                className="public-brand-panel"
+                className="public-brand-panel landing-hero-panel"
                 borderRadius={{ base: "28px", md: "34px" }}
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
+                px={{ base: 4, sm: 5, md: 6 }}
+                py={{ base: 4, sm: 5, md: 6 }}
+                minW={0}
+                maxW="100%"
                 backdropFilter="blur(12px)"
                 border="1px solid rgba(227, 211, 184, 0.16)"
                 boxShadow="0 28px 80px rgba(4, 8, 14, 0.36)"
@@ -416,15 +444,21 @@ export default function ModernHero({
                     </Text>
                   </Stack>
 
-                  <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={5}>
+                  <SimpleGrid
+                    className="landing-hero-segments"
+                    columns={{ base: 1, sm: 2, xl: 4 }}
+                    spacing={{ base: 3, md: 5 }}
+                    minChildWidth="0"
+                  >
                     {segmentEntries.map((category) => (
                       <Box
                         key={category.key}
                         as={RouterLink}
                         to={category.href}
                         borderRadius="32px"
-                        px={6}
-                        py={6}
+                        px={{ base: 4, md: 6 }}
+                        py={{ base: 4, md: 6 }}
+                        minW={0}
                         bg="rgba(255,255,255,0.05)"
                         border="1px solid rgba(227, 211, 184, 0.12)"
                         transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
@@ -450,11 +484,17 @@ export default function ModernHero({
                             {category.count || 0}
                           </Text>
                         </HStack>
-                        <Stack mt={5} spacing={2}>
-                          <Text color="white" fontWeight="700" fontSize="lg">
+                        <Stack mt={5} spacing={2} minW={0}>
+                          <Text color="white" fontWeight="700" fontSize={{ base: "md", md: "lg" }}>
                             {category.title}
                           </Text>
-                          <Text color="whiteAlpha.680" fontSize="md" noOfLines={2} lineHeight="1.7">
+                          <Text
+                            color="whiteAlpha.680"
+                            fontSize={{ base: "sm", md: "md" }}
+                            noOfLines={3}
+                            lineHeight="1.6"
+                            wordBreak="break-word"
+                          >
                             {category.text}
                           </Text>
                         </Stack>
@@ -462,7 +502,12 @@ export default function ModernHero({
                     ))}
                   </SimpleGrid>
 
-                  <Grid templateColumns={{ base: "1fr", lg: "minmax(0,1fr) auto auto" }} gap={3}>
+                  <Grid
+                    className="landing-hero-search"
+                    templateColumns={{ base: "1fr", lg: "minmax(0,1fr) auto auto" }}
+                    gap={3}
+                    width="100%"
+                  >
                     <InputGroup size="lg">
                       <InputLeftElement pointerEvents="none">
                         <FiSearch color="#d7c4a3" />
@@ -495,8 +540,11 @@ export default function ModernHero({
                       to={catalogHref}
                       leftIcon={<FiSearch />}
                       borderRadius="full"
-                      h="60px"
-                      px={8}
+                      h={{ base: "48px", md: "60px" }}
+                      px={{ base: 5, md: 8 }}
+                      w={{ base: "100%", lg: "auto" }}
+                      whiteSpace="normal"
+                      lineHeight="1.25"
                       bg={publicBrand.gradients.brass}
                       color={publicBrand.colors.ink}
                       fontWeight="700"
@@ -512,8 +560,11 @@ export default function ModernHero({
                       onClick={onSearch}
                       rightIcon={<FiArrowRight />}
                       borderRadius="full"
-                      h="60px"
-                      px={8}
+                      h={{ base: "48px", md: "60px" }}
+                      px={{ base: 5, md: 8 }}
+                      w={{ base: "100%", lg: "auto" }}
+                      whiteSpace="normal"
+                      lineHeight="1.25"
                       bg="rgba(255,255,255,0.05)"
                       color="white"
                       border="1px solid rgba(227, 211, 184, 0.14)"
@@ -523,11 +574,18 @@ export default function ModernHero({
                     </Button>
                   </Grid>
 
-                  <HStack spacing={{ base: 3, md: 5 }} flexWrap="wrap">
+                  <HStack
+                    className="landing-hero-trust"
+                    spacing={{ base: 2, md: 5 }}
+                    flexWrap="wrap"
+                    rowGap={2}
+                  >
                     {copy.trustLine.map((item) => (
-                      <HStack key={item} spacing={2} color="whiteAlpha.820">
-                        <Icon as={FiShield} color="#f5d076" />
-                        <Text fontSize="sm">{item}</Text>
+                      <HStack key={item} spacing={2} color="whiteAlpha.820" maxW="100%">
+                        <Icon as={FiShield} color="#f5d076" flexShrink={0} />
+                        <Text fontSize="sm" wordBreak="break-word">
+                          {item}
+                        </Text>
                       </HStack>
                     ))}
                   </HStack>
@@ -536,8 +594,10 @@ export default function ModernHero({
 
               <SimpleGrid
                 ref={statsRef}
-                columns={{ base: 1, md: 3 }}
+                className="landing-hero-stats"
+                columns={{ base: 1, sm: 3 }}
                 spacing={4}
+                minChildWidth="0"
                 style={{
                   transition:
                     "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -577,11 +637,13 @@ export default function ModernHero({
                       </Text>
                     </HStack>
                     <Text
+                      className="landing-hero-stat-value"
                       mt={5}
                       color="white"
-                      fontSize={{ base: "2xl", md: "3xl" }}
+                      fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
                       fontWeight="700"
-                      lineHeight="1.1"
+                      lineHeight="1.15"
+                      wordBreak="break-word"
                     >
                       {stat.value}
                     </Text>
@@ -607,10 +669,21 @@ export default function ModernHero({
                     >
                       {copy.routesTitle}
                     </Text>
-                    <Heading mt={2} fontSize={{ base: "2xl", md: "3xl" }} lineHeight="1.1">
+                    <Heading
+                      mt={2}
+                      fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
+                      lineHeight="1.2"
+                      wordBreak="break-word"
+                    >
                       {copy.marketLabel}
                     </Heading>
-                    <Text mt={4} color="whiteAlpha.760" lineHeight="1.8">
+                    <Text
+                      mt={4}
+                      color="whiteAlpha.760"
+                      lineHeight="1.65"
+                      fontSize={{ base: "sm", md: "md" }}
+                      wordBreak="break-word"
+                    >
                       {copy.marketText}
                     </Text>
                   </Box>
@@ -660,14 +733,28 @@ export default function ModernHero({
                             {route.count}
                           </Text>
                         </HStack>
-                        <Heading mt={4} size="md" color="white">
+                        <Heading
+                          mt={4}
+                          size="md"
+                          color="white"
+                          fontSize={{ base: "md", md: "lg" }}
+                          lineHeight="1.25"
+                          wordBreak="break-word"
+                        >
                           {route.title}
                         </Heading>
-                        <Text mt={2} color="whiteAlpha.720" fontSize="md" lineHeight="1.7">
+                        <Text
+                          mt={2}
+                          color="whiteAlpha.720"
+                          fontSize={{ base: "sm", md: "md" }}
+                          lineHeight="1.6"
+                          noOfLines={4}
+                          wordBreak="break-word"
+                        >
                           {route.text}
                         </Text>
-                        <HStack mt={5} spacing={2} color="#f5d076">
-                          <Text fontSize="sm" fontWeight="700">
+                        <HStack mt={5} spacing={2} color="#f5d076" flexWrap="wrap">
+                          <Text fontSize="sm" fontWeight="700" wordBreak="break-word">
                             {copy.routesCta}
                           </Text>
                           <FiArrowRight />
