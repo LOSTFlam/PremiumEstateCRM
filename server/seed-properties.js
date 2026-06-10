@@ -45,14 +45,6 @@ const sampleProperties = [
     exteriorFeatures: "Бассейн, барбекю-зона, терраса, ландшафтный сад",
     parkingAvailability: "Гараж на 3 машины + гостевая парковка",
     listingDate: new Date("2026-02-10"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Брошюра объекта.pdf", "Планировка.pdf"),
     verificationStatus: "approved",
     verificationScore: 98,
@@ -82,14 +74,6 @@ const sampleProperties = [
     exteriorFeatures: "Терраса, участок с газоном, фасадная подсветка",
     parkingAvailability: "Гараж на 2 машины",
     listingDate: new Date("2026-02-24"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Технический паспорт.pdf"),
     verificationStatus: "approved",
     verificationScore: 91,
@@ -120,15 +104,6 @@ const sampleProperties = [
     exteriorFeatures: "Открытый бассейн, зона BBQ, гостевой дом",
     parkingAvailability: "Гараж на 4 машины + гостевая парковка",
     listingDate: new Date("2026-03-12"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs(
       "Презентация виллы.pdf",
       "Юридический пакет.pdf",
@@ -161,14 +136,6 @@ const sampleProperties = [
     exteriorFeatures: "Панорамные окна, skyline views",
     parkingAvailability: "2 места в подземном паркинге",
     listingDate: new Date("2026-01-19"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Паспорт объекта.pdf"),
     verificationStatus: "approved",
     verificationScore: 95,
@@ -198,13 +165,6 @@ const sampleProperties = [
     exteriorFeatures: "Панорамные окна, благоустроенный двор",
     parkingAvailability: "1 место в подземном паркинге",
     listingDate: new Date("2026-02-04"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Планировка.pdf"),
     verificationStatus: "approved",
     verificationScore: 88,
@@ -233,14 +193,6 @@ const sampleProperties = [
     exteriorFeatures: "Терраса, панорамное остекление",
     parkingAvailability: "2 семейных машиноместа",
     listingDate: new Date("2026-03-15"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Пентхаус-презентация.pdf", "План этажа.pdf"),
     verificationStatus: "approved",
     verificationScore: 97,
@@ -270,13 +222,6 @@ const sampleProperties = [
     exteriorFeatures: "Лесная линия, тихая улица",
     parkingAvailability: "Гостевая парковка",
     listingDate: new Date("2026-01-31"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Кадастровая выписка.pdf", "ГПЗУ.pdf"),
     verificationStatus: "approved",
     verificationScore: 84,
@@ -306,13 +251,6 @@ const sampleProperties = [
     exteriorFeatures: "Угловой участок, длинный фасад",
     parkingAvailability: "Подъезд для строительной техники",
     listingDate: new Date("2026-03-02"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/461960/pexels-photo-461960.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Инвест-мемо.pdf", "Схема участка.pdf"),
     verificationStatus: "approved",
     verificationScore: 86,
@@ -341,13 +279,6 @@ const sampleProperties = [
     exteriorFeatures: "Вид на воду, лесная линия",
     parkingAvailability: "Гостевой карман у въезда",
     listingDate: new Date("2026-03-18"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/461960/pexels-photo-461960.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/1438832/pexels-photo-1438832.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Схема поселка.pdf"),
     verificationStatus: "pending",
     verificationScore: 73,
@@ -377,13 +308,6 @@ const sampleProperties = [
     exteriorFeatures: "Двойной фасад, signage zone",
     parkingAvailability: "Гостевая парковка и зона разгрузки",
     listingDate: new Date("2026-02-14"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs(
       "Коммерческие условия.pdf",
       "План арендатора.pdf",
@@ -416,14 +340,6 @@ const sampleProperties = [
     exteriorFeatures: "Панорамный фасад, private client lounge",
     parkingAvailability: "10 мест в подземном паркинге",
     listingDate: new Date("2026-03-06"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs(
       "Fit-out package.pdf",
       "Коммерческое предложение.pdf",
@@ -457,13 +373,6 @@ const sampleProperties = [
     exteriorFeatures: "Парадная витрина, отдельный вход",
     parkingAvailability: "Городская парковка и valet nearby",
     listingDate: new Date("2026-03-20"),
-    propertyPhotos: buildPhotos(
-      "https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    ),
-    floorPlans: buildPhotos(
-      "https://placehold.co/1200x800/f7f4ec/2d3748?text=Premium+Estate+Floor+Plan",
-    ),
     propertyDocuments: buildDocs("Showroom pack.pdf"),
     verificationStatus: "approved",
     verificationScore: 87,
@@ -481,8 +390,8 @@ const enrichProperty = (property, ownerId) => {
   return {
     deleted: false,
     featuredCollections: [],
-    verificationStatus: "pending",
-    verificationScore: 0,
+    verificationStatus: "approved",
+    verificationScore: 90,
     propertyDocuments: [],
     dealType: "sale",
     createdDate,
@@ -576,16 +485,7 @@ async function seedDatabase() {
       }
     }
 
-    // Console statement removed
-    if (!owner?._id) {
-      // Console statement removed
-    }
-    // Console statement removed
-    // Console statement removed
-    // Console statement removed
-    // Console statement removed
-    // Console statement removed
-    // Console statement removed
+    console.log(`[seed:properties] Done. Created: ${created}, Updated: ${updated}`);
   } catch (error) {
     console.error("[seed:properties] Failed:", error?.message || error);
     if (error?.stack) {
