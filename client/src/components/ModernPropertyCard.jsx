@@ -429,7 +429,7 @@ const ModernPropertyCard = ({
           </Text>
         </Stack>
 
-        <SimpleGrid className="property-metrics" columns={{ base: 2, sm: 3 }} spacing={2} minChildWidth="0">
+        <SimpleGrid className="property-metrics" columns={{ base: 2, sm: 3 }} spacing={2} w="100%">
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}

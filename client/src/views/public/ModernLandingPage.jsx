@@ -470,7 +470,7 @@ export default function ModernLandingPage() {
       color="white"
       overflowX="hidden"
       width="100%"
-      maxWidth="100vw"
+      maxWidth="100%"
     >
       <style>{`
         @keyframes fade-in-up {
@@ -581,9 +581,9 @@ export default function ModernLandingPage() {
 
                   <SimpleGrid
                     className="landing-market-stats"
-                    columns={{ base: 1, sm: 2, md: 4 }}
+                    columns={{ base: 1, md: 2, lg: 4 }}
                     spacing={{ base: 3, md: 5 }}
-                    minChildWidth="0"
+                    w="100%"
                   >
                     {marketStats.map((item) => (
                       <Box

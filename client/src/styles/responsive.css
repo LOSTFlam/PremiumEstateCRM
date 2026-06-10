@@ -344,10 +344,46 @@ a.public-brand-button {
 @media (max-width: 767px) {
   .landing-hero,
   .landing-hero-panel,
+  .landing-hero-segments,
   .landing-hero-segments > *,
-  .landing-hero-stats > * {
+  .landing-hero-stats,
+  .landing-hero-stats > *,
+  .landing-hero-routes,
+  .landing-hero-routes > * {
     min-width: 0;
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .landing-hero-segments {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-routes {
+    grid-template-columns: 1fr !important;
+  }
+
+  .landing-hero-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .landing-hero-metrics > :last-child {
+    grid-column: span 2;
+  }
+
+  .landing-hero-title,
+  .landing-hero-kicker,
+  .landing-hero-description,
+  .landing-hero-panel .chakra-text,
+  .landing-hero-routes .chakra-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
   }
 
   .landing-hero-title {
@@ -388,8 +424,12 @@ a.public-brand-button {
   }
 }
 
-@media (max-width: 479px) and (min-width: 390px) {
-  .landing-market-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+@media (min-width: 480px) and (max-width: 767px) {
+  .landing-hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .landing-hero-metrics > :last-child {
+    grid-column: auto;
   }
 }

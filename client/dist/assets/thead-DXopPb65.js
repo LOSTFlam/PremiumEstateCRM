@@ -1,0 +1,1 @@
+import{o as e,j as r,p as o}from"./index-DYxI1UoK.js";import{u as c}from"./tr-Dv5yg9LQ.js";const u=e(({isNumeric:s,...t},a)=>{const n=c();return r.jsx(o.th,{...t,ref:a,__css:n.th,"data-is-numeric":s})}),d=e((s,t)=>{const a=c();return r.jsx(o.thead,{...s,ref:t,__css:a.thead})});export{d as T,u as a};

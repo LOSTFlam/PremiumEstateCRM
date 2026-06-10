@@ -305,7 +305,8 @@ export default function ModernHero({
       pt={{ base: 24, md: 30, xl: 36 }}
       pb={{ base: 14, md: 18, xl: 22 }}
       bg={publicBrand.gradients.hero}
-      maxW="100vw"
+      w="100%"
+      maxW="100%"
     >
       <Box
         position="absolute"
@@ -339,11 +340,13 @@ export default function ModernHero({
           alignItems="start"
           width="100%"
         >
-          <GridItem>
-            <Stack spacing={8}>
+          <GridItem minW={0} w="100%">
+            <Stack spacing={8} w="100%" minW={0}>
               <Stack
                 spacing={5}
-                maxW="820px"
+                maxW="100%"
+                w="100%"
+                minW={0}
                 ref={titleRef}
                 style={{
                   transition:
@@ -406,6 +409,8 @@ export default function ModernHero({
                   fontSize={{ base: "sm", sm: "md", md: "lg" }}
                   maxW="100%"
                   lineHeight={{ base: "1.65", md: "1.85" }}
+                  wordBreak="break-word"
+                  overflowWrap="anywhere"
                 >
                   {copy.description}
                 </Text>
@@ -446,9 +451,9 @@ export default function ModernHero({
 
                   <SimpleGrid
                     className="landing-hero-segments"
-                    columns={{ base: 1, sm: 2, xl: 4 }}
+                    columns={{ base: 1, md: 2, xl: 4 }}
                     spacing={{ base: 3, md: 5 }}
-                    minChildWidth="0"
+                    w="100%"
                   >
                     {segmentEntries.map((category) => (
                       <Box
@@ -468,10 +473,11 @@ export default function ModernHero({
                           boxShadow: "0 24px 56px rgba(0, 0, 0, 0.22)",
                         }}
                       >
-                        <HStack justify="space-between" align="start">
+                        <HStack justify="space-between" align="start" w="100%">
                           <Box
                             w="56px"
                             h="56px"
+                            flexShrink={0}
                             borderRadius="22px"
                             display="grid"
                             placeItems="center"
@@ -480,20 +486,27 @@ export default function ModernHero({
                           >
                             <Icon as={category.icon} boxSize={6} />
                           </Box>
-                          <Text color="whiteAlpha.620" fontSize="sm">
+                          <Text
+                            color="whiteAlpha.620"
+                            fontSize="sm"
+                            fontWeight="700"
+                            flexShrink={0}
+                            whiteSpace="nowrap"
+                            ml={2}
+                          >
                             {category.count || 0}
                           </Text>
                         </HStack>
-                        <Stack mt={5} spacing={2} minW={0}>
+                        <Stack mt={5} spacing={2} minW={0} w="100%">
                           <Text color="white" fontWeight="700" fontSize={{ base: "md", md: "lg" }}>
                             {category.title}
                           </Text>
                           <Text
                             color="whiteAlpha.680"
                             fontSize={{ base: "sm", md: "md" }}
-                            noOfLines={3}
                             lineHeight="1.6"
                             wordBreak="break-word"
+                            overflowWrap="anywhere"
                           >
                             {category.text}
                           </Text>
@@ -595,9 +608,9 @@ export default function ModernHero({
               <SimpleGrid
                 ref={statsRef}
                 className="landing-hero-stats"
-                columns={{ base: 1, sm: 3 }}
+                columns={{ base: 1, md: 3 }}
                 spacing={4}
-                minChildWidth="0"
+                w="100%"
                 style={{
                   transition:
                     "opacity 800ms cubic-bezier(0.4, 0, 0.2, 1), transform 800ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -615,7 +628,7 @@ export default function ModernHero({
                     border="1px solid rgba(227, 211, 184, 0.10)"
                     backdropFilter="blur(10px)"
                   >
-                    <HStack justify="space-between" align="start">
+                    <Stack spacing={2} align="flex-start" w="100%">
                       <Box
                         w="44px"
                         h="44px"
@@ -624,18 +637,22 @@ export default function ModernHero({
                         placeItems="center"
                         bg="rgba(245,208,118,0.10)"
                         color="#f5d076"
+                        flexShrink={0}
                       >
                         <Icon as={stat.icon} />
                       </Box>
                       <Text
                         color="whiteAlpha.560"
                         fontSize="xs"
-                        letterSpacing="0.14em"
+                        letterSpacing="0.08em"
                         textTransform="uppercase"
+                        lineHeight="1.35"
+                        wordBreak="break-word"
+                        w="100%"
                       >
                         {stat.label}
                       </Text>
-                    </HStack>
+                    </Stack>
                     <Text
                       className="landing-hero-stat-value"
                       mt={5}
@@ -689,16 +706,18 @@ export default function ModernHero({
                   </Box>
 
                   <Box
+                    className="landing-hero-routes"
                     display="grid"
                     gridTemplateColumns={{
                       base: "1fr",
-                      md: "repeat(2, 1fr)",
-                      lg: "repeat(3, 1fr)",
-                      xl: "repeat(4, 1fr)",
-                      "2xl": "repeat(5, 1fr)",
+                      md: "repeat(2, minmax(0, 1fr))",
+                      lg: "repeat(3, minmax(0, 1fr))",
+                      xl: "repeat(2, minmax(0, 1fr))",
+                      "2xl": "repeat(3, minmax(0, 1fr))",
                     }}
                     gap={5}
                     width="100%"
+                    minW={0}
                   >
                     {routeCards.map((route) => (
                       <Box
@@ -717,7 +736,7 @@ export default function ModernHero({
                           boxShadow: "0 24px 56px rgba(0,0,0,0.22)",
                         }}
                       >
-                        <HStack justify="space-between" align="start">
+                        <HStack justify="space-between" align="start" w="100%">
                           <Box
                             w="48px"
                             h="48px"
@@ -726,10 +745,18 @@ export default function ModernHero({
                             placeItems="center"
                             bg="rgba(245,208,118,0.12)"
                             color="#f5d076"
+                            flexShrink={0}
                           >
                             <Icon as={route.icon} boxSize={5} />
                           </Box>
-                          <Text color="whiteAlpha.620" fontSize="sm">
+                          <Text
+                            color="whiteAlpha.620"
+                            fontSize="sm"
+                            fontWeight="700"
+                            flexShrink={0}
+                            whiteSpace="nowrap"
+                            ml={2}
+                          >
                             {route.count}
                           </Text>
                         </HStack>
@@ -748,8 +775,8 @@ export default function ModernHero({
                           color="whiteAlpha.720"
                           fontSize={{ base: "sm", md: "md" }}
                           lineHeight="1.6"
-                          noOfLines={4}
                           wordBreak="break-word"
+                          overflowWrap="anywhere"
                         >
                           {route.text}
                         </Text>
@@ -767,8 +794,8 @@ export default function ModernHero({
             </Stack>
           </GridItem>
 
-          <GridItem>
-            <Stack spacing={5}>
+          <GridItem minW={0} w="100%">
+            <Stack spacing={5} w="100%" minW={0}>
               <Box
                 ref={heroCardRef}
                 position="relative"
@@ -796,7 +823,14 @@ export default function ModernHero({
                   bg="linear-gradient(180deg, rgba(7,12,20,0.02) 0%, rgba(7,12,20,0.24) 28%, rgba(7,12,20,0.90) 100%)"
                 />
 
-                <Stack position="absolute" inset="0" justify="space-between" p={{ base: 5, md: 6 }}>
+                <Stack
+                  position="absolute"
+                  inset="0"
+                  justify="space-between"
+                  p={{ base: 4, sm: 5, md: 6 }}
+                  minW={0}
+                  w="100%"
+                >
                   <HStack justify="space-between" align="start">
                     <Badge
                       px={3.5}
@@ -842,29 +876,41 @@ export default function ModernHero({
                       </Text>
                     </Box>
 
-                    <Stack spacing={3} maxW="560px">
+                    <Stack spacing={3} maxW="100%" w="100%" minW={0}>
                       <Heading
-                        fontSize={{ base: "2xl", md: "4xl" }}
-                        lineHeight="1.04"
-                        letterSpacing="-0.04em"
+                        fontSize={{ base: "xl", sm: "2xl", md: "4xl" }}
+                        lineHeight="1.12"
+                        letterSpacing="-0.02em"
                         color="white"
+                        wordBreak="break-word"
                       >
                         {heroProperty?.name || heroProperty?.propertyAddress}
                       </Heading>
-                      <HStack spacing={2} color="whiteAlpha.760">
-                        <Icon as={LuMapPin} />
-                        <Text noOfLines={1}>
+                      <HStack spacing={2} color="whiteAlpha.760" align="flex-start" w="100%">
+                        <Icon as={LuMapPin} flexShrink={0} mt="3px" />
+                        <Text wordBreak="break-word" lineHeight="1.5">
                           {heroProperty?.propertyAddress || copy.locationFallback}
                         </Text>
                       </HStack>
-                      <Text color="whiteAlpha.780" noOfLines={3} maxW="560px" lineHeight="1.8">
+                      <Text
+                        color="whiteAlpha.780"
+                        maxW="100%"
+                        lineHeight="1.65"
+                        fontSize={{ base: "sm", md: "md" }}
+                        wordBreak="break-word"
+                      >
                         {heroProperty?.marketingDescription ||
                           heroProperty?.propertyDescription ||
                           copy.marketText}
                       </Text>
                     </Stack>
 
-                    <SimpleGrid columns={3} spacing={3}>
+                    <SimpleGrid
+                      className="landing-hero-metrics"
+                      columns={{ base: 2, sm: 3 }}
+                      spacing={3}
+                      w="100%"
+                    >
                       {[
                         {
                           label: t("publicListing.bedrooms"),
@@ -878,21 +924,25 @@ export default function ModernHero({
                           label: t("publicListing.area"),
                           value: metricValue(heroProperty?.squareFootage),
                         },
-                      ].map((item) => (
+                      ].map((item, metricIndex) => (
                         <Box
                           key={item.label}
-                          px={4}
-                          py={4}
+                          px={{ base: 3, md: 4 }}
+                          py={{ base: 3, md: 4 }}
                           borderRadius="22px"
                           bg="rgba(7,12,20,0.46)"
                           border="1px solid rgba(227, 211, 184, 0.14)"
                           backdropFilter="blur(12px)"
+                          minW={0}
+                          gridColumn={{ base: metricIndex === 2 ? "span 2" : "auto", sm: "auto" }}
                         >
                           <Text
                             color="whiteAlpha.600"
-                            fontSize="xs"
+                            fontSize="10px"
                             textTransform="uppercase"
-                            letterSpacing="0.12em"
+                            letterSpacing="0.06em"
+                            lineHeight="1.3"
+                            wordBreak="break-word"
                           >
                             {item.label}
                           </Text>
@@ -949,12 +999,17 @@ export default function ModernHero({
                       <HStack
                         key={item.label}
                         justify="space-between"
+                        align="center"
+                        flexWrap="nowrap"
+                        gap={3}
                         px={3.5}
                         py={3}
                         borderRadius="18px"
                         bg="rgba(255,255,255,0.04)"
+                        w="100%"
+                        minW={0}
                       >
-                        <HStack spacing={3}>
+                        <HStack spacing={3} minW={0} flex={1}>
                           <Box
                             w="34px"
                             h="34px"
@@ -963,14 +1018,20 @@ export default function ModernHero({
                             placeItems="center"
                             bg="rgba(245,208,118,0.10)"
                             color="#f5d076"
+                            flexShrink={0}
                           >
                             <Icon as={item.icon} />
                           </Box>
-                          <Text color="whiteAlpha.820" fontSize="sm">
+                          <Text
+                            color="whiteAlpha.820"
+                            fontSize="sm"
+                            lineHeight="1.35"
+                            wordBreak="break-word"
+                          >
                             {item.label}
                           </Text>
                         </HStack>
-                        <Text color="white" fontWeight="700">
+                        <Text color="white" fontWeight="700" flexShrink={0} whiteSpace="nowrap">
                           {item.value}
                         </Text>
                       </HStack>
@@ -996,35 +1057,54 @@ export default function ModernHero({
                   <Heading mt={3} size="md" color="white">
                     {copy.routesTitle}
                   </Heading>
-                  <Text mt={3} color="whiteAlpha.740" lineHeight="1.8">
+                  <Text
+                    mt={3}
+                    color="whiteAlpha.740"
+                    lineHeight="1.65"
+                    fontSize={{ base: "sm", md: "md" }}
+                    wordBreak="break-word"
+                    overflowWrap="anywhere"
+                  >
                     {copy.routesText}
                   </Text>
-                  <Stack mt={5} spacing={3}>
+                  <Stack mt={5} spacing={3} w="100%" minW={0}>
                     {routeCards.slice(0, 3).map((route) => (
                       <HStack
                         key={route.key}
                         as={RouterLink}
                         to={route.href}
                         justify="space-between"
+                        align="center"
+                        gap={3}
                         px={3.5}
                         py={3}
                         borderRadius="18px"
                         bg="rgba(255,255,255,0.04)"
                         transition="background-color 0.2s ease, transform 0.2s ease"
+                        w="100%"
+                        minW={0}
                         _hover={{
                           bg: "rgba(255,255,255,0.08)",
                           transform: "translateX(2px)",
                         }}
                       >
-                        <Box minW="0">
-                          <Text color="white" fontWeight="600" noOfLines={1}>
+                        <Box minW={0} flex={1}>
+                          <Text
+                            color="white"
+                            fontWeight="600"
+                            fontSize="sm"
+                            lineHeight="1.35"
+                            wordBreak="break-word"
+                          >
                             {route.title}
                           </Text>
-                          <Text color="whiteAlpha.600" fontSize="sm" noOfLines={1}>
+                          <Text color="whiteAlpha.600" fontSize="sm" lineHeight="1.35">
                             {route.count} {locale === "ru" ? "предложений" : "offers"}
                           </Text>
                         </Box>
-                        <FiArrowRight color="#f5d076" />
+                        <Box flexShrink={0}>
+                          <FiArrowRight color="#f5d076" />
+                        </Box>
                       </HStack>
                     ))}
                   </Stack>
