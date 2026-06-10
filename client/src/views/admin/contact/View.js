@@ -38,6 +38,7 @@ import { toast } from "react-toastify";
 import { getApi, deleteApi } from "services/api";
 import { useTranslation } from "react-i18next";
 import AddEmailHistory from "../emailHistory/components/AddEmail";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import AddMeeting from "../meeting/components/Addmeeting";
 import AddPhoneCall from "../phoneCall/components/AddPhoneCall";
 import Add from "./Add";
@@ -1257,35 +1258,12 @@ const View = () => {
 
           {(user?.role === "superAdmin" || permission?.update || permission?.delete) && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {permission?.update && (
-                      <Button
-                        size="sm"
-                        onClick={() => setEdit(true)}
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    {permission?.delete && (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(permission?.update)}
+                showDelete={Boolean(permission?.delete)}
+                onEdit={() => setEdit(true)}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>

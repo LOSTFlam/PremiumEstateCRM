@@ -30,6 +30,7 @@ import { getApi, deleteApi, putApi } from "services/api";
 import AddMeeting from "../meeting/components/Addmeeting";
 import { HasAccess } from "../../../redux/accessUtils";
 import CommonDeleteModel from "components/commonDeleteModel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import CommonCheckTable from "components/reactTable/checktable";
 import moment from "moment";
 import AddEdit from "../task/components/AddEdit";
@@ -497,42 +498,15 @@ const View = (props) => {
 
           {(user?.role === "superAdmin" || permission?.update || permission?.delete) && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(2, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {user?.role === "superAdmin" || permission?.update ? (
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setUserction("edit");
-                          onOpen();
-                        }}
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        Edit
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    {user?.role === "superAdmin" || permission?.delete ? (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(user?.role === "superAdmin" || permission?.update)}
+                showDelete={Boolean(user?.role === "superAdmin" || permission?.delete)}
+                onEdit={() => {
+                  setUserction("edit");
+                  onOpen();
+                }}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>

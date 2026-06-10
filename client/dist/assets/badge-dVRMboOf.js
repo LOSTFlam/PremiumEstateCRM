@@ -1,0 +1,1 @@
+import{o as c,bg as i,aC as n,j as o,p as l,aL as r}from"./index-O_CElUrV.js";const d=c(function(a,s){const e=i("Badge",a),{className:g,...t}=n(a);return o.jsx(l.span,{ref:s,className:r("chakra-badge",a.className),...t,__css:{display:"inline-block",whiteSpace:"nowrap",verticalAlign:"middle",...e}})});d.displayName="Badge";export{d as B};

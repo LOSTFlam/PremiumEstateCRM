@@ -227,14 +227,88 @@ a.public-brand-button {
     hyphens: auto;
   }
 
-  .public-brand-shell .chakra-button,
-  .cabinet-content .chakra-button {
+  .public-brand-shell .chakra-button {
     white-space: normal;
     word-break: break-word;
     line-height: 1.3;
     height: auto;
     min-height: var(--touch-min);
     max-width: 100%;
+  }
+
+  /* Cabinet buttons: keep labels on one line; avoid E-d-i-t vertical breaks */
+  .cabinet-content .chakra-button,
+  .cabinet-content .chakra-icon-button {
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+    hyphens: none;
+    max-width: 100%;
+  }
+
+  .cabinet-content .cabinet-btn-fluid {
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+    height: auto;
+    min-height: var(--touch-min);
+    width: 100%;
+  }
+
+  .cabinet-content .chakra-card > .chakra-grid {
+    grid-template-columns: 1fr !important;
+    width: 100%;
+  }
+
+  .cabinet-content .chakra-card > .chakra-grid > .chakra-grid__item {
+    grid-column: 1 / -1 !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .cabinet-record-actions {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+
+  .cabinet-filter-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  .cabinet-filter-actions .chakra-button {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
+    justify-content: center;
+    font-size: 13px;
+    padding-inline: 10px !important;
+  }
+
+  .cabinet-panel-actions {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .cabinet-panel-actions .chakra-button {
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .cabinet-filter-grid .chakra-input__group,
+  .cabinet-filter-grid .chakra-select__wrapper,
+  .cabinet-filter-grid .chakra-input,
+  .cabinet-filter-grid select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
   .public-brand-shell .chakra-badge,

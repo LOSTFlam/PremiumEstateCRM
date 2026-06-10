@@ -10,6 +10,7 @@ import { HasAccess } from "../../../redux/accessUtils";
 import { getApi, deleteApi } from "services/api";
 import { DeleteIcon } from "@chakra-ui/icons";
 import CommonDeleteModel from "components/commonDeleteModel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 const View = () => {
@@ -257,25 +258,11 @@ const View = () => {
           </Grid>
           {(user?.role === "superAdmin" || permission?.update || permission?.delete) && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {user?.role === "superAdmin" || permission?.delete ? (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDeleteMany(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={false}
+                showDelete={Boolean(user?.role === "superAdmin" || permission?.delete)}
+                onDelete={() => setDeleteMany(true)}
+              />
             </Card>
           )}
         </>

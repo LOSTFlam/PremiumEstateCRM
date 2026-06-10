@@ -627,6 +627,7 @@
       "statusesUsed": "Statuses Used",
       "sortMode": "Sort By",
       "fullTable": "View All Properties",
+      "fullTableShort": "All properties",
       "curatedTitle": "Featured Property",
       "curatedDescription": "Your spotlight property highlighted for quick access",
       "spotlight": "Spotlight",

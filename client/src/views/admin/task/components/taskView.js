@@ -27,6 +27,7 @@ import { HasAccess } from "../../../../redux/accessUtils";
 import { HSeparator } from "components/separator/Separator";
 import AddEdit from "./AddEdit";
 import CommonDeleteModel from "components/commonDeleteModel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { TaskSchema } from "schema";
@@ -472,35 +473,12 @@ const TaskView = (_props) => {
       </Grid>
       {(permission?.update || permission?.delete || user?.role === "superAdmin") && (
         <Card mt={3}>
-          <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-            <GridItem colStart={6}>
-              <Flex justifyContent={"right"}>
-                {(permission?.update || user?.role === "superAdmin") && (
-                  <Button
-                    size="sm"
-                    onClick={() => setEdit(true)}
-                    leftIcon={<EditIcon />}
-                    mr={2.5}
-                    variant="outline"
-                    colorScheme="green"
-                  >
-                    Edit
-                  </Button>
-                )}
-                {(permission?.delete || user?.role === "superAdmin") && (
-                  <Button
-                    size="sm"
-                    style={{ background: "red.800" }}
-                    onClick={() => setDeleteManyModel(true)}
-                    leftIcon={<DeleteIcon />}
-                    colorScheme="red"
-                  >
-                    Delete
-                  </Button>
-                )}
-              </Flex>
-            </GridItem>
-          </Grid>
+          <CabinetRecordActions
+            showEdit={Boolean(permission?.update || user?.role === "superAdmin")}
+            showDelete={Boolean(permission?.delete || user?.role === "superAdmin")}
+            onEdit={() => setEdit(true)}
+            onDelete={() => setDeleteManyModel(true)}
+          />
         </Card>
       )}
       <AddEdit

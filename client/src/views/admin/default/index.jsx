@@ -23,6 +23,7 @@ import {
   StatLabel,
   StatNumber,
   Text,
+  useBreakpointValue,
   useColorModeValue,
   Wrap,
   WrapItem,
@@ -329,6 +330,7 @@ export default function PropertyLandingPage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const user = useMemo(() => parseStoredUser(), []);
+  const compactCabinetLabels = useBreakpointValue({ base: true, md: false }) ?? true;
 
   const [properties, setProperties] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -736,14 +738,17 @@ export default function PropertyLandingPage() {
               <GridItem>
                 <Stack spacing={4}>
                   <Grid
+                    className="cabinet-filter-grid"
                     templateColumns={{
                       base: "1fr",
                       md: "repeat(2, minmax(0, 1fr))",
                       xl: "minmax(0, 1.2fr) repeat(3, minmax(0, 0.86fr))",
                     }}
                     gap={4}
+                    w="100%"
+                    minW={0}
                   >
-                    <InputGroup size="lg">
+                    <InputGroup size="lg" w="100%" minW={0}>
                       <InputLeftElement pointerEvents="none">
                         <Icon as={LuSearch} color="gray.400" />
                       </InputLeftElement>
@@ -753,6 +758,10 @@ export default function PropertyLandingPage() {
                         placeholder={t?.("modules.dashboardHome.searchPlaceholder")}
                         bg="white"
                         borderRadius="18px"
+                        w="100%"
+                        minW={0}
+                        h={{ base: "48px", md: "auto" }}
+                        fontSize={{ base: "16px", md: "md" }}
                       />
                     </InputGroup>
 
@@ -801,16 +810,24 @@ export default function PropertyLandingPage() {
                     direction={{ base: "column", md: "row" }}
                     gap={3}
                   >
-                    <HStack spacing={3} w={{ base: "100%", md: "auto" }}>
+                    <HStack
+                      className="cabinet-filter-actions"
+                      spacing={3}
+                      w={{ base: "100%", md: "auto" }}
+                      minW={0}
+                    >
                       <Button
                         flex={{ base: 1, md: "unset" }}
                         colorScheme="green"
                         borderRadius="18px"
                         onClick={() => navigate("/properties")}
                         h="48px"
-                        px={6}
+                        px={{ base: 3, md: 6 }}
+                        whiteSpace="nowrap"
                       >
-                        {t?.("modules.dashboardHome.fullTable")}
+                        {compactCabinetLabels
+                          ? t?.("modules.dashboardHome.fullTableShort")
+                          : t?.("modules.dashboardHome.fullTable")}
                       </Button>
                       <Button
                         flex={{ base: 1, md: "unset" }}
@@ -818,7 +835,8 @@ export default function PropertyLandingPage() {
                         borderRadius="18px"
                         onClick={resetFilters}
                         h="48px"
-                        px={6}
+                        px={{ base: 3, md: 6 }}
+                        whiteSpace="nowrap"
                       >
                         {t?.("common.reset")}
                       </Button>

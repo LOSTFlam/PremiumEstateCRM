@@ -49,6 +49,7 @@ import { fetchLeadCustomFiled } from "../../../redux/slices/leadCustomFiledSlice
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { useTranslation } from "react-i18next";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 
 const View = () => {
   const param = useParams();
@@ -902,39 +903,12 @@ const View = () => {
           </Tabs>
           {(user?.role === "superAdmin" || permission?.update || permission?.delete) && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {user?.role === "superAdmin" || permission?.update ? (
-                      <Button
-                        size="sm"
-                        onClick={() => setEdit(true)}
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        {t?.("common.edit")}
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    {user?.role === "superAdmin" || permission?.delete ? (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        {t?.("common.delete")}
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(user?.role === "superAdmin" || permission?.update)}
+                showDelete={Boolean(user?.role === "superAdmin" || permission?.delete)}
+                onEdit={() => setEdit(true)}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>

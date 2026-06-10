@@ -31,6 +31,7 @@ import {
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import CommonDeleteModel from "components/commonDeleteModel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import DataNotFound from "components/notFoundData";
 import CommonCheckTable from "components/reactTable/checktable";
 import { HSeparator } from "components/separator/Separator";
@@ -1332,35 +1333,12 @@ const View = () => {
 
           {(permission?.delete || permission?.update || user?.role === "superAdmin") && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {permission?.update && (
-                      <Button
-                        onClick={() => setEdit(true)}
-                        size="sm"
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    {permission?.delete && (
-                      <Button
-                        style={{ background: "red.800" }}
-                        size="sm"
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(permission?.update)}
+                showDelete={Boolean(permission?.delete)}
+                onEdit={() => setEdit(true)}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>

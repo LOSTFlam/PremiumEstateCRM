@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Card from "components/card/Card";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import Spinner from "components/spinner/Spinner";
 import { useCallback, useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
@@ -137,22 +138,7 @@ const View = () => {
             <CustomView data={module} fieldData={data} id="reports" />
           </Box>
           <Card mt={3}>
-            <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-              <GridItem colStart={6}>
-                <Flex justifyContent={"right"}>
-                  <Button
-                    size="sm"
-                    onClick={() => setEdit(true)}
-                    leftIcon={<EditIcon />}
-                    mr={2.5}
-                    variant="outline"
-                    colorScheme="green"
-                  >
-                    Edit
-                  </Button>
-                </Flex>
-              </GridItem>
-            </Grid>
+            <CabinetRecordActions showDelete={false} onEdit={() => setEdit(true)} />
           </Card>
         </>
       )}

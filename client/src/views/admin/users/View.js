@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../redux/slices/localSlice";
 import CommonDeleteModel from "components/commonDeleteModel";
 import AddEditUser from "./AddEditUser";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 
 const View = () => {
   const RoleColumn = [
@@ -256,37 +257,17 @@ const View = () => {
           />
 
           <Card mt={3}>
-            <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-              <GridItem colStart={6}>
-                <Flex justifyContent={"right"}>
-                  <Button
-                    onClick={() => {
-                      handleOpenModal(userData);
-                      handleOpen("edit");
-                    }}
-                    leftIcon={<EditIcon />}
-                    mr={2.5}
-                    variant="outline"
-                    size="sm"
-                    colorScheme="green"
-                  >
-                    Edit
-                  </Button>
-                  {data?.role !== "superAdmin" &&
-                    JSON.parse(localStorage.getItem("user"))?.role === "superAdmin" && (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    )}
-                </Flex>
-              </GridItem>
-            </Grid>
+            <CabinetRecordActions
+              onEdit={() => {
+                handleOpenModal(userData);
+                handleOpen("edit");
+              }}
+              onDelete={() => setDelete(true)}
+              showDelete={
+                data?.role !== "superAdmin" &&
+                JSON.parse(localStorage.getItem("user"))?.role === "superAdmin"
+              }
+            />
           </Card>
         </>
       )}

@@ -4,6 +4,7 @@ import {
   Badge,
   Box,
   Button,
+  Flex,
   Checkbox,
   Divider,
   FormControl,
@@ -18,6 +19,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useBreakpointValue,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
@@ -64,6 +66,7 @@ const defaultChecklist = (property = {}) => {
 export default function ListingVerificationPanel({ property, onUpdated, canManage = false }) {
   const { t } = useTranslation();
   const toast = useToast();
+  const compactActions = useBreakpointValue({ base: true, md: false }) ?? true;
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.200");
   const subtleBg = useColorModeValue("gray.50", "whiteAlpha.100");
   const mutedColor = useColorModeValue("gray.600", "gray.300");
@@ -429,11 +432,18 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
         </SimpleGrid>
 
         {canManage ? (
-          <Box display="flex" justifyContent="flex-end">
-            <Button variant="outline" onClick={handleSaveMeta} isLoading={isSaving}>
-              Сохранить SEO и статус
+          <Flex className="cabinet-panel-actions" justify={{ base: "stretch", md: "flex-end" }} w="100%">
+            <Button
+              className="cabinet-btn-fluid"
+              variant="outline"
+              onClick={handleSaveMeta}
+              isLoading={isSaving}
+              w={{ base: "100%", md: "auto" }}
+              maxW="100%"
+            >
+              {compactActions ? "Сохранить" : "Сохранить SEO и статус"}
             </Button>
-          </Box>
+          </Flex>
         ) : null}
       </Stack>
     </Card>

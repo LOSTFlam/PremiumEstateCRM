@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Card from "components/card/Card";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import { IoIosArrowBack } from "react-icons/io";
 import { HasAccess } from "../../../redux/accessUtils";
 import { HSeparator } from "components/separator/Separator";
@@ -825,38 +826,15 @@ const View = (_props) => {
       </Grid>
       {(opportunityAccess?.update || opportunityAccess?.delete || user?.role === "superAdmin") && (
         <Card mt={3}>
-          <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-            <GridItem colStart={6}>
-              <Flex justifyContent={"right"}>
-                {(opportunityAccess?.update || user?.role === "superAdmin") && (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      setEdit(true);
-                      setType("edit");
-                    }}
-                    leftIcon={<EditIcon />}
-                    mr={2.5}
-                    variant="outline"
-                    colorScheme="green"
-                  >
-                    Edit
-                  </Button>
-                )}
-                {(opportunityAccess?.delete || user?.role === "superAdmin") && (
-                  <Button
-                    size="sm"
-                    style={{ background: "red.800" }}
-                    onClick={() => setDeleteManyModel(true)}
-                    leftIcon={<DeleteIcon />}
-                    colorScheme="red"
-                  >
-                    Delete
-                  </Button>
-                )}
-              </Flex>
-            </GridItem>
-          </Grid>
+          <CabinetRecordActions
+            showEdit={Boolean(opportunityAccess?.update || user?.role === "superAdmin")}
+            showDelete={Boolean(opportunityAccess?.delete || user?.role === "superAdmin")}
+            onEdit={() => {
+              setEdit(true);
+              setType("edit");
+            }}
+            onDelete={() => setDeleteManyModel(true)}
+          />
         </Card>
       )}
       <AddEdit

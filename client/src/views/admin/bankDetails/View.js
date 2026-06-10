@@ -30,6 +30,7 @@ import { toast } from "react-toastify";
 import { getApi, putApi, deleteManyApi } from "services/api";
 import { HasAccess } from "../../../redux/accessUtils";
 import CommonDeleteModel from "components/commonDeleteModel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import moment from "moment";
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
@@ -491,41 +492,12 @@ const View = () => {
 
           {(user?.role === "superAdmin" || permission?.update || permission?.delete) && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(2, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {user?.role === "superAdmin" || permission?.update ? (
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setEdit(true);
-                        }}
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        Edit
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    {user?.role === "superAdmin" || permission?.delete ? (
-                      <Button
-                        size="sm"
-                        style={{ background: "red.800" }}
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(user?.role === "superAdmin" || permission?.update)}
+                showDelete={Boolean(user?.role === "superAdmin" || permission?.delete)}
+                onEdit={() => setEdit(true)}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>

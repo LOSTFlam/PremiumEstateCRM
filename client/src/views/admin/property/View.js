@@ -59,6 +59,7 @@ import { toast } from "react-toastify";
 import EmailModel from "components/commonTableModel/EmailModel";
 import PhoneModel from "components/commonTableModel/PhoneModel";
 import ListingVerificationPanel from "./components/ListingVerificationPanel";
+import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 
 const View = () => {
@@ -854,35 +855,12 @@ const View = () => {
 
           {(permission?.delete || permission?.update || user?.role === "superAdmin") && (
             <Card mt={3}>
-              <Grid templateColumns="repeat(6, 1fr)" gap={1}>
-                <GridItem colStart={6}>
-                  <Flex justifyContent={"right"}>
-                    {permission?.update && (
-                      <Button
-                        onClick={() => setEdit(true)}
-                        size="sm"
-                        leftIcon={<EditIcon />}
-                        mr={2.5}
-                        variant="outline"
-                        colorScheme="green"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    {permission?.delete && (
-                      <Button
-                        style={{ background: "red.800" }}
-                        size="sm"
-                        onClick={() => setDelete(true)}
-                        leftIcon={<DeleteIcon />}
-                        colorScheme="red"
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </Flex>
-                </GridItem>
-              </Grid>
+              <CabinetRecordActions
+                showEdit={Boolean(permission?.update)}
+                showDelete={Boolean(permission?.delete)}
+                onEdit={() => setEdit(true)}
+                onDelete={() => setDelete(true)}
+              />
             </Card>
           )}
         </>
