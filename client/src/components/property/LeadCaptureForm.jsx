@@ -179,21 +179,23 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
         border="1px solid rgba(255,255,255,0.1)"
       >
         <ModalCloseButton color="white" />
-        <ModalHeader>
+        <ModalHeader color="white">
           <HStack spacing={3}>
             <Icon as={currentForm.icon} color="#F5D076" boxSize={6} />
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text fontSize="2xl" fontWeight="bold" color="white">
               {currentForm.title}
             </Text>
           </HStack>
         </ModalHeader>
-        <ModalBody pb={8}>
+        <ModalBody pb={8} color="gray.200">
           {property && (
             <Stack spacing={1} mb={6} p={4} bg="rgba(255,255,255,0.05)" borderRadius="12px">
               <Text fontSize="sm" color="gray.400">
                 {copy.property}:
               </Text>
-              <Text fontWeight="600">{property.name || property.propertyAddress}</Text>
+              <Text fontWeight="600" color="white">
+                {property.name || property.propertyAddress}
+              </Text>
               {property.listingPrice && (
                 <Text color="#F5D076" fontWeight="bold">
                   {copy.priceLabel}: {formatPrice(property.listingPrice)}
@@ -207,7 +209,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               <Stack spacing={2}>
                 <HStack>
                   <Icon as={FiUser} color="gray.400" />
-                  <Text fontWeight="500">{copy.fullName} *</Text>
+                  <Text fontWeight="500" color="gray.200">
+                    {copy.fullName} *
+                  </Text>
                 </HStack>
                 <Input
                   name="name"
@@ -228,7 +232,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               <Stack spacing={2}>
                 <HStack>
                   <Icon as={FiMail} color="gray.400" />
-                  <Text fontWeight="500">{copy.email} *</Text>
+                  <Text fontWeight="500" color="gray.200">
+                    {copy.email} *
+                  </Text>
                 </HStack>
                 <Input
                   name="email"
@@ -250,7 +256,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               <Stack spacing={2}>
                 <HStack>
                   <Icon as={FiPhone} color="gray.400" />
-                  <Text fontWeight="500">{copy.phone} *</Text>
+                  <Text fontWeight="500" color="gray.200">
+                    {copy.phone} *
+                  </Text>
                 </HStack>
                 <Input
                   name="phone"
@@ -271,7 +279,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               {(type === "viewing" || type === "consultation") && (
                 <>
                   <Stack spacing={2}>
-                    <Text fontWeight="500">{copy.preferredDate}</Text>
+                    <Text fontWeight="500" color="gray.200">
+                      {copy.preferredDate}
+                    </Text>
                     <Input
                       name="preferredDate"
                       type="date"
@@ -288,7 +298,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
                   </Stack>
 
                   <Stack spacing={2}>
-                    <Text fontWeight="500">{copy.preferredTime}</Text>
+                    <Text fontWeight="500" color="gray.200">
+                      {copy.preferredTime}
+                    </Text>
                     <Select
                       name="preferredTime"
                       value={formData.preferredTime}
@@ -313,7 +325,9 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
               <Stack spacing={2}>
                 <HStack>
                   <Icon as={FiMessageSquare} color="gray.400" />
-                  <Text fontWeight="500">{copy.message}</Text>
+                  <Text fontWeight="500" color="gray.200">
+                    {copy.message}
+                  </Text>
                 </HStack>
                 <Textarea
                   name="message"

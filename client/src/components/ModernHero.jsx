@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import HeroPropertyOfWeekPicker from "components/admin/HeroPropertyOfWeekPicker";
 import {
   Badge,
   Box,
@@ -187,6 +188,10 @@ export default function ModernHero({
   segmentCards = [],
   marketRouteCards = [],
   content = {},
+  heroPropertyId = null,
+  canEditHeroProperty = false,
+  onHeroPropertySave,
+  isHeroPropertySaving = false,
 }) {
   const { t, i18n } = useTranslation();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -202,9 +207,15 @@ export default function ModernHero({
   const [pulseRef, pulseRevealed] = useScrollReveal({ threshold: 1, delay: 0 });
 
   const heroProperty = useMemo(() => {
+    if (heroPropertyId) {
+      const selected = (properties || []).find(
+        (property) => String(property?._id) === String(heroPropertyId)
+      );
+      if (selected) return selected;
+    }
     const withImages = (properties || []).filter((property) => getPhotoCount(property) > 0);
     return withImages[0] || properties?.[0] || null;
-  }, [properties]);
+  }, [heroPropertyId, properties]);
 
   const typeCounts = useMemo(
     () =>
@@ -912,6 +923,15 @@ export default function ModernHero({
                   inset="0"
                   bg="linear-gradient(180deg, rgba(7,12,20,0.02) 0%, rgba(7,12,20,0.24) 28%, rgba(7,12,20,0.90) 100%)"
                 />
+
+                {canEditHeroProperty && onHeroPropertySave ? (
+                  <HeroPropertyOfWeekPicker
+                    properties={properties}
+                    selectedId={heroPropertyId}
+                    onSave={onHeroPropertySave}
+                    isSaving={isHeroPropertySaving}
+                  />
+                ) : null}
 
                 <Stack
                   position="absolute"

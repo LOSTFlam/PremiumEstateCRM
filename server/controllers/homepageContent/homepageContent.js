@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const HomepageContent = require("../../model/schema/homepageContent");
 
 const DEFAULT_VISIBILITY = {
@@ -19,12 +20,19 @@ const mergeVisibility = (incoming = {}) =>
     return acc;
   }, {});
 
+const normalizeHeroPropertyId = (value) => {
+  if (!value) return null;
+  const id = String(value).trim();
+  return mongoose.Types.ObjectId.isValid(id) ? id : null;
+};
+
 const normalizeContent = (incoming = {}) => ({
   visibility: mergeVisibility(incoming.visibility),
   locales: {
     ru: isPlainObject(incoming.locales?.ru) ? incoming.locales.ru : {},
     en: isPlainObject(incoming.locales?.en) ? incoming.locales.en : {},
   },
+  heroPropertyId: normalizeHeroPropertyId(incoming.heroPropertyId),
 });
 
 const ensureDocument = async () => {
@@ -57,6 +65,7 @@ const publicIndex = async (req, res) => {
     return res.status(200).json({
       visibility: mergeVisibility(document.visibility),
       locales: document.locales || { ru: {}, en: {} },
+      heroPropertyId: document.heroPropertyId || null,
       updatedDate: document.updatedDate,
     });
   } catch (error) {
@@ -73,6 +82,7 @@ const edit = async (req, res) => {
         $set: {
           visibility: normalized.visibility,
           locales: normalized.locales,
+          heroPropertyId: normalized.heroPropertyId,
           updatedDate: new Date(),
           updatedBy: req.user?.userId || null,
         },

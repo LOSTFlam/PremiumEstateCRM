@@ -36,6 +36,7 @@ export const mergeHomepageContent = (incoming = {}) => ({
     ru: mergeDeep(DEFAULT_HOMEPAGE_CONTENT.locales.ru, incoming.locales?.ru || {}),
     en: mergeDeep(DEFAULT_HOMEPAGE_CONTENT.locales.en, incoming.locales?.en || {}),
   },
+  heroPropertyId: incoming.heroPropertyId || null,
 });
 
 export const getHomepageLocaleContent = (content, locale = "ru") => {

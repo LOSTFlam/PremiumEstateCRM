@@ -81,16 +81,17 @@ export default function MortgageCalculator({ propertyPrice = 25000000, onApply }
       borderRadius="28px"
       p={{ base: 5, md: 7 }}
       bg="white"
+      color={publicBrand.colors.ink}
       border="1px solid rgba(9,18,32,0.08)"
       boxShadow={publicBrand.shadows.soft}
     >
       <Stack spacing={6}>
-        <Heading size="md" fontFamily="heading">
+        <Heading size="md" fontFamily="heading" color={publicBrand.colors.ink}>
           {locale === "ru" ? "Ипотечный калькулятор" : "Mortgage calculator"}
         </Heading>
 
         <FormControl>
-          <FormLabel>
+          <FormLabel color={publicBrand.colors.ink} fontWeight="600" mb={2}>
             {locale === "ru" ? "Первоначальный взнос" : "Down payment"}: {downPaymentPct}%
           </FormLabel>
           <Slider value={downPaymentPct} min={10} max={80} onChange={setDownPaymentPct}>
@@ -102,7 +103,7 @@ export default function MortgageCalculator({ propertyPrice = 25000000, onApply }
         </FormControl>
 
         <FormControl>
-          <FormLabel>
+          <FormLabel color={publicBrand.colors.ink} fontWeight="600" mb={2}>
             {locale === "ru" ? "Срок" : "Term"}: {termYears} {locale === "ru" ? "лет" : "years"}
           </FormLabel>
           <Slider value={termYears} min={5} max={30} onChange={setTermYears}>
@@ -114,7 +115,7 @@ export default function MortgageCalculator({ propertyPrice = 25000000, onApply }
         </FormControl>
 
         <FormControl>
-          <FormLabel>
+          <FormLabel color={publicBrand.colors.ink} fontWeight="600" mb={2}>
             {locale === "ru" ? "Ставка" : "Rate"}: {rate.toFixed(1)}%
           </FormLabel>
           <Slider value={rate} min={5} max={20} step={0.1} onChange={setRate}>

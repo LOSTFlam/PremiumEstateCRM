@@ -42,7 +42,8 @@ import GuidedFinder from "components/property/AIPropertyMatcher";
 import MobileBottomNav from "components/public/MobileBottomNav";
 import { useSelector } from "react-redux";
 import HomepageBlockEditBar from "components/admin/HomepageBlockEditBar";
-import { fetchPublicHomepageContent } from "services/homepageContent";
+import { fetchPublicHomepageContent, updateHomepageContent } from "services/homepageContent";
+import { mergeHomepageContent } from "utils/homepageContent";
 import { canManageSiteContent } from "utils/adminAccess";
 import { fetchPublicStorefrontSettings } from "services/storefrontSettings";
 import { getHomepageLocaleContent, isHomepageBlockVisible } from "utils/homepageContent";
@@ -143,6 +144,7 @@ export default function ModernLandingPage() {
   const [compareIds, setCompareIds] = useState([]);
   const [storefrontPresets, setStorefrontPresets] = useState(DEFAULT_STOREFRONT_PRESETS);
   const [homepageContent, setHomepageContent] = useState(null);
+  const [heroPropertySaving, setHeroPropertySaving] = useState(false);
 
   const enableFullMotion = false; // Disabled for performance
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
@@ -219,6 +221,30 @@ export default function ModernLandingPage() {
   }, [properties, searchQuery]);
 
   const featuredProperties = useMemo(() => filteredProperties.slice(0, 6), [filteredProperties]);
+
+  const handleHeroPropertySave = async (propertyId) => {
+    setHeroPropertySaving(true);
+    try {
+      const response = await updateHomepageContent({
+        ...mergeHomepageContent(homepageContent),
+        heroPropertyId: propertyId,
+      });
+      setHomepageContent(response.content);
+      toast({
+        title: t("adminInline.heroPropertySaved", { defaultValue: "Listing of the week updated" }),
+        status: "success",
+        duration: 2500,
+      });
+    } catch {
+      toast({
+        title: t("adminInline.saveError"),
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setHeroPropertySaving(false);
+    }
+  };
 
   const richCount = useMemo(
     () => properties.filter((property) => isRichListing(property)).length,
@@ -449,6 +475,10 @@ export default function ModernLandingPage() {
             segmentCards={heroSegmentCards}
             marketRouteCards={marketRoutes}
             content={blocks.hero}
+            heroPropertyId={homepageContent?.heroPropertyId || null}
+            canEditHeroProperty={canEditHomepage}
+            onHeroPropertySave={handleHeroPropertySave}
+            isHeroPropertySaving={heroPropertySaving}
           />
           </Box>
         ) : null}

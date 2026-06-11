@@ -13,6 +13,7 @@ import {
   Heading,
   HStack,
   Input,
+  Select,
   Switch,
   Tab,
   TabList,
@@ -31,6 +32,8 @@ import { useNavigate } from "react-router-dom";
 import Card from "components/card/Card";
 import Spinner from "components/spinner/Spinner";
 import { fetchHomepageContent, updateHomepageContent } from "services/homepageContent";
+import { fetchPublicCatalog } from "views/public/catalog/catalogService";
+import { getListingTitle } from "views/public/catalog/catalogData";
 import { HOMEPAGE_BLOCK_KEYS, mergeHomepageContent } from "utils/homepageContent";
 import { getPublicSitePath } from "utils/authPaths";
 
@@ -92,7 +95,7 @@ const Field = ({ label, value, onChange, multiline = false, rows = 3 }) => {
   );
 };
 
-const BlockFields = ({ blockKey, locale, content, onChange, t }) => {
+const BlockFields = ({ blockKey, locale, content, onChange, t, catalogProperties = [] }) => {
   const nestedBorderColor = useColorModeValue("gray.200", "whiteAlpha.200");
   const nestedHeadingColor = useColorModeValue("secondaryGray.900", "white");
   const block = content.locales?.[locale]?.[blockKey] || {};
@@ -102,6 +105,31 @@ const BlockFields = ({ blockKey, locale, content, onChange, t }) => {
   if (blockKey === "hero") {
     return (
       <VStack align="stretch" spacing={4}>
+        {locale === "ru" ? (
+          <FormControl>
+            <FormLabel fontSize="sm">{t("homepageEditor.heroPropertyLabel")}</FormLabel>
+            <Text fontSize="sm" color={nestedHeadingColor} mb={2}>
+              {t("homepageEditor.heroPropertyHelp")}
+            </Text>
+            <Select
+              value={content.heroPropertyId || ""}
+              onChange={(event) =>
+                onChange({
+                  ...content,
+                  heroPropertyId: event.target.value || null,
+                })
+              }
+              borderRadius="16px"
+            >
+              <option value="">{t("adminInline.heroPropertyAuto")}</option>
+              {catalogProperties.map((property) => (
+                <option key={property._id} value={property._id}>
+                  {getListingTitle(property, t, locale) || property?.propertyAddress}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+        ) : null}
         <Field label={t("homepageEditor.fields.eyebrow")} value={block.eyebrow} onChange={(v) => update("hero.eyebrow", v)} />
         <Field label={t("homepageEditor.fields.kicker")} value={block.kicker} onChange={(v) => update("hero.kicker", v)} />
         <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("hero.title", v)} />
@@ -209,6 +237,7 @@ export default function HomepageEditor() {
   const accordionTextColor = useColorModeValue("secondaryGray.900", "white");
   const accordionMutedColor = useColorModeValue("secondaryGray.600", "whiteAlpha.700");
   const [content, setContent] = useState(() => mergeHomepageContent());
+  const [catalogProperties, setCatalogProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -228,8 +257,14 @@ export default function HomepageEditor() {
     const load = async () => {
       setLoading(true);
       try {
-        const response = await fetchHomepageContent();
-        if (!ignore) setContent(response.content);
+        const [response, catalog] = await Promise.all([
+          fetchHomepageContent(),
+          fetchPublicCatalog(),
+        ]);
+        if (!ignore) {
+          setContent(response.content);
+          setCatalogProperties(catalog);
+        }
       } catch {
         if (!ignore) {
           toast({
@@ -349,6 +384,7 @@ export default function HomepageEditor() {
                         content={content}
                         onChange={setContent}
                         t={t}
+                        catalogProperties={catalogProperties}
                       />
                     </AccordionPanel>
                   </AccordionItem>

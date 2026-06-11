@@ -148,11 +148,16 @@ a.public-brand-button {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  max-width: min(52vw, 520px);
+  max-width: min(58vw, 640px);
+  gap: 8px;
 }
 
 .header-nav-scroll::-webkit-scrollbar {
   display: none;
+}
+
+.header-nav-scroll > .chakra-button {
+  flex-shrink: 0;
 }
 
 /* Cabinet content area */

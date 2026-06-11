@@ -138,6 +138,21 @@ export default function ModernHeader({ largeLogo = [] }) {
     onClose();
   };
 
+  const navItemPadding = { px: 3, py: 2 };
+  const navItemAfter = (active) =>
+    active
+      ? {
+          content: '""',
+          position: "absolute",
+          left: "10px",
+          right: "10px",
+          bottom: "4px",
+          h: "1.5px",
+          borderRadius: "999px",
+          bg: "rgba(212, 175, 55, 0.5)",
+        }
+      : undefined;
+
   const isActivePath = (href) => {
     const hash = href.includes("#") ? href.split("#")[1] : "";
     const basePath = href.split("#")[0];
@@ -263,10 +278,11 @@ export default function ModernHeader({ largeLogo = [] }) {
             </RouterLink>
 
             <HStack
-              spacing={1}
+              spacing={{ base: 2, xl: 3 }}
               display={{ base: "none", lg: "flex" }}
               className="header-nav-scroll"
               flexShrink={1}
+              align="center"
             >
               {navLinks.map((link) => {
                 const active = isActivePath(link.href);
@@ -275,32 +291,23 @@ export default function ModernHeader({ largeLogo = [] }) {
                     <Menu key={link.href} isLazy>
                       <MenuButton
                         as={Button}
-                        rightIcon={<FiChevronDown />}
                         variant="ghost"
                         position="relative"
-                        color={active ? "white" : "whiteAlpha.600"}
+                        color={active ? "white" : "whiteAlpha.700"}
                         fontWeight="500"
-                        px={{ base: 2, xl: 3 }}
+                        {...navItemPadding}
                         fontSize={{ base: "xs", xl: "sm" }}
                         minH="40px"
+                        whiteSpace="nowrap"
+                        flexShrink={0}
                         bg="transparent"
                         _hover={{ color: "white", bg: "transparent" }}
-                        _after={
-                          active
-                            ? {
-                                content: '""',
-                                position: "absolute",
-                                left: "12px",
-                                right: "12px",
-                                bottom: "4px",
-                                h: "1.5px",
-                                borderRadius: "999px",
-                                bg: "rgba(212, 175, 55, 0.5)",
-                              }
-                            : undefined
-                        }
+                        _after={navItemAfter(active)}
                       >
-                        {link.label}
+                        <HStack as="span" spacing={1.5} align="center">
+                          <Text as="span">{link.label}</Text>
+                          <Box as={FiChevronDown} boxSize={3.5} flexShrink={0} opacity={0.85} />
+                        </HStack>
                       </MenuButton>
                       <MenuList
                         bg="rgba(7, 12, 20, 0.96)"
@@ -334,29 +341,16 @@ export default function ModernHeader({ largeLogo = [] }) {
                     onClick={() => navigateToHref(link.href)}
                     variant="ghost"
                     position="relative"
-                    color={active ? "white" : "whiteAlpha.600"}
+                    color={active ? "white" : "whiteAlpha.700"}
                     fontWeight="500"
-                    px={{ base: 2, xl: 3 }}
+                    {...navItemPadding}
                     fontSize={{ base: "xs", xl: "sm" }}
                     minH="40px"
                     whiteSpace="nowrap"
                     flexShrink={0}
                     bg="transparent"
                     _hover={{ color: "white", bg: "transparent" }}
-                    _after={
-                      active
-                        ? {
-                            content: '""',
-                            position: "absolute",
-                            left: "12px",
-                            right: "12px",
-                            bottom: "4px",
-                            h: "1.5px",
-                            borderRadius: "999px",
-                            bg: "rgba(212, 175, 55, 0.5)",
-                          }
-                        : undefined
-                    }
+                    _after={navItemAfter(active)}
                   >
                     {link.label}
                   </Button>

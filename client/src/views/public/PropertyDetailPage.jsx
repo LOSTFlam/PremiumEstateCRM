@@ -615,6 +615,8 @@ const PropertyDetailPage = () => {
                   variant="ghost"
                   size="lg"
                   borderRadius="12px"
+                  color="gray.200"
+                  _hover={{ color: "#F5D076", bg: "rgba(255,255,255,0.06)" }}
                   onClick={() => openLeadForm("offer")}
                 >
                   {copy.makeOffer}

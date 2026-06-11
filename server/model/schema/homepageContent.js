@@ -14,6 +14,11 @@ const homepageContentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     default: {},
   },
+  heroPropertyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Property",
+    default: null,
+  },
   updatedDate: {
     type: Date,
     default: Date.now,

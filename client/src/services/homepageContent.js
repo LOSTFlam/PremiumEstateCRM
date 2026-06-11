@@ -5,6 +5,7 @@ const normalizeResponse = (response) =>
   mergeHomepageContent({
     visibility: response?.visibility || response?.data?.visibility,
     locales: response?.locales || response?.data?.locales,
+    heroPropertyId: response?.heroPropertyId || response?.data?.heroPropertyId || null,
   });
 
 export const fetchPublicHomepageContent = async () => {
