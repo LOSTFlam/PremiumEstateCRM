@@ -29,6 +29,16 @@ export function SidebarLinks(props) {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const staffRoles = ["admin", "manager", "teamleader", "executive", "telecaller"];
+  const canAccessRoute = (route) => {
+    const layouts = route?.layout || [];
+    const role = user?.role;
+    if (!role) return false;
+    if (layouts.includes(`/${role}`)) return true;
+    if (staffRoles.includes(role) && layouts.includes("/superAdmin")) return true;
+    return false;
+  };
+
   const { routes, setOpenSidebar, openSidebar } = props;
 
   const routeNameToI18nKey = {
@@ -106,7 +116,7 @@ export function SidebarLinks(props) {
             {createLinks(route?.items)}
           </>
         );
-      } else if (!route?.under && user?.role && route?.layout?.includes(`/${user?.role}`)) {
+      } else if (!route?.under && canAccessRoute(route)) {
         return (
           <NavLink key={index} to={route?.path}>
             {route?.separator && (

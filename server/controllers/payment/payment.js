@@ -1,8 +1,18 @@
 const stripeModule = require('stripe')
 
+const getStripeClient = () => {
+    const key = process.env.STRIPE_PRIVATE_KEY;
+    if (!key) {
+        return null;
+    }
+    return stripeModule(key);
+};
 
 const index = async (req, res) => {
-    const stripe = stripeModule(process.env.STRIPE_PRIVATE_KEY);
+    const stripe = getStripeClient();
+    if (!stripe) {
+        return res.status(503).json({ message: 'Payment service is not configured' });
+    }
     try {
         const session = await stripe.paymentIntents.list({ limit: 100 });
 
@@ -41,7 +51,10 @@ const index = async (req, res) => {
 }
 
 const add = async (req, res) => {
-    const stripe = stripeModule(process.env.STRIPE_PRIVATE_KEY);
+    const stripe = getStripeClient();
+    if (!stripe) {
+        return res.status(503).json({ message: 'Payment service is not configured' });
+    }
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],

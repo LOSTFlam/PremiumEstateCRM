@@ -193,6 +193,7 @@ const View = (_props) => {
           invoiceData={invoiceData}
           isLoding={isLoding}
           invoicesColumns={invoicesColumns}
+          access={invoicesAccess}
         />
       )}
       {(quotesAccess?.update || quotesAccess?.delete || user?.role === "superAdmin") && (

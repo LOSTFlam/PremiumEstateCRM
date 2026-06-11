@@ -60,7 +60,7 @@ const Index = (_props) => {
           <MenuButton>
             <CiMenuKebab />
           </MenuButton>
-          <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+          <MenuList minW={"fit-content"}>
             {permission?.update && (
               <MenuItem
                 py={2.5}
@@ -530,11 +530,13 @@ const Index = (_props) => {
     setIsLoding(true);
     try {
       const result = await dispatch(fetchOpportunityData());
+      if (fetchOpportunityData.rejected.match(result)) {
+        toast.error("Failed to fetch data", "error");
+        setData([]);
+        return;
+      }
       const data = Array.isArray(result?.payload) ? result.payload : [];
       setData(data);
-      if (!data.length) {
-        toast.error("Failed to fetch data", "error");
-      }
     } finally {
       setIsLoding(false);
     }

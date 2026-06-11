@@ -62,7 +62,7 @@ const Task = () => {
           <MenuButton>
             <CiMenuKebab />
           </MenuButton>
-          <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+          <MenuList minW={"fit-content"}>
             {permission?.update && (
               <MenuItem
                 py={2.5}
@@ -184,10 +184,11 @@ const Task = () => {
       : Array.isArray(result?.payload?.data)
         ? result.payload.data
         : [];
-    if (data.length > 0) {
-      setData(data);
-    } else {
+    if (fetchTaskData.rejected.match(result)) {
       toast.error("Failed to fetch data", "error");
+      setData([]);
+    } else {
+      setData(data);
     }
     setIsLoding(false);
   };

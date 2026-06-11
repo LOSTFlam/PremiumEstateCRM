@@ -1,42 +1,61 @@
 import { useEffect, useState } from "react";
-import { Box as _Box, Heading, SimpleGrid, Stack, Text as _Text, useToast } from "@chakra-ui/react";
-import { getApi } from "services/api";
+import { Heading, SimpleGrid, Stack } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import {
   PROPERTY_CARD_GRID_SPACING,
   PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
-import { useTranslation } from "react-i18next";
+import { normalizePropertyTypeKey } from "views/public/catalog/catalogData";
+import { fetchPublicCatalog } from "views/public/catalog/catalogService";
 
 const SimilarProperties = ({ currentProperty }) => {
-  const { t: _t } = useTranslation();
-  const _toast = useToast();
+  const { t } = useTranslation();
   const [similarProperties, setSimilarProperties] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchSimilarProperties();
-  }, [currentProperty]);
+    const loadSimilar = async () => {
+      if (!currentProperty?._id) return;
 
-  const fetchSimilarProperties = async () => {
-    if (!currentProperty) return;
+      try {
+        setLoading(true);
+        const catalog = await fetchPublicCatalog();
+        const typeKey =
+          currentProperty.propertyTypeKey ||
+          normalizePropertyTypeKey(currentProperty.propertyType);
+        const locationHint = String(currentProperty.propertyAddress || "")
+          .toLowerCase()
+          .split(",")[0]
+          .trim();
 
-    try {
-      setLoading(true);
-      const response = await getApi(
-        `api/property/public/similar?propertyType=${currentProperty.propertyTypeKey}&location=${currentProperty.propertyAddress}&limit=3`
-      );
-      if (response && response.data) {
-        // Filter out the current property
-        const filtered = response.data.filter((p) => p._id !== currentProperty._id);
-        setSimilarProperties(filtered.slice(0, 3));
+        const matches = catalog
+          .filter((property) => property?._id && property._id !== currentProperty._id)
+          .map((property) => {
+            const sameType =
+              !typeKey ||
+              property.propertyTypeKey === typeKey ||
+              normalizePropertyTypeKey(property.propertyType) === typeKey;
+            const address = String(property.propertyAddress || "").toLowerCase();
+            const locationScore = locationHint && address.includes(locationHint) ? 2 : 0;
+            const typeScore = sameType ? 1 : 0;
+            return { property, score: typeScore + locationScore };
+          })
+          .filter((entry) => entry.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .map((entry) => entry.property)
+          .slice(0, 3);
+
+        setSimilarProperties(matches);
+      } catch {
+        setSimilarProperties([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      // Console statement removed
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    loadSimilar();
+  }, [currentProperty]);
 
   if (similarProperties.length === 0 && !loading) {
     return null;
@@ -44,7 +63,9 @@ const SimilarProperties = ({ currentProperty }) => {
 
   return (
     <Stack spacing={6}>
-      <Heading size="lg">Similar Properties</Heading>
+      <Heading size="lg">
+        {t("publicPages.detail.similarProperties", { defaultValue: "Similar Properties" })}
+      </Heading>
       <SimpleGrid
         className="property-card-grid"
         minChildWidth={PROPERTY_CARD_MIN_WIDTH}

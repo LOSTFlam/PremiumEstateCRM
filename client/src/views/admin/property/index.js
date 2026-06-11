@@ -170,7 +170,10 @@ const Index = () => {
 
         setColumns(tempTableColumns);
       } else {
-        toast.error("Failed to fetch custom fields", "error");
+        setColumns([
+          { Header: "#", accessor: "_id", isSortable: false, width: 10 },
+          ...(permission?.update || permission?.view || permission?.delete ? [actionHeader] : []),
+        ]);
       }
     } catch (error) {
       toast.error("Failed to fetch data", "error");
@@ -208,9 +211,8 @@ const Index = () => {
   return (
     <div>
       <Grid templateColumns="repeat(6, 1fr)" mb={3} gap={4}>
-        {!isLoding && (
-          <GridItem colSpan={6}>
-            <CommonCheckTable
+        <GridItem colSpan={6}>
+          <CommonCheckTable
               title="Properties"
               isLoding={isLoding}
               columnData={columns ?? []}
@@ -233,8 +235,7 @@ const Index = () => {
               setDelete={setDelete}
               setIsImport={setIsImportProperty}
             />
-          </GridItem>
-        )}
+        </GridItem>
       </Grid>
       {isOpen && (
         <Add

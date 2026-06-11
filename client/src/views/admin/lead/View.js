@@ -84,7 +84,7 @@ const View = () => {
   const [addEmailHistory, setAddEmailHistory] = useState(false);
   const [addPhoneCall, setAddPhoneCall] = useState(false);
 
-  const leadData = useSelector((state) => state?.leadCustomFiled?.data.data);
+  const leadData = useSelector((state) => state?.leadCustomFiled?.data);
   const findUser = userData?.find((user) => user?._id === data?.assignUser);
 
   useEffect(() => {

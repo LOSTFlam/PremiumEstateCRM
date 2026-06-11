@@ -4,7 +4,7 @@ const { auth, authorize } = require('../../middlewares/auth');
 
 const router = express.Router();
 
-router.post('/add', auth, authorize('superAdmin'), payment.add);
-router.get('/', auth, authorize('superAdmin'), payment.index);
+router.post('/add', auth, authorize('superAdmin', 'user'), payment.add);
+router.get('/', auth, authorize('superAdmin', 'user'), payment.index);
 
-module.exports = router
+module.exports = router;

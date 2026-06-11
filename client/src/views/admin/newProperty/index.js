@@ -96,7 +96,7 @@ const Index = () => {
             <MenuButton>
               <CiMenuKebab />
             </MenuButton>
-            <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+            <MenuList minW={"fit-content"}>
               {permission?.update && (
                 <MenuItem
                   py={2.5}
@@ -496,7 +496,7 @@ const Index = () => {
                     <MenuButton>
                       <CiMenuKebab />
                     </MenuButton>
-                    <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+                    <MenuList minW={"fit-content"}>
                       {permission?.update && (
                         <MenuItem
                           py={2.5}

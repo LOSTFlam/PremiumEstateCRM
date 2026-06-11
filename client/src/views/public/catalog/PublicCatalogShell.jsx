@@ -1178,7 +1178,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                 <Text fontSize="sm" color={publicBrand.colors.textSoft}>
                   {t("publicPages.catalog.shownCount", {
                     shown: paginatedProperties.length,
-                    total: properties.length,
+                    total: stats.filtered,
                   })}
                 </Text>
               ) : null}

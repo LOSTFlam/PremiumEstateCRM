@@ -81,7 +81,7 @@ const View = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const contactData = useSelector((state) => state?.contactCustomFiled?.data?.data);
+  const contactData = useSelector((state) => state?.contactCustomFiled?.data);
 
   const [propertyData, setPropertyData] = useState([]);
   const [columns, setColumns] = useState([]);

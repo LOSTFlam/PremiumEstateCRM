@@ -82,7 +82,11 @@ export default function PropertyPhotoManager({
       if (response?.status === 200 || response?.data) {
         // Fetch updated property data
         const updatedProperty = await getApi(`api/property/view/${propertyId}`);
-        const newPhotos = updatedProperty?.data?.propertyPhotos || [];
+        const newPhotos =
+          updatedProperty?.propertyPhotos ||
+          updatedProperty?.data?.propertyPhotos ||
+          updatedProperty?.data?.property?.propertyPhotos ||
+          [];
         setLocalPhotos(newPhotos);
         if (onChange) {
           onChange(newPhotos);

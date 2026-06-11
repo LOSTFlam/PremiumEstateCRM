@@ -41,6 +41,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchOpportunityData } from "../../../redux/slices/opportunitySlice";
 import AccountModel from "components/commonTableModel/AccountModel";
 import { fetchAccountData } from "../../../redux/slices/accountSlice";
+import { fetchContactData } from "../../../redux/slices/contactSlice";
 import ContactModel from "components/commonTableModel/ContactModel";
 import { HasAccess } from "../../../redux/accessUtils";
 import moment from "moment";
@@ -62,6 +63,7 @@ const AddEdit = (props) => {
   const accountList = useSelector((state) => state?.accountData?.data || []);
   const opportunityFetched = useSelector((state) => state?.opportunityData?.hasFetched);
   const accountFetched = useSelector((state) => state?.accountData?.hasFetched);
+  const contactFetched = useSelector((state) => state?.contactData?.hasFetched);
   const contactList = useSelector((state) => state?.contactData?.data);
   const largeLogo = useSelector((state) =>
     state?.images?.images?.filter((item) => item?.isActive === true)
@@ -287,7 +289,10 @@ const AddEdit = (props) => {
     if (!accountFetched) {
       dispatch(fetchAccountData());
     }
-  }, [accountFetched, dispatch, opportunityFetched]);
+    if (!contactFetched) {
+      dispatch(fetchContactData());
+    }
+  }, [accountFetched, contactFetched, dispatch, opportunityFetched]);
 
   return (
     <div>

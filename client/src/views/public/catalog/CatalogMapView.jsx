@@ -7,6 +7,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { formatPrice } from "./catalogData";
+import { buildPropertyHref } from "utils/propertyHref";
 import { useTranslation } from "react-i18next";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -33,6 +34,28 @@ export default function CatalogMapView({ properties = [] }) {
 
   const center = mapped[0]?.coords || DEFAULT_CENTER;
 
+  if (!mapped.length) {
+    return (
+      <Box
+        borderRadius="28px"
+        h={{ base: "420px", md: "560px" }}
+        w="100%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bg="rgba(9,18,32,0.04)"
+        px={6}
+        textAlign="center"
+      >
+        <Text color="gray.600">
+          {t("publicPages.catalog.mapEmpty", {
+            defaultValue: "No listings with map coordinates in this selection yet.",
+          })}
+        </Text>
+      </Box>
+    );
+  }
+
   return (
     <Box borderRadius="28px" overflow="hidden" h={{ base: "420px", md: "560px" }} w="100%">
       <MapContainer center={center} zoom={11} style={{ height: "100%", width: "100%" }}>
@@ -51,7 +74,7 @@ export default function CatalogMapView({ properties = [] }) {
               </Text>
               <Text
                 as={RouterLink}
-                to={`/offers/${property._id}`}
+                to={buildPropertyHref(property)}
                 fontSize="sm"
                 color="blue.600"
                 fontWeight="600"

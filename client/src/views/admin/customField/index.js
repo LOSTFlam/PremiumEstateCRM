@@ -309,7 +309,7 @@ const CustomField = () => {
             </Flex>
           </Box>
         </Flex>
-        {!data?.length > 0 && !isLoading && (
+        {!data?.length && !isLoading && (
           <Text
             textAlign={"center"}
             width="100%"

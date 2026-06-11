@@ -102,7 +102,7 @@ const View = () => {
   const [bookedOpen, setBookedOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const propertyData = useSelector((state) => state?.propertyCustomFiled?.data?.data);
+  const propertyData = useSelector((state) => state?.propertyCustomFiled?.data);
 
   const [contactData, setContactData] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -906,7 +906,7 @@ const View = () => {
                                   </MenuButton>
                                   <MenuList
                                     minW={"fit-content"}
-                                    transform={"translate(1520px, 173px);"}
+                                   
                                   >
                                     {item?.status !== "Available" && (
                                       <MenuItem

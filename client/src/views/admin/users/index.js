@@ -65,7 +65,7 @@ const Index = () => {
             <MenuButton>
               <CiMenuKebab />
             </MenuButton>
-            <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+            <MenuList minW={"fit-content"}>
               <MenuItem
                 py={2.5}
                 onClick={() => {

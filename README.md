@@ -1,12 +1,12 @@
 # 🏠 Premium Estate CRM
 
-> **Version:** 1.1.0 — Ethereal Luxury Edition  
+> **Version:** 1.2.0 — Ethereal Luxury Edition  
 > **Author:** [LOSTFlam](https://github.com/LOSTFlam) (Alexander Avdeev / Александр Авдеев)  
 > **Stack:** MERN (MongoDB, Express, React 18, Node.js) + Vite
 
 <div align="center">
 
-[![Version](https://img.shields.io/badge/version-1.1.0-gold?style=for-the-badge)](https://github.com/LOSTFlam/PremiumEstateCRM/releases)
+[![Version](https://img.shields.io/badge/version-1.2.0-gold?style=for-the-badge)](https://github.com/LOSTFlam/PremiumEstateCRM/releases)
 [![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![Node](https://img.shields.io/badge/Node.js-25+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
@@ -23,14 +23,24 @@
 
 ---
 
-## 🆕 What's New (v1.1.0)
+## 🆕 What's New (v1.2.0)
 
-- **Property Numeric Fields** — added Bedrooms, Bathrooms, Area to Add/Edit forms
-- **Security Enhancements** — ownership enforcement, secure file uploads with auth
-- **DB Reliability** — SRV fallback support via `DB_URL_FALLBACK`
-- **Improved Seeding** — auto-create admin user, bcrypt hashing, upsert logic
-- **New Scripts** — `npm run seed:properties`, `npm run seed:all`, `npm run dev:open`
-- **Visual Polish** — updated landing page gradients, shadows, and spacing
+### Public storefront
+- **Slug-first property URLs** — cards and map links prefer `/property/:slug` (fallback `/offers/:id`)
+- **Inline admin editing** — staff can edit listings, photos, and homepage blocks on live public pages
+- **Homepage editor** — admin UI for landing hero/features with dark-theme fixes
+- **Catalog & detail fixes** — similar properties, correct filter counts, map empty state, i18n prices
+
+### Admin CRM stability
+- **API rate limits** — stopped infinite `api/opportunity/` loops; `hasFetched` guards in Redux slices
+- **Payments** — `/payments` works for `user` and `superAdmin`; Stripe requires `STRIPE_PRIVATE_KEY` + `PUBLIC_APP_URL`
+- **RBAC** — role permissions load on any admin page, not only `/dashboard`
+- **List pages** — fixed context menus, empty-list toasts, custom-field selectors on Lead/Contact/Property views
+- **Quotes** — invoice section respects access permissions; contacts preload in Quote/Invoice forms
+
+### API & security (v1.1.x baseline retained)
+- Guest session endpoint returns `200` instead of `401`; CSP allows OpenStreetMap tiles
+- Property numeric fields, ownership checks, `DB_URL_FALLBACK`, seed scripts, visual polish
 
 ---
 
@@ -58,6 +68,7 @@
 - [📁 Project Structure](#-project-structure)
 - [🧪 Testing](#-testing)
 - [📦 Deployment](#-deployment)
+- [🔧 Troubleshooting](#-troubleshooting)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
@@ -67,6 +78,8 @@
 
 ### 🏠 Property Management
 - **Property Catalog** — apartments, houses, land plots, commercial
+- **Canonical URLs** — SEO-friendly `/property/:slug` pages with legacy ID fallback
+- **On-site editing** — admins edit listing fields and photos without leaving the public page
 - **Detailed Attributes** — bedrooms, bathrooms, square footage tracking
 - **SEO Optimization** — public pages with meta tags
 - **Media Gallery** — photos, videos, virtual tours, documents
@@ -379,6 +392,10 @@ JWT_SECRET=your-production-secret
 JWT_EXPIRES_IN=7d
 PORT=5001
 CLIENT_URL=https://yourdomain.com
+PUBLIC_APP_URL=https://yourdomain.com
+
+# Payments (Stripe Checkout)
+STRIPE_PRIVATE_KEY=sk_live_...
 ```
 
 ### Build
@@ -391,6 +408,12 @@ npm run build
 cd server
 NODE_ENV=production npm start
 ```
+
+---
+
+## 🔧 Troubleshooting
+
+See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) (EN) and [docs/TROUBLESHOOTING.ru.md](docs/TROUBLESHOOTING.ru.md) (RU) for payments, 429 rate limits, map tiles, and admin CRM issues.
 
 ---
 
@@ -435,19 +458,30 @@ MIT License — see [LICENSE](LICENSE) for details.
 - [📁 Структура проекта](#-структура-проекта)
 - [🧪 Тестирование](#-тестирование)
 - [📦 Деплой](#-деплой)
+- [🔧 Устранение неполадок](#-устранение-неполадок)
 - [🤝 Контрибьюция](#-контрибьюция)
 - [📄 Лицензия](#-лицензия)
 
 ---
 
-## 🆕 Что нового (v1.1.0)
+## 🆕 Что нового (v1.2.0)
 
-- **Поля недвижимости** — добавлены Спальни, Ванные, Площадь в формы
-- **Безопасность** — проверка владельца, защита загрузок файлов
-- **Надёжность БД** — поддержка `DB_URL_FALLBACK` для обхода проблем SRV
-- **Сидинг** — автосоздание админа, хеширование bcrypt, логика upsert
-- **Новые скрипты** — `seed:properties`, `seed:all`, `dev:open`
-- **Визуальный полиш** — обновлённые градиенты, тени, отступы
+### Публичная витрина
+- **URL по slug** — карточки и карта ведут на `/property/:slug` (запасной вариант `/offers/:id`)
+- **Inline-редактирование** — админы правят объекты, фото и блоки главной прямо на сайте
+- **Редактор главной** — hero/features в админке, исправлена тёмная тема
+- **Каталог и карточка** — похожие объекты, корректный счётчик фильтров, пустая карта, цены с i18n
+
+### Стабильность админ-CRM
+- **Лимиты API** — устранены циклы `api/opportunity/`; флаг `hasFetched` в Redux
+- **Платежи** — `/payments` для ролей `user` и `superAdmin`; нужны `STRIPE_PRIVATE_KEY` и `PUBLIC_APP_URL`
+- **RBAC** — права ролей загружаются на любой странице админки
+- **Списки** — исправлены меню ⋯, ложные toast при пустых данных, селекторы кастомных полей
+- **Котировки** — блок счетов с учётом прав; предзагрузка контактов в формах Quote/Invoice
+
+### API и безопасность (база v1.1.x сохранена)
+- Сессия гостя `200` вместо `401`; CSP для тайлов OpenStreetMap
+- Поля недвижимости, ownership, `DB_URL_FALLBACK`, сидинг, визуальный полиш
 
 ---
 
@@ -455,6 +489,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ### 🏠 Управление недвижимостью
 - **Каталог объектов** — квартиры, дома, участки, коммерция
+- **Канонические URL** — SEO-страницы `/property/:slug` с fallback по ID
+- **Редактирование на сайте** — правки полей и фото без выхода из публичной страницы
 - **Детальные атрибуты** — количество спален, ванных, площадь
 - **SEO-оптимизация** — публичные страницы с мета-тегами
 - **Медиа-галерея** — фото, видео, виртуальные туры, документы
@@ -644,6 +680,10 @@ JWT_SECRET=your-production-secret
 JWT_EXPIRES_IN=7d
 PORT=5001
 CLIENT_URL=https://yourdomain.com
+PUBLIC_APP_URL=https://yourdomain.com
+
+# Платежи (Stripe Checkout)
+STRIPE_PRIVATE_KEY=sk_live_...
 ```
 
 ### Сборка
@@ -656,6 +696,12 @@ npm run build
 cd server
 NODE_ENV=production npm start
 ```
+
+---
+
+## 🔧 Устранение неполадок
+
+См. [docs/TROUBLESHOOTING.ru.md](docs/TROUBLESHOOTING.ru.md) (RU) и [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) (EN): платежи, 429, карта, админ-CRM.
 
 ---
 

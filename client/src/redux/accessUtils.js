@@ -6,15 +6,13 @@ export const HasAccess = (actions) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const dispatch = useDispatch();
+  const roles = useSelector((state) => state?.roles?.roles);
 
   useEffect(() => {
-    // Dispatch the fetchRoles action on component mount
-    if (window.location.pathname === "/dashboard") {
-      dispatch(fetchRoles(user?._id));
+    if (user?._id && (!roles || roles.length === 0)) {
+      dispatch(fetchRoles(user._id));
     }
-  }, [dispatch]);
-
-  const roles = useSelector((state) => state?.roles?.roles);
+  }, [dispatch, user?._id, roles]);
 
   const rolesToCheck = roles?.map((item) => item.roleName);
   const mergedPermissions = {};
@@ -28,21 +26,18 @@ export const HasAccess = (actions) => {
   };
 
   actions?.forEach((action) => {
-    const access = rolesToCheck.map((roleToCheck) => {
+    const access = rolesToCheck?.map((roleToCheck) => {
       const role = roles.find((r) => r.roleName === roleToCheck);
       return role?.access?.find((a) => a.title === action);
     });
 
     access?.forEach((permission) => {
-      // Check if permission is defined
       if (permission) {
-        // Destructure permission only if it's defined
         const { title, ...rest } = permission;
 
         if (!mergedPermissions[title]) {
           mergedPermissions[title] = { ...rest };
         } else {
-          // Merge with priority to true values
           Object.keys(rest).forEach((key) => {
             if (mergedPermissions[title][key] !== true) {
               mergedPermissions[title][key] = rest[key];
@@ -53,7 +48,6 @@ export const HasAccess = (actions) => {
     });
   });
 
-  // Return permissions for each action
   return actions.map((action) =>
     user?.role === "superAdmin" ? superAdminPermission : mergedPermissions[action]
   );

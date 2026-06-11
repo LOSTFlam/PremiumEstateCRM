@@ -52,7 +52,7 @@ const Index = (_props) => {
           <MenuButton>
             <CiMenuKebab />
           </MenuButton>
-          <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+          <MenuList minW={"fit-content"}>
             {permission?.view && (
               <MenuItem
                 py={2.5}

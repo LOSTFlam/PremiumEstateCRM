@@ -57,22 +57,34 @@ export const fetchPublicCatalog = async (options = {}) => {
   }
 };
 
-export const fetchPublicPropertyById = async (id) => {
-  const response = await getApi(`api/property/public/${id}`, {
-    useCache: true,
-    cacheKey: `public:property:${id}`,
-    silent: true,
-  });
+const normalizePublicProperty = (response) => {
+  const entity = normalizePropertyMedia(extractEntity(response, "property"));
+  if (!entity) return null;
+  return getCatalogDataset([entity])[0] || entity;
+};
 
-  return normalizePropertyMedia(extractEntity(response, "property"));
+export const fetchPublicPropertyById = async (id) => {
+  try {
+    const response = await getApi(`api/property/public/${id}`, {
+      useCache: true,
+      cacheKey: `public:property:${id}`,
+      silent: true,
+    });
+    return normalizePublicProperty(response);
+  } catch {
+    return null;
+  }
 };
 
 export const fetchPublicPropertyBySlug = async (slug) => {
-  const response = await getApi(`api/property/public/slug/${slug}`, {
-    useCache: true,
-    cacheKey: `public:property:slug:${slug}`,
-    silent: true,
-  });
-
-  return normalizePropertyMedia(extractEntity(response, "property"));
+  try {
+    const response = await getApi(`api/property/public/slug/${slug}`, {
+      useCache: true,
+      cacheKey: `public:property:slug:${slug}`,
+      silent: true,
+    });
+    return normalizePublicProperty(response);
+  } catch {
+    return null;
+  }
 };

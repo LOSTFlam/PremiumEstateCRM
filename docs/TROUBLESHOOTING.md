@@ -210,6 +210,38 @@ pm2 logs
 
 ---
 
+## 💳 Payments
+
+### Problem: `/payments` page does not start checkout
+
+**Possible causes:**
+- Missing `STRIPE_PRIVATE_KEY` in `server/.env`
+- User role blocked (fixed in v1.2.0 — both `user` and `superAdmin` are allowed)
+- Wrong redirect URL after Stripe session
+
+**Solutions:**
+1. Add Stripe keys to `server/.env`:
+```env
+STRIPE_PRIVATE_KEY=sk_test_...
+PUBLIC_APP_URL=https://your-production-domain.com
+CLIENT_URL=https://your-production-domain.com
+```
+2. Restart the server after changing env vars
+3. Check Network tab for `api/payment/add` — `403` means role mismatch; `503` means Stripe is not configured
+
+---
+
+### Problem: Mass `429` errors on `api/opportunity/`
+
+**Cause:** Repeated Redux fetches in admin list/forms (older builds)
+
+**Solutions:**
+1. Deploy v1.2.0+ with `hasFetched` guards in opportunity/contact/invoices slices
+2. Hard-refresh the browser after deploy (`Ctrl+Shift+R`)
+3. Wait 15 minutes if rate limit was already hit, then reload once
+
+---
+
 ## 🖥️ Client Issues
 
 ### Problem: Blank page after build
@@ -226,6 +258,22 @@ REACT_APP_API_URL=https://your-api-domain.com/api
 cd client
 npm run build
 ```
+
+---
+
+### Problem: OpenStreetMap tiles blocked (catalog map)
+
+**Cause:** Content-Security-Policy blocking external tile images
+
+**Solution:** Ensure production server includes OSM domains in CSP (`server/index.js` — `img-src` / `connect-src` for `*.tile.openstreetmap.org`). Redeploy after updating.
+
+---
+
+### Problem: Property cards open wrong detail page
+
+**Cause:** Legacy `/offers/:id` links vs canonical `/property/:slug`
+
+**Solution:** v1.2.0+ uses `utils/propertyHref.js` — cards link slug-first. Listings need `publicSlug` set in admin (Property → Verification / SEO).
 
 ---
 

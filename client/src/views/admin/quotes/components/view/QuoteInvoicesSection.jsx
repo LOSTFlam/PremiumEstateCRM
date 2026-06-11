@@ -3,7 +3,7 @@ import { GridItem } from "@chakra-ui/react";
 import Card from "components/card/Card";
 import CommonCheckTable from "components/reactTable/checktable";
 
-const QuoteInvoicesSection = ({ invoiceData, isLoding, invoicesColumns }) => {
+const QuoteInvoicesSection = ({ invoiceData, isLoding, invoicesColumns, access }) => {
   return (
     <GridItem colSpan={{ base: 12 }} mt={5}>
       <Card overflow={"scroll"}>
@@ -18,7 +18,7 @@ const QuoteInvoicesSection = ({ invoiceData, isLoding, invoicesColumns }) => {
           checkBox={false}
           deleteMany={true}
           ManageGrid={false}
-          access={false}
+          access={access}
         />
       </Card>
     </GridItem>

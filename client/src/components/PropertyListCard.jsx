@@ -12,6 +12,7 @@ import {
   placeholderImage,
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
+import { buildPropertyHref } from "utils/propertyHref";
 
 export default function PropertyListCard({
   property,
@@ -21,7 +22,7 @@ export default function PropertyListCard({
   onCompareToggle,
 }) {
   const { t, i18n } = useTranslation();
-  const href = property?._id ? `/offers/${property._id}` : "#";
+  const href = buildPropertyHref(property);
 
   return (
     <Flex

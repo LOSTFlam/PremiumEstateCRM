@@ -42,6 +42,7 @@ import OpprtunityModel from "components/commonTableModel/OpprtunityModel";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOpportunityData } from "../../../redux/slices/opportunitySlice";
+import { fetchContactData } from "../../../redux/slices/contactSlice";
 import AccountModel from "components/commonTableModel/AccountModel";
 import { fetchAccountData } from "../../../redux/slices/accountSlice";
 import ContactModel from "components/commonTableModel/ContactModel";
@@ -68,6 +69,7 @@ const AddEdit = (props) => {
   const accountList = useSelector((state) => state?.accountData?.data || []);
   const opportunityFetched = useSelector((state) => state?.opportunityData?.hasFetched);
   const accountFetched = useSelector((state) => state?.accountData?.hasFetched);
+  const contactFetched = useSelector((state) => state?.contactData?.hasFetched);
   const contactList = useSelector((state) => state?.contactData?.data);
 
   const initialValues = {
@@ -295,7 +297,10 @@ const AddEdit = (props) => {
     if (!accountFetched) {
       dispatch(fetchAccountData());
     }
-  }, [accountFetched, dispatch, opportunityFetched]);
+    if (!contactFetched) {
+      dispatch(fetchContactData());
+    }
+  }, [accountFetched, contactFetched, dispatch, opportunityFetched]);
 
   return (
     <div>

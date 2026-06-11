@@ -46,6 +46,7 @@ import {
 } from "views/public/catalog/catalogData";
 import LazyImage from "components/public/LazyImage";
 import { publicBrand } from "views/public/publicBrand";
+import { buildPropertyHref, buildPropertyShareUrl } from "utils/propertyHref";
 
 const metricText = (value, fallback = "—") => {
   if (value === null || value === undefined || value === "" || Number(value) === 0) {
@@ -67,13 +68,6 @@ const propertyTypeLabel = (property, t) => {
   if (key === "commercial") return t?.("publicListing.commercial") || "Commercial";
   return property?.propertyType || t?.("publicListing.propertyType") || "Property";
 };
-
-const buildPropertyHref = (property) => {
-  const id = property?._id;
-  return id ? `/offers/${id}` : "#";
-};
-
-const buildShareUrl = (property) => `${window.location.origin}${buildPropertyHref(property)}`;
 
 const actionStyles = {
   bg: "rgba(7, 12, 20, 0.56)",
@@ -145,16 +139,17 @@ const ModernPropertyCard = ({
   }, [priceAmount, property?.listingPrice, t, i18n.language]);
 
   const isNewListing = useMemo(() => {
-    if (!property?.createdAt) return false;
-    return Date.now() - new Date(property.createdAt).getTime() < 14 * 24 * 60 * 60 * 1000;
-  }, [property?.createdAt]);
+    const createdAt = property?.createdDate || property?.createdAt || property?.listingDate;
+    if (!createdAt) return false;
+    return Date.now() - new Date(createdAt).getTime() < 14 * 24 * 60 * 60 * 1000;
+  }, [property?.createdAt, property?.createdDate, property?.listingDate]);
 
   const handleShare = async (event) => {
     event.preventDefault();
     event.stopPropagation();
 
     try {
-      await navigator.clipboard.writeText(buildShareUrl(property));
+      await navigator.clipboard.writeText(buildPropertyShareUrl(property));
       toast({
         title: t?.("publicListing.copied") || "Link copied",
         status: "success",

@@ -235,14 +235,18 @@ const PropertyDetailPage = () => {
     commercial: LuMapPin,
   };
 
+  const areaValue = property.squareFootage
+    ? String(property.squareFootage).replace(/\s*m²\s*$/i, "").trim()
+    : "—";
+
   const amenities = [
     { icon: MdMeetingRoom, label: copy.bedrooms, value: property.numberofBedrooms || "—" },
     { icon: MdBathtub, label: copy.bathrooms, value: property.numberofBathrooms || "—" },
-    { icon: MdOutlineSquareFoot, label: copy.area, value: `${property.squareFootage || "—"} m²` },
+    { icon: MdOutlineSquareFoot, label: copy.area, value: areaValue === "—" ? "—" : `${areaValue} m²` },
     {
       icon: FiDollarSign,
       label: copy.price,
-      value: formatPrice(property.listingPrice) || copy.onRequest,
+      value: formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest,
     },
   ];
 
@@ -382,7 +386,7 @@ const PropertyDetailPage = () => {
                     {copy.price}
                   </Text>
                   <Heading size="xl" color="#F5D076">
-                    {formatPrice(property.listingPrice) || copy.onRequest}
+                    {formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest}
                   </Heading>
                 </Stack>
                 {property.pricePerSqm && (
@@ -549,6 +553,7 @@ const PropertyDetailPage = () => {
               <Stack spacing={4}>
                 <Heading size="lg">{copy.videoTour}</Heading>
                 <Box
+                  position="relative"
                   borderRadius="20px"
                   overflow="hidden"
                   bg="rgba(255,255,255,0.05)"

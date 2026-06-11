@@ -62,10 +62,20 @@ export default function PaymentForm() {
         status: "error",
         duration: 3000,
       });
-    } catch {
+    } catch (error) {
+      const status = error?.response?.status;
+      const apiMessage = error?.response?.data?.message || error?.response?.data?.error;
       toast({
         title: t("messages.errorOccurred", { defaultValue: "Payment could not be started" }),
-        description: t("messages.tryAgainLater", { defaultValue: "Please try again later." }),
+        description:
+          status === 403
+            ? apiMessage || t("messages.accessDenied", { defaultValue: "Access denied." })
+            : status === 503
+              ? apiMessage ||
+                t("messages.paymentUnavailable", {
+                  defaultValue: "Payment service is temporarily unavailable.",
+                })
+              : apiMessage || t("messages.tryAgainLater", { defaultValue: "Please try again later." }),
         status: "error",
         duration: 4000,
       });

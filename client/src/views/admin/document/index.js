@@ -116,7 +116,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchData();
-  }, [linkDocument, handleSubmit]);
+  }, [linkDocument]);
 
   return (
     <div>

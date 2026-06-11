@@ -1,3 +1,23 @@
+## [1.2.0] 2026-06-11
+
+### Added
+- Slug-first public property URLs via `utils/propertyHref.js`
+- Inline admin editing on public property pages and homepage blocks
+- Homepage editor in admin settings
+- Client-side similar properties on detail page
+- `hasFetched` pattern for contact, invoices, opportunity Redux slices
+
+### Fixed
+- Payments API access for `user` role; Stripe configuration guard (503)
+- Infinite `api/opportunity/` fetch loops and 429 rate-limit storms
+- RBAC roles loading on all admin pages (not only dashboard)
+- Redux selectors on Lead/Contact/Property view pages (`.data.data` → `.data`)
+- Context menu positioning on 17+ admin list pages
+- Empty CRM lists no longer show false "Failed to fetch data" toasts
+- Quote view invoices section permissions
+- Catalog filter count, map empty state, PropertyDetailPage i18n/area display
+- Guest session 401 noise; CSP for OpenStreetMap; role-access API path
+
 ## [1.3.0] 2023-05-06
 
 🐛 Bugs solved:

@@ -47,12 +47,14 @@ const Email = () => {
 
   const { errors, touched, values, handleChange, handleSubmit, setFieldValue } = formik;
 
-  if (touched?.recipient && errors?.createBy) {
-    toast.error(
-      t?.("modules.communication.pleaseSelectRecipient") || "Please select an authorized recipient"
-    );
-    formik.resetForm();
-  }
+  useEffect(() => {
+    if (touched?.recipient && errors?.createBy) {
+      toast.error(
+        t?.("modules.communication.pleaseSelectRecipient") ||
+          "Please select an authorized recipient"
+      );
+    }
+  }, [touched?.recipient, errors?.createBy, t]);
 
   const AddData = async () => {
     try {

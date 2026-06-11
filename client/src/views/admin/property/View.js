@@ -88,7 +88,7 @@ const View = () => {
   const [phoneCall, setPhoneCall] = useState([]);
   const [setEmail, setEmailData] = useState([]);
   const dispatch = useDispatch();
-  const propertyData = useSelector((state) => state?.propertyCustomFiled?.data?.data);
+  const propertyData = useSelector((state) => state?.propertyCustomFiled?.data);
 
   const [contactData, setContactData] = useState([]);
   const [columns, setColumns] = useState([]);

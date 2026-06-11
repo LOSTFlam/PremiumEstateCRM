@@ -56,6 +56,10 @@ JWT_EXPIRES_IN=15m
 
 # CORS
 CLIENT_URL=http://localhost:3000
+PUBLIC_APP_URL=https://your-production-domain.com
+
+# Payments (Stripe Checkout — optional)
+STRIPE_PRIVATE_KEY=sk_live_...
 
 # Default Users (comma-separated emails)
 DEFAULT_USERS=admin@gmail.com

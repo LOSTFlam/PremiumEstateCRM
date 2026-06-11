@@ -139,7 +139,7 @@ const Index = () => {
               <MenuButton>
                 <CiMenuKebab />
               </MenuButton>
-              <MenuList minW={"fit-content"} transform={"translate(1520px, 173px);"}>
+              <MenuList minW={"fit-content"}>
                 {permission?.update && (
                   <MenuItem
                     py={2.5}
@@ -340,9 +340,8 @@ const Index = () => {
   return (
     <div>
       <Grid templateColumns="repeat(6, 1fr)" mb={3} gap={4}>
-        {!isLoding && (
-          <GridItem colSpan={6}>
-            <CommonCheckTable
+        <GridItem colSpan={6}>
+          <CommonCheckTable
               title={title}
               isLoding={isLoding}
               searchDisplay={searchDisplay}
@@ -367,8 +366,7 @@ const Index = () => {
               setDelete={setDelete}
               setIsImport={setIsImport}
             />
-          </GridItem>
-        )}
+        </GridItem>
       </Grid>
       {isOpen && (
         <Add
