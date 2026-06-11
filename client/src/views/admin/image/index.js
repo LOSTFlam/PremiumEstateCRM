@@ -23,6 +23,7 @@ import AddImage from "./addImage";
 import { getApi, putApi, deleteApi } from "services/api";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { AddIcon } from "@chakra-ui/icons";
 import DataNotFound from "components/notFoundData";
 import Spinner from "components/spinner/Spinner";
@@ -37,6 +38,7 @@ const ChangeImage = () => {
   const [selectedId, setSelectedId] = useState(false);
   const [isLoding, setIsLoding] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const fetchData = async (selectedId) => {
     setIsLoding(true);
@@ -122,7 +124,7 @@ const ChangeImage = () => {
             leftIcon={<IoIosArrowBack />}
             ml={2}
           >
-            Back
+            {t("adminSettingsHub.back")}
           </Button>
         </Flex>
         {!(load?.status === "succeeded") ? (

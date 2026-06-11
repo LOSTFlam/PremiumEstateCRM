@@ -25,7 +25,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiBriefcase, FiChevronDown, FiHeart, FiHome, FiKey, FiMenu, FiSearch, FiUser, FiX } from "react-icons/fi";
+import { FiBriefcase, FiChevronDown, FiHeart, FiHome, FiKey, FiMenu, FiSearch, FiX } from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import useActiveBranding, { getActiveBrandRecord, getBrandLogoSrc } from "hooks/useActiveBranding";
@@ -38,7 +38,10 @@ import {
   resolvePublicBrandRecord,
 } from "views/public/publicBrand";
 import ThemeToggle from "components/ThemeToggle";
+import PublicUserMenu from "components/public/PublicUserMenu";
 import { isAuthenticatedUser } from "utils/authStorage";
+import { getRoleHomePath, resolveAuthUser } from "utils/authPaths";
+import { useSelector } from "react-redux";
 
 const scrollToHashTarget = (hash) => {
   const targetId = String(hash || "").replace(/^#/, "");
@@ -59,7 +62,10 @@ export default function ModernHeader({ largeLogo = [] }) {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const branding = useActiveBranding(largeLogo);
-  const isAuthenticated = isAuthenticatedUser();
+  const reduxUser = useSelector((state) => state?.user?.user);
+  const authUser = resolveAuthUser(reduxUser);
+  const isAuthenticated = isAuthenticatedUser() || Boolean(authUser?.role);
+  const accountHomePath = getRoleHomePath(authUser?.role);
   const favoriteCount = useFavoriteCount();
   const isHidden = useHideOnScroll({ offset: 140, disabled: isOpen });
   const currentLanguage = i18n.language?.startsWith("ru") ? "ru" : "en";
@@ -452,18 +458,7 @@ export default function ModernHeader({ largeLogo = [] }) {
               </Button>
 
               {isAuthenticated ? (
-                <Button
-                  as={RouterLink}
-                  to="/dashboard"
-                  variant="ghost"
-                  color="whiteAlpha.600"
-                  fontSize="sm"
-                  px={2}
-                  bg="transparent"
-                  _hover={{ bg: "transparent", color: "white" }}
-                >
-                  <FiUser size={18} />
-                </Button>
+                <PublicUserMenu />
               ) : (
                 <Button
                   as={RouterLink}
@@ -636,17 +631,24 @@ export default function ModernHeader({ largeLogo = [] }) {
               </Stack>
 
               {isAuthenticated ? (
-                <Button
-                  as={RouterLink}
-                  to="/dashboard"
-                  onClick={onClose}
-                  leftIcon={<FiUser />}
-                  borderRadius="full"
-                  bg={publicBrand.gradients.brass}
-                  color={publicBrand.colors.ink}
-                >
-                  {t("navigation.dashboard")}
-                </Button>
+                <Box>
+                  <PublicUserMenu onNavigate={onClose} />
+                  <Button
+                    as={RouterLink}
+                    to={accountHomePath}
+                    onClick={onClose}
+                    mt={3}
+                    w="full"
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                    fontWeight="700"
+                  >
+                    {authUser?.role === "user"
+                      ? t("navigation.personalCabinet")
+                      : t("navigation.dashboard")}
+                  </Button>
+                </Box>
               ) : (
                 <Stack spacing={3}>
                   <Button

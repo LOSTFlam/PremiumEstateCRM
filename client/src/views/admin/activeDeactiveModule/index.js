@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchModules } from "../../../redux/slices/moduleSlice";
 
 const Index = () => {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
   const textColor = useColorModeValue("gray.500", "white");
 
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ const Index = () => {
         <Flex justifyContent={"space-between"} alignItems={"center"} mb={5}>
           <Box>
             <Text color={"secondaryGray.900"} fontSize="22px" fontWeight="700">
-              Active Deactive Module
+              {t("navigation.activeModules")}
             </Text>
           </Box>
           <Button
@@ -88,7 +88,7 @@ const Index = () => {
             leftIcon={<IoIosArrowBack />}
             ml={2}
           >
-            Back
+            {t("adminSettingsHub.back")}
           </Button>
         </Flex>
         <HSeparator />

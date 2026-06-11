@@ -19,12 +19,14 @@ import { useEffect, useState } from "react";
 // Assets
 import { MdNotificationsNone } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
+import { FiExternalLink } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getApi, postApi } from "services/api";
 import { constant } from "constant";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAuthStorage } from "utils/authStorage";
+import { getPublicSitePath } from "utils/authPaths";
 import { clearUser } from "../../redux/slices/localSlice";
 import { useTranslation } from "react-i18next";
 import i18next from "i18n/i18n.config";
@@ -194,6 +196,19 @@ export default function HeaderLinks(props) {
         setOpenSidebar={setOpenSidebar}
         openSidebar={openSidebar}
       />
+
+      <Button
+        variant="ghost"
+        size="sm"
+        leftIcon={<FiExternalLink />}
+        color={textColor}
+        fontWeight="600"
+        display={{ base: "none", md: "inline-flex" }}
+        onClick={() => navigate(getPublicSitePath())}
+        _hover={{ bg: menuItemHoverBg }}
+      >
+        {t("navigation.goToSite")}
+      </Button>
 
       <Menu>
         <MenuButton
@@ -370,6 +385,16 @@ export default function HeaderLinks(props) {
             >
               <Text fontSize="sm" onClick={() => navigate(profilePath)} color={textColor}>
                 {t?.("navigation.profileSettings")}
+              </Text>
+            </MenuItem>
+            <MenuItem
+              _hover={{ bg: menuItemHoverBg }}
+              _focus={{ bg: menuItemHoverBg }}
+              borderRadius="8px"
+              px="14px"
+            >
+              <Text fontSize="sm" onClick={() => navigate(getPublicSitePath())} color={textColor}>
+                {t?.("navigation.goToSite")}
               </Text>
             </MenuItem>
             {/*<MenuItem _hover={{ bg: 'none' }} _focus={{ bg: 'none' }} borderRadius="8px" px="14px">
