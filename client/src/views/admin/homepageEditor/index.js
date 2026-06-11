@@ -176,6 +176,16 @@ export default function HomepageEditor() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (loading) return;
+    const hash = window.location.hash.replace("#", "");
+    if (!hash) return;
+    const target = document.querySelector(`[data-homepage-block="${hash}"]`);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [loading]);
+
+  useEffect(() => {
     let ignore = false;
 
     const load = async () => {
@@ -260,7 +270,12 @@ export default function HomepageEditor() {
             <TabPanel key={locale} px={0}>
               <Accordion allowMultiple defaultIndex={[0]}>
                 {HOMEPAGE_BLOCK_KEYS.map((blockKey) => (
-                  <AccordionItem key={`${locale}-${blockKey}`} border="none" mb={3}>
+                  <AccordionItem
+                    key={`${locale}-${blockKey}`}
+                    data-homepage-block={blockKey}
+                    border="none"
+                    mb={3}
+                  >
                     <AccordionButton borderRadius="16px" bg="gray.50" _expanded={{ bg: "brand.50" }}>
                       <Box flex="1" textAlign="left" fontWeight="700">
                         {blockLabels[blockKey]}

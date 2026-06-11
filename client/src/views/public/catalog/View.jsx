@@ -26,7 +26,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EditIcon } from "@chakra-ui/icons";
+import AdminEditButton from "components/admin/AdminEditButton";
+import AdminSectionHeader from "components/admin/AdminSectionHeader";
+import PropertyAdminEditLayer from "components/admin/PropertyAdminEditLayer";
+import PropertyPhotoManager from "components/property/PropertyPhotoManager";
+import { usePropertyInlineEdit } from "hooks/usePropertyInlineEdit";
 import {
   LuBath,
   LuBedDouble,
@@ -75,7 +79,6 @@ import LeadCaptureCard from "./LeadCaptureCard";
 import SeoMeta from "./SeoMeta";
 import i18n from "i18n/i18n.config";
 import { publicBrand } from "../publicBrand";
-import { isAuthenticatedUser } from "utils/authStorage";
 
 const splitFeatures = (...values) =>
   values
@@ -120,6 +123,20 @@ export default function PublicOfferView() {
   const [downPaymentPercent, setDownPaymentPercent] = useState(30);
   const [termYears, setTermYears] = useState(20);
   const [interestRate, setInterestRate] = useState(18);
+  const {
+    canEditListing,
+    propertyAdminPath,
+    editSection,
+    openEdit,
+    closeEdit,
+    handlePropertySaved,
+  } = usePropertyInlineEdit(property, setProperty, {
+    onSyncCollection: (updated) => {
+      setAllProperties((items) =>
+        items.map((item) => (item?._id === updated?._id ? { ...item, ...updated } : item))
+      );
+    },
+  });
 
   const pageBg = publicBrand.colors.paper;
   const cardBg = publicBrand.gradients.panelLight;
@@ -371,6 +388,11 @@ export default function PublicOfferView() {
                     property?.propertyDescription ||
                     t?.("publicListing.detailsTitle")}
                 </Text>
+                {canEditListing ? (
+                  <Flex justify="flex-end">
+                    <AdminEditButton onClick={() => openEdit("hero")} href={propertyAdminPath} />
+                  </Flex>
+                ) : null}
                 <HStack spacing={3} flexWrap="wrap">
                   <Button
                     as={RouterLink}
@@ -880,28 +902,42 @@ export default function PublicOfferView() {
                   borderColor={borderColor}
                 >
                   <Stack spacing={4}>
-                    <Heading size="md">{t?.("publicListing.propertyImages")}</Heading>
-                    <SimpleGrid columns={{ base: 2, md: 3 }} gap={3}>
-                      {property?.propertyPhotos?.map((photo, index) => (
-                        <Box key={index} position="relative" borderRadius="16px" overflow="hidden">
-                          <Image
-                            src={photo?.img}
-                            alt={photo?.title || `Photo ${index + 1}`}
-                            w="100%"
-                            h="150px"
-                            objectFit="cover"
-                            onError={(e) => {
-                              e.target.src = placeholderImage;
-                            }}
-                          />
-                          <Badge position="absolute" top={2} right={2} colorScheme="green">
-                            {index === 0 ? t?.("publicListing.primaryImage") : `#${index + 1}`}
-                          </Badge>
-                        </Box>
-                      ))}
-                    </SimpleGrid>
-                    {(!property?.propertyPhotos || property.propertyPhotos.length === 0) && (
-                      <Text color={mutedColor}>{t?.("publicListing.noPhotos")}</Text>
+                    <AdminSectionHeader
+                      title={t?.("publicListing.propertyImages")}
+                      canEdit={canEditListing}
+                      editHref={propertyAdminPath}
+                    />
+                    {canEditListing && property?._id ? (
+                      <PropertyPhotoManager
+                        propertyId={property._id}
+                        photos={property?.propertyPhotos || []}
+                        onChange={(photos) => handlePropertySaved({ ...property, propertyPhotos: photos })}
+                      />
+                    ) : (
+                      <>
+                        <SimpleGrid columns={{ base: 2, md: 3 }} gap={3}>
+                          {property?.propertyPhotos?.map((photo, index) => (
+                            <Box key={index} position="relative" borderRadius="16px" overflow="hidden">
+                              <Image
+                                src={photo?.img}
+                                alt={photo?.title || `Photo ${index + 1}`}
+                                w="100%"
+                                h="150px"
+                                objectFit="cover"
+                                onError={(e) => {
+                                  e.target.src = placeholderImage;
+                                }}
+                              />
+                              <Badge position="absolute" top={2} right={2} colorScheme="green">
+                                {index === 0 ? t?.("publicListing.primaryImage") : `#${index + 1}`}
+                              </Badge>
+                            </Box>
+                          ))}
+                        </SimpleGrid>
+                        {(!property?.propertyPhotos || property.propertyPhotos.length === 0) && (
+                          <Text color={mutedColor}>{t?.("publicListing.noPhotos")}</Text>
+                        )}
+                      </>
                     )}
                   </Stack>
                 </Box>
@@ -983,7 +1019,12 @@ export default function PublicOfferView() {
                   borderColor={borderColor}
                 >
                   <Stack spacing={4}>
-                    <Heading size="md">{t?.("publicListing.featureHighlightsTitle")}</Heading>
+                    <AdminSectionHeader
+                      title={t?.("publicListing.featureHighlightsTitle")}
+                      canEdit={canEditListing}
+                      onEdit={() => openEdit("highlights")}
+                      editHref={propertyAdminPath}
+                    />
                     {highlights.map((item) => (
                       <HStack
                         key={item.label}
@@ -1018,7 +1059,12 @@ export default function PublicOfferView() {
                 borderColor={borderColor}
               >
                 <Stack spacing={4}>
-                  <Heading size="md">{t?.("publicListing.aboutTitle")}</Heading>
+                  <AdminSectionHeader
+                    title={t?.("publicListing.aboutTitle")}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("about")}
+                    editHref={propertyAdminPath}
+                  />
                   <Text color={mutedColor} whiteSpace="pre-wrap">
                     {property?.marketingDescription ||
                       property?.propertyDescription ||
@@ -1052,21 +1098,12 @@ export default function PublicOfferView() {
                 borderColor={borderColor}
               >
                 <Stack spacing={4}>
-                  <Flex justify="space-between" align="center">
-                    <Heading size="md">{t?.("publicListing.featuresTitle")}</Heading>
-                    {/* Кнопка редактирования для авторизованных */}
-                    {isAuthenticatedUser() && (
-                      <Button
-                        as={RouterLink}
-                        to={`/admin/properties`}
-                        size="sm"
-                        colorScheme="blue"
-                        leftIcon={<EditIcon />}
-                      >
-                        {t?.("common.edit")}
-                      </Button>
-                    )}
-                  </Flex>
+                  <AdminSectionHeader
+                    title={t?.("publicListing.featuresTitle")}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("features")}
+                    editHref={propertyAdminPath}
+                  />
                   <SimpleGrid columns={2} gap={4}>
                     <HStack>
                       <Icon as={LuBedDouble} />
@@ -1169,7 +1206,12 @@ export default function PublicOfferView() {
                 borderColor={borderColor}
               >
                 <Stack spacing={4}>
-                  <Heading size="md">{t?.("publicListing.amenitiesTitle")}</Heading>
+                  <AdminSectionHeader
+                    title={t?.("publicListing.amenitiesTitle")}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("amenities")}
+                    editHref={propertyAdminPath}
+                  />
                   {amenities.length ? (
                     <SimpleGrid columns={{ base: 1, md: 2 }} gap={3}>
                       {amenities.map((feature, index) => (
@@ -1370,6 +1412,12 @@ export default function PublicOfferView() {
           )}
         </Stack>
       </Container>
+      <PropertyAdminEditLayer
+        property={property}
+        editSection={editSection}
+        onClose={closeEdit}
+        onSaved={handlePropertySaved}
+      />
       <ModernFooter />
     </Box>
   );

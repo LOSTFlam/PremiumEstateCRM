@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Box,
   Image,
@@ -19,6 +19,7 @@ import {
   IconButton,
   Container,
   Divider,
+  Flex,
   SimpleGrid,
   Tab,
   TabList,
@@ -43,9 +44,14 @@ import {
 } from "react-icons/fi";
 import { MdMeetingRoom, MdBathtub, MdOutlineSquareFoot } from "react-icons/md";
 import { LuMapPin, LuTrees, LuBuilding2 } from "react-icons/lu";
-import { getApi } from "services/api";
 import { useTranslation } from "react-i18next";
+import AdminEditButton from "components/admin/AdminEditButton";
+import AdminSectionHeader from "components/admin/AdminSectionHeader";
+import PropertyAdminEditLayer from "components/admin/PropertyAdminEditLayer";
+import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 import LeadCaptureForm from "components/property/LeadCaptureForm";
+import { usePropertyInlineEdit } from "hooks/usePropertyInlineEdit";
+import { fetchPublicPropertyBySlug } from "./catalog/catalogService";
 import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
 import MortgageCalculator from "components/property/MortgageCalculator";
@@ -113,7 +119,7 @@ const detailCopy = {
 
 const PropertyDetailPage = () => {
   const { slug } = useParams();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const toast = useToast();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -124,33 +130,51 @@ const PropertyDetailPage = () => {
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const copy = detailCopy[locale];
 
-  useEffect(() => {
-    fetchProperty();
-  }, [slug, fetchProperty]);
+  const {
+    canEditListing,
+    propertyAdminPath,
+    editSection,
+    openEdit,
+    closeEdit,
+    handlePropertySaved,
+  } = usePropertyInlineEdit(property, setProperty);
 
-  const fetchProperty = async () => {
+  const fetchProperty = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getApi(`api/property/public/${slug}`);
-      if (response && response.data) {
-        setProperty(response.data);
-        const propertyId = response.data._id;
+      const data = await fetchPublicPropertyBySlug(slug);
+      if (data) {
+        setProperty(data);
+        const propertyId = data._id;
         if (propertyId) {
           pushRecentlyViewedId(propertyId);
           setIsFavorite(getFavoriteIds().includes(propertyId));
         }
+      } else {
+        setProperty(null);
       }
-    } catch (error) {
-      // Error handled silently
+    } catch {
       toast({
         title: copy.loadError,
         status: "error",
         duration: 3000,
       });
+      setProperty(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug, copy.loadError, toast]);
+
+  useEffect(() => {
+    fetchProperty();
+  }, [fetchProperty]);
+
+  const galleryImages = useMemo(() => {
+    const fromPhotos = (property?.propertyPhotos || []).map((photo) => photo?.img).filter(Boolean);
+    if (fromPhotos.length) return fromPhotos;
+    if (Array.isArray(property?.images) && property.images.length) return property.images;
+    return property?.primaryImage ? [property.primaryImage] : [];
+  }, [property]);
 
   const handleFavoriteToggle = async () => {
     if (!property?._id) return;
@@ -233,7 +257,7 @@ const PropertyDetailPage = () => {
         mt={{ base: "88px", md: 0 }}
       >
         <Image
-          src={property.images?.[0] || property.primaryImage}
+          src={galleryImages[0]}
           alt={property.name || property.propertyAddress}
           w="100%"
           h="100%"
@@ -283,7 +307,7 @@ const PropertyDetailPage = () => {
         </Badge>
 
         {/* Gallery Button */}
-        {property.images?.length > 1 && (
+        {galleryImages.length > 1 && (
           <Button
             position="absolute"
             bottom={{ base: 4, md: 6 }}
@@ -297,7 +321,7 @@ const PropertyDetailPage = () => {
             onClick={() => setShowGallery(true)}
             _hover={{ bg: "white" }}
           >
-            {copy.viewAllPhotos(property.images.length)}
+            {copy.viewAllPhotos(galleryImages.length)}
           </Button>
         )}
       </Box>
@@ -309,6 +333,11 @@ const PropertyDetailPage = () => {
           <Stack spacing={8}>
             {/* Title & Price */}
             <Stack spacing={4}>
+              {canEditListing ? (
+                <Flex justify="flex-end">
+                  <AdminEditButton onClick={() => openEdit("hero")} href={propertyAdminPath} />
+                </Flex>
+              ) : null}
               <HStack spacing={4} flexWrap="wrap">
                 <Badge
                   px={3}
@@ -364,7 +393,13 @@ const PropertyDetailPage = () => {
               </HStack>
             </Box>
 
-            {/* Amenities */}
+            <AdminSectionHeader
+              title={t("publicListing.featuresTitle")}
+              canEdit={canEditListing}
+              onEdit={() => openEdit("features")}
+              editHref={propertyAdminPath}
+            />
+
             <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
               {amenities.map((amenity, idx) => (
                 <Box
@@ -397,6 +432,46 @@ const PropertyDetailPage = () => {
               ))}
             </SimpleGrid>
 
+            <Box
+              p={5}
+              borderRadius="20px"
+              bg="rgba(255,255,255,0.05)"
+              border="1px solid rgba(255,255,255,0.1)"
+            >
+              <AdminSectionHeader
+                title={t("publicListing.propertyImages")}
+                canEdit={canEditListing}
+                editHref={propertyAdminPath}
+              />
+              {canEditListing && property?._id ? (
+                <PropertyPhotoManager
+                  propertyId={property._id}
+                  photos={property?.propertyPhotos || []}
+                  onChange={(photos) => handlePropertySaved({ ...property, propertyPhotos: photos })}
+                />
+              ) : galleryImages.length ? (
+                <SimpleGrid columns={{ base: 2, md: 3 }} gap={3} mt={4}>
+                  {galleryImages.map((image, index) => (
+                    <Image
+                      key={`${image}-${index}`}
+                      src={image}
+                      alt={`Photo ${index + 1}`}
+                      borderRadius="16px"
+                      h="160px"
+                      w="100%"
+                      objectFit="cover"
+                      cursor="pointer"
+                      onClick={() => setShowGallery(true)}
+                    />
+                  ))}
+                </SimpleGrid>
+              ) : (
+                <Text color="gray.400" mt={4}>
+                  {t("publicListing.noPhotos")}
+                </Text>
+              )}
+            </Box>
+
             <Tabs variant="soft-rounded" colorScheme="yellow">
               <TabList flexWrap="wrap" gap={2}>
                 <Tab>{copy.description}</Tab>
@@ -406,15 +481,29 @@ const PropertyDetailPage = () => {
               </TabList>
               <TabPanels mt={6}>
                 <TabPanel px={0}>
-                  <Text color="gray.300" lineHeight="1.8">
+                  <AdminSectionHeader
+                    title={copy.description}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("about")}
+                    editHref={propertyAdminPath}
+                    headingSize="sm"
+                  />
+                  <Text color="gray.300" lineHeight="1.8" mt={4}>
                     {property.propertyDescription ||
                       property.marketingDescription ||
                       copy.noDescription}
                   </Text>
                 </TabPanel>
                 <TabPanel px={0}>
+                  <AdminSectionHeader
+                    title={copy.features}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("amenities")}
+                    editHref={propertyAdminPath}
+                    headingSize="sm"
+                  />
                   {property.features?.length > 0 ? (
-                    <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3}>
+                    <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3} mt={4}>
                       {property.features.map((feature, idx) => (
                         <HStack key={idx} spacing={2}>
                           <Box w={2} h={2} borderRadius="full" bg="#F5D076" />
@@ -433,7 +522,14 @@ const PropertyDetailPage = () => {
                   />
                 </TabPanel>
                 <TabPanel px={0}>
-                  <Stack spacing={3}>
+                  <AdminSectionHeader
+                    title={locale === "ru" ? "Расположение" : "Location"}
+                    canEdit={canEditListing}
+                    onEdit={() => openEdit("hero")}
+                    editHref={propertyAdminPath}
+                    headingSize="sm"
+                  />
+                  <Stack spacing={3} mt={4}>
                     <HStack color="gray.300">
                       <Icon as={FiMapPin} />
                       <Text>{property.propertyAddress}</Text>
@@ -566,7 +662,7 @@ const PropertyDetailPage = () => {
             <ModalCloseButton color="white" zIndex={10} />
             <ModalBody p={0}>
               <PropertyGallery
-                images={property.images || []}
+                images={galleryImages}
                 onClose={() => setShowGallery(false)}
               />
             </ModalBody>
@@ -580,6 +676,13 @@ const PropertyDetailPage = () => {
         onClose={() => setShowLeadForm(false)}
         property={property}
         type={leadFormType}
+      />
+
+      <PropertyAdminEditLayer
+        property={property}
+        editSection={editSection}
+        onClose={closeEdit}
+        onSaved={handlePropertySaved}
       />
 
       <ModernFooter />

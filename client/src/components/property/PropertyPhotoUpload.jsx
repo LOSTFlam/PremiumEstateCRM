@@ -248,35 +248,53 @@ export default function PropertyPhotoUpload({ propertyId: _propertyId, photos = 
                     position="absolute"
                     top={2}
                     left={2}
-                    colorScheme="green"
+                    bg="green.600"
+                    color="white"
                     fontSize="xs"
+                    fontWeight="700"
                     px={2}
                     py={1}
                     borderRadius="md"
+                    boxShadow="0 4px 14px rgba(0,0,0,0.35)"
+                    zIndex={2}
                   >
                     {t("publicListing.primaryImage")}
                   </Badge>
                 )}
 
                 {/* Action Buttons */}
-                <HStack position="absolute" top={2} right={2} spacing={1}>
-                  {/* Set as Primary */}
+                <HStack
+                  position="absolute"
+                  top={2}
+                  right={2}
+                  spacing={1}
+                  zIndex={2}
+                  p={1}
+                  borderRadius="10px"
+                  bg="rgba(8, 17, 26, 0.78)"
+                  backdropFilter="blur(8px)"
+                  boxShadow="0 8px 24px rgba(0,0,0,0.35)"
+                >
                   <IconButton
                     aria-label={t("publicListing.setAsPrimary")}
                     icon={index === 0 ? <FiStar /> : <FiStarOutline />}
                     size="sm"
                     colorScheme={index === 0 ? "green" : "gray"}
+                    variant="solid"
+                    bg={index === 0 ? "green.500" : "gray.600"}
+                    color="white"
                     onClick={() => handleSetPrimary(index)}
                     title={t("publicListing.setAsPrimary")}
                   />
 
-                  {/* Remove */}
                   <IconButton
                     aria-label={t("publicListing.removePhoto")}
                     icon={<FiX />}
                     size="sm"
                     colorScheme="red"
                     variant="solid"
+                    bg="red.500"
+                    color="white"
                     onClick={() => handleRemovePhoto(index)}
                     title={t("publicListing.removePhoto")}
                   />

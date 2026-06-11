@@ -118,6 +118,19 @@
       "activeModules": "Enable or disable system sections for users."
     }
   },
+  "adminInline": {
+    "saved": "Changes saved",
+    "saveError": "Failed to save changes",
+    "openInCrm": "Open in CRM",
+    "editBlock": "Edit block",
+    "sections": {
+      "hero": "Edit listing hero",
+      "features": "Edit key parameters",
+      "about": "Edit description",
+      "amenities": "Edit amenities",
+      "highlights": "Edit highlights"
+    }
+  },
   "homepageEditor": {
     "title": "Homepage Content",
     "subtitle": "Edit homepage copy in Russian and English. Catalog data, listing cards, and routes stay connected automatically.",

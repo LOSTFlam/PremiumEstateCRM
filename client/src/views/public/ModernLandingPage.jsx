@@ -40,7 +40,10 @@ import SmokeEffect from "components/SmokeEffect";
 import FloatingOrbs from "components/FloatingOrbs";
 import GuidedFinder from "components/property/AIPropertyMatcher";
 import MobileBottomNav from "components/public/MobileBottomNav";
+import { useSelector } from "react-redux";
+import HomepageBlockEditBar from "components/admin/HomepageBlockEditBar";
 import { fetchPublicHomepageContent } from "services/homepageContent";
+import { canManageSiteContent } from "utils/adminAccess";
 import { fetchPublicStorefrontSettings } from "services/storefrontSettings";
 import { getHomepageLocaleContent, isHomepageBlockVisible } from "utils/homepageContent";
 import {
@@ -143,6 +146,8 @@ export default function ModernLandingPage() {
 
   const enableFullMotion = false; // Disabled for performance
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+  const reduxUser = useSelector((state) => state?.user?.user);
+  const canEditHomepage = canManageSiteContent(reduxUser);
   const { visibility, blocks } = getHomepageLocaleContent(homepageContent, locale);
   const services = (blocks.services?.items || []).map((item) => ({
     ...item,
@@ -434,6 +439,8 @@ export default function ModernLandingPage() {
 
       <Box position="relative" zIndex={1}>
         {isHomepageBlockVisible(visibility, "hero") ? (
+          <Box position="relative">
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="hero" /> : null}
           <MemoizedModernHero
             properties={properties}
             onSearch={scrollToCatalogPreview}
@@ -443,10 +450,12 @@ export default function ModernLandingPage() {
             marketRouteCards={marketRoutes}
             content={blocks.hero}
           />
+          </Box>
         ) : null}
 
         {isHomepageBlockVisible(visibility, "features") ? (
-          <Box id="about" pt={{ base: 16, md: 20 }}>
+          <Box id="about" pt={{ base: 16, md: 20 }} position="relative">
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="features" /> : null}
             <MemoizedModernFeatures properties={properties} t={t} content={blocks.features} />
           </Box>
         ) : null}
@@ -454,9 +463,11 @@ export default function ModernLandingPage() {
         {isHomepageBlockVisible(visibility, "market") ? (
         <Box
           id="market"
+          position="relative"
           py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,0.98) 0%, rgba(236,227,215,1) 100%)"
         >
+          {canEditHomepage ? <HomepageBlockEditBar blockKey="market" /> : null}
           <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             <Stack spacing={10}>
               <Box
@@ -636,8 +647,10 @@ export default function ModernLandingPage() {
         <Box
           id="collections"
           py={{ base: 16, md: 20 }}
+          position="relative"
           bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
         >
+          {canEditHomepage ? <HomepageBlockEditBar blockKey="collections" /> : null}
           <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             {isHomepageBlockVisible(visibility, "collections") ? (
             <Stack spacing={8}>
@@ -760,11 +773,13 @@ export default function ModernLandingPage() {
               {isHomepageBlockVisible(visibility, "services") ? (
               <Box
                 id="services"
+                position="relative"
                 className="public-brand-panel"
                 borderRadius="32px"
                 px={{ base: 5, md: 6 }}
                 py={{ base: 5, md: 6 }}
               >
+                {canEditHomepage ? <HomepageBlockEditBar blockKey="services" /> : null}
                 <Stack spacing={5}>
                   <Box>
                     <Text
@@ -827,7 +842,9 @@ export default function ModernLandingPage() {
                 borderRadius="32px"
                 px={{ base: 5, md: 6 }}
                 py={{ base: 5, md: 6 }}
+                position="relative"
               >
+                {canEditHomepage ? <HomepageBlockEditBar blockKey="locations" /> : null}
                 <Stack spacing={4}>
                   <Box>
                     <Text
@@ -892,9 +909,11 @@ export default function ModernLandingPage() {
         {isHomepageBlockVisible(visibility, "catalog") ? (
         <Box
           id="properties-section"
+          position="relative"
           py={{ base: 14, md: 18, xl: 20 }}
           bg="linear-gradient(180deg, rgba(244,238,229,1) 0%, rgba(244,238,229,1) 100%)"
         >
+          {canEditHomepage ? <HomepageBlockEditBar blockKey="catalog" /> : null}
           <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
             <Stack spacing={10}>
               <Stack spacing={6} align="center" textAlign="center">

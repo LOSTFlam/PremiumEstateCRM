@@ -67,5 +67,5 @@ export default function PublicOfferViewBySlug() {
     return <Navigate to="/offers" replace />;
   }
 
-  return <Navigate to={`/offers/${propertyId}`} replace />;
+  return <Navigate to={`/property/${slug}`} replace />;
 }

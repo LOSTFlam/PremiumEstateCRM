@@ -219,6 +219,7 @@ export default function PropertyPhotoManager({
             {localPhotos.map((photo, index) => (
               <Box
                 key={index}
+                role="group"
                 position="relative"
                 borderRadius="16px"
                 overflow="hidden"
@@ -246,11 +247,15 @@ export default function PropertyPhotoManager({
                     position="absolute"
                     top={2}
                     left={2}
-                    colorScheme="green"
+                    bg="green.600"
+                    color="white"
                     fontSize="xs"
+                    fontWeight="700"
                     px={2}
                     py={1}
                     borderRadius="md"
+                    boxShadow="0 4px 14px rgba(0,0,0,0.35)"
+                    zIndex={2}
                   >
                     {isRu ? "Основное" : "Primary"}
                   </Badge>
@@ -262,9 +267,15 @@ export default function PropertyPhotoManager({
                   top={2}
                   right={2}
                   gap={1}
-                  opacity={0}
+                  zIndex={2}
+                  p={1}
+                  borderRadius="10px"
+                  bg="rgba(8, 17, 26, 0.78)"
+                  backdropFilter="blur(8px)"
+                  boxShadow="0 8px 24px rgba(0,0,0,0.35)"
+                  opacity={{ base: 1, md: 0.92 }}
                   _groupHover={{ opacity: 1 }}
-                  transition="opacity 0.3s"
+                  transition="opacity 0.2s ease"
                 >
                   {index > 0 && (
                     <Tooltip label={isRu ? "Сделать основным" : "Set as primary"}>
@@ -274,6 +285,9 @@ export default function PropertyPhotoManager({
                         size="sm"
                         colorScheme="green"
                         variant="solid"
+                        bg="green.500"
+                        color="white"
+                        _hover={{ bg: "green.400" }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSetPrimary(index);
@@ -288,6 +302,9 @@ export default function PropertyPhotoManager({
                       size="sm"
                       colorScheme="red"
                       variant="solid"
+                      bg="red.500"
+                      color="white"
+                      _hover={{ bg: "red.400" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemovePhoto(index);
