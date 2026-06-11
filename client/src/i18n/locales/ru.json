@@ -322,7 +322,32 @@
     "provenTrackText": "Тысячи успешных сделок и довольных клиентов",
     "quickLinks": "Быстрые ссылки",
     "home": "Главная",
-    "properties": "Недвижимость",
+    "properties": {
+      "riveraHills": {
+        "name": "Ривера Хиллс",
+        "address": "Серебряная Дубовая аллея, 18, Зеленая долина"
+      },
+      "skylineLoft": {
+        "name": "Резиденция Панорамный Лофт",
+        "address": "Центральная набережная 4, Башня А"
+      },
+      "forestAcre": {
+        "name": "Лесной участок",
+        "address": "Район Сосновое озеро"
+      },
+      "harborTownhouse": {
+        "name": "Таунхаус у гавани",
+        "address": "Квартал Марина, 7"
+      },
+      "auroraSuites": {
+        "name": "Резиденции Аврора",
+        "address": "Парковый бульвар, 21"
+      },
+      "meadowEstates": {
+        "name": "Участок Луговые Резиденции",
+        "address": "Северные луга"
+      }
+    },
     "agents": "Агенты",
     "aboutUs": "О нас",
     "contact": "Контакты",
@@ -381,10 +406,10 @@
     "privacyNav": "Политика конфиденциальности",
     "termsNav": "Условия использования",
     "cookiesNav": "Политика файлов куки",
-  "comparePageTitle": "Сравнение объектов",
-  "comparePageText": "Сравните цену, параметры, наполнение карточки и описание бок о бок перед тем, как перейти к просмотру.",
-  "clearCompare": "Очистить сравнение",
-  "emptyCompareTitle": "Объекты для сравнения пока не выбраны",
+    "comparePageTitle": "Сравнение объектов",
+    "comparePageText": "Сравните цену, параметры, наполнение карточки и описание бок о бок перед тем, как перейти к просмотру.",
+    "clearCompare": "Очистить сравнение",
+    "emptyCompareTitle": "Объекты для сравнения пока не выбраны",
     "emptyCompareText": "Добавьте несколько предложений из каталога или карточки объекта, чтобы посмотреть их рядом.",
     "photosCount": "Фото: {{count}}",
     "docsCount": "Документы: {{count}}",
@@ -428,7 +453,6 @@
     "featuredOffer": "Предложение недели",
     "engineeringTitle": "Инженерные системы",
     "finishTitle": "Отделка и материалы",
-    "aboutTitle": "Описание",
     "bedroomsAny": "Любое кол-во",
     "bathroomsAny": "Любое кол-во",
     "onlyRichListings": "Только премиум",
@@ -455,7 +479,6 @@
     "statusSold": "Продано",
     "statusBlocked": "Заблокировано",
     "statusReserved": "В резерве",
-    "houses": "Дома",
     "housesSingular": "дом",
     "apartmentsSingular": "квартира",
     "plotsSingular": "участок",
@@ -464,15 +487,10 @@
     "seedDescription": "Проверенный объект с качественными материалами и готовой документацией.",
     "districtLabel": "район",
     "buildingLabel": "д.",
-    "apartments": "Квартиры",
-    "plots": "Участки",
-    "commercial": "Коммерческая",
     "propertyTypes": "Типы недвижимости",
     "lifestyleTitle": "Коллекция образа жизни",
     "lifestyleTitleTranslated": "Коллекция Образа Жизни",
     "lifestyleSubtitle": "Избранные объекты для исключительной жизни",
-    "propertyConsultant": "Консультант по недвижимости",
-    "respondsInMinutes": "Обычно отвечает в течение 15 минут",
     "uploadPhotos": "Загрузить фото",
     "addPhoto": "Добавить фото",
     "removePhoto": "Удалить фото",
@@ -488,10 +506,7 @@
     "squareFootage": "Площадь",
     "numberofBedrooms": "Количество спален",
     "numberofBathrooms": "Количество ванных",
-    "yearBuilt": "Год постройки",
-    "lotSize": "Размер участка",
     "parkingAvailability": "Парковка",
-    "listingDate": "Дата публикации",
     "updatedAt": "Обновлено",
     "marketingDescription": "Маркетинговое описание",
     "propertyDescription": "Описание объекта",
@@ -538,33 +553,7 @@
     "selectPhotos": "Выбрать фото",
     "supportedFormats": "Файлы изображений, максимум 10 МБ",
     "clickStarToSetPrimary": "Нажмите звезду чтобы установить основным",
-    "noPhotosUploaded": "Фотографии ещё не загружены",
-    "properties": {
-      "riveraHills": {
-        "name": "Ривера Хиллс",
-        "address": "Серебряная Дубовая аллея, 18, Зеленая долина"
-      },
-      "skylineLoft": {
-        "name": "Резиденция Панорамный Лофт",
-        "address": "Центральная набережная 4, Башня А"
-      },
-      "forestAcre": {
-        "name": "Лесной участок",
-        "address": "Район Сосновое озеро"
-      },
-      "harborTownhouse": {
-        "name": "Таунхаус у гавани",
-        "address": "Квартал Марина, 7"
-      },
-      "auroraSuites": {
-        "name": "Резиденции Аврора",
-        "address": "Парковый бульвар, 21"
-      },
-      "meadowEstates": {
-        "name": "Участок Луговые Резиденции",
-        "address": "Северные луга"
-      }
-    }
+    "noPhotosUploaded": "Фотографии ещё не загружены"
   },
   "auth": {
     "signIn": {
@@ -576,7 +565,8 @@
       "signInButton": "Войти",
       "noAccount": "Нет аккаунта?",
       "createAccount": "Создать аккаунт",
-      "loginSuccessfully": "Вход успешен!"
+      "loginSuccessfully": "Вход успешен!",
+      "loginFailed": "Не удалось войти. Попробуйте ещё раз."
     },
     "signUp": {
       "title": "Создать аккаунт",
@@ -590,7 +580,24 @@
       "createAccountButton": "Создать аккаунт",
       "alreadyHave": "Уже есть аккаунт?",
       "signIn": "Войти",
-      "registrationSuccessful": "Регистрация успешна! Перенаправление на панель управления..."
+      "registrationSuccessful": "Регистрация успешна! Перенаправление на панель управления...",
+      "registrationFailed": "Регистрация не удалась. Попробуйте ещё раз."
+    },
+    "validation": {
+      "firstNameRequired": "Имя обязательно",
+      "lastNameRequired": "Фамилия обязательна",
+      "emailRequired": "Эл. почта обязательна",
+      "emailInvalid": "Некорректный формат эл. почты",
+      "passwordRequired": "Пароль обязателен",
+      "passwordMax": "Пароль не должен превышать 128 символов",
+      "passwordComplexity": "Минимум 8 символов: заглавная, строчная, цифра и спецсимвол",
+      "passwordSequential": "Пароль не должен содержать последовательности (123, abc)",
+      "passwordRepeated": "Пароль не должен содержать повторы (aaa)",
+      "passwordsMustMatch": "Пароли должны совпадать",
+      "confirmPasswordRequired": "Подтвердите пароль",
+      "agreeToTerms": "Необходимо принять условия использования",
+      "passwordHint": "Мин. 8 символов: заглавная, строчная, цифра, спецсимвол; без последовательностей (123, abc) и повторов (aaa)",
+      "fillAllFields": "Заполните все поля"
     }
   },
   "modules": {
@@ -660,8 +667,7 @@
       "statusAvailable": "Доступно",
       "propertyFallback": "Объект",
       "untitledProperty": "Объект без названия",
-      "notSet": "Не установлено",
-      "addressNotSpecified": "Адрес не указан"
+      "notSet": "Не установлено"
     },
     "lead": {
       "title": "Лиды",
@@ -1130,7 +1136,6 @@
     "invoiceNumber": "Номер счёта",
     "title": "Заголовок",
     "related": "Связано",
-    "assignTo": "Назначить",
     "startDate": "Дата начала",
     "endDate": "Дата окончания",
     "agenda": "Повестка",
@@ -1143,7 +1148,6 @@
     "timestamp": "Временная метка",
     "created": "Создано",
     "templateName": "Название шаблона",
-    "description": "Описание",
     "folderName": "Название папки",
     "fileName": "Название файла",
     "uploadFiles": "Загрузить файлы",
@@ -1153,8 +1157,6 @@
     "enterName": "Введите имя",
     "enterEmail": "Введите эл. почту",
     "enterAmount": "Введите сумму",
-    "name": "Название",
-    "email": "Эл. почта",
     "amount": "Сумма",
     "grandTotal": "Итого",
     "emailSent": "Письмо отправлено",
@@ -1179,7 +1181,6 @@
     "close": "Закрыть",
     "submit": "Отправить",
     "pay": "Оплатить",
-    "search": "Поиск...",
     "filter": "Фильтр",
     "export": "Экспорт",
     "import": "Импорт"

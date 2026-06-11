@@ -1,3 +1,54 @@
+const SERVER_MESSAGE_RU = {
+  "Password is required": "Пароль обязателен",
+  "Password must be at least 8 characters": "Пароль должен содержать минимум 8 символов",
+  "Password must be at least 8 characters long": "Пароль должен содержать минимум 8 символов",
+  "Password must not exceed 128 characters": "Пароль не должен превышать 128 символов",
+  "Password must contain at least one uppercase letter":
+    "Пароль должен содержать хотя бы одну заглавную букву",
+  "Password must contain at least one lowercase letter":
+    "Пароль должен содержать хотя бы одну строчную букву",
+  "Password must contain at least one number": "Пароль должен содержать хотя бы одну цифру",
+  "Password must contain at least one special character":
+    "Пароль должен содержать хотя бы один спецсимвол",
+  "Password is too common, please choose a more secure password":
+    "Пароль слишком простой, выберите более надёжный",
+  "Password must not contain sequential characters":
+    "Пароль не должен содержать последовательности символов (123, abc)",
+  "Password must not contain repeated characters":
+    "Пароль не должен содержать повторяющиеся символы (aaa)",
+  "Password does not meet requirements": "Пароль не соответствует требованиям",
+  "Password was used recently. Please choose a different password.":
+    "Этот пароль уже использовался недавно. Выберите другой.",
+  "Email is required": "Эл. почта обязательна",
+  "Invalid email format": "Некорректный формат эл. почты",
+  "First name is required": "Имя обязательно",
+  "First Name is required": "Имя обязательно",
+  "Last name is required": "Фамилия обязательна",
+  "Last Name is required": "Фамилия обязательна",
+  "Username or email is required": "Укажите имя пользователя или эл. почту",
+  "User already exists. Please try another email.":
+    "Пользователь уже существует. Используйте другую эл. почту.",
+  "Invalid email or password. Please try again.":
+    "Неверный email или пароль. Попробуйте ещё раз.",
+  "Login failed": "Не удалось войти",
+  "Please fill in all fields": "Заполните все поля",
+};
+
+const translateApiMessage = (message, locale = "en") => {
+  if (!message || !String(locale).startsWith("ru")) {
+    return message;
+  }
+
+  return (
+    SERVER_MESSAGE_RU[message] ||
+    message
+      .split(/\.\s+/)
+      .map((part) => SERVER_MESSAGE_RU[part.trim()] || part.trim())
+      .filter(Boolean)
+      .join(". ")
+  );
+};
+
 const ERROR_MESSAGES = {
   en: {
     auth: {
@@ -94,20 +145,19 @@ export const extractApiErrorMessage = (error, locale = "en") => {
   const data = error.response?.data;
   if (Array.isArray(data?.errors) && data.errors.length) {
     return data.errors
-      .map((item) => item?.message || item?.msg)
+      .map((item) => {
+        const raw = item?.message || item?.msg;
+        return translateApiMessage(raw, locale);
+      })
       .filter(Boolean)
       .join(". ");
   }
   if (Array.isArray(data?.errors) && typeof data.errors[0] === "string") {
-    return data.errors.join(". ");
+    return data.errors.map((item) => translateApiMessage(item, locale)).filter(Boolean).join(". ");
   }
 
-  return (
-    data?.message ||
-    data?.error ||
-    error.message ||
-    getErrorMessage("common", "unknownError", locale)
-  );
+  const message = data?.message || data?.error || error.message;
+  return translateApiMessage(message, locale) || getErrorMessage("common", "unknownError", locale);
 };
 
 export const getLocalizedError = (error, locale = "en") => {
@@ -115,6 +165,13 @@ export const getLocalizedError = (error, locale = "en") => {
 
   const status = error.response?.status;
   const message = extractApiErrorMessage(error, locale);
+
+  if (status === 400) {
+    if (message?.includes("Password") || message?.includes("password")) {
+      return translateApiMessage(message, locale) || getErrorMessage("auth", "passwordWeak", locale);
+    }
+    return translateApiMessage(message, locale) || getErrorMessage("common", "validationFailed", locale);
+  }
 
   if (status === 401) {
     if (message?.includes("expired") || message?.includes("Session")) {

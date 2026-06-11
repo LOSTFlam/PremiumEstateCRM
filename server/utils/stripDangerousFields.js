@@ -19,10 +19,13 @@ const DANGEROUS_FIELDS = new Set([
  * Dynamic CRM modules may still pass custom fields through.
  */
 const stripDangerousFields = (body = {}, options = {}) => {
-  const { allowCreateBy = false } = options;
+  const { allowCreateBy = false, preservePassword = false } = options;
   const safe = { ...(body || {}) };
 
   DANGEROUS_FIELDS.forEach((field) => {
+    if (preservePassword && field === "password") {
+      return;
+    }
     delete safe[field];
   });
 

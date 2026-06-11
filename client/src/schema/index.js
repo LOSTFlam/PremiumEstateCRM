@@ -2,8 +2,8 @@ import { contactSchema } from "./contactSchema.js";
 import { propertySchema } from "./propertySchema.js";
 import { leadSchema } from "./leadSchema.js";
 import { userSchema } from "./userSchema.js";
-import { loginSchema } from "./loginSchema.js";
-import { signUpSchema } from "./signUpSchema.js";
+import { loginSchema, getLoginSchema } from "./loginSchema.js";
+import { signUpSchema, getSignUpSchema } from "./signUpSchema.js";
 import { emailSchema } from "./emailSchema.js";
 import { documentSchema } from "./document.js";
 import { phoneCallSchema } from "./phoneCallSchema.js";
@@ -19,7 +19,9 @@ export {
   leadSchema,
   userSchema,
   loginSchema,
+  getLoginSchema,
   signUpSchema,
+  getSignUpSchema,
   emailSchema,
   documentSchema,
   TaskSchema,

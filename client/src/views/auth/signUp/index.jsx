@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useFormik } from "formik";
 import {
@@ -23,8 +23,8 @@ import DefaultAuth from "layouts/auth/Default";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { postApi } from "services/api";
-import { signUpSchema } from "schema";
-import { extractApiErrorMessage } from "utils/errorMessages";
+import { getSignUpSchema } from "schema";
+import { getLocalizedError } from "utils/errorMessages";
 import { toast } from "react-toastify";
 import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,6 +60,8 @@ function SignUp() {
     agreeToTerms: false,
   };
 
+  const validationSchema = useMemo(() => getSignUpSchema(t), [t, i18n.language]);
+
   const {
     errors,
     values,
@@ -71,7 +73,7 @@ function SignUp() {
     setFieldValue,
   } = useFormik({
     initialValues,
-    validationSchema: signUpSchema,
+    validationSchema,
     onSubmit: () => {
       register();
     },
@@ -119,7 +121,7 @@ function SignUp() {
     } catch (e) {
       const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
       toast.error(
-        extractApiErrorMessage(e, locale) ||
+        getLocalizedError(e, locale) ||
           t?.("auth.signUp.registrationFailed") ||
           "Registration failed"
       );
@@ -315,9 +317,7 @@ function SignUp() {
                 <FormErrorMessage>{errors?.password}</FormErrorMessage>
               )}
               <Text mt={1} fontSize="xs" color={textColorSecondary}>
-                {i18n.language?.startsWith("ru")
-                  ? "Мин. 8 символов: заглавная, строчная, цифра, спецсимвол; без последовательностей (123, abc) и повторов (aaa)"
-                  : "Min. 8 chars: upper, lower, number, special; no sequences (123, abc) or repeats (aaa)"}
+                {t?.("auth.validation.passwordHint")}
               </Text>
             </FormControl>
 

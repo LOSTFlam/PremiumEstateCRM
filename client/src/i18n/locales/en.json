@@ -591,7 +591,24 @@
       "createAccountButton": "Create Account",
       "alreadyHave": "Already have an account?",
       "signIn": "Sign In",
-      "registrationSuccessful": "Registration successful! Redirecting to dashboard..."
+      "registrationSuccessful": "Registration successful! Redirecting to dashboard...",
+      "registrationFailed": "Registration failed. Please try again."
+    },
+    "validation": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email format",
+      "passwordRequired": "Password is required",
+      "passwordMax": "Password must not exceed 128 characters",
+      "passwordComplexity": "At least 8 characters with uppercase, lowercase, number, and special character",
+      "passwordSequential": "Password must not contain sequential characters (123, abc)",
+      "passwordRepeated": "Password must not contain repeated characters (aaa)",
+      "passwordsMustMatch": "Passwords must match",
+      "confirmPasswordRequired": "Confirm password is required",
+      "agreeToTerms": "You must agree to terms and conditions",
+      "passwordHint": "Min. 8 chars: upper, lower, number, special; no sequences (123, abc) or repeats (aaa)",
+      "fillAllFields": "Please fill in all fields"
     }
   },
   "modules": {

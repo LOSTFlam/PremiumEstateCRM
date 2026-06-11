@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useFormik } from "formik";
 import {
@@ -24,7 +24,8 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { postApi } from "services/api";
 import { persistUser } from "utils/authStorage";
-import { loginSchema } from "schema";
+import { getLoginSchema } from "schema";
+import { getLocalizedError } from "utils/errorMessages";
 import { toast } from "react-toastify";
 import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,9 +57,11 @@ function SignIn() {
     password: "",
   };
 
+  const validationSchema = useMemo(() => getLoginSchema(t), [t, i18n.language]);
+
   const { errors, values, touched, handleBlur, handleChange, resetForm, handleSubmit } = useFormik({
     initialValues,
-    validationSchema: loginSchema,
+    validationSchema,
     onSubmit: async () => {
       await login();
     },
@@ -67,7 +70,7 @@ function SignIn() {
   const login = async () => {
     // Validate manually
     if (!values.email || !values.password) {
-      toast.error("Please fill in all fields");
+      toast.error(t?.("auth.validation.fillAllFields") || "Please fill in all fields");
       return;
     }
 
@@ -79,10 +82,8 @@ function SignIn() {
 
       // Check if it's an error response
       if (result?.response) {
-        const errorMsg =
-          result.response?.data?.error || result.response?.data?.message || "Login failed";
-        // Error handled silently
-        toast.error(errorMsg);
+        const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+        toast.error(getLocalizedError(result, locale));
         setIsLoding(false);
         return;
       }
@@ -113,11 +114,11 @@ function SignIn() {
         }, 500);
       } else {
         // Error handled silently
-        toast.error("Login failed. Please try again.");
+        toast.error(t?.("auth.signIn.loginFailed") || "Login failed. Please try again.");
       }
     } catch (e) {
-      // Error handled silently
-      toast.error(e?.response?.data?.error || e?.message || "Login failed");
+      const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
+      toast.error(getLocalizedError(e, locale));
     } finally {
       setIsLoding(false);
     }
