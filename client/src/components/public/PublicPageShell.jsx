@@ -51,7 +51,11 @@ export default function PublicPageShell({
                 {title}
               </Heading>
               {subtitle ? (
-                <Text fontSize={{ base: "md", md: "lg" }} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                <Text
+                  fontSize={{ base: "md", md: "lg" }}
+                  color={publicBrand.colors.textSoft}
+                  lineHeight="1.8"
+                >
                   {subtitle}
                 </Text>
               ) : null}
