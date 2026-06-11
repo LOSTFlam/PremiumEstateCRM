@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
   Grid,
   GridItem as _GridItem,
   Icon,
@@ -34,6 +35,7 @@ import {
   FiEdit as _FiEdit,
 } from "react-icons/fi";
 import { postApi, putApi, getApi } from "services/api";
+import AdminEditButton from "components/admin/AdminEditButton";
 
 export default function PropertyPhotoManager({
   propertyId,
@@ -41,6 +43,10 @@ export default function PropertyPhotoManager({
   onChange,
   isOpen: _isOpen,
   onClose: _onClose,
+  showEditButton = false,
+  editHref,
+  onEdit,
+  hideTitle = false,
 }) {
   const { t, i18n } = useTranslation();
   const toast = useToast();
@@ -187,11 +193,13 @@ export default function PropertyPhotoManager({
   return (
     <>
       <Flex direction="column" gap={4}>
-        <Flex justify="space-between" align="center">
-          <Heading size="md">
-            {t?.("publicListing.propertyImages") ||
-              (isRu ? "Изображения объекта" : "Property Images")}
-          </Heading>
+        <Flex justify="space-between" align="center" gap={3} flexWrap="wrap">
+          {hideTitle ? null : (
+            <Heading size="md" flex="1" minW={0}>
+              {t?.("publicListing.propertyImages") ||
+                (isRu ? "Изображения объекта" : "Property Images")}
+            </Heading>
+          )}
           <Input
             type="file"
             accept="image/*"
@@ -201,18 +209,21 @@ export default function PropertyPhotoManager({
             id="property-photo-upload"
           />
 
-          <Button
-            as="label"
-            htmlFor="property-photo-upload"
-            colorScheme="green"
-            size="sm"
-            leftIcon={<Icon as={FiUpload} />}
-            isLoading={isUploading}
-            loadingText={isRu ? "Загрузка..." : "Uploading..."}
-            cursor="pointer"
-          >
-            {isRu ? "Загрузить фото" : "Upload Photos"}
-          </Button>
+          <HStack spacing={2} flexShrink={0}>
+            {showEditButton ? <AdminEditButton onClick={onEdit} href={editHref} /> : null}
+            <Button
+              as="label"
+              htmlFor="property-photo-upload"
+              colorScheme="green"
+              size="sm"
+              leftIcon={<Icon as={FiUpload} />}
+              isLoading={isUploading}
+              loadingText={isRu ? "Загрузка..." : "Uploading..."}
+              cursor="pointer"
+            >
+              {isRu ? "Загрузить фото" : "Upload Photos"}
+            </Button>
+          </HStack>
         </Flex>
 
         {localPhotos?.length > 0 ? (

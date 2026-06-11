@@ -461,19 +461,18 @@ const PropertyDetailPage = () => {
               bg="rgba(255,255,255,0.05)"
               border="1px solid rgba(255,255,255,0.1)"
             >
-              <AdminSectionHeader
-                title={t("publicListing.propertyImages")}
-                canEdit={canEditListing}
-                editHref={propertyAdminPath}
-              />
               {canEditListing && property?._id ? (
                 <PropertyPhotoManager
                   propertyId={property._id}
                   photos={property?.propertyPhotos || []}
                   onChange={(photos) => handlePropertySaved({ ...property, propertyPhotos: photos })}
+                  showEditButton
+                  editHref={propertyAdminPath}
                 />
               ) : galleryImages.length ? (
-                <SimpleGrid columns={{ base: 2, md: 3 }} gap={3} mt={4}>
+                <>
+                  <AdminSectionHeader title={t("publicListing.propertyImages")} />
+                  <SimpleGrid columns={{ base: 2, md: 3 }} gap={3} mt={4}>
                   {galleryImages.map((image, index) => (
                     <Image
                       key={`${image}-${index}`}
@@ -488,10 +487,14 @@ const PropertyDetailPage = () => {
                     />
                   ))}
                 </SimpleGrid>
+                </>
               ) : (
-                <Text color="gray.400" mt={4}>
-                  {t("publicListing.noPhotos")}
-                </Text>
+                <>
+                  <AdminSectionHeader title={t("publicListing.propertyImages")} />
+                  <Text color="gray.400" mt={4}>
+                    {t("publicListing.noPhotos")}
+                  </Text>
+                </>
               )}
             </Box>
 
