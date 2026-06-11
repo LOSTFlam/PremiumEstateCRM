@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, Input, InputGroup, InputLeftElement, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
 import { FaCreativeCommonsBy, FaWpforms } from "react-icons/fa";
-import { FiExternalLink, FiSearch, FiSliders } from "react-icons/fi";
+import { FiEdit3, FiExternalLink, FiSearch, FiSliders } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";
 import { TbExchange, TbTableColumn } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,13 @@ const Index = () => {
         icon: HiUsers,
         title: t("navigation.users"),
         description: t("adminSettingsHub.cards.users"),
+      },
+      {
+        id: "homepage",
+        path: "/homepage-editor",
+        icon: FiEdit3,
+        title: t("navigation.homepageContent"),
+        description: t("adminSettingsHub.cards.homepageContent"),
       },
       {
         id: "storefront",

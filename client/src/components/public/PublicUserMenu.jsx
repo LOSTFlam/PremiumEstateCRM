@@ -127,17 +127,30 @@ export default function PublicUserMenu({ onNavigate }) {
             </Text>
           </MenuItem>
           {role === "superAdmin" ? (
-            <MenuItem
-              _hover={{ bg: menuItemHoverBg }}
-              _focus={{ bg: menuItemHoverBg }}
-              borderRadius="8px"
-              px="14px"
-              onClick={() => goTo("/admin-setting")}
-            >
-              <Text fontSize="sm" color={textColor}>
-                {t("navigation.adminSettings")}
-              </Text>
-            </MenuItem>
+            <>
+              <MenuItem
+                _hover={{ bg: menuItemHoverBg }}
+                _focus={{ bg: menuItemHoverBg }}
+                borderRadius="8px"
+                px="14px"
+                onClick={() => goTo("/admin-setting")}
+              >
+                <Text fontSize="sm" color={textColor}>
+                  {t("navigation.adminSettings")}
+                </Text>
+              </MenuItem>
+              <MenuItem
+                _hover={{ bg: menuItemHoverBg }}
+                _focus={{ bg: menuItemHoverBg }}
+                borderRadius="8px"
+                px="14px"
+                onClick={() => goTo("/homepage-editor")}
+              >
+                <Text fontSize="sm" color={textColor}>
+                  {t("navigation.homepageContent")}
+                </Text>
+              </MenuItem>
+            </>
           ) : null}
           <MenuItem
             _hover={{ bg: menuItemHoverBg }}

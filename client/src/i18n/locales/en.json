@@ -64,6 +64,7 @@
     "settings": "Settings",
     "adminSettings": "Admin Settings",
     "storefrontFilters": "Storefront Routes & Filters",
+    "homepageContent": "Homepage Content",
     "users": "Users",
     "roles": "Roles & Access",
     "modules": "System Modules",
@@ -105,6 +106,7 @@
     "back": "Back to settings",
     "welcome": "Hi, {{name}}",
     "cards": {
+      "homepageContent": "Edit every homepage text block: hero, features, collections, services, and storefront copy.",
       "users": "Create, edit, and deactivate staff and client accounts.",
       "storefrontFilters": "Catalog routes, search filters, and how listings appear on the public site.",
       "roles": "Roles, permissions, and access control across the CRM.",
@@ -114,6 +116,48 @@
       "tableFields": "Choose which columns appear in module tables and lists.",
       "modules": "Module names, icons, and CRM structure.",
       "activeModules": "Enable or disable system sections for users."
+    }
+  },
+  "homepageEditor": {
+    "title": "Homepage Content",
+    "subtitle": "Edit homepage copy in Russian and English. Catalog data, listing cards, and routes stay connected automatically.",
+    "save": "Save changes",
+    "saved": "Homepage content saved.",
+    "loadError": "Failed to load homepage content.",
+    "saveError": "Failed to save homepage content.",
+    "visible": "Visible",
+    "blocks": {
+      "hero": "Hero & search",
+      "features": "Features",
+      "market": "Demand routes",
+      "collections": "Collections",
+      "services": "Buyer tools",
+      "locations": "Locations",
+      "catalog": "Property storefront"
+    },
+    "fields": {
+      "eyebrow": "Eyebrow",
+      "kicker": "Kicker",
+      "title": "Title",
+      "accent": "Accent line",
+      "description": "Description",
+      "searchHint": "Search placeholder",
+      "primaryCta": "Primary button",
+      "secondaryCta": "Secondary button",
+      "panelTitle": "Panel title",
+      "panelText": "Panel text",
+      "routesTitle": "Routes title",
+      "routesText": "Routes text",
+      "pulseTitle": "Pulse title",
+      "pulseSubtitle": "Pulse subtitle",
+      "badge": "Badge",
+      "text": "Text",
+      "statsLabel": "Stats label",
+      "openLabel": "Button label",
+      "fromLabel": "From label",
+      "pillar": "Pillar {{index}}",
+      "service": "Service {{index}}",
+      "points": "Points (one per line)"
     }
   },
   "cabinet": {

@@ -39,7 +39,10 @@ import ShimmerParticles from "components/ShimmerParticles";
 import SmokeEffect from "components/SmokeEffect";
 import FloatingOrbs from "components/FloatingOrbs";
 import GuidedFinder from "components/property/AIPropertyMatcher";
+import MobileBottomNav from "components/public/MobileBottomNav";
+import { fetchPublicHomepageContent } from "services/homepageContent";
 import { fetchPublicStorefrontSettings } from "services/storefrontSettings";
+import { getHomepageLocaleContent, isHomepageBlockVisible } from "utils/homepageContent";
 import {
   DEFAULT_STOREFRONT_PRESETS,
   COLLECTION_STOREFRONT_SLUGS,
@@ -84,98 +87,10 @@ const resultsText = (language) =>
     ? "Показаны предложения, которые совпадают с вашим поиском на главной витрине."
     : "These signature listings match your current homepage search.";
 
-const landingCopy = {
-  ru: {
-    marketBadge: "Маршруты спроса",
-    marketTitle: "Быстрые входы в нужный сценарий поиска",
-    marketText:
-      "Семейный дом, городская квартира, проверенная витрина, участки и премиальная коммерция — каждый маршрут на отдельной странице.",
-    marketOpen: "Открыть маршрут",
-    marketStats: "Живые сигналы витрины",
-    collectionsBadge: "Редакционные подборки",
-    collectionsTitle:
-      "Подборки получили свой смысл: это уже не просто фильтр, а отдельные входы под поисковый интент.",
-    collectionsText:
-      "Каждая подборка может работать как рекламная или поисковая посадочная страница: с коротким обещанием, понятным типом спроса и быстрым переходом в релевантные объекты.",
-    servicesBadge: "Инструменты покупателя",
-    servicesTitle: "Инструменты для спокойного выбора",
-    servicesText:
-      "Сохранение, сравнение и интеллектуальный подбор теперь воспринимаются как часть процесса покупки, а не как случайные кнопки в интерфейсе.",
-    locationsTitle: "Локации на витрине",
-    locationsText:
-      "Показываем не абстрактные карточки, а понятные зоны спроса, которые уже видны в базе.",
-    collectionsOpen: "Открыть подборку",
-    fromLabel: "от",
-    catalogBadge: "Витрина объектов",
-    catalogText:
-      "Ниже остается живая витрина предложений, но теперь она лучше связана с поиском выше: запрос, подборки и инструменты выбора работают как одна система.",
-    services: [
-      {
-        key: "shortlist",
-        icon: FiHeart,
-        title: "Подборка без хаоса",
-        text: "Избранное и сравнение вынесены в ясный сценарий выбора, а не спрятаны в служебных экранах.",
-      },
-      {
-        key: "trust",
-        icon: FiShield,
-        title: "Доверие к карточке",
-        text: "Полные объявления с документами и фото стали заметным слоем продукта, а не скрытым преимуществом.",
-      },
-      {
-        key: "growth",
-        icon: FiTrendingUp,
-        title: "Маркетинг под спрос",
-        text: "Подборки и быстрые маршруты дают нормальную основу под рекламу, поисковое продвижение и ретаргетинг.",
-      },
-    ],
-  },
-  en: {
-    marketBadge: "Demand routes",
-    marketTitle:
-      "The homepage now routes buyers into the right search scenario, not only into attractive cards.",
-    marketText:
-      "Inspired by stronger portals, we added fast entry points into common intent: family homes, city apartments, verified listings, investment land, and premium commercial real estate.",
-    marketOpen: "Open route",
-    marketStats: "Live storefront signals",
-    collectionsBadge: "Editorial collections",
-    collectionsTitle:
-      "Collections now carry real intent: they work like focused search landings, not just saved filters.",
-    collectionsText:
-      "Each collection can support SEO or paid traffic with a short promise, clearer demand framing, and a direct route into relevant inventory.",
-    servicesBadge: "Buyer tools",
-    servicesTitle: "Tools for calmer decision-making",
-    servicesText:
-      "Favorites, compare, and the guided finder now read like part of the buying process instead of random utility buttons.",
-    locationsTitle: "Locations on display",
-    locationsText:
-      "The storefront now surfaces understandable demand zones that already exist in the catalog.",
-    collectionsOpen: "Open collection",
-    fromLabel: "from",
-    catalogBadge: "Property storefront",
-    catalogText:
-      "The listing grid stays live below, but now it is connected to the search layer above: query, collections, and buyer tools work as one system.",
-    services: [
-      {
-        key: "shortlist",
-        icon: FiHeart,
-        title: "Shortlist without clutter",
-        text: "Favorites and compare now sit inside a cleaner buyer flow instead of feeling like admin leftovers.",
-      },
-      {
-        key: "trust",
-        icon: FiShield,
-        title: "Trust-ready listings",
-        text: "Listings with photos and documents are positioned as a meaningful product layer, not hidden product hygiene.",
-      },
-      {
-        key: "growth",
-        icon: FiTrendingUp,
-        title: "Demand-oriented marketing",
-        text: "Collections and fast routes give you better surfaces for SEO, ads, and retargeting campaigns.",
-      },
-    ],
-  },
+const serviceIconMap = {
+  shortlist: FiHeart,
+  trust: FiShield,
+  growth: FiTrendingUp,
 };
 
 const compactCurrency = (value, language, t) => {
@@ -224,10 +139,15 @@ export default function ModernLandingPage() {
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [compareIds, setCompareIds] = useState([]);
   const [storefrontPresets, setStorefrontPresets] = useState(DEFAULT_STOREFRONT_PRESETS);
+  const [homepageContent, setHomepageContent] = useState(null);
 
   const enableFullMotion = false; // Disabled for performance
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
-  const copy = landingCopy[locale];
+  const { visibility, blocks } = getHomepageLocaleContent(homepageContent, locale);
+  const services = (blocks.services?.items || []).map((item) => ({
+    ...item,
+    icon: serviceIconMap[item.key] || FiHeart,
+  }));
 
   useEffect(() => {
     let ignore = false;
@@ -236,14 +156,16 @@ export default function ModernLandingPage() {
       setLoading(true);
 
       try {
-        const [catalog, settings] = await Promise.all([
+        const [catalog, settings, homepage] = await Promise.all([
           fetchPublicCatalog(),
           fetchPublicStorefrontSettings(),
+          fetchPublicHomepageContent(),
         ]);
 
         if (!ignore) {
           setProperties(catalog);
           setStorefrontPresets(settings.presets || DEFAULT_STOREFRONT_PRESETS);
+          setHomepageContent(homepage.content);
         }
       } finally {
         if (!ignore) {
@@ -511,19 +433,25 @@ export default function ModernLandingPage() {
       <ModernHeader />
 
       <Box position="relative" zIndex={1}>
-        <MemoizedModernHero
-          properties={properties}
-          onSearch={scrollToCatalogPreview}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          segmentCards={heroSegmentCards}
-          marketRouteCards={marketRoutes}
-        />
+        {isHomepageBlockVisible(visibility, "hero") ? (
+          <MemoizedModernHero
+            properties={properties}
+            onSearch={scrollToCatalogPreview}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            segmentCards={heroSegmentCards}
+            marketRouteCards={marketRoutes}
+            content={blocks.hero}
+          />
+        ) : null}
 
-        <Box id="about" pt={{ base: 16, md: 20 }}>
-          <MemoizedModernFeatures properties={properties} t={t} />
-        </Box>
+        {isHomepageBlockVisible(visibility, "features") ? (
+          <Box id="about" pt={{ base: 16, md: 20 }}>
+            <MemoizedModernFeatures properties={properties} t={t} content={blocks.features} />
+          </Box>
+        ) : null}
 
+        {isHomepageBlockVisible(visibility, "market") ? (
         <Box
           id="market"
           py={{ base: 14, md: 18, xl: 20 }}
@@ -553,7 +481,7 @@ export default function ModernLandingPage() {
                       letterSpacing="0.12em"
                       textTransform="uppercase"
                     >
-                      {copy.marketBadge}
+                      {blocks.market?.badge}
                     </Badge>
                     <Heading
                       color={publicBrand.colors.ink}
@@ -562,7 +490,7 @@ export default function ModernLandingPage() {
                       lineHeight="1.05"
                       mt={4}
                     >
-                      {copy.marketTitle}
+                      {blocks.market?.title}
                     </Heading>
                     <Text
                       color={publicBrand.colors.textSoft}
@@ -570,7 +498,7 @@ export default function ModernLandingPage() {
                       lineHeight="1.9"
                       mt={4}
                     >
-                      {copy.marketText}
+                      {blocks.market?.text}
                     </Text>
                     <Text
                       color={publicBrand.colors.copper}
@@ -579,7 +507,7 @@ export default function ModernLandingPage() {
                       textTransform="uppercase"
                       mt={6}
                     >
-                      {copy.marketStats}
+                      {blocks.market?.statsLabel}
                     </Text>
                   </Box>
 
@@ -690,7 +618,7 @@ export default function ModernLandingPage() {
                     </Text>
                     <HStack mt={5} spacing={2} color={publicBrand.colors.copper} flexWrap="wrap">
                       <Text fontWeight="700" fontSize="sm" wordBreak="break-word">
-                        {copy.marketOpen}
+                        {blocks.market?.openLabel}
                       </Text>
                       <FiArrowRight />
                     </HStack>
@@ -700,13 +628,18 @@ export default function ModernLandingPage() {
             </Stack>
           </Container>
         </Box>
+        ) : null}
 
+        {isHomepageBlockVisible(visibility, "collections") ||
+        isHomepageBlockVisible(visibility, "services") ||
+        isHomepageBlockVisible(visibility, "locations") ? (
         <Box
           id="collections"
           py={{ base: 16, md: 20 }}
           bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
         >
           <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
+            {isHomepageBlockVisible(visibility, "collections") ? (
             <Stack spacing={8}>
               <Box>
                 <Badge
@@ -720,7 +653,7 @@ export default function ModernLandingPage() {
                   letterSpacing="0.12em"
                   textTransform="uppercase"
                 >
-                  {copy.collectionsBadge}
+                  {blocks.collections?.badge}
                 </Badge>
                 <Heading
                   color="white"
@@ -728,7 +661,7 @@ export default function ModernLandingPage() {
                   lineHeight="1.08"
                   wordBreak="break-word"
                 >
-                  {copy.collectionsTitle}
+                  {blocks.collections?.title}
                 </Heading>
                 <Text
                   color="whiteAlpha.760"
@@ -736,7 +669,7 @@ export default function ModernLandingPage() {
                   lineHeight="1.9"
                   maxW="760px"
                 >
-                  {copy.collectionsText}
+                  {blocks.collections?.text}
                 </Text>
                 <SimpleGrid
                   columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 5 }}
@@ -794,7 +727,7 @@ export default function ModernLandingPage() {
                           fontSize="sm"
                           display={{ base: "none", sm: "block" }}
                         >
-                          {copy.collectionsOpen}
+                          {blocks.collections?.openLabel}
                         </Text>
                         <Box
                           as="span"
@@ -805,7 +738,7 @@ export default function ModernLandingPage() {
                           borderRadius={{ base: "full", sm: "none" }}
                           bg={{ base: "rgba(245,208,118,0.14)", sm: "transparent" }}
                           border={{ base: "1px solid rgba(245,208,118,0.24)", sm: "none" }}
-                          aria-label={copy.collectionsOpen}
+                          aria-label={blocks.collections?.openLabel}
                         >
                           <FiArrowRight />
                         </Box>
@@ -815,6 +748,7 @@ export default function ModernLandingPage() {
                 </SimpleGrid>
               </Box>
             </Stack>
+            ) : null}
 
             <Stack spacing={5}>
               <GuidedFinder
@@ -823,6 +757,7 @@ export default function ModernLandingPage() {
                 onMatchFound={handleGuidedMatch}
               />
 
+              {isHomepageBlockVisible(visibility, "services") ? (
               <Box
                 id="services"
                 className="public-brand-panel"
@@ -838,17 +773,17 @@ export default function ModernLandingPage() {
                       letterSpacing="0.16em"
                       textTransform="uppercase"
                     >
-                      {copy.servicesBadge}
+                      {blocks.services?.badge}
                     </Text>
                     <Heading mt={2} size="lg" color="white">
-                      {copy.servicesTitle}
+                      {blocks.services?.title}
                     </Heading>
                     <Text mt={3} color="whiteAlpha.760" lineHeight="1.8">
-                      {copy.servicesText}
+                      {blocks.services?.text}
                     </Text>
                   </Box>
                   <Stack spacing={4}>
-                    {copy.services.map((service) => (
+                    {services.map((service) => (
                       <Box
                         key={service.key}
                         borderRadius="24px"
@@ -884,7 +819,9 @@ export default function ModernLandingPage() {
                   </Stack>
                 </Stack>
               </Box>
+              ) : null}
 
+              {isHomepageBlockVisible(visibility, "locations") ? (
               <Box
                 className="public-brand-panel"
                 borderRadius="32px"
@@ -899,10 +836,10 @@ export default function ModernLandingPage() {
                       letterSpacing="0.16em"
                       textTransform="uppercase"
                     >
-                      {copy.locationsTitle}
+                      {blocks.locations?.title}
                     </Text>
                     <Text mt={2} color="whiteAlpha.760" lineHeight="1.8">
-                      {copy.locationsText}
+                      {blocks.locations?.text}
                     </Text>
                   </Box>
                   <Stack spacing={3}>
@@ -939,17 +876,20 @@ export default function ModernLandingPage() {
                           </Box>
                         </HStack>
                         <Text color="#f5d076" fontWeight="700" fontSize="sm">
-                          {copy.fromLabel} {compactCurrency(location.price, i18n.language, t)}
+                          {blocks.locations?.fromLabel} {compactCurrency(location.price, i18n.language, t)}
                         </Text>
                       </HStack>
                     ))}
                   </Stack>
                 </Stack>
               </Box>
+              ) : null}
             </Stack>
           </Container>
         </Box>
+        ) : null}
 
+        {isHomepageBlockVisible(visibility, "catalog") ? (
         <Box
           id="properties-section"
           py={{ base: 14, md: 18, xl: 20 }}
@@ -969,7 +909,7 @@ export default function ModernLandingPage() {
                   letterSpacing="0.12em"
                   textTransform="uppercase"
                 >
-                  {copy.catalogBadge}
+                  {blocks.catalog?.badge}
                 </Badge>
                 <Heading size="2xl" color={publicBrand.colors.ink} maxW="900px">
                   {searchQuery
@@ -982,7 +922,7 @@ export default function ModernLandingPage() {
                   lineHeight="1.8"
                   maxW="820px"
                 >
-                  {searchQuery ? resultsText(i18n.language) : copy.catalogText}
+                  {searchQuery ? resultsText(i18n.language) : blocks.catalog?.text}
                 </Text>
                 <HStack spacing={3} flexWrap="wrap" justify="center">
                   <Button
@@ -1051,7 +991,9 @@ export default function ModernLandingPage() {
             </Stack>
           </Container>
         </Box>
+        ) : null}
 
+        <MobileBottomNav />
         <ModernFooter />
       </Box>
     </Box>

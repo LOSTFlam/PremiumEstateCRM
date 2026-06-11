@@ -69,10 +69,21 @@ const pillarCopy = {
   ],
 };
 
-export default function ModernFeatures({ properties = [], t }) {
+export default function ModernFeatures({ properties = [], t, content = {} }) {
   const { i18n } = useTranslation();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
-  const pillars = pillarCopy[locale];
+  const pillars = content.pillars?.length ? content.pillars : pillarCopy[locale];
+  const featureBadge = content.badge || t("publicListing.whyChooseUs");
+  const featureTitle =
+    content.title ||
+    (locale === "ru"
+      ? "Сайт больше не выглядит как шаблон. Он ведет покупателя через атмосферу, факты и действие."
+      : "The experience no longer reads like a template. It guides buyers through atmosphere, facts, and action.");
+  const featureDescription =
+    content.description ||
+    (locale === "ru"
+      ? "Мы сместили акцент со случайных карточек и служебных блоков на более взрослую недвижимостную подачу."
+      : "The focus shifts toward a more mature real-estate presentation with stronger visuals and buyer tools.");
 
   // Scroll reveal refs
   const [titleRef, titleRevealed] = useScrollReveal({ threshold: 0.2 });
@@ -140,7 +151,7 @@ export default function ModernFeatures({ properties = [], t }) {
                   letterSpacing="0.14em"
                   textTransform="uppercase"
                 >
-                  {t("publicListing.whyChooseUs")}
+                  {featureBadge}
                 </Badge>
                 <Heading
                   as="h2"
@@ -149,14 +160,10 @@ export default function ModernFeatures({ properties = [], t }) {
                   letterSpacing="-0.04em"
                   color="white"
                 >
-                  {locale === "ru"
-                    ? "Сайт больше не выглядит как шаблон. Он ведет покупателя через атмосферу, факты и действие."
-                    : "The experience no longer reads like a template. It guides buyers through atmosphere, facts, and action."}
+                  {featureTitle}
                 </Heading>
                 <Text color="whiteAlpha.760" fontSize={{ base: "md", md: "lg" }} lineHeight="1.9">
-                  {locale === "ru"
-                    ? "Мы сместили акцент со случайных карточек и служебных блоков на более взрослую недвижимостную подачу: сильный визуал, кураторская структура, инструменты выбора и мягкий переход к личной консультации."
-                    : "The focus shifts from utility blocks and generic cards toward a more mature real-estate presentation: stronger visuals, editorial structure, buyer tools, and a softer path into private consultation."}
+                  {featureDescription}
                 </Text>
                 <HStack spacing={3} flexWrap="wrap">
                   <Button

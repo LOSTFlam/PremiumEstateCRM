@@ -186,11 +186,12 @@ export default function ModernHero({
   setSearchQuery,
   segmentCards = [],
   marketRouteCards = [],
+  content = {},
 }) {
   const { t, i18n } = useTranslation();
   const prefersReducedMotion = usePrefersReducedMotion();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
-  const copy = heroCopy[locale];
+  const copy = { ...heroCopy[locale], ...content };
   const isCompactActions = useBreakpointValue({ base: true, md: false }) ?? true;
 
   const [titleRef, titleRevealed] = useScrollReveal({ threshold: 1, delay: 0 });

@@ -72,6 +72,7 @@ const accountRoute = require("./account/_routes")
 const opportunitiesproject = require("./opportunityproject/_router")
 const bankDetailsRoute = require("./bankDetails/_routes")
 const storefrontSettingsRoute = require("./storefrontSettings/_routes")
+const homepageContentRoute = require("./homepageContent/_routes")
 const pipelineRoute = require("./pipeline/_routes")
 const notificationRoute = require("./notifications/_routes")
 const aiRoute = require("./ai/_routes")
@@ -114,6 +115,7 @@ router.use("/crm-invoices", newInvoiceRoute);
 router.use("/account", accountRoute);
 router.use("/opportunityproject",opportunitiesproject)
 router.use("/storefront-settings", storefrontSettingsRoute);
+router.use("/homepage-content", homepageContentRoute);
 router.use("/pipeline", pipelineRoute);
 router.use("/notifications", notificationRoute);
 router.use("/ai", aiRoute);

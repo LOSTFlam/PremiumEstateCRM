@@ -10,6 +10,7 @@ import { createRoute } from "../../utils/routeHelpers";
 
 const AdminSetting = React.lazy(() => import("views/admin/adminSetting"));
 const StorefrontFilters = React.lazy(() => import("views/admin/storefrontFilters"));
+const HomepageEditor = React.lazy(() => import("views/admin/homepageEditor"));
 const Role = React.lazy(() => import("views/admin/role"));
 const CustomField = React.lazy(() => import("views/admin/customField"));
 const ChangeImage = React.lazy(() => import("views/admin/image"));
@@ -32,6 +33,13 @@ export const adminRoutes = [
     path: "/storefront-filters",
     icon: <Icon as={FiSliders} width="20px" height="20px" color="inherit" />,
     component: StorefrontFilters,
+  }),
+  createRoute({
+    name: "Homepage Content",
+    layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
+    path: "/homepage-editor",
+    under: "admin",
+    component: HomepageEditor,
   }),
   createRoute({
     name: "Roles",

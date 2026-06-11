@@ -22,6 +22,7 @@ export const routeNameToI18nKey = {
   Reports: "navigation.reports",
   "Admin Setting": "navigation.adminSettings",
   "Storefront Filters": "navigation.storefrontFilters",
+  "Homepage Content": "navigation.homepageContent",
   Users: "navigation.users",
   Roles: "navigation.roles",
   "Custom Fields": "navigation.customFields",
