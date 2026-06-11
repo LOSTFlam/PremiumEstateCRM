@@ -390,6 +390,7 @@
     "docsCount": "Документы: {{count}}",
     "plansCount": "Планы этажей: {{count}}",
     "verificationTitle": "Проверка объекта",
+    "verificationShort": "Проверка",
     "verificationVerified": "Проверено",
     "verificationAddress": "Адрес подтвержден",
     "verificationPrice": "Цена актуальна",

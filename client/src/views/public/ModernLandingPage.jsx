@@ -24,6 +24,10 @@ import ModernFooter from "components/ModernFooter";
 import ModernHeader from "components/ModernHeader";
 import ModernHero from "components/ModernHero";
 import ModernPropertyCard from "components/ModernPropertyCard";
+import {
+  PROPERTY_CARD_GRID_SPACING,
+  PROPERTY_CARD_MIN_WIDTH,
+} from "views/public/catalog/propertyCardLayout";
 import ParticleCanvas from "components/ParticleCanvas";
 import PropertyBackground from "components/PropertyBackground";
 import ThreeBackground from "components/ThreeBackground";
@@ -1017,13 +1021,21 @@ export default function ModernLandingPage() {
               </Stack>
 
               {loading ? (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={{ base: 4, md: 6 }}>
+                <SimpleGrid
+                  className="property-card-grid"
+                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  spacing={PROPERTY_CARD_GRID_SPACING}
+                >
                   {Array.from({ length: 6 }).map((_, index) => (
                     <Skeleton key={`landing-skeleton-${index}`} h="520px" borderRadius="40px" />
                   ))}
                 </SimpleGrid>
               ) : (
-                <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={{ base: 4, md: 6 }}>
+                <SimpleGrid
+                  className="property-card-grid"
+                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  spacing={PROPERTY_CARD_GRID_SPACING}
+                >
                   {featuredProperties.map((property) => (
                     <MemoizedModernPropertyCard
                       key={property?._id}

@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Button,
+  Flex,
   HStack,
   Icon,
   IconButton,
@@ -16,7 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   MdArrowForward,
   MdBathtub,
@@ -28,8 +29,10 @@ import {
 } from "react-icons/md";
 import { LuMapPin } from "react-icons/lu";
 import {
+  formatCompactPrice,
   formatPrice,
   getDocumentCount,
+  parsePrice,
   getFloorPlanCount,
   getListingAddress,
   getListingDescription,
@@ -133,6 +136,13 @@ const ModernPropertyCard = ({
   const [imgError, setImgError] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
+  const priceDisplay = useMemo(() => {
+    const formatted = formatPrice(property?.listingPrice, t, i18n.language);
+    const amount = parsePrice(property?.listingPrice);
+    if (!amount || formatted.length <= 16) return formatted;
+    return formatCompactPrice(property?.listingPrice, t, i18n.language);
+  }, [property?.listingPrice, t, i18n.language]);
+
   const handleShare = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -157,7 +167,8 @@ const ModernPropertyCard = ({
       borderRadius={{ base: "30px", md: "40px", xl: "44px" }}
       overflow="hidden"
       maxW="100%"
-      minW={0}
+      minW={{ base: "100%", sm: "380px" }}
+      w="100%"
       bg={publicBrand.gradients.panelLight}
       border="1px solid rgba(9,18,32,0.06)"
       boxShadow="0 10px 36px rgba(0, 0, 0, 0.14), 0 0 26px rgba(212, 175, 55, 0.09)"
@@ -220,21 +231,29 @@ const ModernPropertyCard = ({
           }}
         />
 
-        <HStack
-          className="property-badges"
+        <Flex
+          className="property-card-top"
           position="absolute"
           top={{ base: 3, md: 4 }}
           left={{ base: 3, md: 4 }}
-          spacing={2}
-          flexWrap="nowrap"
-          overflowX="auto"
-          overflowY="hidden"
-          maxW={{ base: "calc(100% - 100px)", md: "calc(100% - 140px)" }}
-          sx={{
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
-          }}
+          right={{ base: 3, md: 4 }}
+          align="flex-start"
+          gap={2}
+          zIndex={2}
         >
+          <HStack
+            className="property-badges"
+            flex={1}
+            minW={0}
+            spacing={2}
+            flexWrap="nowrap"
+            overflowX="auto"
+            overflowY="hidden"
+            sx={{
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+          >
           <Badge
             px={3.5}
             py={1.5}
@@ -287,15 +306,9 @@ const ModernPropertyCard = ({
               {t?.("publicListing.richLabel") || "Rich"}
             </Badge>
           ) : null}
-        </HStack>
+          </HStack>
 
-        <HStack
-          className="property-actions"
-          position="absolute"
-          top={{ base: 3, md: 4 }}
-          right={{ base: 3, md: 4 }}
-          spacing={2}
-        >
+          <HStack className="property-actions" spacing={{ base: 1, md: 2 }} flexShrink={0}>
           <IconButton
             aria-label={
               isFavorite
@@ -303,7 +316,7 @@ const ModernPropertyCard = ({
                 : t?.("publicListing.addToFavorites") || "Add to favorites"
             }
             icon={<FiHeart />}
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             borderRadius="full"
             bg={isFavorite ? publicBrand.gradients.brass : actionStyles.bg}
             color={isFavorite ? publicBrand.colors.ink : actionStyles.color}
@@ -330,7 +343,7 @@ const ModernPropertyCard = ({
                 : t?.("publicListing.addToCompare") || "Add to compare"
             }
             icon={<MdCompareArrows />}
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             borderRadius="full"
             bg={isInCompare ? publicBrand.gradients.brass : actionStyles.bg}
             color={isInCompare ? publicBrand.colors.ink : actionStyles.color}
@@ -353,7 +366,7 @@ const ModernPropertyCard = ({
           <IconButton
             aria-label={t?.("publicListing.shareOffer") || "Share"}
             icon={<FiShare2 />}
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             borderRadius="full"
             bg={actionStyles.bg}
             color={actionStyles.color}
@@ -367,7 +380,8 @@ const ModernPropertyCard = ({
             _active={{ transform: "scale(0.95)" }}
             onClick={handleShare}
           />
-        </HStack>
+          </HStack>
+        </Flex>
 
         <Stack
           className="property-image-footer"
@@ -387,7 +401,7 @@ const ModernPropertyCard = ({
               letterSpacing="-0.02em"
               color="white"
             >
-              {formatPrice(property?.listingPrice, t, i18n.language)}
+              {priceDisplay}
               {property?.dealType === "rent" ? (
                 <Text as="span" fontSize={{ base: "sm", md: "md" }} color="whiteAlpha.700" fontWeight="600">
                   {t?.("publicListing.perMonth") || "/мес"}
@@ -412,13 +426,19 @@ const ModernPropertyCard = ({
             maxW="100%"
           >
             <Text
+              className="property-verification-label"
               color="whiteAlpha.600"
               fontSize="xs"
               textTransform="none"
-              letterSpacing="0.06em"
+              letterSpacing="0.04em"
               noOfLines={1}
             >
-              {t?.("publicListing.verificationTitle") || "Verification"}
+              <Box as="span" display={{ base: "inline", lg: "none" }}>
+                {t?.("publicListing.verificationShort") || "Проверка"}
+              </Box>
+              <Box as="span" display={{ base: "none", lg: "inline" }}>
+                {t?.("publicListing.verificationTitle") || "Verification"}
+              </Box>
             </Text>
             <Text color="white" fontWeight="700" mt={0.5} fontSize={{ base: "sm", md: "md" }}>
               {verificationScore
@@ -457,30 +477,42 @@ const ModernPropertyCard = ({
           </Text>
         </Stack>
 
-        <SimpleGrid className="property-metrics" columns={{ base: 2, sm: 3 }} spacing={2} w="100%">
+        <SimpleGrid className="property-metrics" columns={{ base: 1, sm: 3 }} spacing={2} w="100%">
           {metricBlocks(property, t).map((metric) => (
             <Box
               key={metric.label}
+              className="property-metric"
               borderRadius="22px"
               px={3}
               py={3}
               bg="rgba(9,18,32,0.04)"
               border="1px solid rgba(9,18,32,0.06)"
+              textAlign={{ base: "left", sm: "center" }}
             >
-              <HStack spacing={1.5} color={publicBrand.colors.textSoft} minH="20px">
-                <Icon as={metric.icon} boxSize="14px" flexShrink={0} />
-                <Text fontSize="xs" textTransform="uppercase" letterSpacing="0.08em" noOfLines={1}>
+              <HStack
+                spacing={2}
+                color={publicBrand.colors.textSoft}
+                justify={{ base: "flex-start", sm: "center" }}
+              >
+                <Icon as={metric.icon} boxSize="16px" flexShrink={0} />
+                <Text className="property-metric-label" fontSize="xs" lineHeight="1.3">
                   {metric.label}
                 </Text>
               </HStack>
-              <Text mt={1.5} fontWeight="700" color={publicBrand.colors.ink} noOfLines={1}>
+              <Text
+                className="property-metric-value"
+                mt={1.5}
+                fontWeight="700"
+                color={publicBrand.colors.ink}
+                fontSize={{ base: "md", sm: "sm" }}
+              >
                 {metric.value}
               </Text>
             </Box>
           ))}
         </SimpleGrid>
 
-        <SimpleGrid className="property-assets" columns={{ base: 1, sm: 3 }} spacing={2}>
+        <SimpleGrid className="property-assets" columns={{ base: 1, md: 3 }} spacing={2}>
           {assetBlocks(property, t).map((asset) => (
             <HStack
               key={asset.label}
@@ -531,12 +563,14 @@ const ModernPropertyCard = ({
           rowGap={2}
         >
           <Text
+            className="property-footer-note"
             color={publicBrand.colors.copper}
             fontSize="xs"
             fontWeight="700"
             noOfLines={2}
-            flex="1 1 140px"
+            flex="1 1 160px"
             minW="0"
+            display={{ base: "none", sm: "block" }}
           >
             {richListing
               ? t?.("publicListing.savedOffersHelp") || "Saved in a premium shortlist-ready format"

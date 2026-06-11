@@ -390,6 +390,7 @@
     "docsCount": "Documents: {{count}}",
     "plansCount": "Floor plans: {{count}}",
     "verificationTitle": "Property verification",
+    "verificationShort": "Verified",
     "verificationVerified": "Verified",
     "verificationAddress": "Address confirmed",
     "verificationPrice": "Price is current",

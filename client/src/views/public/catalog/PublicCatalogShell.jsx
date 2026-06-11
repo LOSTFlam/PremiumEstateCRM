@@ -49,6 +49,7 @@ import {
 import { publicBrand } from "views/public/publicBrand";
 import { countCatalogProperties, extractPresetFilters } from "./catalogFilters";
 import { getSeoCollectionConfig } from "./seoCollections";
+import { PROPERTY_CARD_GRID_SPACING, PROPERTY_CARD_MIN_WIDTH } from "./propertyCardLayout";
 import { usePublicCatalog } from "./usePublicCatalog";
 
 const shellCopy = {
@@ -196,7 +197,6 @@ const optionStyles = {
 };
 
 const PAGE_MAX_W = "1920px";
-const PROPERTY_GRID_COLUMNS = { base: 1, md: 2, xl: 3, "2xl": 4 };
 const SURFACE_PANEL_PROPS = {
   borderRadius: { base: "24px", md: "30px", xl: "34px" },
   px: { base: 4, md: 7, xl: 8 },
@@ -809,7 +809,11 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
 
             <GridItem>
               <Stack spacing={5}>
-                <SimpleGrid className="catalog-stat-grid" columns={{ base: 1, sm: 2, xl: 1 }} spacing={4}>
+                <SimpleGrid
+                  className="catalog-stat-grid"
+                  columns={{ base: 1, sm: 2, xl: 1 }}
+                  spacing={4}
+                >
                   {[
                     { label: copy.resultsLabel, value: stats.totalLabel },
                     { label: copy.richLabel, value: String(stats.rich) },
@@ -1136,13 +1140,21 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
               ) : null}
 
               {loading ? (
-                <SimpleGrid columns={PROPERTY_GRID_COLUMNS} spacing={6}>
+                <SimpleGrid
+                  className="property-card-grid"
+                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  spacing={PROPERTY_CARD_GRID_SPACING}
+                >
                   {Array.from({ length: 6 }).map((_, index) => (
                     <Skeleton key={`skeleton-${index}`} h="520px" borderRadius="34px" />
                   ))}
                 </SimpleGrid>
               ) : paginatedProperties.length ? (
-                <SimpleGrid columns={PROPERTY_GRID_COLUMNS} spacing={6}>
+                <SimpleGrid
+                  className="property-card-grid"
+                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  spacing={PROPERTY_CARD_GRID_SPACING}
+                >
                   {paginatedProperties.map((property) => (
                     <ModernPropertyCard
                       key={property?._id}

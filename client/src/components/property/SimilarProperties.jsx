@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { Box as _Box, Heading, SimpleGrid, Stack, Text as _Text, useToast } from "@chakra-ui/react";
 import { getApi } from "services/api";
 import ModernPropertyCard from "components/ModernPropertyCard";
+import {
+  PROPERTY_CARD_GRID_SPACING,
+  PROPERTY_CARD_MIN_WIDTH,
+} from "views/public/catalog/propertyCardLayout";
 import { useTranslation } from "react-i18next";
 
 const SimilarProperties = ({ currentProperty }) => {
@@ -41,7 +45,11 @@ const SimilarProperties = ({ currentProperty }) => {
   return (
     <Stack spacing={6}>
       <Heading size="lg">Similar Properties</Heading>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+      <SimpleGrid
+        className="property-card-grid"
+        minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+        spacing={PROPERTY_CARD_GRID_SPACING}
+      >
         {similarProperties.map((property) => (
           <ModernPropertyCard
             key={property._id}

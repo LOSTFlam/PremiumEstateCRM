@@ -16,6 +16,10 @@ import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiShare2, FiDownload, FiTrash2, FiGrid, FiList } from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import ModernPropertyCard from "components/ModernPropertyCard";
+import {
+  PROPERTY_CARD_GRID_SPACING,
+  PROPERTY_CARD_MIN_WIDTH,
+} from "views/public/catalog/propertyCardLayout";
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
 import { useTranslation } from "react-i18next";
@@ -420,7 +424,12 @@ const FavoritesPage = () => {
               </Button>
             </Stack>
           ) : (
-            <SimpleGrid columns={viewMode === "grid" ? { base: 1, md: 2, lg: 3 } : 1} spacing={6}>
+            <SimpleGrid
+              className="property-card-grid"
+              columns={viewMode === "grid" ? undefined : 1}
+              minChildWidth={viewMode === "grid" ? PROPERTY_CARD_MIN_WIDTH : undefined}
+              spacing={PROPERTY_CARD_GRID_SPACING}
+            >
               {favorites.map((property) => (
                 <Box key={property._id} position="relative">
                   <ModernPropertyCard

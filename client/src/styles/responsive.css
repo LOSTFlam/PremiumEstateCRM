@@ -66,8 +66,24 @@ a.public-brand-button {
   letter-spacing: normal;
 }
 
-.property-card .property-image-footer {
-  width: calc(100% - 24px);
+.property-card-grid {
+  width: 100%;
+}
+
+.property-card .property-card-top {
+  pointer-events: none;
+}
+
+.property-card .property-card-top .property-actions,
+.property-card .property-card-top .property-badges {
+  pointer-events: auto;
+}
+
+.property-card .property-metric-label {
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: normal;
+  word-break: normal;
 }
 
 @media (min-width: 640px) {
@@ -85,24 +101,27 @@ a.public-brand-button {
   }
 
   .property-card .property-badges {
-    max-width: calc(100% - 96px);
     gap: 6px !important;
   }
 
   .property-card .property-badges .chakra-badge {
-    font-size: 10px;
+    font-size: 11px;
     padding: 4px 10px;
   }
 
   .property-card .property-actions {
-    gap: 6px !important;
+    gap: 4px !important;
   }
 
   .property-card .property-actions .chakra-icon-button {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .property-card .property-metrics {
+    grid-template-columns: 1fr !important;
   }
 
   .property-card .property-body {
@@ -395,15 +414,6 @@ a.public-brand-button {
     font-size: 1.2rem !important;
     line-height: 1.2 !important;
     max-width: 100%;
-  }
-
-  .property-card .property-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .property-card .property-metrics .chakra-text {
-    font-size: 10px !important;
-    letter-spacing: 0.04em !important;
   }
 
   .property-card .property-footer {
