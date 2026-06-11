@@ -302,6 +302,13 @@ a.public-brand-button {
 }
 
 @media (max-width: 767px) {
+  button[aria-label="Scroll to top"],
+  [aria-label="Scroll to top"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   .public-brand-shell,
   .public-page-shell {
     max-width: 100vw;
