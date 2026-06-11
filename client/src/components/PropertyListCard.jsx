@@ -5,6 +5,7 @@ import { FiHeart } from "react-icons/fi";
 import { MdBathtub, MdCompareArrows, MdMeetingRoom, MdOutlineSquareFoot } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import {
+  formatAreaValue,
   formatPrice,
   getListingAddress,
   getListingTitle,
@@ -88,7 +89,7 @@ export default function PropertyListCard({
           </HStack>
           <HStack>
             <Icon as={MdOutlineSquareFoot} />
-            <Text>{property?.squareFootage || "—"}</Text>
+            <Text>{formatAreaValue(property?.squareFootage)}</Text>
           </HStack>
         </HStack>
         <HStack spacing={2}>
