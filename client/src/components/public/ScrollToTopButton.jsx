@@ -1,4 +1,4 @@
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, useMediaQuery } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FiArrowUp } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +7,7 @@ import { publicBrand } from "views/public/publicBrand";
 const MotionIconButton = motion.create(IconButton);
 
 export default function ScrollToTopButton() {
+  const [isMobile] = useMediaQuery("(max-width: 767px)", { ssr: false });
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -15,6 +16,32 @@ export default function ScrollToTopButton() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    // #region agent log
+    fetch("http://127.0.0.1:7635/ingest/37b9eb23-aad3-484d-8f4e-2ad56c907247", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "054d26" },
+      body: JSON.stringify({
+        sessionId: "054d26",
+        runId: "scroll-unmount-fix",
+        hypothesisId: "H1-motion-display",
+        location: "ScrollToTopButton.jsx:mount",
+        message: "Footer scroll-to-top render gate",
+        data: {
+          isMobile,
+          willRender: !isMobile,
+          viewportWidth: typeof window !== "undefined" ? window.innerWidth : null,
+        },
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+    // #endregion
+  }, [isMobile]);
+
+  if (isMobile) {
+    return null;
+  }
+
   return (
     <AnimatePresence>
       {visible ? (
@@ -22,9 +49,8 @@ export default function ScrollToTopButton() {
           aria-label="Scroll to top"
           icon={<FiArrowUp />}
           position="fixed"
-          display={{ base: "none", md: "inline-flex" }}
-          right={{ md: 6 }}
-          bottom={{ md: 6 }}
+          right={6}
+          bottom={6}
           zIndex={20}
           borderRadius="full"
           size="lg"

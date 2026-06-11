@@ -16,7 +16,14 @@ export default function PublicPageShell({
   hero = true,
 }) {
   return (
-    <Box minH="100vh" bg={publicBrand.gradients.pageLight} color={publicBrand.colors.ink}>
+    <Box
+      className="public-page-shell public-brand-shell"
+      minH="100vh"
+      bg={publicBrand.gradients.pageLight}
+      color={publicBrand.colors.ink}
+      overflowX="hidden"
+      maxW="100vw"
+    >
       <PublicSeoMeta {...seo} />
       <ModernHeader />
       <Box as="main" pt={{ base: "96px", md: "108px" }} pb={{ base: 28, md: 12 }}>

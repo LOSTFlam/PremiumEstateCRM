@@ -170,9 +170,15 @@ const LeadCaptureForm = ({ isOpen, onClose, property, type = "viewing" }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
       <ModalOverlay backdropFilter="blur(5px)" />
       <ModalContent
+        mx={{ base: 3, sm: 4 }}
+        my={{ base: 3, sm: "auto" }}
+        w="full"
+        maxW={{ base: "calc(100vw - 24px)", sm: "md" }}
+        maxH={{ base: "calc(100dvh - 24px)", sm: "90vh" }}
+        overflowY="auto"
         bg="rgba(15, 23, 42, 0.95)"
         backdropFilter="blur(20px)"
         borderRadius="24px"

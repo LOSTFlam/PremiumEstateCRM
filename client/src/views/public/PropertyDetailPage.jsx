@@ -37,7 +37,6 @@ import {
   FiHeart,
   FiShare2,
   FiMapPin,
-  FiDollarSign,
   FiHome,
   FiVideo,
   FiImage,
@@ -242,11 +241,6 @@ const PropertyDetailPage = () => {
       icon: MdOutlineSquareFoot,
       label: copy.area,
       value: formatAreaValue(property.squareFootage),
-    },
-    {
-      icon: FiDollarSign,
-      label: copy.price,
-      value: formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest,
     },
   ];
 
