@@ -632,25 +632,7 @@ export const formatAreaValue = (value, fallback = "—") => {
   const raw = String(value);
   const cleaned = raw.replace(AREA_UNIT_PATTERN, "").trim();
   if (!cleaned) return fallback;
-  const formatted = `${cleaned} m²`;
-  // #region agent log
-  if (/[мm][²2]/i.test(raw) && formatted !== raw.trim()) {
-    fetch("http://127.0.0.1:7635/ingest/37b9eb23-aad3-484d-8f4e-2ad56c907247", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "054d26" },
-      body: JSON.stringify({
-        sessionId: "054d26",
-        runId: "area-unit-fix",
-        hypothesisId: "H7-cyrillic-m2",
-        location: "catalogData.js:formatAreaValue",
-        message: "Normalized area unit suffix",
-        data: { raw: raw.slice(0, 32), formatted, hadCyrillic: raw.includes("м") },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-  }
-  // #endregion
-  return formatted;
+  return `${cleaned} m²`;
 };
 
 export const formatPrice = (value, t, language = runtimeLanguage()) => {

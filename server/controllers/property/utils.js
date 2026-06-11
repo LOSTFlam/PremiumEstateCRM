@@ -106,6 +106,13 @@ const normalizeMediaList = (items, propertyType, mediaKind = "photo") => {
   });
 };
 
+const normalizeSquareFootage = (value) => {
+  if (value === null || value === undefined || value === "") return value;
+  const cleaned = String(value).replace(/\s*[mм][²2]\s*/gi, "").trim();
+  if (!cleaned) return value;
+  return `${cleaned} m²`;
+};
+
 const normalizePropertyMedia = (property) => {
   if (!property) return property;
 
@@ -128,6 +135,9 @@ const normalizePublicProperty = (property) => {
   if (!property) return null;
 
   const normalized = normalizePropertyMedia({ ...property });
+  if (normalized.squareFootage !== undefined && normalized.squareFootage !== null) {
+    normalized.squareFootage = normalizeSquareFootage(normalized.squareFootage);
+  }
   normalized.agent = buildPublicAgent(property);
   normalized.verification = buildVerificationState(property);
   normalized.seo = buildSeoMeta(property);
