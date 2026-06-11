@@ -3,7 +3,7 @@ const user = require('./user');
 const preferences = require('./preferences');
 const { avatarUpload } = require('./avatarUpload');
 const { resolveUploadPath } = require('../../utils/uploadPaths');
-const { auth, authorize } = require('../../middlewares/auth');
+const { auth, authorize, optionalAuth } = require('../../middlewares/auth');
 const { userValidation } = require("../../middlewares/validation");
 const { rateLimiter } = require('../../middlewares/rateLimiter');
 
@@ -14,7 +14,7 @@ router.use('/avatar', express.static(resolveUploadPath('avatars')));
 router.post('/admin-register', rateLimiter('register'), userValidation.adminRegister, user.adminRegister)
 router.get('/', auth, user.index)
 router.post('/register', rateLimiter('register'), userValidation.register, user.register)
-router.get('/session', auth, user.session)
+router.get('/session', optionalAuth, user.session)
 router.get('/me', auth, preferences.getMe)
 router.put('/me', auth, preferences.updateMe)
 router.get('/preferences', auth, preferences.getPreferences)

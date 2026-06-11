@@ -1,11 +1,12 @@
-import { Button, FormLabel, GridItem, Input, Text } from "@chakra-ui/react";
+import { Button, FormLabel, GridItem, Input, Text, useToast } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
-import { constant } from "../../../constant";
+import { postApi } from "services/api";
 
 export default function PaymentForm() {
   const { t } = useTranslation();
+  const toast = useToast();
   const initialValues = {
     name: "",
     amount: "",
@@ -24,47 +25,53 @@ export default function PaymentForm() {
   const formik = useFormik({
     initialValues,
     validationSchema: validation,
-    onSubmit: (values, { resetForm }) => {
-      addPayment();
-      resetForm();
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      try {
+        await addPayment(values);
+        resetForm();
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
-  const { errors, touched, values, handleBlur, handleChange, handleSubmit } = formik;
+  const { errors, touched, values, handleBlur, handleChange, handleSubmit, isSubmitting } = formik;
 
-  const addPayment = () => {
-    fetch(`${constant.baseUrl}api/payment/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify({
+  const addPayment = async (formValues) => {
+    try {
+      const response = await postApi("api/payment/add", {
         items: [
           {
             quantity: 1,
-            price: values?.amount,
-            name: values?.name,
+            price: formValues?.amount,
+            name: formValues?.name,
             description: "send to PremiumEstate",
           },
         ],
-
-        customer_email: values?.email,
-      }),
-    })
-      .then((res) => {
-        if (res?.ok) return res.json();
-        localStorage.setItem("res", res);
-        return res.json().then((json) => Promise.reject(json));
-      })
-      .then(({ url }) => {
-        window.open(url);
-      })
-      .catch((_e) => {
-        // eslint-disable-next-line no-console
-        // Console statement removed
+        customer_email: formValues?.email,
       });
+
+      const checkoutUrl = response?.url || response?.data?.url;
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+        return;
+      }
+
+      toast({
+        title: t("messages.errorOccurred", { defaultValue: "Payment could not be started" }),
+        status: "error",
+        duration: 3000,
+      });
+    } catch {
+      toast({
+        title: t("messages.errorOccurred", { defaultValue: "Payment could not be started" }),
+        description: t("messages.tryAgainLater", { defaultValue: "Please try again later." }),
+        status: "error",
+        duration: 4000,
+      });
+    }
   };
+
   return (
     <>
       <GridItem display="flex" justifyContent="center" gap="20px" padding="10px 0 50px 0">
@@ -131,7 +138,7 @@ export default function PaymentForm() {
           {errors?.amount && touched?.amount && errors?.amount}
         </Text>
       </GridItem>
-      <Button onClick={handleSubmit} variant="brand" size="sm">
+      <Button onClick={handleSubmit} variant="brand" size="sm" isLoading={isSubmitting}>
         {t?.("common.pay")}
       </Button>
     </>

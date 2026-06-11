@@ -431,30 +431,14 @@ const FavoritesPage = () => {
               spacing={PROPERTY_CARD_GRID_SPACING}
             >
               {favorites.map((property) => (
-                <Box key={property._id} position="relative">
-                  <ModernPropertyCard
-                    property={property}
-                    isFavorite={true}
-                    isInCompare={compareIds.includes(property._id)}
-                    onFavoriteToggle={() => removeFromFavorites(property._id)}
-                    onCompareToggle={() => toggleCompare(property._id)}
-                  />
-                  {/* Quick Remove Button */}
-                  <Button
-                    position="absolute"
-                    top={4}
-                    right={4}
-                    size="sm"
-                    bg="rgba(220, 38, 38, 0.9)"
-                    color="white"
-                    borderRadius="full"
-                    onClick={() => removeFromFavorites(property._id)}
-                    _hover={{ bg: "red.600" }}
-                    zIndex={10}
-                  >
-                    <Icon as={FiTrash2} />
-                  </Button>
-                </Box>
+                <ModernPropertyCard
+                  key={property._id}
+                  property={property}
+                  isFavorite={true}
+                  isInCompare={compareIds.includes(property._id)}
+                  onFavoriteToggle={() => removeFromFavorites(property._id)}
+                  onCompareToggle={() => toggleCompare(property._id)}
+                />
               ))}
             </SimpleGrid>
           )}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon, ViewIcon, SearchIcon } from "@chakra-ui/icons";
 import {
@@ -526,28 +526,20 @@ const Index = (_props) => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoding(true);
-    const result = await dispatch(fetchOpportunityData());
-
-    const data = Array.isArray(result?.payload)
-      ? result.payload
-      : Array.isArray(result?.payload?.data)
-        ? result.payload.data
-        : [];
-    if (data.length > 0) {
+    try {
+      const result = await dispatch(fetchOpportunityData());
+      const data = Array.isArray(result?.payload) ? result.payload : [];
       setData(data);
-    } else {
-      toast.error("Failed to fetch data", "error");
+      if (!data.length) {
+        toast.error("Failed to fetch data", "error");
+      }
+    } finally {
+      setIsLoding(false);
     }
-    setIsLoding(false);
-  };
+  }, [dispatch]);
 
-  // const [columns, setColumns] = useState([...tableColumns]);
-  // const [selectedColumns, setSelectedColumns] = useState([...tableColumns]);
-  // const dataColumn = tableColumns?.filter(item => selectedColumns?.find(colum => colum?.Header === item.Header))
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchData();
   }, [action, fetchData]);

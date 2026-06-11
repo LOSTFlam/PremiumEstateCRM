@@ -40,7 +40,7 @@ const AddEdit = (props) => {
   const [accountModel, setAccountModel] = useState(false);
   const [userData, setUserData] = useState([]);
   const [opprtunityDetails, setOpportunityDetails] = useState({});
-  const accountList = useSelector((state) => state?.accountData?.data?.data);
+  const accountList = useSelector((state) => state?.accountData?.data || []);
   const user = JSON.parse(localStorage.getItem("user"));
   const [accountAccess] = HasAccess(["Account"]);
 

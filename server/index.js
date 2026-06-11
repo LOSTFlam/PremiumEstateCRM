@@ -71,9 +71,24 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        imgSrc: ["'self'", "data:", "blob:"],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://*.tile.openstreetmap.org",
+          "https://tile.openstreetmap.org",
+          "https://a.tile.openstreetmap.org",
+          "https://b.tile.openstreetmap.org",
+          "https://c.tile.openstreetmap.org",
+        ],
         fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
-        connectSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "https://*.tile.openstreetmap.org",
+          "https://a.tile.openstreetmap.org",
+          "https://b.tile.openstreetmap.org",
+          "https://c.tile.openstreetmap.org",
+        ],
         frameAncestors: ["'self'"],
         formAction: ["'self'"],
         baseUri: ["'self'"],
@@ -89,7 +104,7 @@ app.use(compression());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === "production" ? 500 : 10000,
+  max: process.env.NODE_ENV === "production" ? 3000 : 10000,
   message: {
     success: false,
     message: "Too many requests from this IP, please try again later.",

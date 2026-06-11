@@ -43,7 +43,7 @@ const AddEdit = (props) => {
   const _dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const accountList = useSelector((state) => state?.accountData?.data?.data);
+  const accountList = useSelector((state) => state?.accountData?.data || []);
   // const { isLoding } = useSelector((state) => state?.accountData)
 
   const initialValues = {

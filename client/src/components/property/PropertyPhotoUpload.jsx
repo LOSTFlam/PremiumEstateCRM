@@ -18,9 +18,7 @@ import { useTranslation } from "react-i18next";
 import {
   FiUpload,
   FiX,
-  FiImage as _FiImage,
-  FiStar,
-  FiStar as FiStarOutline,
+  FiImage,
 } from "react-icons/fi";
 import { postApi as _postApi } from "services/api";
 
@@ -221,6 +219,7 @@ export default function PropertyPhotoUpload({ propertyId: _propertyId, photos = 
             {localPhotos.map((photo, index) => (
               <Box
                 key={index}
+                role="group"
                 position="relative"
                 width={{ base: "100px", md: "150px" }}
                 height={{ base: "100px", md: "150px" }}
@@ -262,43 +261,40 @@ export default function PropertyPhotoUpload({ propertyId: _propertyId, photos = 
                   </Badge>
                 )}
 
-                {/* Action Buttons */}
-                <HStack
+                <Flex
                   position="absolute"
-                  top={2}
-                  right={2}
-                  spacing={1}
+                  insetX={0}
+                  bottom={0}
+                  justify="flex-end"
+                  align="center"
+                  gap={2}
+                  px={2}
+                  py={2}
                   zIndex={2}
-                  p={1}
-                  borderRadius="10px"
-                  bg="rgba(8, 17, 26, 0.78)"
-                  backdropFilter="blur(8px)"
-                  boxShadow="0 8px 24px rgba(0,0,0,0.35)"
+                  bg="linear-gradient(180deg, transparent 0%, rgba(7, 12, 20, 0.82) 100%)"
+                  opacity={{ base: 1, md: 0 }}
+                  _groupHover={{ opacity: 1 }}
+                  transition="opacity 0.2s ease"
                 >
-                  <IconButton
-                    aria-label={t("publicListing.setAsPrimary")}
-                    icon={index === 0 ? <FiStar /> : <FiStarOutline />}
-                    size="sm"
-                    colorScheme={index === 0 ? "green" : "gray"}
-                    variant="solid"
-                    bg={index === 0 ? "green.500" : "gray.600"}
-                    color="white"
-                    onClick={() => handleSetPrimary(index)}
-                    title={t("publicListing.setAsPrimary")}
-                  />
-
+                  {index > 0 ? (
+                    <IconButton
+                      aria-label={t("publicListing.setAsPrimary")}
+                      icon={<FiImage />}
+                      size="xs"
+                      colorScheme="green"
+                      variant="solid"
+                      onClick={() => handleSetPrimary(index)}
+                    />
+                  ) : null}
                   <IconButton
                     aria-label={t("publicListing.removePhoto")}
                     icon={<FiX />}
-                    size="sm"
+                    size="xs"
                     colorScheme="red"
                     variant="solid"
-                    bg="red.500"
-                    color="white"
                     onClick={() => handleRemovePhoto(index)}
-                    title={t("publicListing.removePhoto")}
                   />
-                </HStack>
+                </Flex>
               </Box>
             ))}
           </Flex>

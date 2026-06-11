@@ -261,50 +261,43 @@ export default function PropertyPhotoManager({
                   </Badge>
                 )}
 
-                {/* Action Buttons */}
                 <Flex
                   position="absolute"
-                  top={2}
-                  right={2}
-                  gap={1}
+                  insetX={0}
+                  bottom={0}
+                  justify="flex-end"
+                  align="center"
+                  gap={2}
+                  px={2}
+                  py={2}
                   zIndex={2}
-                  p={1}
-                  borderRadius="10px"
-                  bg="rgba(8, 17, 26, 0.78)"
-                  backdropFilter="blur(8px)"
-                  boxShadow="0 8px 24px rgba(0,0,0,0.35)"
-                  opacity={{ base: 1, md: 0.92 }}
+                  bg="linear-gradient(180deg, transparent 0%, rgba(7, 12, 20, 0.82) 100%)"
+                  opacity={{ base: 1, md: 0 }}
                   _groupHover={{ opacity: 1 }}
                   transition="opacity 0.2s ease"
                 >
-                  {index > 0 && (
+                  {index > 0 ? (
                     <Tooltip label={isRu ? "Сделать основным" : "Set as primary"}>
                       <IconButton
                         aria-label={isRu ? "Сделать основным" : "Set as primary"}
                         icon={<FiImage />}
-                        size="sm"
+                        size="xs"
                         colorScheme="green"
                         variant="solid"
-                        bg="green.500"
-                        color="white"
-                        _hover={{ bg: "green.400" }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSetPrimary(index);
                         }}
                       />
                     </Tooltip>
-                  )}
+                  ) : null}
                   <Tooltip label={isRu ? "Удалить фото" : "Remove photo"}>
                     <IconButton
                       aria-label={isRu ? "Удалить фото" : "Remove photo"}
                       icon={<FiTrash2 />}
-                      size="sm"
+                      size="xs"
                       colorScheme="red"
                       variant="solid"
-                      bg="red.500"
-                      color="white"
-                      _hover={{ bg: "red.400" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemovePhoto(index);

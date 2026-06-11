@@ -613,15 +613,19 @@ const blockUser = async (req, res, next) => {
 
 const session = async (req, res, next) => {
   try {
+    if (!req.user?.userId) {
+      return res.status(200).json({ user: null, authenticated: false });
+    }
+
     const user = await User.findOne({ _id: req.user.userId, deleted: false }).populate({
       path: "roles",
     });
 
     if (!user) {
-      return res.status(401).json({ message: "Session invalid" });
+      return res.status(200).json({ user: null, authenticated: false });
     }
 
-    res.status(200).json({ user: sanitizeUser(user) });
+    res.status(200).json({ user: sanitizeUser(user), authenticated: true });
   } catch (error) {
     next(error);
   }

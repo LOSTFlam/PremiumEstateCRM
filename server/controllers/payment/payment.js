@@ -67,8 +67,8 @@ const add = async (req, res) => {
                     quantity: item.quantity,
                 };
             }),
-            success_url: "https://real-estate-crm-jet.vercel.app/payments",
-            cancel_url: "https://real-estate-crm-jet.vercel.app/payments",
+            success_url: `${process.env.PUBLIC_APP_URL || process.env.CLIENT_URL || "http://localhost:3000"}/payments`,
+            cancel_url: `${process.env.PUBLIC_APP_URL || process.env.CLIENT_URL || "http://localhost:3000"}/payments`,
         }, {
             apiVersion: "2025-02-24.acacia",
         });

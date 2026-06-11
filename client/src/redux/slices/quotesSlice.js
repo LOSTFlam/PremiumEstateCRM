@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getApi } from "../../services/api";
+import { extractCollection } from "../../utils/normalizeResponse";
 
 export const fetchQuotesData = createAsyncThunk("fetchQuotesData", async () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const response = await getApi(
-    user.role === "superAdmin" ? "api/quotes/" : `api/quotes/?createBy=${user._id}`
+    user.role === "superAdmin" ? "api/quotes/" : `api/quotes/?createBy=${user._id}`,
+    { silent: true }
   );
-  return response;
+  return extractCollection(response);
 });
 
 const quotesSlice = createSlice({

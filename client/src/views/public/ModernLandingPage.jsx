@@ -440,7 +440,7 @@ export default function ModernLandingPage() {
       <Box position="relative" zIndex={1}>
         {isHomepageBlockVisible(visibility, "hero") ? (
           <Box position="relative">
-            {canEditHomepage ? <HomepageBlockEditBar blockKey="hero" /> : null}
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="hero" belowHeader /> : null}
           <MemoizedModernHero
             properties={properties}
             onSearch={scrollToCatalogPreview}

@@ -4,15 +4,15 @@ import { useTranslation } from "react-i18next";
 import AdminEditButton from "components/admin/AdminEditButton";
 import PropTypes from "prop-types";
 
-export default function HomepageBlockEditBar({ blockKey, blockLabel }) {
+export default function HomepageBlockEditBar({ blockKey, blockLabel, belowHeader = false }) {
   const { t } = useTranslation();
 
   return (
     <Box
       position="absolute"
-      top={{ base: 2, md: 4 }}
+      top={belowHeader ? { base: "96px", md: "88px" } : { base: 2, md: 4 }}
       right={{ base: 2, md: 4 }}
-      zIndex={5}
+      zIndex={40}
       px={3}
       py={2}
       borderRadius="full"
@@ -38,4 +38,5 @@ export default function HomepageBlockEditBar({ blockKey, blockLabel }) {
 HomepageBlockEditBar.propTypes = {
   blockKey: PropTypes.string.isRequired,
   blockLabel: PropTypes.string,
+  belowHeader: PropTypes.bool,
 };

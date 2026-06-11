@@ -58,8 +58,10 @@ const AddEdit = (props) => {
   const [accountAccess, contactAccess] = HasAccess(["Account", "Contacts"]);
   const [isOpenPreview, setIsOpenPreview] = useState(false);
 
-  const opportunityList = useSelector((state) => state?.opportunityData?.data?.data);
-  const accountList = useSelector((state) => state?.accountData?.data?.data);
+  const opportunityList = useSelector((state) => state?.opportunityData?.data || []);
+  const accountList = useSelector((state) => state?.accountData?.data || []);
+  const opportunityFetched = useSelector((state) => state?.opportunityData?.hasFetched);
+  const accountFetched = useSelector((state) => state?.accountData?.hasFetched);
   const contactList = useSelector((state) => state?.contactData?.data);
   const largeLogo = useSelector((state) =>
     state?.images?.images?.filter((item) => item?.isActive === true)
@@ -279,13 +281,13 @@ const AddEdit = (props) => {
   }, [action, fetchData, fetchInvoiceDetails, type, user.role]);
 
   useEffect(() => {
-    if (opportunityList?.length === 0 || opportunityList === undefined) {
+    if (!opportunityFetched) {
       dispatch(fetchOpportunityData());
     }
-    if (accountList?.length === 0 || accountList === undefined) {
+    if (!accountFetched) {
       dispatch(fetchAccountData());
     }
-  }, [accountList, dispatch, opportunityList]);
+  }, [accountFetched, dispatch, opportunityFetched]);
 
   return (
     <div>

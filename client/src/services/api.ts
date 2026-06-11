@@ -80,7 +80,8 @@ const buildHeaders = (
 const shouldSkipAuthRedirect = (url = ""): boolean =>
   url.includes("/api/user/login") ||
   url.includes("/api/user/register") ||
-  url.includes("/api/user/refresh-token");
+  url.includes("/api/user/refresh-token") ||
+  url.includes("/api/user/session");
 
 const getCacheEntry = (cacheKey: string): unknown | null => {
   const entry = requestCache.get(cacheKey);
@@ -193,7 +194,10 @@ apiClient.interceptors.response.use(
 
     if (error.response?.status === 429) {
       toast.error("Too many requests. Please wait a moment.");
-    } else if (error.response?.status >= 500) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status >= 500) {
       toast.error("Server error. Please try again later.");
     }
 

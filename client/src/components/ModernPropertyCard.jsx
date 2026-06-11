@@ -237,24 +237,23 @@ const ModernPropertyCard = ({
           }}
         />
 
-        <Flex
+        <Stack
           className="property-card-top"
           position="absolute"
           top={{ base: 3, md: 4 }}
           left={{ base: 3, md: 4 }}
           right={{ base: 3, md: 4 }}
-          align="flex-start"
-          gap={2}
+          spacing={2}
           zIndex={2}
+          pointerEvents="none"
         >
           <HStack
             className="property-badges"
-            flex={1}
-            minW={0}
             spacing={2}
             flexWrap="nowrap"
             overflowX="auto"
             overflowY="hidden"
+            pointerEvents="auto"
             sx={{
               scrollbarWidth: "none",
               "&::-webkit-scrollbar": { display: "none" },
@@ -329,7 +328,8 @@ const ModernPropertyCard = ({
           ) : null}
           </HStack>
 
-          <HStack className="property-actions" spacing={{ base: 1, md: 2 }} flexShrink={0}>
+          <Flex className="property-actions" justify="flex-end" pointerEvents="auto">
+          <HStack spacing={{ base: 1.5, md: 2 }}>
           <IconButton
             aria-label={
               isFavorite
@@ -345,7 +345,7 @@ const ModernPropertyCard = ({
             transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
             _hover={{
               bg: isFavorite ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.2) rotate(10deg)",
+              transform: "scale(1.05)",
               boxShadow: isFavorite
                 ? "0 0 20px rgba(212, 175, 55, 0.5)"
                 : "0 0 15px rgba(255, 255, 255, 0.2)",
@@ -372,7 +372,7 @@ const ModernPropertyCard = ({
             transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
             _hover={{
               bg: isInCompare ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.2) rotate(-10deg)",
+              transform: "scale(1.05)",
               boxShadow: isInCompare
                 ? "0 0 20px rgba(212, 175, 55, 0.5)"
                 : "0 0 15px rgba(255, 255, 255, 0.2)",
@@ -395,14 +395,15 @@ const ModernPropertyCard = ({
             transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
             _hover={{
               bg: "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.2)",
+              transform: "scale(1.05)",
               boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)",
             }}
             _active={{ transform: "scale(0.95)" }}
             onClick={handleShare}
           />
           </HStack>
-        </Flex>
+          </Flex>
+        </Stack>
 
         <Stack
           className="property-image-footer"

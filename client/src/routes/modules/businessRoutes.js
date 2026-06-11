@@ -1,6 +1,13 @@
 import React from "react";
 import { Icon } from "@chakra-ui/react";
-import { MdContacts, MdGavel, MdHome, MdLeaderboard, MdOutlineAddHome } from "react-icons/md";
+import {
+  MdAccountBalance,
+  MdContacts,
+  MdGavel,
+  MdHome,
+  MdLeaderboard,
+  MdOutlineAddHome,
+} from "react-icons/md";
 import { LuBuilding2 } from "react-icons/lu";
 import { TbBulb, TbFileInvoice } from "react-icons/tb";
 import { RiAccountCircleFill } from "react-icons/ri";
@@ -233,8 +240,10 @@ export const businessRoutes = [
   }),
   createRoute({
     name: "Bank Details",
+    i18nKey: "navigation.bankDetails",
     layout: [ROLE_PATH.superAdmin, ROLE_PATH.user],
     path: "/bank-details",
+    icon: <Icon as={MdAccountBalance} width="20px" height="20px" color="inherit" />,
     component: BankDetails,
   }),
   createRoute({

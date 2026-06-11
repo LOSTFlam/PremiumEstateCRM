@@ -70,13 +70,13 @@ a.public-brand-button {
   width: 100%;
 }
 
-.property-card .property-card-top {
-  pointer-events: none;
+.property-card .property-card-top .property-actions {
+  width: 100%;
 }
 
-.property-card .property-card-top .property-actions,
-.property-card .property-card-top .property-badges {
-  pointer-events: auto;
+.property-card .property-card-top .property-actions .chakra-stack,
+.property-card .property-card-top .property-actions .chakra-hstack {
+  flex-wrap: nowrap;
 }
 
 .property-card .property-metric-label {

@@ -40,8 +40,8 @@ const MultiRoleModel = (props) => {
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
     try {
-      const result = await getApi("api/role/");
-      setRoleData(result?.data || []);
+      const result = await getApi("api/role-access", { silent: true });
+      setRoleData(Array.isArray(result) ? result : result?.data || []);
     } catch (error) {
       // Console statement removed
     } finally {

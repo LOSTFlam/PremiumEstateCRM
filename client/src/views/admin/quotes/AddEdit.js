@@ -64,8 +64,10 @@ const AddEdit = (props) => {
     "Opportunities",
   ]);
 
-  const opportunityList = useSelector((state) => state?.opportunityData?.data?.data);
-  const accountList = useSelector((state) => state?.accountData?.data?.data);
+  const opportunityList = useSelector((state) => state?.opportunityData?.data || []);
+  const accountList = useSelector((state) => state?.accountData?.data || []);
+  const opportunityFetched = useSelector((state) => state?.opportunityData?.hasFetched);
+  const accountFetched = useSelector((state) => state?.accountData?.hasFetched);
   const contactList = useSelector((state) => state?.contactData?.data);
 
   const initialValues = {
@@ -287,13 +289,13 @@ const AddEdit = (props) => {
   }, [type, selectedId, user?.role]);
 
   useEffect(() => {
-    if (opportunityList?.length === 0 || opportunityList === undefined) {
+    if (!opportunityFetched) {
       dispatch(fetchOpportunityData());
     }
-    if (accountList?.length === 0 || accountList === undefined) {
+    if (!accountFetched) {
       dispatch(fetchAccountData());
     }
-  }, [accountList, dispatch, opportunityList]);
+  }, [accountFetched, dispatch, opportunityFetched]);
 
   return (
     <div>

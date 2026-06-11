@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getApi } from "../../services/api";
+import { extractCollection } from "../../utils/normalizeResponse";
 
 export const fetchOpportunityData = createAsyncThunk("fetchOpportunityData", async () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const response = await getApi(
-    user.role === "superAdmin" ? "api/opportunity/" : `api/opportunity/?createBy=${user._id}`
+    user.role === "superAdmin" ? "api/opportunity/" : `api/opportunity/?createBy=${user._id}`,
+    { silent: true }
   );
-  return response;
+  return extractCollection(response);
 });
 
 const opportunitySlice = createSlice({
@@ -15,6 +17,7 @@ const opportunitySlice = createSlice({
     data: [],
     isLoading: false,
     error: "",
+    hasFetched: false,
   },
   extraReducers: (builder) => {
     builder
@@ -23,11 +26,13 @@ const opportunitySlice = createSlice({
       })
       .addCase(fetchOpportunityData.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.hasFetched = true;
         state.data = action.payload;
         state.error = "";
       })
       .addCase(fetchOpportunityData.rejected, (state, action) => {
         state.isLoading = false;
+        state.hasFetched = true;
         state.data = [];
         state.error = action.error.message;
       });

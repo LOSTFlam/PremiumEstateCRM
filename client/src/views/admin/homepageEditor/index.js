@@ -21,6 +21,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  useColorModeValue,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -51,18 +52,49 @@ const setNestedValue = (source, path, value) => {
   return next;
 };
 
-const Field = ({ label, value, onChange, multiline = false, rows = 3 }) => (
-  <FormControl>
-    <FormLabel fontSize="sm">{label}</FormLabel>
-    {multiline ? (
-      <Textarea value={value || ""} rows={rows} onChange={(event) => onChange(event.target.value)} />
-    ) : (
-      <Input value={value || ""} onChange={(event) => onChange(event.target.value)} />
-    )}
-  </FormControl>
-);
+const Field = ({ label, value, onChange, multiline = false, rows = 3 }) => {
+  const labelColor = useColorModeValue("secondaryGray.700", "whiteAlpha.800");
+  const fieldBg = useColorModeValue("white", "navy.800");
+  const fieldColor = useColorModeValue("secondaryGray.900", "white");
+  const fieldBorder = useColorModeValue("secondaryGray.100", "whiteAlpha.200");
+  const placeholderColor = useColorModeValue("secondaryGray.400", "whiteAlpha.500");
+  const fieldHoverBorder = useColorModeValue("secondaryGray.200", "whiteAlpha.300");
+  const fieldProps = {
+    bg: fieldBg,
+    color: fieldColor,
+    border: "1px solid",
+    borderColor: fieldBorder,
+    borderRadius: "16px",
+    _placeholder: { color: placeholderColor },
+    _hover: { borderColor: fieldHoverBorder },
+  };
+
+  return (
+    <FormControl>
+      <FormLabel fontSize="sm" color={labelColor}>
+        {label}
+      </FormLabel>
+      {multiline ? (
+        <Textarea
+          {...fieldProps}
+          value={value || ""}
+          rows={rows}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      ) : (
+        <Input
+          {...fieldProps}
+          value={value || ""}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
+    </FormControl>
+  );
+};
 
 const BlockFields = ({ blockKey, locale, content, onChange, t }) => {
+  const nestedBorderColor = useColorModeValue("gray.200", "whiteAlpha.200");
+  const nestedHeadingColor = useColorModeValue("secondaryGray.900", "white");
   const block = content.locales?.[locale]?.[blockKey] || {};
 
   const update = (path, value) => onChange(setNestedValue(content, `locales.${locale}.${path}`, value));
@@ -95,8 +127,8 @@ const BlockFields = ({ blockKey, locale, content, onChange, t }) => {
         <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("features.title", v)} multiline rows={2} />
         <Field label={t("homepageEditor.fields.description")} value={block.description} onChange={(v) => update("features.description", v)} multiline rows={4} />
         {(block.pillars || []).map((pillar, index) => (
-          <Box key={`pillar-${index}`} p={4} borderWidth="1px" borderRadius="16px">
-            <Text fontWeight="700" mb={3}>
+          <Box key={`pillar-${index}`} p={4} borderWidth="1px" borderColor={nestedBorderColor} borderRadius="16px">
+            <Text fontWeight="700" mb={3} color={nestedHeadingColor}>
               {t("homepageEditor.fields.pillar", { index: index + 1 })}
             </Text>
             <VStack align="stretch" spacing={3}>
@@ -128,8 +160,8 @@ const BlockFields = ({ blockKey, locale, content, onChange, t }) => {
         <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("services.title", v)} />
         <Field label={t("homepageEditor.fields.description")} value={block.text} onChange={(v) => update("services.text", v)} multiline rows={3} />
         {(block.items || []).map((item, index) => (
-          <Box key={item.key || index} p={4} borderWidth="1px" borderRadius="16px">
-            <Text fontWeight="700" mb={3}>
+          <Box key={item.key || index} p={4} borderWidth="1px" borderColor={nestedBorderColor} borderRadius="16px">
+            <Text fontWeight="700" mb={3} color={nestedHeadingColor}>
               {t("homepageEditor.fields.service", { index: index + 1 })}
             </Text>
             <VStack align="stretch" spacing={3}>
@@ -171,6 +203,11 @@ export default function HomepageEditor() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const toast = useToast();
+  const subtitleColor = useColorModeValue("secondaryGray.600", "whiteAlpha.700");
+  const accordionBg = useColorModeValue("gray.50", "navy.700");
+  const accordionExpandedBg = useColorModeValue("brand.50", "whiteAlpha.100");
+  const accordionTextColor = useColorModeValue("secondaryGray.900", "white");
+  const accordionMutedColor = useColorModeValue("secondaryGray.600", "whiteAlpha.700");
   const [content, setContent] = useState(() => mergeHomepageContent());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -246,7 +283,7 @@ export default function HomepageEditor() {
       <Flex justify="space-between" align={{ base: "stretch", md: "center" }} direction={{ base: "column", md: "row" }} gap={4} mb={6}>
         <Box>
           <Heading size="lg">{t("homepageEditor.title")}</Heading>
-          <Text color="secondaryGray.600" mt={2} maxW="760px">
+          <Text color={subtitleColor} mt={2} maxW="760px">
             {t("homepageEditor.subtitle")}
           </Text>
         </Box>
@@ -276,12 +313,20 @@ export default function HomepageEditor() {
                     border="none"
                     mb={3}
                   >
-                    <AccordionButton borderRadius="16px" bg="gray.50" _expanded={{ bg: "brand.50" }}>
+                    <AccordionButton
+                      borderRadius="16px"
+                      bg={accordionBg}
+                      color={accordionTextColor}
+                      _hover={{ bg: accordionExpandedBg }}
+                      _expanded={{ bg: accordionExpandedBg, color: accordionTextColor }}
+                    >
                       <Box flex="1" textAlign="left" fontWeight="700">
                         {blockLabels[blockKey]}
                       </Box>
                       <HStack spacing={4} mr={3}>
-                        <Text fontSize="sm">{t("homepageEditor.visible")}</Text>
+                        <Text fontSize="sm" color={accordionMutedColor}>
+                          {t("homepageEditor.visible")}
+                        </Text>
                         <Switch
                           isChecked={content.visibility?.[blockKey] !== false}
                           onChange={(event) =>
