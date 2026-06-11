@@ -75,6 +75,7 @@ import LeadCaptureCard from "./LeadCaptureCard";
 import SeoMeta from "./SeoMeta";
 import i18n from "i18n/i18n.config";
 import { publicBrand } from "../publicBrand";
+import { isAuthenticatedUser } from "utils/authStorage";
 
 const splitFeatures = (...values) =>
   values
@@ -1054,7 +1055,7 @@ export default function PublicOfferView() {
                   <Flex justify="space-between" align="center">
                     <Heading size="md">{t?.("publicListing.featuresTitle")}</Heading>
                     {/* Кнопка редактирования для авторизованных */}
-                    {localStorage.getItem("token") && (
+                    {isAuthenticatedUser() && (
                       <Button
                         as={RouterLink}
                         to={`/admin/properties`}

@@ -21,7 +21,7 @@ import { MdNotificationsNone } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
+import { getApi } from "services/api";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18n/i18n.config";
@@ -82,29 +82,25 @@ export default function HeaderLinks(props) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+    let cancelled = false;
 
-    if (token) {
+    const verifySession = async () => {
       try {
-        const decodedToken = jwtDecode(token);
-        const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-        if (decodedToken?.exp < currentTime) {
-          if (!isLogoutScheduled) {
-            logOut("Token has expired");
-          }
-        } else {
-          // Schedule automatic logout when the token expires
-          const timeToExpire = (decodedToken?.exp - currentTime) * 1000; // Convert seconds to milliseconds
-          setTimeout(() => {
-            if (!isLogoutScheduled) {
-              logOut("Token has expired");
-            }
-          }, timeToExpire);
-        }
+        await getApi("api/user/session", { silent: true });
       } catch (error) {
-        // Console statement removed
+        if (!cancelled && !isLogoutScheduled && error?.response?.status === 401) {
+          logOut("Session expired");
+        }
       }
-    }
+    };
+
+    verifySession();
+    const intervalId = window.setInterval(verifySession, 5 * 60 * 1000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
   }, [isLogoutScheduled]);
 
   return (

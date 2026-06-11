@@ -21,11 +21,18 @@ const ThemeToggle = () => {
     } else if (savedTheme === "light" && colorMode !== "light") {
       toggleColorMode();
     }
+
+    document.documentElement.setAttribute(
+      "data-theme",
+      savedTheme || (colorMode === "dark" ? "dark" : "light")
+    );
   }, []);
 
   const handleToggle = () => {
+    const nextTheme = colorMode === "dark" ? "light" : "dark";
     toggleColorMode();
-    localStorage.setItem("theme", colorMode === "dark" ? "light" : "dark");
+    localStorage.setItem("theme", nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
   };
 
   if (!mounted) {

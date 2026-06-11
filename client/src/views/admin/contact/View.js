@@ -1,12 +1,10 @@
 import { AddIcon, ChevronDownIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
-  Box,
   Button,
   Flex,
   Grid,
   GridItem,
   Heading,
-  IconButton,
   Menu,
   MenuButton,
   MenuDivider,
@@ -17,59 +15,46 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
-  VStack,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import FolderTreeView from "components/FolderTreeView/folderTreeView";
 import Card from "components/card/Card";
-import { HSeparator } from "components/separator/Separator";
 import Spinner from "components/spinner/Spinner";
 import { constant } from "constant";
 import { useEffect, useState } from "react";
-import { BiLink, BiLogoLinkedin } from "react-icons/bi";
-import { BsTwitter } from "react-icons/bs";
-import { FaFacebook, FaFilePdf } from "react-icons/fa";
+import { FaFilePdf } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
-import { LuBuilding2 } from "react-icons/lu";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getApi, deleteApi } from "services/api";
-import { useTranslation } from "react-i18next";
-import AddEmailHistory from "../emailHistory/components/AddEmail";
 import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
-import AddMeeting from "../meeting/components/Addmeeting";
-import AddPhoneCall from "../phoneCall/components/AddPhoneCall";
-import Add from "./Add";
-import Edit from "./Edit";
-import _PhoneCall from "./components/phonCall";
-import PropertyModel from "./components/propertyModel";
-import _PropertyTable from "./components/propertyTable";
 import { HasAccess } from "../../../redux/accessUtils";
-import DataNotFound from "components/notFoundData";
-import CustomView from "utils/customView";
-import AddDocumentModal from "utils/addDocumentModal";
-import CommonDeleteModel from "components/commonDeleteModel";
-import CommonCheckTable from "components/reactTable/checktable";
-import moment from "moment";
-import AddEdit from "../task/components/AddEdit";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchContactCustomFiled } from "../../../redux/slices/contactCustomFiledSlice";
 import { fetchPropertyCustomFiled } from "../../../redux/slices/propertyCustomFiledSlice";
 import html2pdf from "html2pdf.js";
-import AddEditQuotes from "../quotes/AddEdit";
-import AddEditInvoice from "../invoice/AddEdit";
+import moment from "moment";
+import ContactOverviewTab from "./components/view/ContactOverviewTab";
+import ContactEngagementTab from "./components/view/ContactEngagementTab";
+import ContactDocumentsTab from "./components/view/ContactDocumentsTab";
+import ContactSocialTab from "./components/view/ContactSocialTab";
+import ContactViewModals from "./components/view/ContactViewModals";
+import {
+  createCallColumns,
+  createColumnsDataColumns,
+  createInvoicesColumns,
+  createMeetingColumns,
+  createQuotesColumns,
+  createTaskColumns,
+} from "./components/view/contactViewColumns";
+
 const View = () => {
-  const { t } = useTranslation();
   const param = useParams();
   const textColor = useColorModeValue("gray.500", "white");
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const buttonbg = useColorModeValue("gray.200", "white");
   const [data, setData] = useState([]);
   const [allData, setAllData] = useState([]);
-  // const [contactData, setContactData] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [edit, setEdit] = useState(false);
   const [deleteModel, setDelete] = useState(false);
@@ -119,103 +104,14 @@ const View = () => {
     "Invoices",
     "Account",
   ]);
-  const columnsDataColumns = [
-    { Header: "sender", accessor: "senderName" },
-    {
-      Header: "recipient",
-      accessor: "createByName",
-      cell: (cell) => (
-        <Link to={`/Email/${cell?.row?.original?._id}`}>
-          <Text
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value || "-"}
-          </Text>
-        </Link>
-      ),
-    },
-    {
-      Header: "time stamp",
-      accessor: "timestamp",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {moment(cell?.value)?.fromNow()}
-          </Text>
-        </div>
-      ),
-    },
-    {
-      Header: "Created",
-      accessor: "createBy",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {moment(cell?.row?.values?.timestamp)?.format("h:mma (DD/MM)")}
-          </Text>
-        </div>
-      ),
-    },
-  ];
 
-  const callColumns = [
-    { Header: "sender", accessor: "senderName" },
-    {
-      Header: "recipient",
-      accessor: "createByName",
-      cell: (cell) => (
-        <Link to={`/phone-call/${cell?.row?.original?._id}`}>
-          <Text
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value || "-"}
-          </Text>
-        </Link>
-      ),
-    },
-    {
-      Header: "time stamp",
-      accessor: "timestamp",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {moment(cell?.value)?.fromNow()}
-          </Text>
-        </div>
-      ),
-    },
-    {
-      Header: "Created",
-      accessor: "createBy",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {moment(cell?.row?.values?.timestamp)?.format("h:mma (DD/MM)")}
-          </Text>
-        </div>
-      ),
-    },
-  ];
-
-  const _PropertyColumn = [
-    { Header: "property Type", accessor: "propertyType" },
-    { Header: "property Address", accessor: "propertyAddress" },
-    { Header: "listing Price", accessor: "listingPrice" },
-    { Header: "square Footage", accessor: "squareFootage" },
-    { Header: "year Built", accessor: "yearBuilt" },
-  ];
+  const columnDeps = { navigate, textColor, user, accountAccess };
+  const columnsDataColumns = createColumnsDataColumns(columnDeps);
+  const callColumns = createCallColumns(columnDeps);
+  const MeetingColumns = createMeetingColumns(columnDeps);
+  const quotesColumns = createQuotesColumns(columnDeps);
+  const invoicesColumns = createInvoicesColumns(columnDeps);
+  const taskColumns = createTaskColumns(columnDeps);
 
   const fetchCustomDataFields = async () => {
     setIsLoding(true);
@@ -232,226 +128,6 @@ const View = () => {
     setColumns(tempTableColumns);
     setIsLoding(false);
   };
-  const MeetingColumns = [
-    {
-      Header: "agenda",
-      accessor: "agenda",
-      cell: (cell) => (
-        <Link to={`/metting/${cell?.row?.original?._id}`}>
-          <Text
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value || "-"}
-          </Text>
-        </Link>
-      ),
-    },
-    { Header: "date Time", accessor: "dateTime" },
-    {
-      Header: "times tamp",
-      accessor: "timestamp",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text color={textColor} fontSize="sm" fontWeight="700">
-            {moment(cell?.value)?.fromNow()}
-          </Text>
-        </div>
-      ),
-    },
-    { Header: "create By", accessor: "createdByName" },
-  ];
-
-  const quotesColumns = [
-    {
-      Header: "Quote Number",
-      accessor: "quoteNumber",
-      isSortable: false,
-      width: 10,
-    },
-    {
-      Header: "Title",
-      accessor: "title",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text
-            onClick={() => navigate(`/quotesView/${cell?.row?.original._id}`)}
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-              cursor: "pointer",
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value}
-          </Text>
-        </div>
-      ),
-    },
-    { Header: "Quote Stage", accessor: "quoteStage" },
-    {
-      Header: "Contact",
-      accessor: "contact",
-      cell: (cell) => (
-        <Text>{cell?.row?.original?.contactName ? cell?.row?.original?.contactName : "-"}</Text>
-      ),
-    },
-    {
-      Header: "Account",
-      accessor: "account",
-      cell: (cell) =>
-        user?.role === "superAdmin" || accountAccess?.view ? (
-          <div className="selectOpt">
-            <Text
-              onClick={() =>
-                navigate(
-                  cell?.row?.original?.account !== null &&
-                    `/accountView/${cell?.row?.original?.account}`
-                )
-              }
-              me="10px"
-              sx={{
-                "&:hover": { color: "blue.500", textDecoration: "underline" },
-                cursor: "pointer",
-              }}
-              color="brand.600"
-              fontSize="sm"
-              fontWeight="700"
-            >
-              {cell?.row?.original?.accountName ? cell?.row?.original?.accountName : "-"}
-            </Text>
-          </div>
-        ) : (
-          <Text>{cell?.row?.original?.accountName ? cell?.row?.original?.accountName : "-"}</Text>
-        ),
-    },
-    {
-      Header: "Grand Total",
-      accessor: "grandTotal",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text>
-            {cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}
-          </Text>
-        </div>
-      ),
-    },
-    { Header: "valid Until", accessor: "validUntil" },
-  ];
-
-  const invoicesColumns = [
-    {
-      Header: "Invoice Number",
-      accessor: "invoiceNumber",
-      isSortable: false,
-      width: 10,
-    },
-    {
-      Header: "Title",
-      accessor: "title",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text
-            onClick={() => navigate(`/invoicesView/${cell?.row?.original?._id}`)}
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-              cursor: "pointer",
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value}
-          </Text>
-        </div>
-      ),
-    },
-    {
-      Header: "Status",
-      accessor: "status",
-    },
-    {
-      Header: "Contact",
-      accessor: "contact",
-      cell: (cell) => (
-        <Text>{cell?.row?.original?.contactName ? cell?.row?.original?.contactName : "-"}</Text>
-      ),
-    },
-    {
-      Header: "Account",
-      accessor: "account",
-      cell: (cell) =>
-        user?.role === "superAdmin" || accountAccess?.view ? (
-          <div className="selectOpt">
-            <Text
-              onClick={() =>
-                navigate(
-                  cell?.row?.original?.account !== null &&
-                    `/accountView/${cell?.row?.original?.account}`
-                )
-              }
-              me="10px"
-              sx={{
-                "&:hover": { color: "blue.500", textDecoration: "underline" },
-                cursor: "pointer",
-              }}
-              color="brand.600"
-              fontSize="sm"
-              fontWeight="700"
-            >
-              {cell?.row?.original?.accountName ? cell?.row?.original?.accountName : "-"}
-            </Text>
-          </div>
-        ) : (
-          <Text>{cell?.row?.original?.accountName ? cell?.row?.original?.accountName : "-"}</Text>
-        ),
-    },
-    {
-      Header: "Grand Total",
-      accessor: "grandTotal",
-      cell: (cell) => (
-        <div className="selectOpt">
-          <Text>
-            {cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}
-          </Text>
-        </div>
-      ),
-    },
-  ];
-
-  const taskColumns = [
-    {
-      Header: "Title",
-      accessor: "title",
-      cell: (cell) => (
-        <Link to={`/view/${cell?.row?.original?._id}`}>
-          <Text
-            me="10px"
-            sx={{
-              "&:hover": { color: "blue.500", textDecoration: "underline" },
-            }}
-            color="brand.600"
-            fontSize="sm"
-            fontWeight="700"
-          >
-            {cell?.value || "-"}
-          </Text>
-        </Link>
-      ),
-    },
-    { Header: "Category", accessor: "category" },
-    { Header: "Assign To", accessor: "assignToName" },
-    { Header: "Start Date", accessor: "start" },
-    { Header: "End Date", accessor: "end" },
-  ];
 
   const handleTabChange = (index) => {
     setSelectedTab(index);
@@ -461,9 +137,8 @@ const View = () => {
     const element = document.getElementById("reports");
     if (element) {
       element.style.display = "block";
-      element.style.width = "100%"; // Adjust width for mobile
+      element.style.width = "100%";
       element.style.height = "auto";
-      // setTimeout(() => {
       html2pdf()
         .from(element)
         .set({
@@ -477,9 +152,6 @@ const View = () => {
         .then(() => {
           element.style.display = "";
         });
-      // }, 500);
-    } else {
-      // Console statement removed
     }
   };
 
@@ -658,600 +330,64 @@ const View = () => {
             </Grid>
             <TabPanels>
               <TabPanel pt={4} p={0}>
-                <CustomView
-                  data={contactData?.[0]}
-                  fieldData={data}
+                <ContactOverviewTab
+                  contactData={contactData}
+                  data={data}
                   toCamelCase={toCamelCase}
-                  moduleId={contactData?.[0]?._id}
                   fetchData={fetchData}
-                  id="reports"
+                  allData={allData}
+                  isLoding={isLoding}
+                  columns={columns}
+                  propertyData={propertyData}
+                  setPropertyModel={setPropertyModel}
                 />
-
-                <GridItem colSpan={{ base: 12 }} mt={4}>
-                  <Card>
-                    <Grid templateColumns={{ base: "1fr" }} gap={4}>
-                      <GridItem colSpan={2}>
-                        <Box>
-                          <Flex alignItems={"center"} mb={2} justifyContent={"space-between"}>
-                            <Heading size="md">
-                              Property of Interest (
-                              {allData?.interestProperty?.interestProperty?.length})
-                            </Heading>
-                            <Button
-                              onClick={() => setPropertyModel(true)}
-                              leftIcon={<LuBuilding2 />}
-                              size="sm"
-                              colorScheme="gray"
-                              bg={buttonbg}
-                            >
-                              Select Interested Property{" "}
-                            </Button>
-                          </Flex>
-                        </Box>
-
-                        <Grid templateColumns={"repeat(2, 1fr)"} gap={4}>
-                          <GridItem colSpan={{ base: 2 }}>
-                            {/* <PropertyTable fetchData={fetchData} columnsData={PropertyColumn} tableData={allData?.interestProperty?.interestProperty?.length > 0 ? allData?.interestProperty?.interestProperty : []} title={'Interested Property'} /> */}
-                            <CommonCheckTable
-                              isLoding={isLoding}
-                              columnData={columns ?? []}
-                              dataColumn={columns ?? []}
-                              allData={allData?.interestProperty?.interestProperty || []}
-                              tableData={allData?.interestProperty?.interestProperty || []}
-                              tableCustomFields={
-                                propertyData?.[0]?.fields?.filter(
-                                  (field) => field?.isTableField === true
-                                ) || []
-                              }
-                              AdvanceSearch={() => ""}
-                              ManageGrid={false}
-                              deleteMany={false}
-                              selectType="multiple"
-                              customSearch={false}
-                              checkBox={false}
-                            />
-                          </GridItem>
-                        </Grid>
-                      </GridItem>
-                    </Grid>
-                  </Card>
-                </GridItem>
               </TabPanel>
               <TabPanel pt={4} p={0}>
-                <GridItem colSpan={{ base: 12 }}>
-                  <Grid templateColumns={{ base: "1fr" }} gap={4}>
-                    <Grid templateColumns={"repeat(12, 1fr)"} gap={4}>
-                      {emailAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Email"}
-                              isLoding={isLoding}
-                              columnData={columnsDataColumns ?? []}
-                              // dataColumn={columnsDataColumns ?? []}
-                              allData={
-                                showEmail
-                                  ? allData?.EmailHistory
-                                  : allData?.EmailHistory?.length > 0
-                                    ? [allData?.EmailHistory[0]]
-                                    : []
-                              }
-                              tableData={
-                                showEmail
-                                  ? allData?.EmailHistory
-                                  : allData?.EmailHistory?.length > 0
-                                    ? [allData?.EmailHistory[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              dataLength={allData?.EmailHistory?.length}
-                              tableCustomFields={[]}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setAddEmailHistory(true)}
-                              access={emailAccess}
-                            />
-
-                            {allData?.EmailHistory?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  variant="outline"
-                                  size="sm"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showEmail ? setShowEmail(false) : setShowEmail(true)
-                                  }
-                                >
-                                  {showEmail
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                      {callAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Call"}
-                              isLoding={isLoding}
-                              columnData={callColumns ?? []}
-                              // dataColumn={callColumns ?? []}
-                              allData={
-                                showCall
-                                  ? allData?.phoneCallHistory
-                                  : allData?.phoneCallHistory?.length > 0
-                                    ? [allData?.phoneCallHistory[0]]
-                                    : []
-                              }
-                              tableData={
-                                showCall
-                                  ? allData?.phoneCallHistory
-                                  : allData?.phoneCallHistory?.length > 0
-                                    ? [allData?.phoneCallHistory[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              tableCustomFields={[]}
-                              dataLength={allData?.phoneCallHistory?.length}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setAddPhoneCall(true)}
-                              access={callAccess}
-                            />
-
-                            {allData?.phoneCallHistory?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  variant="outline"
-                                  size="sm"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showCall ? setShowCall(false) : setShowCall(true)
-                                  }
-                                >
-                                  {showCall
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                      {taskAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Task"}
-                              isLoding={isLoding}
-                              columnData={taskColumns ?? []}
-                              // dataColumn={taskColumns ?? []}
-                              allData={
-                                showTasks
-                                  ? allData?.task
-                                  : allData?.task?.length > 0
-                                    ? [allData?.task[0]]
-                                    : []
-                              }
-                              tableData={
-                                showTasks
-                                  ? allData?.task
-                                  : allData?.task?.length > 0
-                                    ? [allData?.task[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              dataLength={allData?.task?.length}
-                              tableCustomFields={[]}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setTaskModel(true)}
-                              access={taskAccess}
-                            />
-
-                            {allData?.task?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  variant="outline"
-                                  size="sm"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showTasks ? setShowTasks(false) : setShowTasks(true)
-                                  }
-                                >
-                                  {showTasks
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                      {meetingAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Meeting"}
-                              isLoding={isLoding}
-                              columnData={MeetingColumns ?? []}
-                              // dataColumn={MeetingColumns ?? []}
-                              dataLength={allData?.meetingHistory?.length}
-                              allData={
-                                showMeetings
-                                  ? allData?.meetingHistory
-                                  : allData?.meetingHistory?.length > 0
-                                    ? [allData?.meetingHistory[0]]
-                                    : []
-                              }
-                              tableData={
-                                showMeetings
-                                  ? allData?.meetingHistory
-                                  : allData?.meetingHistory?.length > 0
-                                    ? [allData?.meetingHistory[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              tableCustomFields={[]}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setMeeting(true)}
-                              access={meetingAccess}
-                            />
-
-                            {allData?.meetingHistory?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  size="sm"
-                                  variant="outline"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showMeetings ? setShowMeetings(false) : setShowMeetings(true)
-                                  }
-                                >
-                                  {showMeetings
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                      {quotesAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Quotes"}
-                              isLoding={isLoding}
-                              columnData={quotesColumns ?? []}
-                              // dataColumn={quotesColumns ?? []}
-                              dataLength={allData?.quotes?.length}
-                              allData={
-                                showQuotes
-                                  ? allData?.quotes
-                                  : allData?.quotes?.length > 0
-                                    ? [allData?.quotes[0]]
-                                    : []
-                              }
-                              tableData={
-                                showQuotes
-                                  ? allData?.quotes
-                                  : allData?.quotes?.length > 0
-                                    ? [allData?.quotes[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              tableCustomFields={[]}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setAddQuotes(true)}
-                              access={quotesAccess}
-                            />
-
-                            {allData?.quotes?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  size="sm"
-                                  variant="outline"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showQuotes ? setShowQuotes(false) : setShowQuotes(true)
-                                  }
-                                >
-                                  {showQuotes
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                      {invoicesAccess?.view && (
-                        <GridItem colSpan={{ base: 12, md: 6 }}>
-                          <Card overflow={"scroll"}>
-                            <CommonCheckTable
-                              title={"Invoices"}
-                              isLoding={isLoding}
-                              columnData={invoicesColumns ?? []}
-                              // dataColumn={invoicesColumns ?? []}
-                              dataLength={allData?.invoice?.length}
-                              allData={
-                                showInvoices
-                                  ? allData?.invoice
-                                  : allData?.invoice?.length > 0
-                                    ? [allData?.invoice[0]]
-                                    : []
-                              }
-                              tableData={
-                                showInvoices
-                                  ? allData?.invoice
-                                  : allData?.invoice?.length > 0
-                                    ? [allData?.invoice[0]]
-                                    : []
-                              }
-                              AdvanceSearch={false}
-                              tableCustomFields={[]}
-                              checkBox={false}
-                              deleteMany={true}
-                              ManageGrid={false}
-                              onOpen={() => setAddInvoice(true)}
-                              access={invoicesAccess}
-                            />
-
-                            {allData?.invoice?.length > 1 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "end",
-                                }}
-                              >
-                                <Button
-                                  colorScheme="brand"
-                                  size="sm"
-                                  variant="outline"
-                                  display="flex"
-                                  justifyContant="end"
-                                  onClick={() =>
-                                    showInvoices ? setShowInvoices(false) : setShowInvoices(true)
-                                  }
-                                >
-                                  {showInvoices
-                                    ? t?.("modules.contact.view.showLess")
-                                    : t?.("modules.contact.view.showMore")}
-                                </Button>
-                              </div>
-                            )}
-                          </Card>
-                        </GridItem>
-                      )}
-                    </Grid>
-                  </Grid>
-                </GridItem>
+                <ContactEngagementTab
+                  allData={allData}
+                  isLoding={isLoding}
+                  emailAccess={emailAccess}
+                  callAccess={callAccess}
+                  taskAccess={taskAccess}
+                  meetingAccess={meetingAccess}
+                  quotesAccess={quotesAccess}
+                  invoicesAccess={invoicesAccess}
+                  columnsDataColumns={columnsDataColumns}
+                  callColumns={callColumns}
+                  taskColumns={taskColumns}
+                  MeetingColumns={MeetingColumns}
+                  quotesColumns={quotesColumns}
+                  invoicesColumns={invoicesColumns}
+                  showEmail={showEmail}
+                  setShowEmail={setShowEmail}
+                  showCall={showCall}
+                  setShowCall={setShowCall}
+                  showTasks={showTasks}
+                  setShowTasks={setShowTasks}
+                  showMeetings={showMeetings}
+                  setShowMeetings={setShowMeetings}
+                  showQuotes={showQuotes}
+                  setShowQuotes={setShowQuotes}
+                  showInvoices={showInvoices}
+                  setShowInvoices={setShowInvoices}
+                  setAddEmailHistory={setAddEmailHistory}
+                  setAddPhoneCall={setAddPhoneCall}
+                  setTaskModel={setTaskModel}
+                  setMeeting={setMeeting}
+                  setAddQuotes={setAddQuotes}
+                  setAddInvoice={setAddInvoice}
+                />
               </TabPanel>
               <TabPanel pt={4} p={0}>
-                <GridItem colSpan={{ base: 12 }}>
-                  <Card minH={"40vh"}>
-                    <Flex alignItems={"center"} justifyContent={"space-between"} mb="2">
-                      <Heading size="md" mb={3}>
-                        Documents
-                      </Heading>
-                      <Button
-                        leftIcon={<AddIcon />}
-                        size="sm"
-                        variant="brand"
-                        onClick={() => setAddDocument(true)}
-                      >
-                        Add Document
-                      </Button>
-                    </Flex>
-                    <HSeparator />
-                    <VStack mt={4} alignItems="flex-start">
-                      {allData?.Document?.length > 0 ? (
-                        allData?.Document?.map((item) => (
-                          <FolderTreeView
-                            key={item?._id || item?.folderName}
-                            name={item?.folderName}
-                            item={item}
-                          >
-                            {item?.files?.map((file) => (
-                              <FolderTreeView
-                                key={file?._id || file?.fileName}
-                                download={download}
-                                data={file}
-                                name={file?.fileName}
-                                isFile
-                                from="contact"
-                              />
-                            ))}
-                          </FolderTreeView>
-                        ))
-                      ) : (
-                        <Text
-                          textAlign={"center"}
-                          width="100%"
-                          color={textColor}
-                          fontSize="sm"
-                          fontWeight="700"
-                        >
-                          <DataNotFound />
-                        </Text>
-                      )}
-                    </VStack>
-                  </Card>
-                </GridItem>
+                <ContactDocumentsTab
+                  allData={allData}
+                  download={download}
+                  setAddDocument={setAddDocument}
+                />
               </TabPanel>
 
               <TabPanel pt={4} p={0}>
-                <GridItem colSpan={{ base: 12 }}>
-                  <Card>
-                    <Grid templateColumns={{ base: "1fr" }} gap={4}>
-                      <GridItem colSpan={2}>
-                        <Box>
-                          <Heading size="md" mb={3}>
-                            Social Media Profiles
-                          </Heading>
-                          <HSeparator />
-                        </Box>
-                      </GridItem>
-                      {data?.linkedInProfile ||
-                      data?.facebookProfile ||
-                      data?.twitterHandle ||
-                      data?.otherProfiles ? (
-                        <Grid
-                          templateColumns={"repeat(12, 1fr)"}
-                          gap={4}
-                          my={3}
-                          flexWrap={"wrap"}
-                          display={"flex"}
-                          justifyContent={"center"}
-                        >
-                          {data?.linkedInProfile && (
-                            <GridItem textAlign={"center"} colSpan={{ base: 2, md: 1 }}>
-                              <a target="_blank" href={data?.linkedInProfile} rel="noreferrer">
-                                <IconButton
-                                  colorScheme="brand"
-                                  aria-label="Call Fred"
-                                  borderRadius="10px"
-                                  size="md"
-                                  icon={<BiLogoLinkedin />}
-                                />
-                              </a>
-                              <Text fontSize="sm" mt={2} fontWeight="bold" color={"blackAlpha.900"}>
-                                {" "}
-                                LinkedIn Profile{" "}
-                              </Text>
-                            </GridItem>
-                          )}
-                          {data?.facebookProfile && (
-                            <GridItem textAlign={"center"} colSpan={{ base: 2, md: 1 }}>
-                              <a
-                                target="_blank"
-                                href={`https://www.facebook.com/${data?.facebookProfile}`}
-                                rel="noreferrer"
-                              >
-                                <IconButton
-                                  colorScheme="brand"
-                                  aria-label="Call Fred"
-                                  borderRadius="10px"
-                                  size="md"
-                                  icon={<FaFacebook />}
-                                />
-                              </a>
-                              <Text fontSize="sm" mt={2} fontWeight="bold" color={"blackAlpha.900"}>
-                                {" "}
-                                Facebook Profile{" "}
-                              </Text>
-                            </GridItem>
-                          )}
-                          {data?.linkedInProfile && (
-                            <GridItem textAlign={"center"} colSpan={{ base: 2, md: 1 }}>
-                              <a
-                                target="_blank"
-                                href={`https://www.facebook.com/${data?.facebookProfile}`}
-                                rel="noreferrer"
-                              >
-                                <IconButton
-                                  colorScheme="brand"
-                                  aria-label="Call Fred"
-                                  borderRadius="10px"
-                                  size="md"
-                                  icon={<BsTwitter />}
-                                />
-                              </a>
-                              <Text
-                                fontSize="sm"
-                                mt={2}
-                                px={2}
-                                fontWeight="bold"
-                                color={"blackAlpha.900"}
-                              >
-                                Twitter Handle{" "}
-                              </Text>
-                            </GridItem>
-                          )}
-
-                          {data?.linkedInProfile && (
-                            <GridItem textAlign={"center"} colSpan={{ base: 2, md: 1 }}>
-                              <a target="_blank" href={data?.otherProfiles} rel="noreferrer">
-                                <IconButton
-                                  colorScheme="brand"
-                                  aria-label="Call Fred"
-                                  borderRadius="10px"
-                                  size="md"
-                                  icon={<BiLink />}
-                                />
-                              </a>
-                              <Text fontSize="sm" mt={2} fontWeight="bold" color={"blackAlpha.900"}>
-                                {" "}
-                                Other Profiles{" "}
-                              </Text>
-                            </GridItem>
-                          )}
-                        </Grid>
-                      ) : (
-                        <Grid templateColumns={"repeat(2, 1fr)"} gap={4}>
-                          <GridItem colSpan={{ base: 2 }} textAlign={"center"}>
-                            <Text
-                              textAlign={"center"}
-                              width="100%"
-                              color={textColor}
-                              fontSize="sm"
-                              fontWeight="700"
-                            >
-                              {" "}
-                              <DataNotFound />
-                            </Text>
-                          </GridItem>
-                        </Grid>
-                      )}
-                    </Grid>
-                  </Card>
-                </GridItem>
+                <ContactSocialTab data={data} />
               </TabPanel>
             </TabPanels>
           </Tabs>
@@ -1268,101 +404,38 @@ const View = () => {
           )}
         </>
       )}
-      {isOpen && (
-        <Add isOpen={isOpen} size={size} onClose={onClose} contactData={contactData?.[0]} />
-      )}
-      <Edit
-        isOpen={edit}
-        contactData={contactData?.[0]}
+      <ContactViewModals
+        isOpen={isOpen}
+        onClose={onClose}
         size={size}
-        onClose={setEdit}
+        contactData={contactData}
+        edit={edit}
+        setEdit={setEdit}
         setAction={setAction}
-        moduleId={contactData?.[0]?._id}
         data={data}
-      />
-
-      <CommonDeleteModel
-        isOpen={deleteModel}
-        onClose={() => setDelete(false)}
-        type="Contact"
-        handleDeleteData={handleDeleteContact}
-        ids={param?.id}
-      />
-
-      <AddEmailHistory
-        lead="false"
-        contactEmail={allData?.contact?.email}
+        deleteModel={deleteModel}
+        setDelete={setDelete}
+        handleDeleteContact={handleDeleteContact}
+        param={param}
+        allData={allData}
         fetchData={fetchData}
-        isOpen={addEmailHistory}
-        onClose={setAddEmailHistory}
-        id={param?.id}
-      />
-
-      <AddDocumentModal
+        addEmailHistory={addEmailHistory}
+        setAddEmailHistory={setAddEmailHistory}
         addDocument={addDocument}
         setAddDocument={setAddDocument}
-        linkId={param?.id}
-        from="contact"
-        setAction={setAction}
-        fetchData={fetchData}
-      />
-
-      <AddMeeting
-        fetchData={fetchData}
-        leadContect={splitValue[0]}
-        isOpen={addMeeting}
-        onClose={setMeeting}
-        from="contact"
-        id={param?.id}
-        setAction={setAction}
-        view={true}
-      />
-
-      <AddEdit
-        isOpen={taskModel}
-        fetchData={fetchData}
-        leadContect={splitValue[0]}
-        onClose={setTaskModel}
-        id={param?.id}
-        userAction={"add"}
-        view={true}
-      />
-
-      <AddPhoneCall
-        viewData={allData}
-        fetchData={fetchData}
-        setAction={setAction}
-        isOpen={addPhoneCall}
-        onClose={setAddPhoneCall}
-        data={data?.contact}
-        id={param?.id}
-        cData={data}
-      />
-
-      <AddEditQuotes
-        isOpen={addQuotes}
-        size={"lg"}
-        onClose={() => setAddQuotes(false)}
-        setAction={setAction}
-        type={"add"}
-        contactId={param?.id}
-      />
-
-      <AddEditInvoice
-        isOpen={addInvoice}
-        size={"lg"}
-        onClose={() => setAddInvoice(false)}
-        setAction={setAction}
-        type={"add"}
-        contactId={param?.id}
-      />
-
-      <PropertyModel
-        fetchData={fetchData}
-        isOpen={propertyModel}
-        onClose={setPropertyModel}
-        id={param?.id}
-        interestProperty={data?.interestProperty}
+        addMeeting={addMeeting}
+        setMeeting={setMeeting}
+        splitValue={splitValue}
+        taskModel={taskModel}
+        setTaskModel={setTaskModel}
+        addPhoneCall={addPhoneCall}
+        setAddPhoneCall={setAddPhoneCall}
+        addQuotes={addQuotes}
+        setAddQuotes={setAddQuotes}
+        addInvoice={addInvoice}
+        setAddInvoice={setAddInvoice}
+        propertyModel={propertyModel}
+        setPropertyModel={setPropertyModel}
       />
     </>
   );

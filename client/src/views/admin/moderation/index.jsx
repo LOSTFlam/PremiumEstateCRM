@@ -36,6 +36,7 @@ import { extractApiErrorMessage } from "utils/errorMessages";
 import { normalizeModerationStatus, moderationStatusMeta } from "utils/moderationStatus";
 import { formatPrice, normalizePropertyMedia } from "views/public/catalog/catalogData";
 import { placeholderImage } from "utils/propertyStockImages";
+import CabinetEmptyState from "components/cabinet/CabinetEmptyState";
 
 const primaryImage = (listing) =>
   listing?.propertyPhotos?.[0]?.img || listing?.propertyPhotos?.[0] || placeholderImage;
@@ -174,21 +175,13 @@ export default function ModerationQueue() {
           ))}
         </SimpleGrid>
       ) : listings.length === 0 ? (
-        <Box
-          bg={cardBg}
-          border="1px solid"
-          borderColor={borderColor}
-          borderRadius="24px"
-          p={10}
-          textAlign="center"
-        >
-          <Text fontWeight="700" fontSize="lg">
-            {t("moderationQueue.emptyTitle")}
-          </Text>
-          <Text color={subtleText} mt={2}>
-            {t("moderationQueue.emptyHint")}
-          </Text>
-        </Box>
+        <CabinetEmptyState
+          icon={MdGavel}
+          title={t("moderationQueue.emptyTitle")}
+          description={t("moderationQueue.emptyHint")}
+          actionLabel={t("moderationQueue.refresh")}
+          onAction={fetchQueue}
+        />
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={5}>
           {listings.map((listing) => {

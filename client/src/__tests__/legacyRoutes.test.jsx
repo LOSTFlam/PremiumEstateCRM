@@ -54,7 +54,6 @@ describe("AnimatedRoutes", () => {
   });
 
   it("routes authenticated admins into the admin shell", async () => {
-    localStorage.setItem("token", "test-token");
     localStorage.setItem("user", JSON.stringify({ role: "superAdmin" }));
 
     renderRoutes("/dashboard");

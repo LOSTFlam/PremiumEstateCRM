@@ -1,5 +1,5 @@
 const path = require("path");
-const multer = require("multer");
+const { createSecureStorage } = require("../../middlewares/secureUpload");
 const ejs = require("ejs");
 let puppeteer;
 try {
@@ -19,19 +19,7 @@ const { resolveUploadPath } = require("../../utils/uploadPaths");
 
 const getOfferLetterDir = () => resolveUploadPath("offer-letter");
 
-const offerLetterStorage = multer({
-  storage: multer.diskStorage({
-    destination(req, file, cb) {
-      const uploadDir = getOfferLetterDir();
-      ensureUploadDir(uploadDir);
-      cb(null, uploadDir);
-    },
-    filename(req, file, cb) {
-      const uploadDir = getOfferLetterDir();
-      cb(null, buildUniqueFilename(uploadDir, file.originalname));
-    },
-  }),
-});
+const offerLetterStorage = createSecureStorage(getOfferLetterDir(), "images");
 
 const genrateOfferLetter = async (req, res) => {
   try {

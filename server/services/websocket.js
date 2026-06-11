@@ -1,5 +1,20 @@
 const WebSocket = require("ws");
 const jwt = require("jsonwebtoken");
+const { AUTH_COOKIE_NAME } = require("../controllers/user/auth.service");
+
+const parseCookies = (cookieHeader = "") => {
+  const cookies = {};
+  cookieHeader.split(";").forEach((part) => {
+    const trimmed = part.trim();
+    if (!trimmed) return;
+    const separatorIndex = trimmed.indexOf("=");
+    if (separatorIndex === -1) return;
+    const key = trimmed.slice(0, separatorIndex);
+    const value = trimmed.slice(separatorIndex + 1);
+    cookies[key] = decodeURIComponent(value);
+  });
+  return cookies;
+};
 
 let wss = null;
 const clients = new Map();
@@ -8,8 +23,9 @@ const initWebSocket = (server) => {
   wss = new WebSocket.Server({ server });
 
   wss.on("connection", (ws, req) => {
-    const params = new URLSearchParams(req.url.split("?")[1]);
-    const token = params.get("token");
+    const params = new URLSearchParams((req.url || "").split("?")[1] || "");
+    const cookies = parseCookies(req.headers.cookie || "");
+    const token = cookies[AUTH_COOKIE_NAME] || params.get("token");
 
     if (!token) {
       ws.close(1008, "Authentication required");

@@ -11,10 +11,7 @@ export const useWebSocket = (url, options = {}) => {
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
 
-    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-    const wsUrl = `${url}?token=${token}`;
-
-    const ws = new WebSocket(wsUrl);
+    const ws = new WebSocket(url);
     wsRef.current = ws;
 
     ws.onopen = () => {

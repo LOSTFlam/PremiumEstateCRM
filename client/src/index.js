@@ -48,18 +48,7 @@ const ReactQueryDevtools = import.meta.env.DEV
     )
   : null;
 
-const getStoredUser = () => {
-  const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user");
-
-  if (!rawUser) return null;
-
-  try {
-    return JSON.parse(rawUser);
-  } catch (error) {
-    // Console statement removed
-    return null;
-  }
-};
+import { getStoredUser, isAuthenticatedUser } from "utils/authStorage";
 
 const resolveLocale = () => {
   if (typeof window === "undefined") return "ru";
@@ -387,9 +376,8 @@ export function RouteFallback() {
 
 export function AnimatedRoutes() {
   const location = useLocation();
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const user = getStoredUser();
-  const isAuthenticated = Boolean(token && user?.role);
+  const isAuthenticated = isAuthenticatedUser();
 
   return (
     <AnimatePresence mode="wait">
@@ -421,10 +409,16 @@ export function AnimatedRoutes() {
           {isAuthenticated ? (
             user?.role === "user" ? (
               <Route path="/*" element={<UserLayout />} />
-            ) : user?.role === "superAdmin" ? (
+            ) : ["superAdmin", "admin", "manager", "teamleader", "executive", "telecaller"].includes(
+                user?.role
+              ) ? (
               <>
-                <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
-                <Route path="/admin/leads" element={<LeadKanban />} />
+                {user?.role === "superAdmin" ? (
+                  <>
+                    <Route path="/admin/analytics" element={<AnalyticsDashboard />} />
+                    <Route path="/admin/leads" element={<LeadKanban />} />
+                  </>
+                ) : null}
                 <Route path="/*" element={<AdminLayout />} />
               </>
             ) : (

@@ -1,17 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const getStoredUser = () => {
-  const value = localStorage.getItem("user") || sessionStorage.getItem("user");
-
-  if (!value) return null;
-
-  try {
-    return JSON.parse(value);
-  } catch (error) {
-    // Console statement removed
-    return null;
-  }
-};
+import { clearAuthStorage, getStoredUser, persistUser } from "utils/authStorage";
 
 const initialState = {
   user: getStoredUser(),
@@ -24,14 +12,12 @@ const localSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       if (action.payload) {
-        localStorage.setItem("user", JSON.stringify(action.payload));
-        sessionStorage.setItem("user", JSON.stringify(action.payload));
+        persistUser(action.payload, true);
       }
     },
     clearUser: (state) => {
       state.user = null;
-      localStorage.removeItem("user");
-      sessionStorage.removeItem("user");
+      clearAuthStorage();
     },
   },
 });

@@ -126,14 +126,14 @@ const updateLastActive = async (userId) => {
 const getAuthCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
   maxAge: 15 * 60 * 1000,  // 15 minutes for access token
 });
 
 const getRefreshCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days for refresh token
 });
 

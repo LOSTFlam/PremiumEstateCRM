@@ -30,6 +30,7 @@ import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../../redux/slices/imageSlice";
 import { setUser } from "../../../redux/slices/localSlice";
+import { persistUser } from "utils/authStorage";
 import { useTranslation } from "react-i18next";
 
 function SignUp() {
@@ -96,18 +97,8 @@ function SignUp() {
         result.data.user
       ) {
         const newUser = result.data.user;
-        const token = result.data.token;
-
-        // Save token to both storage locations
-        if (token) {
-          localStorage.setItem("token", token);
-          sessionStorage.setItem("token", token);
-        }
-
-        // Save user to both storage locations
         if (newUser) {
-          localStorage.setItem("user", JSON.stringify(newUser));
-          sessionStorage.setItem("user", JSON.stringify(newUser));
+          persistUser(newUser, false);
         }
 
         // Dispatch user to Redux

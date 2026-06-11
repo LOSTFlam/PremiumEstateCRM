@@ -1,15 +1,15 @@
-const multer = require('multer');
 const DocumentSchema = require('../../model/schema/document')
-const fs = require('fs');
 const mongoose = require('mongoose');
 const { resolveUploadPath } = require('../../utils/uploadPaths');
+const { createSecureStorage } = require('../../middlewares/secureUpload');
+const { pickAllowedQuery } = require('../../utils/safeQuery');
 
 const getDocumentDir = () => resolveUploadPath('document');
 
 
 const index = async (req, res) => {
     try {
-        const query = req.query
+        const query = pickAllowedQuery(req.query, ['createBy', 'folderName']);
         if (query.createBy) {
             query.createBy = new mongoose.Types.ObjectId(query.createBy);
         }
@@ -48,31 +48,7 @@ const index = async (req, res) => {
 }
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const folderPath = getDocumentDir();
-        fs.mkdirSync(folderPath, { recursive: true }); // Create the directory if it doesn't exist
-        cb(null, folderPath);
-    },
-    filename: function (req, file, cb) {
-        const uploadDir = getDocumentDir();
-        const filePath = path.join(uploadDir, file.originalname);
-
-        if (fs.existsSync(filePath)) {
-            // File with the same name already exists, generate a new filename
-            const timestamp = Date.now() + Math.floor(Math.random() * 90);
-            cb(null, file.originalname.split('.')[0] + '-' + timestamp + '.' + file.originalname.split('.')[1]);
-        } else {
-            // File doesn't exist, use the original filename
-            cb(null, file.originalname);
-        }
-        // cb(null, file.originalname);
-    },
-});
-
-
-
-const upload = multer({ storage: storage });
+const upload = createSecureStorage(getDocumentDir(), 'documents');
 
 const file = async (req, res) => {
     try {

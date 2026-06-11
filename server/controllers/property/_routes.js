@@ -1,6 +1,7 @@
 const express = require("express");
 const property = require("./property.facade");
 const { auth, authorize } = require("../../middlewares/auth");
+const { canView, canCreate, canUpdate, canDelete } = require("../../middlewares/crudRbac");
 const { propertyValidation } = require("../../middlewares/validation");
 const { resolveUploadPath } = require("../../utils/uploadPaths");
 
@@ -11,13 +12,13 @@ router.get("/public/by-ids", property.publicByIds);
 router.get("/public/slug/:slug", property.publicViewBySlug);
 router.get("/public/:id", property.publicView);
 
-router.get("/", auth, property.index);
-router.post("/add", auth, propertyValidation.create, property.add);
-router.post("/add-units/:id", auth, property.addUnits);
-router.put("/edit-unit/:id", auth, property.editUnit);
-router.post("/delete-unit-type/:id", auth, property.deleteUnitType);
-router.post("/change-unit-status/:id", auth, property.changeUnitStatus);
-router.post("/addMany", auth, property.addMany);
+router.get("/", auth, canView("Properties"), property.index);
+router.post("/add", auth, canCreate("Properties"), propertyValidation.create, property.add);
+router.post("/add-units/:id", auth, canUpdate("Properties"), property.addUnits);
+router.put("/edit-unit/:id", auth, canUpdate("Properties"), property.editUnit);
+router.post("/delete-unit-type/:id", auth, canUpdate("Properties"), property.deleteUnitType);
+router.post("/change-unit-status/:id", auth, canUpdate("Properties"), property.changeUnitStatus);
+router.post("/addMany", auth, canCreate("Properties"), property.addMany);
 router.post(
   "/genrate-offer-letter/:id",
   auth,
@@ -29,13 +30,13 @@ router.post(
 );
 
 router.get("/moderation-queue", auth, authorize("superAdmin"), property.moderationQueue);
-router.put("/submit/:id", auth, property.submitForReview);
-router.put("/withdraw/:id", auth, property.withdrawFromReview);
+router.put("/submit/:id", auth, canUpdate("Properties"), property.submitForReview);
+router.put("/withdraw/:id", auth, canUpdate("Properties"), property.withdrawFromReview);
 router.put("/verify/:id", auth, authorize("superAdmin"), property.verifyListing);
-router.get("/view/:id", auth, property.view);
-router.put("/edit/:id", auth, propertyValidation.update, property.edit);
-router.delete("/delete/:id", auth, propertyValidation.delete, property.deleteData);
-router.post("/deleteMany", auth, property.deleteMany);
+router.get("/view/:id", auth, canView("Properties"), property.view);
+router.put("/edit/:id", auth, canUpdate("Properties"), propertyValidation.update, property.edit);
+router.delete("/delete/:id", auth, canDelete("Properties"), propertyValidation.delete, property.deleteData);
+router.post("/deleteMany", auth, canDelete("Properties"), property.deleteMany);
 router.post(
   "/update-unit-type/:id/:unitid/:newUnitType",
   auth,

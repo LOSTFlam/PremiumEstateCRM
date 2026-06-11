@@ -2,11 +2,7 @@ import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { constant } from "constant";
 import { toast } from "react-toastify";
-
-interface _AuthData {
-  token: string;
-  user: Record<string, unknown>;
-}
+import { clearAuthStorage, persistUser } from "utils/authStorage";
 
 interface PersistOptions {
   rememberMe?: boolean;
@@ -44,51 +40,27 @@ let failedQueue: Array<{
   reject: (_reason?: unknown) => void;
 }> = [];
 
-const processQueue = (error: unknown | null, token: string | null = null) => {
+const processQueue = (error: unknown | null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token);
+      prom.resolve();
     }
   });
   failedQueue = [];
 };
 
-const getStoredToken = (): string | null => {
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-  return token;
-};
-
-const clearStoredAuth = (): void => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  sessionStorage.removeItem("token");
-  sessionStorage.removeItem("user");
-};
-
-const persistAuth = (result: AxiosResponse, rememberMe: boolean): void => {
-  if (!result?.data?.token) return;
-
-  const storage = rememberMe ? localStorage : sessionStorage;
-  const fallbackStorage = rememberMe ? sessionStorage : localStorage;
-
-  storage.setItem("token", result.data.token);
-  storage.setItem("user", JSON.stringify(result.data.user));
-  fallbackStorage.removeItem("token");
-  fallbackStorage.removeItem("user");
-};
-
-const updateStoredToken = (token: string): void => {
-  const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
-  storage.setItem("token", token);
+const getCsrfToken = (): string | null => {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)csrfToken=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
 };
 
 const buildHeaders = (
   isFormData = false,
   headers: Record<string, string> = {}
 ): Record<string, string> => {
-  const token = getStoredToken();
   const nextHeaders: Record<string, string> = { ...headers };
 
   if (isFormData) {
@@ -97,8 +69,9 @@ const buildHeaders = (
     nextHeaders["Content-Type"] = "application/json";
   }
 
-  if (token) {
-    nextHeaders.Authorization = `Bearer ${token}`;
+  const csrfToken = getCsrfToken();
+  if (csrfToken) {
+    nextHeaders["X-CSRF-Token"] = csrfToken;
   }
 
   return nextHeaders;
@@ -179,7 +152,7 @@ apiClient.interceptors.response.use(
 
     if (error.response?.status === 401 && !shouldSkipAuthRedirect(originalRequest?.url || "")) {
       if (originalRequest._retry) {
-        clearStoredAuth();
+        clearAuthStorage();
         window.location.href = "/auth/sign-in";
         toast.error("Session expired. Please login again.");
         return Promise.reject(error);
@@ -189,10 +162,7 @@ apiClient.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return apiClient(originalRequest);
-          })
+          .then(() => apiClient(originalRequest))
           .catch((err) => Promise.reject(err));
       }
 
@@ -200,15 +170,12 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshResponse = await apiClient.post("/api/user/refresh-token");
-        const newToken = refreshResponse.data.token;
-        updateStoredToken(newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        processQueue(null, newToken);
+        await apiClient.post("/api/user/refresh-token");
+        processQueue(null);
         return apiClient(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
-        clearStoredAuth();
+        processQueue(refreshError);
+        clearAuthStorage();
         window.location.href = "/auth/sign-in";
         toast.error("Session expired. Please login again.");
         return Promise.reject(refreshError);
@@ -314,7 +281,10 @@ export const postApi = async (
     headers: buildHeaders(useFormData, (requestConfig?.headers || {}) as Record<string, string>),
   });
 
-  persistAuth(result, !!rememberMe);
+  if (result?.data?.user) {
+    persistUser(result.data.user, !!rememberMe);
+  }
+
   return result;
 };
 

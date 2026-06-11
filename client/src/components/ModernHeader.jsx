@@ -32,6 +32,7 @@ import {
   resolvePublicBrandRecord,
 } from "views/public/publicBrand";
 import ThemeToggle from "components/ThemeToggle";
+import { isAuthenticatedUser } from "utils/authStorage";
 
 const scrollToHashTarget = (hash) => {
   const targetId = String(hash || "").replace(/^#/, "");
@@ -52,7 +53,7 @@ export default function ModernHeader({ largeLogo = [] }) {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const branding = useActiveBranding(largeLogo);
-  const isAuthenticated = Boolean(localStorage.getItem("token") || sessionStorage.getItem("token"));
+  const isAuthenticated = isAuthenticatedUser();
   const isHidden = useHideOnScroll({ offset: 140, disabled: isOpen });
   const currentLanguage = i18n.language?.startsWith("ru") ? "ru" : "en";
 

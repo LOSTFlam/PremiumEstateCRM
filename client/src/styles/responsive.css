@@ -394,6 +394,23 @@ a.public-brand-button {
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
   }
+
+  .cabinet-empty-state,
+  .cabinet-error-state,
+  .cabinet-content .chakra-card {
+    animation: cabinetFadeIn 0.35s ease both;
+  }
+}
+
+@keyframes cabinetFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 389px) {

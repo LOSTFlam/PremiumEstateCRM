@@ -8,6 +8,8 @@ const db = require("./db/config");
 const route = require("./controllers/route");
 const errorHandler = require("./middlewares/errorHandler");
 const { auditLog } = require("./middlewares/auditLog");
+const { verifyCsrf } = require("./middlewares/csrf");
+const { sanitizeIncomingRequest } = require("./middlewares/sanitizeRequest");
 const { initWebSocket, broadcast } = require("./services/websocket");
 
 require("dotenv").config();
@@ -47,9 +49,10 @@ const isAllowedCorsOrigin = (origin) => {
     const isLocalIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(hostname);
     const isConfiguredOrigin = allowedOrigins.includes(normalizedOrigin);
     const isAmveraApp =
-      hostname === "amvera.io" || hostname.endsWith(".amvera.io");
+      process.env.NODE_ENV !== "production" &&
+      (hostname === "amvera.io" || hostname.endsWith(".amvera.io"));
 
-    return isConfiguredOrigin || isLocalhost || isLocalIP || isAmveraApp;
+    return isConfiguredOrigin || isLocalhost || (process.env.NODE_ENV !== "production" && isLocalIP) || isAmveraApp;
   } catch {
     return false;
   }
@@ -101,6 +104,7 @@ app.use("/api", limiter);
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use("/api", sanitizeIncomingRequest);
 
 // Set up CORS with options (only for API routes, not static files)
 app.use(
@@ -126,6 +130,27 @@ app.use(
     exposedHeaders: ["Access-Control-Allow-Origin", "X-Total-Count"],
   }),
 );
+
+const isCsrfExempt = (req) => {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return true;
+  const path = (req.originalUrl || req.path || "").split("?")[0].replace(/^\/api/, "");
+  const exemptPrefixes = [
+    "/user/login",
+    "/user/register",
+    "/user/refresh-token",
+    "/user/admin-register",
+    "/lead/public-inquiry",
+    "/lead/create",
+    "/property/public",
+    "/health",
+  ];
+  return exemptPrefixes.some((prefix) => path.startsWith(prefix));
+};
+
+app.use("/api", (req, res, next) => {
+  if (isCsrfExempt(req)) return next();
+  return verifyCsrf(req, res, next);
+});
 
 // Apply audit logging
 app.use("/api/user", auditLog);

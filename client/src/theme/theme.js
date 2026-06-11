@@ -25,7 +25,7 @@ export default extendTheme(
   CardComponent,
   {
     config: {
-      initialColorMode: "dark",
+      initialColorMode: "light",
       useSystemColorMode: false,
     },
     styles: {

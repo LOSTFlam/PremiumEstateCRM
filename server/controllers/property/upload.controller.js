@@ -1,23 +1,10 @@
-const multer = require("multer");
 const { Property } = require("../../model/schema/property");
-const { ensureUploadDir, buildUniqueFilename } = require("./utils");
+const { createSecureStorage } = require("../../middlewares/secureUpload");
+const { resolveUploadPath } = require("../../utils/uploadPaths");
 
-const createStorage = (uploadDir) =>
-  multer({
-    storage: multer.diskStorage({
-      destination(req, file, cb) {
-        ensureUploadDir(uploadDir);
-        cb(null, uploadDir);
-      },
-      filename(req, file, cb) {
-        cb(null, buildUniqueFilename(uploadDir, file.originalname));
-      },
-    }),
-  });
+const createStorage = (uploadDir, fileType) => createSecureStorage(uploadDir, fileType);
 
 const mapUploadedFiles = (req, routePrefix, includeFilename = false) =>
-  // Store relative URLs so images keep working regardless of the host
-  // the site is served from (domain, IP, localhost, proxy, etc.)
   req?.files.map((file) => ({
     ...(includeFilename ? { filename: file.filename } : {}),
     img: `/api/property/${routePrefix}/${file.filename}`,
@@ -35,15 +22,13 @@ const createUploadHandler = ({ field, routePrefix }) => async (req, res) => {
     const files = mapUploadedFiles(req, routePrefix, field === "propertyDocuments");
 
     const filter = { _id: id };
-    // Enforce ownership for non-super admins
     if (req.user?.role !== "superAdmin") {
       filter.createBy = req.user?.userId;
     }
 
-    const result = await Property.updateOne(
-      filter,
-      { $push: { [field]: { $each: files } } },
-    );
+    const result = await Property.updateOne(filter, {
+      $push: { [field]: { $each: files } },
+    });
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: "Property not found or access denied" });
@@ -51,17 +36,17 @@ const createUploadHandler = ({ field, routePrefix }) => async (req, res) => {
 
     res.send("File uploaded successfully.");
   } catch (err) {
-    // Console statement removed
     res.status(400).json({ error: `Failed to upload ${field}` });
   }
 };
 
-const { resolveUploadPath } = require("../../utils/uploadPaths");
-
-const upload = createStorage(resolveUploadPath("Property", "PropertyPhotos"));
-const virtualTours = createStorage(resolveUploadPath("Property", "virtual-tours-or-videos"));
-const FloorPlansStorage = createStorage(resolveUploadPath("Property", "floor-plans"));
-const PropertyDocumentsStorage = createStorage(resolveUploadPath("Property", "property-documents"));
+const upload = createStorage(resolveUploadPath("Property", "PropertyPhotos"), "images");
+const virtualTours = createStorage(resolveUploadPath("Property", "virtual-tours-or-videos"), "videos");
+const FloorPlansStorage = createStorage(resolveUploadPath("Property", "floor-plans"), "floorPlans");
+const PropertyDocumentsStorage = createStorage(
+  resolveUploadPath("Property", "property-documents"),
+  "documents"
+);
 
 const propertyPhoto = createUploadHandler({
   field: "propertyPhotos",

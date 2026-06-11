@@ -23,6 +23,7 @@ import DefaultAuth from "layouts/auth/Default";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { postApi } from "services/api";
+import { persistUser } from "utils/authStorage";
 import { loginSchema } from "schema";
 import { toast } from "react-toastify";
 import Spinner from "components/spinner/Spinner";
@@ -94,14 +95,8 @@ function SignIn() {
         result.data.user
       ) {
         const currentUser = result?.data?.user;
-        const token = result?.data?.token;
-
-        if (token) {
-          // Save token and user directly
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(currentUser));
-          sessionStorage.setItem("token", token);
-          sessionStorage.setItem("user", JSON.stringify(currentUser));
+        if (currentUser) {
+          persistUser(currentUser, true);
         }
 
         dispatch(setUser(currentUser));

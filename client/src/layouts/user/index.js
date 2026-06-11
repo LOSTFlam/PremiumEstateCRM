@@ -19,6 +19,7 @@ import i18next from "i18next";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ROLE_PATH } from "../../roles";
 import newRoute from "routes.js";
+import { translateRouteName as translateRouteLabel } from "../../routes/routeNameToI18nKey";
 import { MdHome, MdLock, MdOutlineAddHome } from "react-icons/md";
 import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,44 +36,7 @@ const SignInCentered = React.lazy(() => import("views/auth/signIn"));
 const Calender = React.lazy(() => import("views/admin/calender"));
 const UserView = React.lazy(() => import("views/admin/users/View"));
 
-const routeNameToI18nKey = {
-  Dashboard: "navigation.dashboard",
-  "My Listings": "navigation.myListings",
-  Properties: "navigation.properties",
-  Leads: "navigation.leads",
-  Contacts: "navigation.contacts",
-  Invoices: "navigation.invoices",
-  Quotes: "navigation.quotes",
-  "Offer Letter": "navigation.offerLetters",
-  Opportunities: "navigation.opportunities",
-  Account: "navigation.account",
-  Tasks: "navigation.tasks",
-  Meetings: "navigation.meetings",
-  Calls: "navigation.phoneCall",
-  Emails: "navigation.emails",
-  "Email Template": "navigation.emailTemplate",
-  Calender: "navigation.calendar",
-  Payments: "navigation.payments",
-  Documents: "navigation.documents",
-  "Reporting and Analytics": "navigation.reports",
-  Reports: "navigation.reports",
-  "Admin Setting": "navigation.adminSettings",
-  "Storefront Filters": "navigation.storefrontFilters",
-  Users: "navigation.users",
-  Roles: "navigation.roles",
-  "Custom Fields": "navigation.customFields",
-  "Table Fields": "navigation.tableFields",
-  "Active Deactive Module": "navigation.activeModules",
-  Module: "navigation.modules",
-  Validation: "navigation.validations",
-  "Change Images": "navigation.changeImages",
-  "Bank Details": "navigation.bankDetails",
-};
-
-const translateRouteName = (name) => {
-  const key = routeNameToI18nKey[name];
-  return key ? i18next.t(key) : name;
-};
+const translateRouteName = (name) => translateRouteLabel(name, i18next.t.bind(i18next));
 
 const defaultBrandLabel = () =>
   i18next.language?.startsWith("ru") ? "Премиум Эстейт" : "Premium Estate";

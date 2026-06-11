@@ -14,6 +14,7 @@ import { fetchPropertyData as _fetchPropertyData } from "../../../redux/slices/p
 import { fetchPropertyCustomFiled } from "../../../redux/slices/propertyCustomFiledSlice.js";
 import CommonCheckTable from "../../../components/reactTable/checktable";
 import { useDispatch, useSelector as _useSelector } from "react-redux";
+import { sanitizeHtml } from "utils/sanitizeHtml";
 
 const View = () => {
   const param = useParams();
@@ -287,7 +288,7 @@ const View = () => {
                         alignItems: "center",
                         padding: "50px 50px",
                       }}
-                      dangerouslySetInnerHTML={{ __html: data?.html }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(data?.html) }}
                     />
                   )}
                 </pre>

@@ -8,9 +8,14 @@ const MeetingHistory = require("../../model/schema/meeting");
 const DocumentSchema = require("../../model/schema/document");
 const { sendUserConfirmation, sendAdminNotification, sendUserSms } = require("../../services/notificationService");
 
+const { pickAllowedQuery } = require("../../utils/safeQuery");
+const { stripDangerousFields } = require("../../utils/stripDangerousFields");
+
 const index = async (req, res) => {
-  const query = req.query;
-  query.deleted = false;
+  const query = {
+    ...pickAllowedQuery(req.query, ["leadStatus", "leadSource", "createBy", "propertyId"]),
+    deleted: false,
+  };
 
   // let result = await Lead.find(query)
 
@@ -190,8 +195,9 @@ const publicInquiry = async (req, res) => {
 
 const add = async (req, res) => {
   try {
-    req.body.createdDate = new Date();
-    const user = new Lead(req.body);
+    const payload = stripDangerousFields(req.body);
+    payload.createdDate = new Date();
+    const user = new Lead(payload);
     await user.save();
     res.status(200).json(user);
   } catch (err) {
@@ -204,7 +210,7 @@ const edit = async (req, res) => {
   try {
     let result = await Lead.updateOne(
       { _id: req.params.id },
-      { $set: req.body }
+      { $set: stripDangerousFields(req.body) }
     );
     res.status(200).json(result);
   } catch (err) {

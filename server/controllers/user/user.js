@@ -25,6 +25,8 @@ const {
   resetFailedAttempts,
 } = require("../../middlewares/rateLimiter");
 const { invalidateUserCache } = require("../../middlewares/auth");
+const { pickAllowedQuery } = require("../../utils/safeQuery");
+const { issueCsrfToken } = require("../../middlewares/csrf");
 
 const getDefaultUsers = () =>
   String(process.env.DEFAULT_USERS || "")
@@ -34,10 +36,15 @@ const getDefaultUsers = () =>
 
 const normalizeIdentity = (value) => String(value || "").trim().toLowerCase();
 
-// Admin register
+// Admin register — only allowed when no superAdmin exists yet (bootstrap)
 const adminRegister = async (req, res, next) => {
   try {
     assertJwtSecret();
+    const existingSuperAdmin = await User.findOne({ role: "superAdmin", deleted: false }).lean();
+    if (existingSuperAdmin) {
+      return res.status(403).json({ message: "Admin bootstrap is disabled. Contact system owner." });
+    }
+
     const { username, password, firstName, lastName, phoneNumber } = req.body;
     const normalizedUsername = normalizeIdentity(username);
     const user = await User.findOne({ username: normalizedUsername });
@@ -149,11 +156,11 @@ const register = async (req, res, next) => {
 
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
     res.cookie(REFRESH_COOKIE_NAME, refreshToken, getRefreshCookieOptions());
+    issueCsrfToken(res);
 
     res.status(201).json({
       message: "User created successfully",
       user: sanitizeUser(newUser),
-      token,
     });
   } catch (error) {
     next(error);
@@ -162,7 +169,10 @@ const register = async (req, res, next) => {
 
 const index = async (req, res, next) => {
   try {
-    const query = { ...req.query, deleted: false };
+    const query = {
+      ...pickAllowedQuery(req.query, ["role", "firstName", "lastName", "username", "email"]),
+      deleted: false,
+    };
 
     const user = await User.find(query)
       .populate({
@@ -381,12 +391,11 @@ const login = async (req, res, next) => {
 
     res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions());
     res.cookie(REFRESH_COOKIE_NAME, refreshToken, getRefreshCookieOptions());
+    issueCsrfToken(res);
 
     res
       .status(200)
-      .setHeader("Authorization", `Bearer ${token}`)
       .json({ 
-        token, 
         user: sanitizeUser(user),
         expiresIn: 15 * 60 * 1000,  // 15 minutes
       });
@@ -398,10 +407,15 @@ const login = async (req, res, next) => {
 const changeRoles = async (req, res, next) => {
   try {
     const userId = req.params.id;
+    const roles = Array.isArray(req.body) ? req.body : req.body?.roles;
+
+    if (!Array.isArray(roles)) {
+      return res.status(400).json({ message: "roles must be an array of role IDs" });
+    }
 
     const result = await User.updateOne(
       { _id: userId },
-      { $set: { roles: req.body } }
+      { $set: { roles } }
     );
 
     // Invalidate cache to reflect role changes immediately
@@ -454,9 +468,9 @@ const refreshToken = async (req, res, next) => {
     
     res.cookie(AUTH_COOKIE_NAME, newAccessToken, getAuthCookieOptions());
     res.cookie(REFRESH_COOKIE_NAME, rotationResult.refreshToken, getRefreshCookieOptions());
+    issueCsrfToken(res);
     
     res.status(200).json({
-      token: newAccessToken,
       message: "Token refreshed successfully",
     });
   } catch (error) {
@@ -589,6 +603,22 @@ const blockUser = async (req, res, next) => {
   }
 };
 
+const session = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.user.userId, deleted: false }).populate({
+      path: "roles",
+    });
+
+    if (!user) {
+      return res.status(401).json({ message: "Session invalid" });
+    }
+
+    res.status(200).json({ user: sanitizeUser(user) });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const unblockUser = async (req, res, next) => {
   try {
     const target = await User.findOne({ _id: req.params.id, deleted: false }).lean();
@@ -622,6 +652,7 @@ module.exports = {
   refreshToken,
   changePassword,
   adminRegister,
+  session,
   index,
   deleteMany,
   view,

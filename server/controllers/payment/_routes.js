@@ -1,10 +1,10 @@
 const express = require('express');
-const payment = require('./payment')
+const payment = require('./payment');
+const { auth, authorize } = require('../../middlewares/auth');
 
 const router = express.Router();
 
-
-router.post('/add', payment.add)
-router.get('/', payment.index)
+router.post('/add', auth, authorize('superAdmin'), payment.add);
+router.get('/', auth, authorize('superAdmin'), payment.index);
 
 module.exports = router

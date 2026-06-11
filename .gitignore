@@ -23,6 +23,8 @@ Client/.env
 
 # production
 /build
+client/dist
+Client/dist
 
 *.bat
 
