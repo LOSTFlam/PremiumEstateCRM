@@ -132,7 +132,35 @@
     "quick": {
       "catalog": "Open catalog",
       "profile": "Profile settings",
-      "listings": "My listings"
+      "listings": "My listings",
+      "schedule": "Schedule viewing",
+      "ask": "My inquiries"
+    },
+    "monthlyViews": "Views in your shortlist",
+    "monthlyViewsHelp": "Recently viewed properties count",
+    "recommended": "Recommended for you",
+    "savedSearchMatches": "New listings for your filters",
+    "savedSearchMatchesText": "You have {{count}} saved searches — check fresh listings in the catalog.",
+    "favoritesDragHint": "Drag cards to reorder your favorites.",
+    "notificationsCenter": {
+      "title": "Notifications",
+      "markAll": "Mark all read",
+      "filterAll": "All",
+      "filterUnread": "Unread",
+      "filterImportant": "Important",
+      "empty": "No new notifications",
+      "searchMatchTitle": "New listings for your search",
+      "searchMatchText": "Review {{count}} saved searches in the catalog.",
+      "priceDropTitle": "Favorite price update",
+      "priceDropText": "Open favorites and review updated offers.",
+      "inquiryTitle": "Inquiry status",
+      "inquiryText": "You have {{count}} inquiries — a manager will follow up.",
+      "tipTitle": "Daily tip",
+      "tipText": "Save searches in the catalog so you do not reset filters every time."
+    },
+    "recommendedEmpty": {
+      "title": "No recommendations yet",
+      "text": "Browse a few properties and we will suggest similar options."
     },
     "sections": {
       "saved": "Favorite properties",
@@ -1376,5 +1404,149 @@
     "filter": "Filter",
     "export": "Export",
     "import": "Import"
+  },
+  "publicPages": {
+    "stats": {
+      "years": "years in market",
+      "deals": "closed deals",
+      "agents": "team experts",
+      "satisfaction": "client satisfaction"
+    },
+    "values": {
+      "discretion": "Discretion",
+      "discretionText": "Private viewings, off-market listings, and delicate guidance at every step.",
+      "expertise": "Expertise",
+      "expertiseText": "Deep knowledge of the premium segment, legal frameworks, and investment logic.",
+      "integrity": "Integrity",
+      "integrityText": "Transparent terms, verified listings, and clear communication."
+    },
+    "about": {
+      "title": "About us",
+      "subtitle": "Premium Estate is a curated luxury real estate agency focused on privacy, service, and outcomes.",
+      "badge": "About",
+      "missionTitle": "Our mission",
+      "missionText": "We connect discerning buyers and owners through personal service, precise analytics, and flawless transaction support—from first interest to key handover.",
+      "teamTitle": "Expert team"
+    },
+    "services": {
+      "title": "Services",
+      "subtitle": "Full-cycle support for buyers, sellers, and premium-segment investors.",
+      "badge": "Services",
+      "cta": "Request consultation",
+      "items": [
+        { "title": "Residence sourcing", "text": "Personal search for homes, apartments, and villas aligned with your lifestyle and budget." },
+        { "title": "Property sales", "text": "Presentation, marketing, and negotiations with confidentiality preserved." },
+        { "title": "Premium rentals", "text": "Long- and short-term rentals with legal support." },
+        { "title": "Investment consulting", "text": "Yield analytics, risk review, and exit strategies." },
+        { "title": "Legal support", "text": "Due diligence, contracts, and settlements through closing." },
+        { "title": "Property management", "text": "Owner services: leasing, maintenance, and reporting." }
+      ]
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "Four steps from first inquiry to a confident transaction.",
+      "badge": "Process",
+      "steps": [
+        { "title": "Brief & goals", "text": "We clarify budget, locations, timing, and property criteria in a private conversation." },
+        { "title": "Curated shortlist", "text": "We assemble a shortlist from public and off-market opportunities." },
+        { "title": "Private viewings", "text": "Viewings at your pace with an expert beside you." },
+        { "title": "Deal & service", "text": "We support negotiations, paperwork, and handover." }
+      ]
+    },
+    "contacts": {
+      "title": "Contacts",
+      "subtitle": "Reach out for consultation, property sourcing, or partnership.",
+      "badge": "Contact",
+      "formTitle": "Contact form",
+      "mapLabel": "Premium Estate Office",
+      "success": "Message sent",
+      "nameError": "Enter your name",
+      "emailError": "Enter a valid email",
+      "phoneError": "Enter your phone",
+      "messageError": "Message is too short"
+    },
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Answers to common questions about buying, renting, and transaction support.",
+      "badge": "Questions",
+      "searchPlaceholder": "Search questions...",
+      "empty": "Nothing found. Try another query.",
+      "items": [
+        { "q": "How do I schedule a viewing?", "a": "Submit a request on the property page or contact form—a manager will respond within one business day." },
+        { "q": "Do you work with off-market listings?", "a": "Yes, part of our portfolio is available only by personal request and NDA." },
+        { "q": "Can I finance a premium property with a mortgage?", "a": "Yes, we help align bank programs and prepare documentation." },
+        { "q": "How long does a transaction take?", "a": "Typically 2 to 8 weeks depending on asset type and settlement structure." },
+        { "q": "Do you support international clients?", "a": "Yes, in Russian and English, including remote viewings." }
+      ]
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "subtitle": "Client stories from search to closing.",
+      "badge": "Trust",
+      "items": [
+        { "name": "Maria K.", "role": "Residence buyer", "rating": 5, "text": "The team found an off-market home in two weeks. Calm and transparent throughout.", "photo": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80" },
+        { "name": "James R.", "role": "Investor", "rating": 5, "text": "Excellent market insight and discreet handling of a portfolio acquisition.", "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" },
+        { "name": "Oleg S.", "role": "Villa seller", "rating": 5, "text": "Sold faster than planned without public noise. Presentation was world-class.", "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80" }
+      ]
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Market insights, buyer guides, and agency news.",
+      "badge": "News",
+      "searchPlaceholder": "Search articles...",
+      "allCategories": "All",
+      "notFound": "Article not found",
+      "backToBlog": "Back to blog"
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "subtitle": "How we collect, use, and protect your personal data.",
+      "badge": "Legal",
+      "sections": [
+        { "title": "1. General", "text": "This policy describes how Premium Estate processes personal data of website users." },
+        { "title": "2. Data we collect", "text": "Name, contact details, property preferences, and technical visit information." },
+        { "title": "3. Processing purposes", "text": "Handling inquiries, personalizing service, analytics, and service quality improvement." },
+        { "title": "4. Third-party sharing", "text": "Data is not shared without legal basis or your consent." },
+        { "title": "5. Your rights", "text": "You may request access, correction, or deletion via our contact form." }
+      ]
+    },
+    "notFound": {
+      "title": "Page not found",
+      "subtitle": "The link may be outdated or the page may have moved.",
+      "cta": "Back to home"
+    },
+    "thankYou": {
+      "title": "Thank you!",
+      "subtitle": "We received your request and will contact you shortly.",
+      "contactMessage": "Your message was sent. A manager will reach out during business hours."
+    },
+    "nav": {
+      "about": "About",
+      "services": "Services",
+      "howItWorks": "How it works",
+      "contacts": "Contacts",
+      "faq": "FAQ",
+      "testimonials": "Testimonials",
+      "blog": "Blog"
+    },
+    "footer": {
+      "newsletterTitle": "Newsletter",
+      "newsletterText": "Receive new listings and market insights by email.",
+      "newsletterPlaceholder": "Your email",
+      "newsletterSuccess": "Subscribed successfully",
+      "company": "Company",
+      "legal": "Legal"
+    },
+    "catalog": {
+      "viewGrid": "Grid",
+      "viewList": "List",
+      "viewMap": "Map",
+      "shownCount": "Showing {{shown}} of {{total}}",
+      "loadMore": "Load more",
+      "badgeNew": "New",
+      "badgeReduced": "Price reduced",
+      "badgeExclusive": "Exclusive",
+      "viewedAgo": "Viewed {{time}}"
+    }
   }
 }

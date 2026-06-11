@@ -146,15 +146,13 @@ apiClient.interceptors.response.use(
       error.message ||
       "An unexpected error occurred";
 
-    if (silentRequest) {
-      return Promise.reject(error);
-    }
-
     if (error.response?.status === 401 && !shouldSkipAuthRedirect(originalRequest?.url || "")) {
       if (originalRequest._retry) {
-        clearAuthStorage();
-        window.location.href = "/auth/sign-in";
-        toast.error("Session expired. Please login again.");
+        if (!silentRequest) {
+          clearAuthStorage();
+          window.location.href = "/auth/sign-in";
+          toast.error("Session expired. Please login again.");
+        }
         return Promise.reject(error);
       }
 
@@ -170,19 +168,30 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await apiClient.post("/api/user/refresh-token");
+        const refreshResponse = await apiClient.post("/api/user/refresh-token");
+        if (refreshResponse?.data?.user) {
+          persistUser(refreshResponse.data.user, true);
+        }
         processQueue(null);
         return apiClient(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        clearAuthStorage();
-        window.location.href = "/auth/sign-in";
-        toast.error("Session expired. Please login again.");
+        if (!silentRequest) {
+          clearAuthStorage();
+          window.location.href = "/auth/sign-in";
+          toast.error("Session expired. Please login again.");
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
-    } else if (error.response?.status === 429) {
+    }
+
+    if (silentRequest) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 429) {
       toast.error("Too many requests. Please wait a moment.");
     } else if (error.response?.status >= 500) {
       toast.error("Server error. Please try again later.");

@@ -16,14 +16,20 @@ import {
   HStack,
   IconButton,
   Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  SimpleGrid,
   Stack,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiHeart, FiMenu, FiUser, FiX } from "react-icons/fi";
+import { FiBriefcase, FiChevronDown, FiHeart, FiHome, FiKey, FiMenu, FiSearch, FiUser, FiX } from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import useActiveBranding, { getActiveBrandRecord, getBrandLogoSrc } from "hooks/useActiveBranding";
+import useFavoriteCount from "hooks/useFavoriteCount";
 import useHideOnScroll from "hooks/useHideOnScroll";
 import {
   getPublicSubline,
@@ -54,8 +60,24 @@ export default function ModernHeader({ largeLogo = [] }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const branding = useActiveBranding(largeLogo);
   const isAuthenticated = isAuthenticatedUser();
+  const favoriteCount = useFavoriteCount();
   const isHidden = useHideOnScroll({ offset: 140, disabled: isOpen });
   const currentLanguage = i18n.language?.startsWith("ru") ? "ru" : "en";
+
+  const serviceMegaItems = useMemo(() => {
+    const serviceItems = t("publicPages.services.items", { returnObjects: true }) || [];
+    const icons = [FiSearch, FiHome, FiKey];
+    return [
+      ...(Array.isArray(serviceItems)
+        ? serviceItems.slice(0, 3).map((item, index) => ({
+            label: item.title,
+            href: "/services",
+            icon: icons[index] || FiSearch,
+          }))
+        : []),
+      { label: t("publicPages.nav.howItWorks"), href: "/how-it-works", icon: FiBriefcase },
+    ];
+  }, [t]);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 18);
@@ -82,12 +104,12 @@ export default function ModernHeader({ largeLogo = [] }) {
     () => [
       { label: t("publicListing.homeNav"), href: "/" },
       { label: t("publicListing.propertiesNav"), href: "/offers" },
-      { label: currentLanguage === "ru" ? "Маршруты" : "Routes", href: "/#market" },
-      { label: currentLanguage === "ru" ? "Подборки" : "Collections", href: "/#collections" },
-      { label: currentLanguage === "ru" ? "Сервисы" : "Services", href: "/#services" },
-      { label: t("publicListing.contactNav"), href: "/#contact" },
+      { label: t("publicPages.nav.about"), href: "/about" },
+      { label: t("publicPages.nav.services"), href: "/services", mega: true },
+      { label: t("publicPages.nav.blog"), href: "/blog" },
+      { label: t("publicPages.nav.contacts"), href: "/contacts" },
     ],
-    [currentLanguage, t]
+    [t]
   );
 
   const navigateToHref = (href) => {
@@ -242,13 +264,71 @@ export default function ModernHeader({ largeLogo = [] }) {
             >
               {navLinks.map((link) => {
                 const active = isActivePath(link.href);
+                if (link.mega) {
+                  return (
+                    <Menu key={link.href} isLazy>
+                      <MenuButton
+                        as={Button}
+                        rightIcon={<FiChevronDown />}
+                        variant="ghost"
+                        position="relative"
+                        color={active ? "white" : "whiteAlpha.600"}
+                        fontWeight="500"
+                        px={{ base: 2, xl: 3 }}
+                        fontSize={{ base: "xs", xl: "sm" }}
+                        minH="40px"
+                        bg="transparent"
+                        _hover={{ color: "white", bg: "transparent" }}
+                        _after={
+                          active
+                            ? {
+                                content: '""',
+                                position: "absolute",
+                                left: "12px",
+                                right: "12px",
+                                bottom: "4px",
+                                h: "1.5px",
+                                borderRadius: "999px",
+                                bg: "rgba(212, 175, 55, 0.5)",
+                              }
+                            : undefined
+                        }
+                      >
+                        {link.label}
+                      </MenuButton>
+                      <MenuList
+                        bg="rgba(7, 12, 20, 0.96)"
+                        border="1px solid rgba(227, 211, 184, 0.14)"
+                        backdropFilter="blur(16px)"
+                        p={4}
+                        minW="320px"
+                      >
+                        <SimpleGrid columns={2} spacing={2}>
+                          {serviceMegaItems.map((item) => (
+                            <MenuItem
+                              key={item.label}
+                              as={RouterLink}
+                              to={item.href}
+                              borderRadius="14px"
+                              bg="rgba(255,255,255,0.04)"
+                              _hover={{ bg: "rgba(212,175,55,0.12)" }}
+                              icon={<Box as={item.icon} />}
+                            >
+                              {item.label}
+                            </MenuItem>
+                          ))}
+                        </SimpleGrid>
+                      </MenuList>
+                    </Menu>
+                  );
+                }
                 return (
                   <Button
                     key={link.href}
                     onClick={() => navigateToHref(link.href)}
                     variant="ghost"
                     position="relative"
-                    color="whiteAlpha.600"
+                    color={active ? "white" : "whiteAlpha.600"}
                     fontWeight="500"
                     px={{ base: 2, xl: 3 }}
                     fontSize={{ base: "xs", xl: "sm" }}
@@ -350,9 +430,25 @@ export default function ModernHeader({ largeLogo = [] }) {
                 fontSize="sm"
                 px={2}
                 bg="transparent"
+                position="relative"
                 _hover={{ bg: "transparent", color: "white" }}
               >
                 <FiHeart size={18} />
+                {favoriteCount > 0 ? (
+                  <Badge
+                    position="absolute"
+                    top="2px"
+                    right="0"
+                    borderRadius="full"
+                    px={1.5}
+                    minW="18px"
+                    fontSize="10px"
+                    bg={publicBrand.colors.gold}
+                    color={publicBrand.colors.ink}
+                  >
+                    {favoriteCount}
+                  </Badge>
+                ) : null}
               </Button>
 
               {isAuthenticated ? (
@@ -417,8 +513,8 @@ export default function ModernHeader({ largeLogo = [] }) {
         </Container>
       </Box>
 
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
-        <DrawerOverlay />
+      <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="full">
+        <DrawerOverlay backdropFilter="blur(6px)" />
         <DrawerContent bg={publicBrand.colors.ink} color="white">
           <DrawerCloseButton />
           <DrawerHeader pt={8}>
@@ -461,7 +557,12 @@ export default function ModernHeader({ largeLogo = [] }) {
           <DrawerBody pb={8}>
             <Stack spacing={6}>
               <Stack spacing={3}>
-                {navLinks.map((link) => (
+                {[
+                  ...navLinks,
+                  { label: t("publicPages.nav.faq"), href: "/faq" },
+                  { label: t("publicPages.nav.testimonials"), href: "/testimonials" },
+                  { label: t("publicPages.nav.howItWorks"), href: "/how-it-works" },
+                ].map((link) => (
                   <Button
                     key={link.href}
                     onClick={() => navigateAndClose(link.href)}

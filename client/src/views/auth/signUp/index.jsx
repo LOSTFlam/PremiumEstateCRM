@@ -30,7 +30,6 @@ import Spinner from "components/spinner/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchImage } from "../../../redux/slices/imageSlice";
 import { setUser } from "../../../redux/slices/localSlice";
-import { persistUser } from "utils/authStorage";
 import { useTranslation } from "react-i18next";
 
 function SignUp() {
@@ -90,7 +89,7 @@ function SignUp() {
         password: values.password,
       };
 
-      const result = await postApi("/api/user/register", payload, false);
+      const result = await postApi("/api/user/register", payload, { rememberMe: true });
 
       if (
         result &&
@@ -99,9 +98,6 @@ function SignUp() {
         result.data.user
       ) {
         const newUser = result.data.user;
-        if (newUser) {
-          persistUser(newUser, false);
-        }
 
         // Dispatch user to Redux
         dispatch(setUser(newUser));

@@ -15,6 +15,7 @@ import { Box, ChakraProvider, Container, Spinner, Stack, Text } from "@chakra-ui
 import theme from "theme/theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "sonner";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -39,6 +40,17 @@ const AnalyticsDashboard = lazy(() => import("views/admin/analytics/AnalyticsDas
 const LeadKanban = lazy(() => import("views/admin/leads/LeadKanban"));
 const SignUp = lazy(() => import("views/auth/signUp"));
 const SignIn = lazy(() => import("views/auth/signIn"));
+const AboutPage = lazy(() => import("views/public/pages/AboutPage"));
+const ServicesPage = lazy(() => import("views/public/pages/ServicesPage"));
+const HowItWorksPage = lazy(() => import("views/public/pages/HowItWorksPage"));
+const ContactsPage = lazy(() => import("views/public/pages/ContactsPage"));
+const FaqPage = lazy(() => import("views/public/pages/FaqPage"));
+const TestimonialsPage = lazy(() => import("views/public/pages/TestimonialsPage"));
+const BlogPage = lazy(() => import("views/public/pages/BlogPage"));
+const BlogArticlePage = lazy(() => import("views/public/pages/BlogArticlePage"));
+const PrivacyPage = lazy(() => import("views/public/pages/PrivacyPage"));
+const NotFoundPage = lazy(() => import("views/public/pages/NotFoundPage"));
+const ThankYouPage = lazy(() => import("views/public/pages/ThankYouPage"));
 
 const ReactQueryDevtools = import.meta.env.DEV
   ? lazy(() =>
@@ -49,6 +61,8 @@ const ReactQueryDevtools = import.meta.env.DEV
   : null;
 
 import { getStoredUser, isAuthenticatedUser } from "utils/authStorage";
+import { restoreAuthSession } from "utils/authSession";
+import { setUser, clearUser } from "./redux/slices/localSlice";
 
 const resolveLocale = () => {
   if (typeof window === "undefined") return "ru";
@@ -402,6 +416,16 @@ export function AnimatedRoutes() {
           <Route path="/collections/:slug" element={<SeoCollectionPage />} />
           <Route path="/offers/compare" element={<PublicCompareView />} />
           <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/testimonials" element={<TestimonialsPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogArticlePage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/compare" element={<Navigate to="/offers/compare" replace />} />
           <Route path="/offers/:id" element={<PublicOfferView />} />
           <Route path="/offers/slug/:slug" element={<PublicOfferViewBySlug />} />
@@ -437,7 +461,7 @@ export function AnimatedRoutes() {
               <Route path="/*" element={<Navigate to="/" replace />} />
             )
           ) : (
-            <Route path="/*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           )}
         </Routes>
       </PageTransition>
@@ -447,9 +471,34 @@ export function AnimatedRoutes() {
 
 export function LegacyApplicationShell() {
   const [commandOpen, setCommandOpen] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
     initExchangeRate();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrapAuth = async () => {
+      const restoredUser = await restoreAuthSession();
+
+      if (cancelled) return;
+
+      if (restoredUser) {
+        store.dispatch(setUser(restoredUser));
+      } else if (!getStoredUser()) {
+        store.dispatch(clearUser());
+      }
+
+      setAuthReady(true);
+    };
+
+    bootstrapAuth();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleKeyDown = useCallback((e) => {
@@ -467,7 +516,7 @@ export function LegacyApplicationShell() {
   return (
     <BrowserRouter>
       <Suspense fallback={<RouteFallback />}>
-        <AnimatedRoutes />
+        {authReady ? <AnimatedRoutes /> : <RouteFallback />}
         <ScrollToTop />
         <CommandPalette isOpen={commandOpen} onClose={() => setCommandOpen(false)} />
       </Suspense>
@@ -506,6 +555,7 @@ export function LegacyAppProviders({ children }) {
             <ThemeProvider>
               <ChakraProvider theme={theme}>
                 <ToastContainer />
+                <Toaster position="bottom-right" richColors closeButton duration={5000} />
                 <LegacyRuTextGuard />
                 {children}
                 {ReactQueryDevtools ? (

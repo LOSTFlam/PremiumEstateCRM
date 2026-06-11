@@ -7,7 +7,7 @@ import { extractCollection } from "utils/normalizeResponse";
 import { fetchPublicCatalog } from "views/public/catalog/catalogService";
 import { clearFavoriteIds } from "views/public/catalog/catalogStorage";
 import { useCabinetPreferences } from "hooks/useCabinetPreferences";
-import CabinetPropertyGrid from "./CabinetPropertyGrid";
+import FavoritesDraggableGrid from "./FavoritesDraggableGrid";
 import PropertyNotesPanel from "./PropertyNotesPanel";
 import { exportFavoritesPdf, shareFavorites } from "./cabinetExport";
 import { useCabinetTheme } from "./useCabinetTheme";
@@ -17,7 +17,12 @@ const CabinetSection = ({ title, description, children, actions }) => {
 
   return (
     <Stack spacing={5}>
-      <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
+      <Flex
+        justify="space-between"
+        align={{ base: "flex-start", md: "center" }}
+        gap={4}
+        wrap="wrap"
+      >
         <Box>
           <Heading size="md" color={theme.heading} mb={2}>
             {title}
@@ -38,6 +43,7 @@ const CabinetSection = ({ title, description, children, actions }) => {
 const SavedFavoritesSection = () => {
   const { t, i18n } = useTranslation();
   const toast = useToast();
+  const theme = useCabinetTheme();
   const { favoriteIds, propertyNotes, refreshLocal } = useCabinetPreferences({ autoSync: false });
   const [exporting, setExporting] = useState(false);
 
@@ -103,12 +109,16 @@ const SavedFavoritesSection = () => {
         ) : null
       }
     >
-      <CabinetPropertyGrid
-        ids={favoriteIds}
-        emptyTitle={t("cabinet.savedEmpty.title")}
-        emptyText={t("cabinet.savedEmpty.text")}
-        onRemove={refreshLocal}
-      />
+      {favoriteIds.length ? (
+        <FavoritesDraggableGrid ids={favoriteIds} onReorder={refreshLocal} />
+      ) : (
+        <Box {...theme.emptyStateStyle} textAlign="center">
+          <Text color={theme.heading} fontWeight="700" mb={2}>
+            {t("cabinet.savedEmpty.title")}
+          </Text>
+          <Text color={theme.muted}>{t("cabinet.savedEmpty.text")}</Text>
+        </Box>
+      )}
       <PropertyNotesPanel
         favoriteIds={favoriteIds}
         propertyNotes={propertyNotes}

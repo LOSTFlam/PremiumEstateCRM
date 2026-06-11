@@ -21,9 +21,11 @@ import { MdNotificationsNone } from "react-icons/md";
 import { FaEthereum } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getApi } from "services/api";
+import { getApi, postApi } from "services/api";
 import { constant } from "constant";
 import { useDispatch, useSelector } from "react-redux";
+import { clearAuthStorage } from "utils/authStorage";
+import { clearUser } from "../../redux/slices/localSlice";
 import { useTranslation } from "react-i18next";
 import i18next from "i18n/i18n.config";
 import { setLanguage } from "../../redux/slices/languageSlice";
@@ -74,10 +76,25 @@ export default function HeaderLinks(props) {
 
   const [isLogoutScheduled, setIsLogoutScheduled] = useState(false);
 
-  const logOut = (message) => {
-    localStorage.clear();
-    sessionStorage.clear();
+  const logOut = async (message, skipServerLogout = false) => {
+    if (isLogoutScheduled) return;
     setIsLogoutScheduled(true);
+
+    if (!skipServerLogout) {
+      try {
+        await postApi("api/user/logout", {}, {
+          rememberMe: false,
+          requestConfig: {
+            headers: { "X-Silent-Request": "true" },
+          },
+        });
+      } catch {
+        // Continue local cleanup even if the server logout fails.
+      }
+    }
+
+    clearAuthStorage();
+    dispatch(clearUser());
 
     if (message) {
       toast.error(message);
@@ -85,7 +102,6 @@ export default function HeaderLinks(props) {
       toast.success("Log out Successfully");
     }
 
-    // Navigate to offers page after logout
     setTimeout(() => {
       window.location.href = "/offers";
     }, 100);
@@ -98,8 +114,20 @@ export default function HeaderLinks(props) {
       try {
         await getApi("api/user/session", { silent: true });
       } catch (error) {
-        if (!cancelled && !isLogoutScheduled && error?.response?.status === 401) {
-          logOut("Session expired");
+        if (cancelled || isLogoutScheduled || error?.response?.status !== 401) {
+          return;
+        }
+
+        try {
+          await postApi("api/user/refresh-token", {}, {
+            rememberMe: true,
+            requestConfig: {
+              headers: { "X-Silent-Request": "true" },
+            },
+          });
+          await getApi("api/user/session", { silent: true });
+        } catch {
+          logOut("Session expired", true);
         }
       }
     };

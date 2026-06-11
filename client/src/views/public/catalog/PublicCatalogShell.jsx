@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Button,
+  ButtonGroup,
   Container,
   Drawer,
   DrawerBody,
@@ -33,13 +34,18 @@ import {
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useSearchParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { FiBookmark, FiFilter, FiHome, FiLink, FiShield, FiTrendingUp, FiX } from "react-icons/fi";
 import { MdArrowForward, MdCompareArrows, MdFavoriteBorder } from "react-icons/md";
 import { LuBuilding2, LuTrees } from "react-icons/lu";
 import ModernFooter from "components/ModernFooter";
 import ModernHeader from "components/ModernHeader";
 import ModernPropertyCard from "components/ModernPropertyCard";
+import PropertyListCard from "components/PropertyListCard";
+import MobileBottomNav from "components/public/MobileBottomNav";
+import PublicEmptyState from "components/public/PublicEmptyState";
+import CatalogMapView from "./CatalogMapView";
 import GuidedFinder from "components/property/AIPropertyMatcher";
 import {
   COLLECTION_STOREFRONT_SLUGS,
@@ -476,10 +482,20 @@ const CatalogFiltersPanel = ({
   </Stack>
 );
 
+const MotionBox = motion.create(Box);
+
 export default function PublicCatalogShell({ forcedType = null, collectionSlug = "", children }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewMode = searchParams.get("view") || "grid";
+
+  const setViewMode = (mode) => {
+    const next = new URLSearchParams(searchParams);
+    next.set("view", mode);
+    setSearchParams(next, { replace: true });
+  };
   const copy = shellCopy[i18n.language?.startsWith("ru") ? "ru" : "en"];
   const {
     properties,
@@ -925,6 +941,25 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                       minW="44px"
                       minH="44px"
                     />
+                    <ButtonGroup isAttached borderRadius="full" overflow="hidden" flexWrap="wrap">
+                      {[
+                        { key: "grid", label: t("publicPages.catalog.viewGrid") },
+                        { key: "list", label: t("publicPages.catalog.viewList") },
+                        { key: "map", label: t("publicPages.catalog.viewMap") },
+                      ].map((mode) => (
+                        <Button
+                          key={mode.key}
+                          size="sm"
+                          onClick={() => setViewMode(mode.key)}
+                          bg={viewMode === mode.key ? publicBrand.colors.ink : "white"}
+                          color={viewMode === mode.key ? "white" : publicBrand.colors.ink}
+                          border="1px solid rgba(9,18,32,0.08)"
+                          minH="44px"
+                        >
+                          {mode.label}
+                        </Button>
+                      ))}
+                    </ButtonGroup>
                     <Select
                       maxW={{ base: "100%", md: "260px" }}
                       flex={{ base: 1, md: "none" }}
@@ -1139,53 +1174,84 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                 </Box>
               ) : null}
 
-              {loading ? (
-                <SimpleGrid
-                  className="property-card-grid"
-                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
-                  spacing={PROPERTY_CARD_GRID_SPACING}
-                >
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={`skeleton-${index}`} h="520px" borderRadius="34px" />
-                  ))}
-                </SimpleGrid>
-              ) : paginatedProperties.length ? (
-                <SimpleGrid
-                  className="property-card-grid"
-                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
-                  spacing={PROPERTY_CARD_GRID_SPACING}
-                >
-                  {paginatedProperties.map((property) => (
-                    <ModernPropertyCard
-                      key={property?._id}
-                      property={property}
-                      isFavorite={favoriteIds.includes(property?._id)}
-                      isInCompare={compareIds.includes(property?._id)}
-                      onFavoriteToggle={toggleFavorite}
-                      onCompareToggle={toggleCompare}
-                    />
-                  ))}
-                </SimpleGrid>
-              ) : (
-                <Box {...SURFACE_PANEL_PROPS}>
-                  <Stack spacing={4} align="start">
-                    <Heading size="md" color={publicBrand.colors.ink}>
-                      {copy.noResults}
-                    </Heading>
-                    <Text color={publicBrand.colors.textSoft} maxW="560px">
-                      {copy.noResultsText}
-                    </Text>
-                    <Button
-                      onClick={resetFilters}
-                      borderRadius="full"
-                      bg={publicBrand.gradients.brass}
-                      color={publicBrand.colors.ink}
+              {!loading && paginatedProperties.length ? (
+                <Text fontSize="sm" color={publicBrand.colors.textSoft}>
+                  {t("publicPages.catalog.shownCount", {
+                    shown: paginatedProperties.length,
+                    total: properties.length,
+                  })}
+                </Text>
+              ) : null}
+
+              <AnimatePresence mode="wait">
+                {loading ? (
+                  <MotionBox
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <SimpleGrid
+                      className="property-card-grid"
+                      minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                      spacing={PROPERTY_CARD_GRID_SPACING}
                     >
-                      {copy.browseAll}
-                    </Button>
-                  </Stack>
-                </Box>
-              )}
+                      {Array.from({ length: 6 }).map((_, index) => (
+                        <Skeleton key={`skeleton-${index}`} h="520px" borderRadius="34px" />
+                      ))}
+                    </SimpleGrid>
+                  </MotionBox>
+                ) : paginatedProperties.length ? (
+                  <MotionBox
+                    key={viewMode}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {viewMode === "map" ? (
+                      <CatalogMapView properties={paginatedProperties} />
+                    ) : viewMode === "list" ? (
+                      <Stack spacing={4}>
+                        {paginatedProperties.map((property) => (
+                          <PropertyListCard
+                            key={property?._id}
+                            property={property}
+                            isFavorite={favoriteIds.includes(property?._id)}
+                            isInCompare={compareIds.includes(property?._id)}
+                            onFavoriteToggle={toggleFavorite}
+                            onCompareToggle={toggleCompare}
+                          />
+                        ))}
+                      </Stack>
+                    ) : (
+                      <SimpleGrid
+                        className="property-card-grid"
+                        minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                        spacing={PROPERTY_CARD_GRID_SPACING}
+                      >
+                        {paginatedProperties.map((property) => (
+                          <ModernPropertyCard
+                            key={property?._id}
+                            property={property}
+                            isFavorite={favoriteIds.includes(property?._id)}
+                            isInCompare={compareIds.includes(property?._id)}
+                            onFavoriteToggle={toggleFavorite}
+                            onCompareToggle={toggleCompare}
+                          />
+                        ))}
+                      </SimpleGrid>
+                    )}
+                  </MotionBox>
+                ) : (
+                  <PublicEmptyState
+                    title={copy.noResults}
+                    description={copy.noResultsText}
+                    actionLabel={copy.browseAll}
+                    onAction={resetFilters}
+                  />
+                )}
+              </AnimatePresence>
 
               {totalPages > 1 ? (
                 <HStack spacing={2} justify="center" flexWrap="wrap">
@@ -1266,6 +1332,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
         </Grid>
       </Container>
 
+      <MobileBottomNav />
       <ModernFooter />
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">

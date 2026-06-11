@@ -20,6 +20,11 @@ import {
   Container,
   Divider,
   SimpleGrid,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
 } from "@chakra-ui/react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import {
@@ -43,8 +48,11 @@ import { useTranslation } from "react-i18next";
 import LeadCaptureForm from "components/property/LeadCaptureForm";
 import SimilarProperties from "components/property/SimilarProperties";
 import PropertyGallery from "components/property/PropertyGallery";
+import MortgageCalculator from "components/property/MortgageCalculator";
+import MobileBottomNav from "components/public/MobileBottomNav";
 import ModernHeader from "components/ModernHeader";
 import ModernFooter from "components/ModernFooter";
+import { parsePrice } from "./catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 import { formatPrice } from "./catalog/catalogData";
 
@@ -389,30 +397,56 @@ const PropertyDetailPage = () => {
               ))}
             </SimpleGrid>
 
-            {/* Description */}
-            <Stack spacing={4}>
-              <Heading size="lg">{copy.description}</Heading>
-              <Text color="gray.300" lineHeight="1.8">
-                {property.propertyDescription ||
-                  property.marketingDescription ||
-                  copy.noDescription}
-              </Text>
-            </Stack>
-
-            {/* Features */}
-            {property.features?.length > 0 && (
-              <Stack spacing={4}>
-                <Heading size="lg">{copy.features}</Heading>
-                <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3}>
-                  {property.features.map((feature, idx) => (
-                    <HStack key={idx} spacing={2}>
-                      <Box w={2} h={2} borderRadius="full" bg="#F5D076" />
-                      <Text color="gray.300">{feature}</Text>
+            <Tabs variant="soft-rounded" colorScheme="yellow">
+              <TabList flexWrap="wrap" gap={2}>
+                <Tab>{copy.description}</Tab>
+                <Tab>{copy.features}</Tab>
+                <Tab>{locale === "ru" ? "Ипотека" : "Mortgage"}</Tab>
+                <Tab>{locale === "ru" ? "Расположение" : "Location"}</Tab>
+              </TabList>
+              <TabPanels mt={6}>
+                <TabPanel px={0}>
+                  <Text color="gray.300" lineHeight="1.8">
+                    {property.propertyDescription ||
+                      property.marketingDescription ||
+                      copy.noDescription}
+                  </Text>
+                </TabPanel>
+                <TabPanel px={0}>
+                  {property.features?.length > 0 ? (
+                    <SimpleGrid columns={{ base: 2, md: 3 }} spacing={3}>
+                      {property.features.map((feature, idx) => (
+                        <HStack key={idx} spacing={2}>
+                          <Box w={2} h={2} borderRadius="full" bg="#F5D076" />
+                          <Text color="gray.300">{feature}</Text>
+                        </HStack>
+                      ))}
+                    </SimpleGrid>
+                  ) : (
+                    <Text color="gray.400">{copy.noDescription}</Text>
+                  )}
+                </TabPanel>
+                <TabPanel px={0}>
+                  <MortgageCalculator
+                    propertyPrice={parsePrice(property.listingPrice) || 25000000}
+                    onApply={() => openLeadForm("info")}
+                  />
+                </TabPanel>
+                <TabPanel px={0}>
+                  <Stack spacing={3}>
+                    <HStack color="gray.300">
+                      <Icon as={FiMapPin} />
+                      <Text>{property.propertyAddress}</Text>
                     </HStack>
-                  ))}
-                </SimpleGrid>
-              </Stack>
-            )}
+                    <Text color="gray.400" fontSize="sm">
+                      {locale === "ru"
+                        ? "Точные координаты и карта доступны менеджеру при записи на просмотр."
+                        : "Exact coordinates and map details are shared by your manager when booking a viewing."}
+                    </Text>
+                  </Stack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
 
             {/* Video Tour */}
             {property.videoTour && (
@@ -549,6 +583,7 @@ const PropertyDetailPage = () => {
       />
 
       <ModernFooter />
+      <MobileBottomNav />
     </Box>
   );
 };

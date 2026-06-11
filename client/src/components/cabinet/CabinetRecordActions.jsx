@@ -25,7 +25,13 @@ export default function CabinetRecordActions({
 
   if (compact) {
     return (
-      <Flex className="cabinet-record-actions" gap={2} w="100%" justify="flex-end" flexWrap="nowrap">
+      <Flex
+        className="cabinet-record-actions"
+        gap={2}
+        w="100%"
+        justify="flex-end"
+        flexWrap="nowrap"
+      >
         {showEdit ? (
           <IconButton
             aria-label={editText}
@@ -72,7 +78,13 @@ export default function CabinetRecordActions({
         </Button>
       ) : null}
       {showDelete ? (
-        <Button onClick={onDelete} size="sm" leftIcon={deleteIcon} colorScheme="red" whiteSpace="nowrap">
+        <Button
+          onClick={onDelete}
+          size="sm"
+          leftIcon={deleteIcon}
+          colorScheme="red"
+          whiteSpace="nowrap"
+        >
           {deleteText}
         </Button>
       ) : null}

@@ -1,4 +1,7 @@
 import { Box, Button, Icon, Text, useColorModeValue } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+const MotionBox = motion.create(Box);
 
 export default function CabinetEmptyState({
   title,
@@ -13,7 +16,7 @@ export default function CabinetEmptyState({
   const subtleText = useColorModeValue("gray.500", "gray.400");
 
   return (
-    <Box
+    <MotionBox
       className="cabinet-empty-state"
       bg={cardBg}
       border="1px solid"
@@ -21,6 +24,9 @@ export default function CabinetEmptyState({
       borderRadius="24px"
       p={{ base: 8, md: 10 }}
       textAlign="center"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {icon ? <Icon as={icon} boxSize={10} color="gold.500" mb={4} /> : null}
       <Text fontWeight="700" fontSize="lg">
@@ -37,6 +43,6 @@ export default function CabinetEmptyState({
           {actionLabel}
         </Button>
       ) : null}
-    </Box>
+    </MotionBox>
   );
 }

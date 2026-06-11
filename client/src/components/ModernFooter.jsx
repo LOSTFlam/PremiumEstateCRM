@@ -9,15 +9,18 @@ import {
   HStack,
   Icon,
   Image,
+  Input,
   Link,
   SimpleGrid,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone, FiYoutube } from "react-icons/fi";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import ScrollToTopButton from "components/public/ScrollToTopButton";
 import useActiveBranding, { getActiveBrandRecord, getBrandLogoSrc } from "hooks/useActiveBranding";
 import {
   getPublicSubline,
@@ -28,6 +31,8 @@ import {
 
 export default function ModernFooter() {
   const { t, i18n } = useTranslation();
+  const toast = useToast();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
   const currentYear = new Date().getFullYear();
   const branding = useActiveBranding();
   const brandRecord = useMemo(
@@ -38,11 +43,18 @@ export default function ModernFooter() {
   const compactLogo = getBrandLogoSrc(brandRecord, "small");
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
 
-  const quickLinks = [
-    { label: t("publicListing.homeNav"), href: "/" },
+  const companyLinks = [
+    { label: t("publicPages.nav.about"), href: "/about" },
+    { label: t("publicPages.nav.howItWorks"), href: "/how-it-works" },
+    { label: t("publicPages.nav.testimonials"), href: "/testimonials" },
+    { label: t("publicPages.nav.blog"), href: "/blog" },
+  ];
+
+  const serviceLinks = [
+    { label: t("publicPages.nav.services"), href: "/services" },
+    { label: t("publicPages.nav.faq"), href: "/faq" },
+    { label: t("publicPages.nav.contacts"), href: "/contacts" },
     { label: t("publicListing.propertiesNav"), href: "/offers" },
-    { label: t("publicListing.savedOffers"), href: "/favorites" },
-    { label: t("publicListing.comparePageTitle"), href: "/offers/compare" },
   ];
 
   const propertyTypes = [
@@ -193,10 +205,40 @@ export default function ModernFooter() {
                       color="#f5d076"
                       border="1px solid rgba(245,208,118,0.22)"
                     >
-                      {t("publicListing.quickLinksNav")}
+                      {t("publicPages.footer.company")}
                     </Badge>
                     <Stack spacing={3}>
-                      {quickLinks.map((link) => (
+                      {companyLinks.map((link) => (
+                        <Link
+                          key={link.href}
+                          as={RouterLink}
+                          to={link.href}
+                          color="whiteAlpha.820"
+                          fontSize="sm"
+                          _hover={{ color: "#f5d076" }}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </Stack>
+                  </Stack>
+                </Box>
+
+                <Box className="public-brand-panel" borderRadius="30px" px={6} py={7}>
+                  <Stack spacing={5}>
+                    <Badge
+                      w="fit-content"
+                      px={3}
+                      py={1.5}
+                      borderRadius="full"
+                      bg="rgba(245,208,118,0.14)"
+                      color="#f5d076"
+                      border="1px solid rgba(245,208,118,0.22)"
+                    >
+                      {t("publicPages.nav.services")}
+                    </Badge>
+                    <Stack spacing={3}>
+                      {serviceLinks.map((link) => (
                         <Link
                           key={link.href}
                           as={RouterLink}
@@ -252,7 +294,36 @@ export default function ModernFooter() {
             bg="rgba(255,255,255,0.04)"
             border="1px solid rgba(227, 211, 184, 0.12)"
           >
-            <Grid templateColumns={{ base: "1fr", lg: "1.2fr 0.8fr" }} gap={8} alignItems="center">
+            <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={8} alignItems="start">
+              <Stack spacing={4}>
+                <Text fontSize="xs" letterSpacing="0.18em" textTransform="uppercase" color="#f5d076">
+                  {t("publicPages.footer.newsletterTitle")}
+                </Text>
+                <Text color="whiteAlpha.760" lineHeight="1.8">
+                  {t("publicPages.footer.newsletterText")}
+                </Text>
+                <HStack as="form" spacing={3} onSubmit={(event) => {
+                  event.preventDefault();
+                  if (!newsletterEmail.trim()) return;
+                  toast({ title: t("publicPages.footer.newsletterSuccess"), status: "success" });
+                  setNewsletterEmail("");
+                }}>
+                  <Input
+                    value={newsletterEmail}
+                    onChange={(event) => setNewsletterEmail(event.target.value)}
+                    placeholder={t("publicPages.footer.newsletterPlaceholder")}
+                    bg="rgba(255,255,255,0.06)"
+                    border="1px solid rgba(227, 211, 184, 0.14)"
+                    color="white"
+                    borderRadius="full"
+                    type="email"
+                  />
+                  <Button type="submit" borderRadius="full" bg={publicBrand.gradients.brass} color={publicBrand.colors.ink}>
+                    OK
+                  </Button>
+                </HStack>
+              </Stack>
+
               <Stack spacing={4}>
                 <Text
                   fontSize="xs"
@@ -317,19 +388,20 @@ export default function ModernFooter() {
               {t("publicListing.rightsReserved").replace("2024", String(currentYear))}
             </Text>
             <HStack spacing={6} flexWrap="wrap">
-              <Text color="whiteAlpha.620" fontSize="sm">
+              <Link as={RouterLink} to="/privacy" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
                 {t("publicListing.privacyNav")}
-              </Text>
-              <Text color="whiteAlpha.620" fontSize="sm">
-                {t("publicListing.termsNav")}
-              </Text>
-              <Text color="whiteAlpha.620" fontSize="sm">
-                {t("publicListing.cookiesNav")}
-              </Text>
+              </Link>
+              <Link as={RouterLink} to="/faq" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
+                {t("publicPages.nav.faq")}
+              </Link>
+              <Link as={RouterLink} to="/contacts" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
+                {t("publicPages.nav.contacts")}
+              </Link>
             </HStack>
           </HStack>
         </Stack>
       </Container>
+      <ScrollToTopButton />
     </Box>
   );
 }

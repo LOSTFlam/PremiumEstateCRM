@@ -7,7 +7,7 @@ const REFRESH_COOKIE_NAME = "refreshToken";
 
 // Token expiration settings
 const ACCESS_TOKEN_EXPIRY = process.env.JWT_EXPIRES_IN || "15m";  // Short-lived access token
-const REFRESH_TOKEN_EXPIRY = "7d";  // Longer-lived refresh token
+const REFRESH_TOKEN_EXPIRY = "30d";  // Longer-lived refresh token
 const SESSION_TIMEOUT = 30 * 60 * 1000;  // 30 minutes session timeout
 
 const assertJwtSecret = () => {
@@ -53,7 +53,7 @@ const generateRefreshTokenId = () => {
  * Store refresh token in user document with rotation support
  */
 const storeRefreshToken = async (userId, refreshToken, tokenId) => {
-  const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expiryDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
   
   await User.findByIdAndUpdate(userId, {
     refreshToken: tokenId,  // Store token ID for rotation tracking
@@ -134,7 +134,7 @@ const getRefreshCookieOptions = () => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days for refresh token
+  maxAge: 30 * 24 * 60 * 60 * 1000,  // 30 days for refresh token
 });
 
 const getLogoutCookieOptions = () => ({

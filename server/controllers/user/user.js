@@ -479,6 +479,7 @@ const refreshToken = async (req, res, next) => {
     
     res.status(200).json({
       message: "Token refreshed successfully",
+      user: sanitizeUser(user),
     });
   } catch (error) {
     next(error);

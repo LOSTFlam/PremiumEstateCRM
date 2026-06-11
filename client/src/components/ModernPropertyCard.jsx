@@ -6,7 +6,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Image,
   SimpleGrid,
   Stack,
   Text,
@@ -18,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
 import { useMemo, useState } from "react";
+import CountUp from "react-countup";
 import {
   MdArrowForward,
   MdBathtub,
@@ -44,6 +44,7 @@ import {
   normalizeStatus,
   placeholderImage,
 } from "views/public/catalog/catalogData";
+import LazyImage from "components/public/LazyImage";
 import { publicBrand } from "views/public/publicBrand";
 
 const metricText = (value, fallback = "—") => {
@@ -133,15 +134,20 @@ const ModernPropertyCard = ({
   const verificationScore = Number(property?.verification?.score || 0);
   const richListing = isRichListing(property);
   const propertyHref = buildPropertyHref(property);
-  const [imgError, setImgError] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
+  const priceAmount = useMemo(() => parsePrice(property?.listingPrice), [property?.listingPrice]);
   const priceDisplay = useMemo(() => {
     const formatted = formatPrice(property?.listingPrice, t, i18n.language);
-    const amount = parsePrice(property?.listingPrice);
+    const amount = priceAmount;
     if (!amount || formatted.length <= 16) return formatted;
     return formatCompactPrice(property?.listingPrice, t, i18n.language);
-  }, [property?.listingPrice, t, i18n.language]);
+  }, [priceAmount, property?.listingPrice, t, i18n.language]);
+
+  const isNewListing = useMemo(() => {
+    if (!property?.createdAt) return false;
+    return Date.now() - new Date(property.createdAt).getTime() < 14 * 24 * 60 * 60 * 1000;
+  }, [property?.createdAt]);
 
   const handleShare = async (event) => {
     event.preventDefault();
@@ -212,13 +218,13 @@ const ModernPropertyCard = ({
             transform: "scale(1.08)",
           }}
         >
-          <Image
-            src={imgError ? placeholderImage : getPrimaryImage(property)}
+          <LazyImage
+            src={getPrimaryImage(property)}
+            fallbackSrc={placeholderImage}
             alt={property?.name || property?.propertyAddress}
             h={{ base: "240px", md: "300px", xl: "320px" }}
             w="100%"
             objectFit="cover"
-            onError={() => setImgError(true)}
           />
         </Box>
         <Box
@@ -304,6 +310,21 @@ const ModernPropertyCard = ({
               flexShrink={0}
             >
               {t?.("publicListing.richLabel") || "Rich"}
+            </Badge>
+          ) : null}
+          {isNewListing ? (
+            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(56,161,105,0.2)" color="#9ae6b4" textTransform="none" flexShrink={0}>
+              {t?.("publicPages.catalog.badgeNew") || "New"}
+            </Badge>
+          ) : null}
+          {property?.featured ? (
+            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(212,175,55,0.22)" color="#f5d076" textTransform="none" flexShrink={0}>
+              {t?.("publicPages.catalog.badgeExclusive") || "Exclusive"}
+            </Badge>
+          ) : null}
+          {property?.previousPrice ? (
+            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(229,62,62,0.2)" color="#feb2b2" textTransform="none" flexShrink={0}>
+              {t?.("publicPages.catalog.badgeReduced") || "Reduced"}
             </Badge>
           ) : null}
           </HStack>
@@ -401,7 +422,17 @@ const ModernPropertyCard = ({
               letterSpacing="-0.02em"
               color="white"
             >
-              {priceDisplay}
+              {priceAmount ? (
+                <CountUp
+                  end={priceAmount}
+                  duration={1.2}
+                  formattingFn={(value) =>
+                    formatPrice(value, t, i18n.language) || priceDisplay
+                  }
+                />
+              ) : (
+                priceDisplay
+              )}
               {property?.dealType === "rent" ? (
                 <Text as="span" fontSize={{ base: "sm", md: "md" }} color="whiteAlpha.700" fontWeight="600">
                   {t?.("publicListing.perMonth") || "/мес"}

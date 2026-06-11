@@ -1,15 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  HStack,
-  Skeleton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Heading, HStack, Skeleton, Stack, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LuCalendarClock, LuMessageSquare } from "react-icons/lu";
@@ -119,7 +109,9 @@ const InquiriesSection = () => {
                     </Badge>
                     <HStack color={theme.subtle} fontSize="sm">
                       <LuCalendarClock />
-                      <Text>{formatDate(inquiry.createdDate || inquiry.createdAt, i18n.language)}</Text>
+                      <Text>
+                        {formatDate(inquiry.createdDate || inquiry.createdAt, i18n.language)}
+                      </Text>
                     </HStack>
                   </HStack>
                   <Text color={theme.heading} fontWeight="700" fontSize="lg">

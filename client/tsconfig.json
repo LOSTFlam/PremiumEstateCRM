@@ -31,6 +31,7 @@
       "@assets/*": ["./src/assets/*"],
       "assets/*": ["./src/assets/*"],
       "components/*": ["./src/components/*"],
+      "data/*": ["./src/data/*"],
       "constant": ["./src/constant.js"],
       "constant/*": ["./src/constant/*"],
       "contexts/*": ["./src/contexts/*"],

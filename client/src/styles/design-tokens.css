@@ -1,4 +1,26 @@
 :root {
+  /* Premium Estate brand palette */
+  --pe-primary: #0a2540;
+  --pe-accent: #d4af37;
+  --pe-background: #ffffff;
+  --pe-surface: #f7f9fc;
+  --pe-text-primary: #1a202c;
+  --pe-text-secondary: #4a5568;
+  --pe-success: #38a169;
+  --pe-error: #e53e3e;
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-input: 6px;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.2);
+  --h1-size: 48px;
+  --h2-size: 36px;
+  --h3-size: 24px;
+  --body-size: 16px;
+  --small-size: 14px;
+  --line-height-body: 1.6;
+
   /* Light mode - SaaS grade design tokens */
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;

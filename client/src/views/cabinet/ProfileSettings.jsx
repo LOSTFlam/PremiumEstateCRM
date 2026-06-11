@@ -221,23 +221,33 @@ const ProfileSettings = () => {
         </Heading>
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
           <Box>
-            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.username")}</Text>
-            <Text color={theme.text} fontWeight="600">{userMeta?.username || "—"}</Text>
+            <Text color={theme.subtle} fontSize="sm">
+              {t("cabinet.account.username")}
+            </Text>
+            <Text color={theme.text} fontWeight="600">
+              {userMeta?.username || "—"}
+            </Text>
           </Box>
           <Box>
-            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.memberSince")}</Text>
+            <Text color={theme.subtle} fontSize="sm">
+              {t("cabinet.account.memberSince")}
+            </Text>
             <Text color={theme.text} fontWeight="600">
               {formatAccountDate(userMeta?.createdAt || userMeta?.createdDate, i18n.language)}
             </Text>
           </Box>
           <Box>
-            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.lastLogin")}</Text>
+            <Text color={theme.subtle} fontSize="sm">
+              {t("cabinet.account.lastLogin")}
+            </Text>
             <Text color={theme.text} fontWeight="600">
               {formatAccountDate(userMeta?.lastLoginAt, i18n.language)}
             </Text>
           </Box>
           <Box>
-            <Text color={theme.subtle} fontSize="sm">{t("navigation.language")}</Text>
+            <Text color={theme.subtle} fontSize="sm">
+              {t("navigation.language")}
+            </Text>
             <Select
               mt={1}
               value={currentLanguage}
@@ -257,7 +267,11 @@ const ProfileSettings = () => {
           {t("cabinet.profile.title")}
         </Heading>
         <Stack direction={{ base: "column", md: "row" }} align="center" spacing={6} mb={6}>
-          <Avatar size="2xl" name={`${profile.firstName} ${profile.lastName}`} src={resolvedAvatar} />
+          <Avatar
+            size="2xl"
+            name={`${profile.firstName} ${profile.lastName}`}
+            src={resolvedAvatar}
+          />
           <Stack spacing={3} align={{ base: "center", md: "flex-start" }}>
             <Text color={theme.muted}>{t("cabinet.profile.avatarHint")}</Text>
             <input
@@ -334,7 +348,13 @@ const ProfileSettings = () => {
             </HStack>
           ))}
         </Stack>
-        <Button mt={5} colorScheme="green" variant="outline" onClick={handleNotificationsSave} isLoading={savingNotify}>
+        <Button
+          mt={5}
+          colorScheme="green"
+          variant="outline"
+          onClick={handleNotificationsSave}
+          isLoading={savingNotify}
+        >
           {t("cabinet.notifications.save")}
         </Button>
       </Box>
@@ -354,14 +374,21 @@ const ProfileSettings = () => {
               <Input
                 type="password"
                 value={passwords[field.key]}
-                onChange={(event) => setPasswords({ ...passwords, [field.key]: event.target.value })}
+                onChange={(event) =>
+                  setPasswords({ ...passwords, [field.key]: event.target.value })
+                }
                 {...theme.inputFieldProps}
               />
             </FormControl>
           ))}
         </Stack>
         <Divider my={5} borderColor={theme.divider} />
-        <Button colorScheme="green" variant="outline" onClick={handlePasswordChange} isLoading={savingPassword}>
+        <Button
+          colorScheme="green"
+          variant="outline"
+          onClick={handlePasswordChange}
+          isLoading={savingPassword}
+        >
           {t("cabinet.profile.changePassword")}
         </Button>
       </Box>

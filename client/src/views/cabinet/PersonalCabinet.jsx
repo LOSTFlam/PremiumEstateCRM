@@ -20,13 +20,16 @@ import {
   LuUser,
 } from "react-icons/lu";
 import { MdCompareArrows } from "react-icons/md";
+import CabinetNotificationsCenter from "components/cabinet/CabinetNotificationsCenter";
 import ConsumerDashboard from "./ConsumerDashboard";
+import { useCabinetPreferences } from "hooks/useCabinetPreferences";
 import CabinetPropertyGrid from "./CabinetPropertyGrid";
 import ProfileSettings from "./ProfileSettings";
 import SavedFavoritesSection from "./SavedFavoritesSection";
 import InquiriesSection from "./InquiriesSection";
 import { buildSavedSearchPath } from "./cabinetExport";
-import { useCabinetPreferences } from "hooks/useCabinetPreferences";
+import { useCallback, useEffect, useState } from "react";
+import { getApi } from "services/api";
 import { useCabinetTheme } from "./useCabinetTheme";
 import {
   clearCompareIds,
@@ -39,7 +42,12 @@ const CabinetSection = ({ title, description, children, actions }) => {
 
   return (
     <Stack spacing={5}>
-      <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
+      <Flex
+        justify="space-between"
+        align={{ base: "flex-start", md: "center" }}
+        gap={4}
+        wrap="wrap"
+      >
         <Box>
           <Heading size="md" color={theme.heading} mb={2}>
             {title}
@@ -138,7 +146,10 @@ const SearchesSection = () => {
 
   if (!savedSearches.length) {
     return (
-      <CabinetSection title={t("cabinet.sections.searches")} description={t("cabinet.sections.searchesDesc")}>
+      <CabinetSection
+        title={t("cabinet.sections.searches")}
+        description={t("cabinet.sections.searchesDesc")}
+      >
         <Box {...theme.emptyStateStyle}>
           <Text color={theme.heading} fontWeight="700" mb={2}>
             {t("cabinet.searchesEmpty.title")}
@@ -155,7 +166,10 @@ const SearchesSection = () => {
   }
 
   return (
-    <CabinetSection title={t("cabinet.sections.searches")} description={t("cabinet.sections.searchesDesc")}>
+    <CabinetSection
+      title={t("cabinet.sections.searches")}
+      description={t("cabinet.sections.searchesDesc")}
+    >
       <Stack spacing={3}>
         {savedSearches.map((search) => (
           <Flex
@@ -208,14 +222,45 @@ const PersonalCabinet = () => {
   const location = useLocation();
   const theme = useCabinetTheme();
   const isMobile = useBreakpointValue({ base: true, lg: false });
+  const { favoriteIds, savedSearches, notifications } = useCabinetPreferences({ autoSync: false });
+  const [inquiryCount, setInquiryCount] = useState(0);
+
+  const fetchInquiryCount = useCallback(async () => {
+    try {
+      const response = await getApi("api/user/inquiries", { silent: true });
+      const items = response?.inquiries || [];
+      setInquiryCount(Array.isArray(items) ? items.length : 0);
+    } catch {
+      setInquiryCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchInquiryCount();
+  }, [fetchInquiryCount]);
 
   const tabs = [
     { key: "", label: t("cabinet.tabs.overview"), icon: LuLayoutDashboard, path: "/cabinet" },
     { key: "saved", label: t("cabinet.tabs.saved"), icon: LuHeart, path: "/cabinet/saved" },
     { key: "recent", label: t("cabinet.tabs.recent"), icon: LuClock3, path: "/cabinet/recent" },
-    { key: "compare", label: t("cabinet.tabs.compare"), icon: MdCompareArrows, path: "/cabinet/compare" },
-    { key: "searches", label: t("cabinet.tabs.searches"), icon: LuSearch, path: "/cabinet/searches" },
-    { key: "inquiries", label: t("cabinet.tabs.inquiries"), icon: LuMessageSquare, path: "/cabinet/inquiries" },
+    {
+      key: "compare",
+      label: t("cabinet.tabs.compare"),
+      icon: MdCompareArrows,
+      path: "/cabinet/compare",
+    },
+    {
+      key: "searches",
+      label: t("cabinet.tabs.searches"),
+      icon: LuSearch,
+      path: "/cabinet/searches",
+    },
+    {
+      key: "inquiries",
+      label: t("cabinet.tabs.inquiries"),
+      icon: LuMessageSquare,
+      path: "/cabinet/inquiries",
+    },
     { key: "profile", label: t("cabinet.tabs.profile"), icon: LuUser, path: "/cabinet/profile" },
   ];
 
@@ -256,16 +301,22 @@ const PersonalCabinet = () => {
           position={{ lg: "sticky" }}
           top={{ lg: "110px" }}
         >
-          <Text
-            color={theme.navMenuLabel}
-            fontSize="xs"
-            textTransform="uppercase"
-            letterSpacing="0.12em"
-            px={3}
-            py={2}
-          >
-            {t("cabinet.menu")}
-          </Text>
+          <HStack justify="space-between" px={3} py={2}>
+            <Text
+              color={theme.navMenuLabel}
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="0.12em"
+            >
+              {t("cabinet.menu")}
+            </Text>
+            <CabinetNotificationsCenter
+              inquiryCount={inquiryCount}
+              favoriteCount={favoriteIds.length}
+              savedSearchCount={savedSearches.length}
+              priceAlertsEnabled={Boolean(notifications?.priceChanges)}
+            />
+          </HStack>
           <Stack spacing={1}>
             {tabs.map((tab) => (
               <Button

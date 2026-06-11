@@ -52,6 +52,8 @@ export const pushRecentlyViewedId = (id) => pushRecentId(RECENT_KEY, id, 12);
 
 export const clearCompareIds = () => writeIds(COMPARE_KEY, []);
 export const clearFavoriteIds = () => writeIds(FAVORITES_KEY, []);
+
+export const reorderFavoriteIds = (orderedIds) => writeIds(FAVORITES_KEY, orderedIds);
 export const clearRecentlyViewedIds = () => writeIds(RECENT_KEY, []);
 
 export const getSavedSearches = () => {

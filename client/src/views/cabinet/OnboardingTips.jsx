@@ -9,10 +9,26 @@ const OnboardingTips = () => {
   const theme = useCabinetTheme();
 
   const tips = [
-    { icon: LuHeart, title: t("cabinet.onboarding.tip1Title"), text: t("cabinet.onboarding.tip1Text") },
-    { icon: MdCompareArrows, title: t("cabinet.onboarding.tip2Title"), text: t("cabinet.onboarding.tip2Text") },
-    { icon: LuSearch, title: t("cabinet.onboarding.tip3Title"), text: t("cabinet.onboarding.tip3Text") },
-    { icon: LuUser, title: t("cabinet.onboarding.tip4Title"), text: t("cabinet.onboarding.tip4Text") },
+    {
+      icon: LuHeart,
+      title: t("cabinet.onboarding.tip1Title"),
+      text: t("cabinet.onboarding.tip1Text"),
+    },
+    {
+      icon: MdCompareArrows,
+      title: t("cabinet.onboarding.tip2Title"),
+      text: t("cabinet.onboarding.tip2Text"),
+    },
+    {
+      icon: LuSearch,
+      title: t("cabinet.onboarding.tip3Title"),
+      text: t("cabinet.onboarding.tip3Text"),
+    },
+    {
+      icon: LuUser,
+      title: t("cabinet.onboarding.tip4Title"),
+      text: t("cabinet.onboarding.tip4Text"),
+    },
   ];
 
   return (

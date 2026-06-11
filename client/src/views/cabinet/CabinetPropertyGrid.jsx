@@ -1,13 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, SimpleGrid, Skeleton, Stack, Text } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ModernPropertyCard from "components/ModernPropertyCard";
@@ -18,10 +10,7 @@ import {
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
 import { fetchPublicCatalog } from "views/public/catalog/catalogService";
-import {
-  toggleCompareId,
-  toggleFavoriteId,
-} from "views/public/catalog/catalogStorage";
+import { toggleCompareId, toggleFavoriteId } from "views/public/catalog/catalogStorage";
 import { useCabinetTheme } from "./useCabinetTheme";
 
 const sortByIdOrder = (properties, ids) => {
@@ -67,10 +56,20 @@ const CabinetPropertyGrid = ({
       }
 
       const catalog = await fetchPublicCatalog();
-      setProperties(sortByIdOrder(catalog.filter((item) => ids.includes(item?._id)), ids));
+      setProperties(
+        sortByIdOrder(
+          catalog.filter((item) => ids.includes(item?._id)),
+          ids
+        )
+      );
     } catch {
       const catalog = await fetchPublicCatalog();
-      setProperties(sortByIdOrder(catalog.filter((item) => ids.includes(item?._id)), ids));
+      setProperties(
+        sortByIdOrder(
+          catalog.filter((item) => ids.includes(item?._id)),
+          ids
+        )
+      );
     } finally {
       setLoading(false);
     }
