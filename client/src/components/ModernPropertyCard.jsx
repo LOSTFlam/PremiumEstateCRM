@@ -183,6 +183,7 @@ const ModernPropertyCard = ({
       }
     >
       <Box
+        className="property-image-overlay"
         position="relative"
         overflow="hidden"
         borderRadius={{ base: "26px 26px 0 0", md: "34px 34px 0 0" }}
@@ -350,10 +351,10 @@ const ModernPropertyCard = ({
             justify="space-between"
             align="end"
             spacing={4}
-            flexWrap={{ base: "wrap", sm: "nowrap" }}
-            rowGap={2}
+            flexWrap="nowrap"
+            w="100%"
           >
-            <Stack spacing={1} minW={0} flex={1}>
+            <Stack spacing={1} minW={0} flex={1} overflow="hidden">
               <Text
                 className="property-price"
                 fontSize={{ base: "xl", md: "2xl", xl: "3xl" }}
@@ -361,7 +362,7 @@ const ModernPropertyCard = ({
                 lineHeight="1.1"
                 letterSpacing="-0.04em"
                 color="white"
-                wordBreak="break-word"
+                noOfLines={1}
               >
                 {formatPrice(property?.listingPrice, t, i18n.language)}
                 {property?.dealType === "rent" ? (
@@ -370,7 +371,7 @@ const ModernPropertyCard = ({
                   </Text>
                 ) : null}
               </Text>
-              <Text color="whiteAlpha.700" fontSize="sm">
+              <Text color="whiteAlpha.700" fontSize="sm" noOfLines={1}>
                 {property?.dealType === "rent"
                   ? t?.("publicListing.rentPriceLabel") || dealTypeLabel(property, t)
                   : t?.("publicListing.priceLabel") || "Price"}
