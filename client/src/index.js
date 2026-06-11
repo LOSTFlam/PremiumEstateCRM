@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ErrorBoundary from "components/ErrorBoundary";
 import SEO from "components/SEO";
 import GlobalAnimationStyles from "components/GlobalAnimationStyles";
-import ScrollToTop from "components/ScrollToTop";
 import CommandPalette from "components/CommandPalette";
 import "assets/css/App.css";
 import "assets/css/tailwind.css";
@@ -508,7 +507,6 @@ export function LegacyApplicationShell() {
     <BrowserRouter>
       <Suspense fallback={<RouteFallback />}>
         {authReady ? <AnimatedRoutes /> : <RouteFallback />}
-        <ScrollToTop />
         <CommandPalette isOpen={commandOpen} onClose={() => setCommandOpen(false)} />
       </Suspense>
     </BrowserRouter>
