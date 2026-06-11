@@ -29,6 +29,7 @@ import {
 } from "react-icons/md";
 import { LuMapPin } from "react-icons/lu";
 import {
+  formatAreaValue,
   formatCompactPrice,
   formatPrice,
   getDocumentCount,
@@ -89,7 +90,7 @@ const metricBlocks = (property, t) => [
   {
     label: t?.("publicListing.area") || "Area",
     icon: MdOutlineSquareFoot,
-    value: metricText(property?.squareFootage),
+    value: formatAreaValue(property?.squareFootage),
   },
 ];
 
@@ -168,7 +169,7 @@ const ModernPropertyCard = ({
       borderRadius={{ base: "30px", md: "40px", xl: "44px" }}
       overflow="hidden"
       maxW="100%"
-      minW={{ base: "100%", sm: "380px" }}
+      minW={0}
       w="100%"
       bg={publicBrand.gradients.panelLight}
       border="1px solid rgba(9,18,32,0.06)"
@@ -616,7 +617,7 @@ const ModernPropertyCard = ({
             fontSize="xs"
             flexShrink={0}
             maxW="100%"
-            whiteSpace="normal"
+            whiteSpace={{ base: "nowrap", sm: "normal" }}
             lineHeight="1.25"
             textAlign="center"
             transition="all 0.3s ease"

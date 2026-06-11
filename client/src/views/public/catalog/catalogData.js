@@ -623,6 +623,15 @@ const sampleStorefrontMeta = {
 
 export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/g, "")) || 0;
 
+export const formatAreaValue = (value, fallback = "—") => {
+  if (value === null || value === undefined || value === "" || Number(value) === 0) {
+    return fallback;
+  }
+  const cleaned = String(value).replace(/\s*m²\s*/gi, "").trim();
+  if (!cleaned) return fallback;
+  return `${cleaned} m²`;
+};
+
 export const formatPrice = (value, t, language = runtimeLanguage()) => {
   const amount = parsePrice(value);
   if (!amount) return t?.("publicListing.priceOnRequest") || "Price on request";

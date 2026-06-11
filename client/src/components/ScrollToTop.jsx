@@ -41,6 +41,7 @@ const ScrollToTop = () => {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
+          display={{ base: "none", md: "block" }}
           position="fixed"
           bottom={6}
           right={6}

@@ -58,7 +58,7 @@ import MortgageCalculator from "components/property/MortgageCalculator";
 import MobileBottomNav from "components/public/MobileBottomNav";
 import ModernHeader from "components/ModernHeader";
 import ModernFooter from "components/ModernFooter";
-import { parsePrice } from "./catalog/catalogData";
+import { formatAreaValue, parsePrice } from "./catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 import { formatPrice } from "./catalog/catalogData";
 
@@ -235,14 +235,14 @@ const PropertyDetailPage = () => {
     commercial: LuMapPin,
   };
 
-  const areaValue = property.squareFootage
-    ? String(property.squareFootage).replace(/\s*m²\s*$/i, "").trim()
-    : "—";
-
   const amenities = [
     { icon: MdMeetingRoom, label: copy.bedrooms, value: property.numberofBedrooms || "—" },
     { icon: MdBathtub, label: copy.bathrooms, value: property.numberofBathrooms || "—" },
-    { icon: MdOutlineSquareFoot, label: copy.area, value: areaValue === "—" ? "—" : `${areaValue} m²` },
+    {
+      icon: MdOutlineSquareFoot,
+      label: copy.area,
+      value: formatAreaValue(property.squareFootage),
+    },
     {
       icon: FiDollarSign,
       label: copy.price,
@@ -251,7 +251,14 @@ const PropertyDetailPage = () => {
   ];
 
   return (
-    <Box bg={publicBrand.gradients.page} minH="100vh" color="white" className="public-brand-shell">
+    <Box
+      bg={publicBrand.gradients.page}
+      minH="100vh"
+      color="white"
+      className="public-brand-shell property-detail-shell"
+      overflowX="hidden"
+      maxW="100vw"
+    >
       <ModernHeader />
       {/* Hero Image */}
       <Box
@@ -380,21 +387,30 @@ const PropertyDetailPage = () => {
               bg="rgba(255,255,255,0.05)"
               border="1px solid rgba(255,255,255,0.1)"
             >
-              <HStack justify="space-between">
-                <Stack spacing={1}>
+              <Flex
+                direction={{ base: "column", sm: "row" }}
+                align={{ base: "flex-start", sm: "center" }}
+                justify="space-between"
+                gap={3}
+              >
+                <Stack spacing={1} minW={0}>
                   <Text color="gray.400" fontSize="sm">
                     {copy.price}
                   </Text>
-                  <Heading size="xl" color="#F5D076">
+                  <Heading
+                    size={{ base: "lg", md: "xl" }}
+                    color="#F5D076"
+                    wordBreak="break-word"
+                  >
                     {formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest}
                   </Heading>
                 </Stack>
                 {property.pricePerSqm && (
-                  <Text color="gray.400" fontSize="sm">
+                  <Text color="gray.400" fontSize="sm" flexShrink={0}>
                     ${property.pricePerSqm}/m²
                   </Text>
                 )}
-              </HStack>
+              </Flex>
             </Box>
 
             <AdminSectionHeader
@@ -404,32 +420,41 @@ const PropertyDetailPage = () => {
               editHref={propertyAdminPath}
             />
 
-            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+            <SimpleGrid columns={{ base: 2, md: 2 }} spacing={{ base: 2, md: 4 }}>
               {amenities.map((amenity, idx) => (
                 <Box
                   key={idx}
-                  p={4}
+                  p={{ base: 3, md: 4 }}
                   borderRadius="16px"
                   bg="rgba(255,255,255,0.05)"
                   border="1px solid rgba(255,255,255,0.1)"
+                  minW={0}
                 >
-                  <HStack spacing={3}>
+                  <HStack spacing={3} align="flex-start">
                     <Box
-                      w={12}
-                      h={12}
+                      w={{ base: 10, md: 12 }}
+                      h={{ base: 10, md: 12 }}
                       borderRadius="12px"
                       bg="rgba(212,175,55,0.2)"
                       display="grid"
                       placeItems="center"
                       color="#F5D076"
+                      flexShrink={0}
                     >
-                      <Icon as={amenity.icon} boxSize={6} />
+                      <Icon as={amenity.icon} boxSize={{ base: 5, md: 6 }} />
                     </Box>
-                    <Stack spacing={0}>
-                      <Text color="gray.400" fontSize="xs">
+                    <Stack spacing={0} minW={0}>
+                      <Text color="gray.400" fontSize="xs" noOfLines={1}>
                         {amenity.label}
                       </Text>
-                      <Text fontWeight="600">{amenity.value}</Text>
+                      <Text
+                        fontWeight="600"
+                        fontSize={{ base: "sm", md: "md" }}
+                        noOfLines={2}
+                        wordBreak="break-word"
+                      >
+                        {amenity.value}
+                      </Text>
                     </Stack>
                   </HStack>
                 </Box>
@@ -580,42 +605,50 @@ const PropertyDetailPage = () => {
           </Stack>
 
           {/* Sidebar - Contact Form */}
-          <Stack spacing={6}>
+          <Stack spacing={6} minW={0} maxW="100%">
             <Box
-              p={6}
+              className="property-contact-panel"
+              p={{ base: 4, md: 6 }}
               borderRadius="20px"
               bg="rgba(255,255,255,0.05)"
               border="1px solid rgba(255,255,255,0.1)"
-              position="sticky"
+              position={{ base: "static", lg: "sticky" }}
               top={100}
+              maxW="100%"
             >
               <Stack spacing={4} mb={6}>
                 <Button
                   w="full"
+                  maxW="100%"
                   colorScheme="green"
                   size="lg"
                   borderRadius="12px"
+                  whiteSpace="normal"
                   onClick={() => openLeadForm("viewing")}
                 >
                   {copy.schedule}
                 </Button>
                 <Button
                   w="full"
+                  maxW="100%"
                   variant="outline"
                   borderColor="rgba(212,175,55,0.3)"
                   color="#F5D076"
                   size="lg"
                   borderRadius="12px"
+                  whiteSpace="normal"
                   onClick={() => openLeadForm("info")}
                 >
                   {copy.requestInfo}
                 </Button>
                 <Button
                   w="full"
+                  maxW="100%"
                   variant="ghost"
                   size="lg"
                   borderRadius="12px"
                   color="gray.200"
+                  whiteSpace="normal"
                   _hover={{ color: "#F5D076", bg: "rgba(255,255,255,0.06)" }}
                   onClick={() => openLeadForm("offer")}
                 >

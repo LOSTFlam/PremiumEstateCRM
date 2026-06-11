@@ -3,7 +3,6 @@ import ModernHeader from "components/ModernHeader";
 import ModernFooter from "components/ModernFooter";
 import Breadcrumbs from "components/public/Breadcrumbs";
 import PublicSeoMeta from "components/public/PublicSeoMeta";
-import ScrollToTopButton from "components/public/ScrollToTopButton";
 import MobileBottomNav from "components/public/MobileBottomNav";
 import { publicBrand } from "views/public/publicBrand";
 
@@ -66,7 +65,6 @@ export default function PublicPageShell({
         </Container>
       </Box>
       <ModernFooter />
-      <ScrollToTopButton />
       <MobileBottomNav />
     </Box>
   );
