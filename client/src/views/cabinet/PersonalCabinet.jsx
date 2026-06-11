@@ -27,43 +27,35 @@ import SavedFavoritesSection from "./SavedFavoritesSection";
 import InquiriesSection from "./InquiriesSection";
 import { buildSavedSearchPath } from "./cabinetExport";
 import { useCabinetPreferences } from "hooks/useCabinetPreferences";
+import { useCabinetTheme } from "./useCabinetTheme";
 import {
   clearCompareIds,
   clearRecentlyViewedIds,
   removeSavedSearch,
 } from "views/public/catalog/catalogStorage";
 
-const navButtonStyle = (active) => ({
-  justifyContent: "flex-start",
-  variant: active ? "solid" : "ghost",
-  colorScheme: active ? "green" : "whiteAlpha",
-  color: active ? "white" : "whiteAlpha.800",
-  bg: active ? "green.700" : "transparent",
-  _hover: { bg: active ? "green.600" : "whiteAlpha.100" },
-  borderRadius: "16px",
-  px: 4,
-  py: 6,
-  w: "100%",
-});
+const CabinetSection = ({ title, description, children, actions }) => {
+  const theme = useCabinetTheme();
 
-const CabinetSection = ({ title, description, children, actions }) => (
-  <Stack spacing={5}>
-    <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
-      <Box>
-        <Heading size="md" color="white" mb={2}>
-          {title}
-        </Heading>
-        {description ? (
-          <Text color="whiteAlpha.700" maxW="720px">
-            {description}
-          </Text>
-        ) : null}
-      </Box>
-      {actions}
-    </Flex>
-    {children}
-  </Stack>
-);
+  return (
+    <Stack spacing={5}>
+      <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
+        <Box>
+          <Heading size="md" color={theme.heading} mb={2}>
+            {title}
+          </Heading>
+          {description ? (
+            <Text color={theme.muted} maxW="720px">
+              {description}
+            </Text>
+          ) : null}
+        </Box>
+        {actions}
+      </Flex>
+      {children}
+    </Stack>
+  );
+};
 
 const RecentSection = () => {
   const { t } = useTranslation();
@@ -141,22 +133,17 @@ const CompareSection = () => {
 
 const SearchesSection = () => {
   const { t } = useTranslation();
+  const theme = useCabinetTheme();
   const { savedSearches, refreshLocal } = useCabinetPreferences({ autoSync: false });
 
   if (!savedSearches.length) {
     return (
       <CabinetSection title={t("cabinet.sections.searches")} description={t("cabinet.sections.searchesDesc")}>
-        <Box
-          borderRadius="24px"
-          border="1px dashed"
-          borderColor="whiteAlpha.300"
-          p={8}
-          textAlign="center"
-        >
-          <Text color="white" fontWeight="700" mb={2}>
+        <Box {...theme.emptyStateStyle}>
+          <Text color={theme.heading} fontWeight="700" mb={2}>
             {t("cabinet.searchesEmpty.title")}
           </Text>
-          <Text color="whiteAlpha.700" mb={4}>
+          <Text color={theme.muted} mb={4}>
             {t("cabinet.searchesEmpty.text")}
           </Text>
           <Button as={RouterLink} to="/offers" colorScheme="green">
@@ -173,21 +160,17 @@ const SearchesSection = () => {
         {savedSearches.map((search) => (
           <Flex
             key={search.id}
-            borderRadius="20px"
-            bg="whiteAlpha.50"
-            border="1px solid"
-            borderColor="whiteAlpha.200"
-            p={4}
+            {...theme.listItemStyle}
             align="center"
             justify="space-between"
             gap={4}
             wrap="wrap"
           >
             <Box>
-              <Text color="white" fontWeight="700">
+              <Text color={theme.heading} fontWeight="700">
                 {search.label || search.name || t("cabinet.savedSearchFallback")}
               </Text>
-              <Text color="whiteAlpha.700" fontSize="sm">
+              <Text color={theme.muted} fontSize="sm">
                 {search.summary || search.query || t("cabinet.savedSearchNoSummary")}
               </Text>
             </Box>
@@ -223,6 +206,7 @@ const SearchesSection = () => {
 const PersonalCabinet = () => {
   const { t } = useTranslation();
   const location = useLocation();
+  const theme = useCabinetTheme();
   const isMobile = useBreakpointValue({ base: true, lg: false });
 
   const tabs = [
@@ -242,6 +226,22 @@ const PersonalCabinet = () => {
     return location.pathname.startsWith(path);
   };
 
+  const navButtonProps = (active) =>
+    active
+      ? {
+          variant: "solid",
+          colorScheme: "green",
+          color: "white",
+          bg: "green.700",
+          _hover: { bg: "green.600" },
+        }
+      : {
+          variant: "ghost",
+          color: theme.navInactive,
+          bg: "transparent",
+          _hover: { bg: theme.navHoverBg },
+        };
+
   return (
     <Box maxW="1400px" mx="auto" w="100%">
       <Stack
@@ -252,16 +252,12 @@ const PersonalCabinet = () => {
         <Box
           w={{ base: "100%", lg: "260px" }}
           flexShrink={0}
-          borderRadius="24px"
-          bg="rgba(255,255,255,0.04)"
-          border="1px solid"
-          borderColor="whiteAlpha.200"
-          p={3}
+          {...theme.sidebarStyle}
           position={{ lg: "sticky" }}
           top={{ lg: "110px" }}
         >
           <Text
-            color="whiteAlpha.600"
+            color={theme.navMenuLabel}
             fontSize="xs"
             textTransform="uppercase"
             letterSpacing="0.12em"
@@ -278,7 +274,12 @@ const PersonalCabinet = () => {
                 to={tab.path}
                 leftIcon={<Icon as={tab.icon} />}
                 size={isMobile ? "md" : "lg"}
-                {...navButtonStyle(isActive(tab.path))}
+                justifyContent="flex-start"
+                borderRadius="16px"
+                px={4}
+                py={6}
+                w="100%"
+                {...navButtonProps(isActive(tab.path))}
               >
                 {tab.label}
               </Button>

@@ -27,14 +27,7 @@ import { setLanguage } from "../../redux/slices/languageSlice";
 import { useCabinetPreferences } from "hooks/useCabinetPreferences";
 import { saveExtendedPreferences } from "services/userPreferences";
 import BuyerWishesPanel from "./BuyerWishesPanel";
-
-const panelStyle = {
-  borderRadius: "24px",
-  bg: "rgba(255,255,255,0.06)",
-  border: "1px solid",
-  borderColor: "whiteAlpha.200",
-  p: { base: 5, md: 7 },
-};
+import { useCabinetTheme } from "./useCabinetTheme";
 
 const formatAccountDate = (value, locale) => {
   if (!value) return "—";
@@ -51,6 +44,7 @@ const formatAccountDate = (value, locale) => {
 
 const ProfileSettings = () => {
   const { t, i18n } = useTranslation();
+  const theme = useCabinetTheme();
   const toast = useToast();
   const dispatch = useDispatch();
   const fileRef = useRef(null);
@@ -221,37 +215,35 @@ const ProfileSettings = () => {
 
   return (
     <Stack spacing={6}>
-      <Box {...panelStyle}>
-        <Heading size="md" color="white" mb={4}>
+      <Box {...theme.panelStyle}>
+        <Heading size="md" color={theme.heading} mb={4}>
           {t("cabinet.account.title")}
         </Heading>
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
           <Box>
-            <Text color="whiteAlpha.600" fontSize="sm">{t("cabinet.account.username")}</Text>
-            <Text color="white" fontWeight="600">{userMeta?.username || "—"}</Text>
+            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.username")}</Text>
+            <Text color={theme.text} fontWeight="600">{userMeta?.username || "—"}</Text>
           </Box>
           <Box>
-            <Text color="whiteAlpha.600" fontSize="sm">{t("cabinet.account.memberSince")}</Text>
-            <Text color="white" fontWeight="600">
+            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.memberSince")}</Text>
+            <Text color={theme.text} fontWeight="600">
               {formatAccountDate(userMeta?.createdAt || userMeta?.createdDate, i18n.language)}
             </Text>
           </Box>
           <Box>
-            <Text color="whiteAlpha.600" fontSize="sm">{t("cabinet.account.lastLogin")}</Text>
-            <Text color="white" fontWeight="600">
+            <Text color={theme.subtle} fontSize="sm">{t("cabinet.account.lastLogin")}</Text>
+            <Text color={theme.text} fontWeight="600">
               {formatAccountDate(userMeta?.lastLoginAt, i18n.language)}
             </Text>
           </Box>
           <Box>
-            <Text color="whiteAlpha.600" fontSize="sm">{t("navigation.language")}</Text>
+            <Text color={theme.subtle} fontSize="sm">{t("navigation.language")}</Text>
             <Select
               mt={1}
               value={currentLanguage}
               onChange={(event) => handleLanguageChange(event.target.value)}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
               maxW="220px"
+              {...theme.inputFieldProps}
             >
               <option value="ru">Русский</option>
               <option value="en">English</option>
@@ -260,14 +252,14 @@ const ProfileSettings = () => {
         </Grid>
       </Box>
 
-      <Box {...panelStyle}>
-        <Heading size="md" color="white" mb={5}>
+      <Box {...theme.panelStyle}>
+        <Heading size="md" color={theme.heading} mb={5}>
           {t("cabinet.profile.title")}
         </Heading>
         <Stack direction={{ base: "column", md: "row" }} align="center" spacing={6} mb={6}>
           <Avatar size="2xl" name={`${profile.firstName} ${profile.lastName}`} src={resolvedAvatar} />
           <Stack spacing={3} align={{ base: "center", md: "flex-start" }}>
-            <Text color="whiteAlpha.700">{t("cabinet.profile.avatarHint")}</Text>
+            <Text color={theme.muted}>{t("cabinet.profile.avatarHint")}</Text>
             <input
               ref={fileRef}
               type="file"
@@ -294,47 +286,22 @@ const ProfileSettings = () => {
         </Stack>
 
         <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("cabinet.profile.firstName")}</FormLabel>
-            <Input
-              value={profile.firstName}
-              onChange={(event) => setProfile({ ...profile, firstName: event.target.value })}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("cabinet.profile.lastName")}</FormLabel>
-            <Input
-              value={profile.lastName}
-              onChange={(event) => setProfile({ ...profile, lastName: event.target.value })}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("common.email")}</FormLabel>
-            <Input
-              type="email"
-              value={profile.email}
-              onChange={(event) => setProfile({ ...profile, email: event.target.value })}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("common.phone")}</FormLabel>
-            <Input
-              value={profile.phoneNumber}
-              onChange={(event) => setProfile({ ...profile, phoneNumber: event.target.value })}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
+          {[
+            { key: "firstName", label: t("cabinet.profile.firstName") },
+            { key: "lastName", label: t("cabinet.profile.lastName") },
+            { key: "email", label: t("common.email"), type: "email" },
+            { key: "phoneNumber", label: t("common.phone") },
+          ].map((field) => (
+            <FormControl key={field.key}>
+              <FormLabel color={theme.label}>{field.label}</FormLabel>
+              <Input
+                type={field.type || "text"}
+                value={profile[field.key]}
+                onChange={(event) => setProfile({ ...profile, [field.key]: event.target.value })}
+                {...theme.inputFieldProps}
+              />
+            </FormControl>
+          ))}
         </Grid>
 
         <Button mt={6} colorScheme="green" onClick={handleProfileSave} isLoading={savingProfile}>
@@ -344,88 +311,56 @@ const ProfileSettings = () => {
 
       <BuyerWishesPanel buyerProfile={buyerProfile} onSaved={refreshLocal} />
 
-      <Box {...panelStyle}>
-        <Heading size="md" color="white" mb={2}>
+      <Box {...theme.panelStyle}>
+        <Heading size="md" color={theme.heading} mb={2}>
           {t("cabinet.notifications.title")}
         </Heading>
-        <Text color="whiteAlpha.700" mb={4}>
+        <Text color={theme.muted} mb={4}>
           {t("cabinet.notifications.desc")}
         </Text>
         <Stack spacing={4}>
-          <HStack justify="space-between">
-            <Text color="white">{t("cabinet.notifications.emailUpdates")}</Text>
-            <Switch
-              colorScheme="green"
-              isChecked={notify.emailUpdates}
-              onChange={(event) => setNotify({ ...notify, emailUpdates: event.target.checked })}
-            />
-          </HStack>
-          <HStack justify="space-between">
-            <Text color="white">{t("cabinet.notifications.newListings")}</Text>
-            <Switch
-              colorScheme="green"
-              isChecked={notify.newListings}
-              onChange={(event) => setNotify({ ...notify, newListings: event.target.checked })}
-            />
-          </HStack>
-          <HStack justify="space-between">
-            <Text color="white">{t("cabinet.notifications.priceChanges")}</Text>
-            <Switch
-              colorScheme="green"
-              isChecked={notify.priceChanges}
-              onChange={(event) => setNotify({ ...notify, priceChanges: event.target.checked })}
-            />
-          </HStack>
+          {[
+            { key: "emailUpdates", label: t("cabinet.notifications.emailUpdates") },
+            { key: "newListings", label: t("cabinet.notifications.newListings") },
+            { key: "priceChanges", label: t("cabinet.notifications.priceChanges") },
+          ].map((item) => (
+            <HStack key={item.key} justify="space-between">
+              <Text color={theme.text}>{item.label}</Text>
+              <Switch
+                colorScheme="green"
+                isChecked={notify[item.key]}
+                onChange={(event) => setNotify({ ...notify, [item.key]: event.target.checked })}
+              />
+            </HStack>
+          ))}
         </Stack>
         <Button mt={5} colorScheme="green" variant="outline" onClick={handleNotificationsSave} isLoading={savingNotify}>
           {t("cabinet.notifications.save")}
         </Button>
       </Box>
 
-      <Box {...panelStyle}>
-        <Heading size="md" color="white" mb={5}>
+      <Box {...theme.panelStyle}>
+        <Heading size="md" color={theme.heading} mb={5}>
           {t("cabinet.profile.passwordTitle")}
         </Heading>
         <Stack spacing={4} maxW="480px">
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("cabinet.profile.currentPassword")}</FormLabel>
-            <Input
-              type="password"
-              value={passwords.currentPassword}
-              onChange={(event) =>
-                setPasswords({ ...passwords, currentPassword: event.target.value })
-              }
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("cabinet.profile.newPassword")}</FormLabel>
-            <Input
-              type="password"
-              value={passwords.newPassword}
-              onChange={(event) => setPasswords({ ...passwords, newPassword: event.target.value })}
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel color="whiteAlpha.800">{t("cabinet.profile.confirmPassword")}</FormLabel>
-            <Input
-              type="password"
-              value={passwords.confirmPassword}
-              onChange={(event) =>
-                setPasswords({ ...passwords, confirmPassword: event.target.value })
-              }
-              bg="whiteAlpha.100"
-              borderColor="whiteAlpha.300"
-              color="white"
-            />
-          </FormControl>
+          {[
+            { key: "currentPassword", label: t("cabinet.profile.currentPassword") },
+            { key: "newPassword", label: t("cabinet.profile.newPassword") },
+            { key: "confirmPassword", label: t("cabinet.profile.confirmPassword") },
+          ].map((field) => (
+            <FormControl key={field.key}>
+              <FormLabel color={theme.label}>{field.label}</FormLabel>
+              <Input
+                type="password"
+                value={passwords[field.key]}
+                onChange={(event) => setPasswords({ ...passwords, [field.key]: event.target.value })}
+                {...theme.inputFieldProps}
+              />
+            </FormControl>
+          ))}
         </Stack>
-        <Divider my={5} borderColor="whiteAlpha.200" />
+        <Divider my={5} borderColor={theme.divider} />
         <Button colorScheme="green" variant="outline" onClick={handlePasswordChange} isLoading={savingPassword}>
           {t("cabinet.profile.changePassword")}
         </Button>

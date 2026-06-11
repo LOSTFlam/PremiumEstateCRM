@@ -18,19 +18,13 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { saveExtendedPreferences } from "services/userPreferences";
-
-const panelStyle = {
-  borderRadius: "24px",
-  bg: "rgba(255,255,255,0.06)",
-  border: "1px solid",
-  borderColor: "whiteAlpha.200",
-  p: { base: 5, md: 7 },
-};
+import { useCabinetTheme } from "./useCabinetTheme";
 
 const PROPERTY_TYPES = ["house", "apartment", "land", "commercial"];
 
 const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
   const { t } = useTranslation();
+  const theme = useCabinetTheme();
   const [form, setForm] = useState({
     budgetMin: "",
     budgetMax: "",
@@ -75,64 +69,60 @@ const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
   };
 
   return (
-    <Box {...panelStyle}>
-      <Heading size="md" color="white" mb={2}>
+    <Box {...theme.panelStyle}>
+      <Heading size="md" color={theme.heading} mb={2}>
         {t("cabinet.wishes.title")}
       </Heading>
-      <Text color="whiteAlpha.700" mb={5}>
+      <Text color={theme.muted} mb={5}>
         {t("cabinet.wishes.desc")}
       </Text>
 
       <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={4}>
         <FormControl>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.budgetMin")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.budgetMin")}</FormLabel>
           <NumberInput
             value={form.budgetMin}
             onChange={(_, value) => setForm({ ...form, budgetMin: value })}
             min={0}
           >
-            <NumberInputField bg="whiteAlpha.100" borderColor="whiteAlpha.300" color="white" />
+            <NumberInputField {...theme.inputFieldProps} />
           </NumberInput>
         </FormControl>
         <FormControl>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.budgetMax")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.budgetMax")}</FormLabel>
           <NumberInput
             value={form.budgetMax}
             onChange={(_, value) => setForm({ ...form, budgetMax: value })}
             min={0}
           >
-            <NumberInputField bg="whiteAlpha.100" borderColor="whiteAlpha.300" color="white" />
+            <NumberInputField {...theme.inputFieldProps} />
           </NumberInput>
         </FormControl>
         <FormControl gridColumn={{ md: "span 2" }}>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.city")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.city")}</FormLabel>
           <Input
             value={form.preferredCity}
             onChange={(event) => setForm({ ...form, preferredCity: event.target.value })}
-            bg="whiteAlpha.100"
-            borderColor="whiteAlpha.300"
-            color="white"
+            {...theme.inputFieldProps}
           />
         </FormControl>
         <FormControl>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.bedrooms")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.bedrooms")}</FormLabel>
           <NumberInput
             value={form.bedroomsMin}
             onChange={(_, value) => setForm({ ...form, bedroomsMin: value })}
             min={0}
             max={20}
           >
-            <NumberInputField bg="whiteAlpha.100" borderColor="whiteAlpha.300" color="white" />
+            <NumberInputField {...theme.inputFieldProps} />
           </NumberInput>
         </FormControl>
         <FormControl>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.contactMethod")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.contactMethod")}</FormLabel>
           <Select
             value={form.contactMethod}
             onChange={(event) => setForm({ ...form, contactMethod: event.target.value })}
-            bg="whiteAlpha.100"
-            borderColor="whiteAlpha.300"
-            color="white"
+            {...theme.inputFieldProps}
           >
             <option value="phone">{t("cabinet.wishes.contactPhone")}</option>
             <option value="whatsapp">WhatsApp</option>
@@ -140,7 +130,7 @@ const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
           </Select>
         </FormControl>
         <FormControl gridColumn={{ md: "span 2" }}>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.types")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.types")}</FormLabel>
           <CheckboxGroup
             value={form.propertyTypes}
             onChange={(value) => setForm({ ...form, propertyTypes: value })}
@@ -148,23 +138,21 @@ const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
             <Stack direction={{ base: "column", sm: "row" }} spacing={4} flexWrap="wrap">
               {PROPERTY_TYPES.map((type) => (
                 <Checkbox key={type} value={type} colorScheme="green">
-                  <Text color="whiteAlpha.900">{t(`cabinet.wishes.type.${type}`)}</Text>
+                  <Text color={theme.text}>{t(`cabinet.wishes.type.${type}`)}</Text>
                 </Checkbox>
               ))}
             </Stack>
           </CheckboxGroup>
         </FormControl>
         <FormControl gridColumn={{ md: "span 2" }}>
-          <FormLabel color="whiteAlpha.800">{t("cabinet.wishes.about")}</FormLabel>
+          <FormLabel color={theme.label}>{t("cabinet.wishes.about")}</FormLabel>
           <Textarea
             value={form.about}
             onChange={(event) => setForm({ ...form, about: event.target.value })}
             placeholder={t("cabinet.wishes.aboutPlaceholder")}
-            bg="whiteAlpha.100"
-            borderColor="whiteAlpha.300"
-            color="white"
             rows={4}
             maxLength={1000}
+            {...theme.inputFieldProps}
           />
         </FormControl>
       </Grid>

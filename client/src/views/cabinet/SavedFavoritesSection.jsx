@@ -10,25 +10,30 @@ import { useCabinetPreferences } from "hooks/useCabinetPreferences";
 import CabinetPropertyGrid from "./CabinetPropertyGrid";
 import PropertyNotesPanel from "./PropertyNotesPanel";
 import { exportFavoritesPdf, shareFavorites } from "./cabinetExport";
+import { useCabinetTheme } from "./useCabinetTheme";
 
-const CabinetSection = ({ title, description, children, actions }) => (
-  <Stack spacing={5}>
-    <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
-      <Box>
-        <Heading size="md" color="white" mb={2}>
-          {title}
-        </Heading>
-        {description ? (
-          <Text color="whiteAlpha.700" maxW="720px">
-            {description}
-          </Text>
-        ) : null}
-      </Box>
-      {actions}
-    </Flex>
-    {children}
-  </Stack>
-);
+const CabinetSection = ({ title, description, children, actions }) => {
+  const theme = useCabinetTheme();
+
+  return (
+    <Stack spacing={5}>
+      <Flex justify="space-between" align={{ base: "flex-start", md: "center" }} gap={4} wrap="wrap">
+        <Box>
+          <Heading size="md" color={theme.heading} mb={2}>
+            {title}
+          </Heading>
+          {description ? (
+            <Text color={theme.muted} maxW="720px">
+              {description}
+            </Text>
+          ) : null}
+        </Box>
+        {actions}
+      </Flex>
+      {children}
+    </Stack>
+  );
+};
 
 const SavedFavoritesSection = () => {
   const { t, i18n } = useTranslation();

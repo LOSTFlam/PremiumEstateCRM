@@ -15,14 +15,7 @@ import { useTranslation } from "react-i18next";
 import { LuCalendarClock, LuMessageSquare } from "react-icons/lu";
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
-
-const panelStyle = {
-  borderRadius: "20px",
-  bg: "whiteAlpha.50",
-  border: "1px solid",
-  borderColor: "whiteAlpha.200",
-  p: { base: 4, md: 5 },
-};
+import { useCabinetTheme } from "./useCabinetTheme";
 
 const statusColor = (status) => {
   const key = String(status || "").toLowerCase();
@@ -49,6 +42,7 @@ const formatDate = (value, locale) => {
 
 const InquiriesSection = () => {
   const { t, i18n } = useTranslation();
+  const theme = useCabinetTheme();
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -82,17 +76,11 @@ const InquiriesSection = () => {
 
   if (!inquiries.length) {
     return (
-      <Box
-        borderRadius="24px"
-        border="1px dashed"
-        borderColor="whiteAlpha.300"
-        p={8}
-        textAlign="center"
-      >
-        <Heading size="md" color="white" mb={2}>
+      <Box {...theme.emptyStateStyle}>
+        <Heading size="md" color={theme.heading} mb={2}>
           {t("cabinet.inquiries.emptyTitle")}
         </Heading>
-        <Text color="whiteAlpha.700" mb={4}>
+        <Text color={theme.muted} mb={4}>
           {t("cabinet.inquiries.emptyText")}
         </Text>
         <Button as={RouterLink} to="/offers" colorScheme="green">
@@ -105,10 +93,10 @@ const InquiriesSection = () => {
   return (
     <Stack spacing={5}>
       <Box>
-        <Heading size="md" color="white" mb={2}>
+        <Heading size="md" color={theme.heading} mb={2}>
           {t("cabinet.sections.inquiries")}
         </Heading>
-        <Text color="whiteAlpha.700">{t("cabinet.sections.inquiriesDesc")}</Text>
+        <Text color={theme.muted}>{t("cabinet.sections.inquiriesDesc")}</Text>
       </Box>
 
       <Stack spacing={3}>
@@ -122,23 +110,23 @@ const InquiriesSection = () => {
           const status = inquiry?.leadStatus || inquiry?.leadState || "pending";
 
           return (
-            <Box key={inquiry._id} {...panelStyle}>
+            <Box key={inquiry._id} {...theme.listItemStyle}>
               <Flex justify="space-between" align="flex-start" gap={4} wrap="wrap">
                 <Stack spacing={2} flex="1">
                   <HStack spacing={3} flexWrap="wrap">
                     <Badge colorScheme={statusColor(status)} borderRadius="full" px={3}>
                       {status}
                     </Badge>
-                    <HStack color="whiteAlpha.600" fontSize="sm">
+                    <HStack color={theme.subtle} fontSize="sm">
                       <LuCalendarClock />
                       <Text>{formatDate(inquiry.createdDate || inquiry.createdAt, i18n.language)}</Text>
                     </HStack>
                   </HStack>
-                  <Text color="white" fontWeight="700" fontSize="lg">
+                  <Text color={theme.heading} fontWeight="700" fontSize="lg">
                     {propertyTitle}
                   </Text>
                   {inquiry?.leadMessage || inquiry?.leadNotes ? (
-                    <HStack align="flex-start" spacing={2} color="whiteAlpha.700">
+                    <HStack align="flex-start" spacing={2} color={theme.muted}>
                       <LuMessageSquare style={{ marginTop: 4, flexShrink: 0 }} />
                       <Text fontSize="sm">{inquiry.leadMessage || inquiry.leadNotes}</Text>
                     </HStack>

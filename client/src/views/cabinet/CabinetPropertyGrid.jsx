@@ -22,6 +22,7 @@ import {
   toggleCompareId,
   toggleFavoriteId,
 } from "views/public/catalog/catalogStorage";
+import { useCabinetTheme } from "./useCabinetTheme";
 
 const sortByIdOrder = (properties, ids) => {
   const order = new Map(ids.map((id, index) => [String(id), index]));
@@ -39,6 +40,7 @@ const CabinetPropertyGrid = ({
   onRemove,
 }) => {
   const { t } = useTranslation();
+  const theme = useCabinetTheme();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState(ids);
@@ -102,21 +104,11 @@ const CabinetPropertyGrid = ({
 
   if (!ids.length || properties.length === 0) {
     return (
-      <Stack
-        align="center"
-        justify="center"
-        minH="280px"
-        borderRadius="24px"
-        border="1px dashed"
-        borderColor="whiteAlpha.300"
-        bg="whiteAlpha.50"
-        p={8}
-        textAlign="center"
-      >
-        <Text fontSize="lg" fontWeight="700" color="white">
+      <Stack align="center" justify="center" {...theme.emptyStateStyle}>
+        <Text fontSize="lg" fontWeight="700" color={theme.heading}>
           {emptyTitle || t("cabinet.empty.title")}
         </Text>
-        <Text color="whiteAlpha.700" maxW="420px">
+        <Text color={theme.muted} maxW="420px">
           {emptyText || t("cabinet.empty.text")}
         </Text>
         <Button as={RouterLink} to={browseTo} colorScheme="green" mt={2}>
@@ -146,7 +138,7 @@ const CabinetPropertyGrid = ({
       </SimpleGrid>
       {properties.length < ids.length ? (
         <Flex justify="center" mt={6}>
-          <Text color="whiteAlpha.600" fontSize="sm">
+          <Text color={theme.subtle} fontSize="sm">
             {t("cabinet.partialLoad", { shown: properties.length, total: ids.length })}
           </Text>
         </Flex>

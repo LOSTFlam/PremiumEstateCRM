@@ -28,21 +28,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useCabinetPreferences } from "hooks/useCabinetPreferences";
 import CabinetPropertyGrid from "./CabinetPropertyGrid";
 import OnboardingTips from "./OnboardingTips";
+import { useCabinetTheme } from "./useCabinetTheme";
 import { constant } from "constant";
 import { getStoredUser } from "utils/authStorage";
 import { getApi } from "services/api";
 
-const statCard = {
-  p: { base: 5, md: 6 },
-  borderRadius: "24px",
-  bg: "rgba(255,255,255,0.06)",
-  border: "1px solid",
-  borderColor: "whiteAlpha.200",
-  backdropFilter: "blur(12px)",
-};
-
 const ConsumerDashboard = () => {
   const { t } = useTranslation();
+  const theme = useCabinetTheme();
   const user = getStoredUser();
   const { favoriteIds, compareIds, recentIds, savedSearches } = useCabinetPreferences();
   const [inquiryCount, setInquiryCount] = useState(0);
@@ -73,41 +66,11 @@ const ConsumerDashboard = () => {
     : undefined;
 
   const stats = [
-    {
-      label: t("cabinet.stats.favorites"),
-      value: favoriteIds.length,
-      icon: LuHeart,
-      to: "/cabinet/saved",
-      color: "pink.300",
-    },
-    {
-      label: t("cabinet.stats.recent"),
-      value: recentIds.length,
-      icon: LuClock3,
-      to: "/cabinet/recent",
-      color: "cyan.300",
-    },
-    {
-      label: t("cabinet.stats.compare"),
-      value: compareIds.length,
-      icon: MdCompareArrows,
-      to: "/cabinet/compare",
-      color: "orange.300",
-    },
-    {
-      label: t("cabinet.stats.searches"),
-      value: savedSearches.length,
-      icon: LuSearch,
-      to: "/cabinet/searches",
-      color: "purple.300",
-    },
-    {
-      label: t("cabinet.stats.inquiries"),
-      value: inquiryCount,
-      icon: LuMessageSquare,
-      to: "/cabinet/inquiries",
-      color: "blue.300",
-    },
+    { label: t("cabinet.stats.favorites"), value: favoriteIds.length, icon: LuHeart, to: "/cabinet/saved", color: "pink.500" },
+    { label: t("cabinet.stats.recent"), value: recentIds.length, icon: LuClock3, to: "/cabinet/recent", color: "cyan.600" },
+    { label: t("cabinet.stats.compare"), value: compareIds.length, icon: MdCompareArrows, to: "/cabinet/compare", color: "orange.500" },
+    { label: t("cabinet.stats.searches"), value: savedSearches.length, icon: LuSearch, to: "/cabinet/searches", color: "purple.500" },
+    { label: t("cabinet.stats.inquiries"), value: inquiryCount, icon: LuMessageSquare, to: "/cabinet/inquiries", color: "blue.500" },
   ];
 
   const quickLinks = [
@@ -126,9 +89,9 @@ const ConsumerDashboard = () => {
         <Box
           borderRadius="28px"
           p={{ base: 6, md: 8 }}
-          bgGradient="linear(135deg, rgba(16, 52, 38, 0.95), rgba(8, 28, 22, 0.92))"
+          bgGradient={theme.heroGradient}
           border="1px solid"
-          borderColor="whiteAlpha.200"
+          borderColor={theme.panelBorder}
         >
           <Badge
             colorScheme="green"
@@ -142,10 +105,10 @@ const ConsumerDashboard = () => {
           >
             {t("cabinet.badge")}
           </Badge>
-          <Heading size={{ base: "lg", md: "xl" }} color="white" mb={3}>
+          <Heading size={{ base: "lg", md: "xl" }} color={theme.heroHeading} mb={3}>
             {t("cabinet.welcome", { name: displayName })}
           </Heading>
-          <Text color="whiteAlpha.800" maxW="640px" fontSize={{ base: "md", md: "lg" }}>
+          <Text color={theme.heroText} maxW="640px" fontSize={{ base: "md", md: "lg" }}>
             {t("cabinet.subtitle")}
           </Text>
           <HStack mt={6} spacing={3} flexWrap="wrap">
@@ -156,9 +119,9 @@ const ConsumerDashboard = () => {
                 to={link.to}
                 leftIcon={<Icon as={link.icon} />}
                 variant="outline"
-                colorScheme="whiteAlpha"
-                borderColor="whiteAlpha.300"
-                color="white"
+                colorScheme="green"
+                borderColor={theme.heroButtonBorder}
+                color={theme.heroButtonColor}
               >
                 {link.label}
               </Button>
@@ -166,12 +129,12 @@ const ConsumerDashboard = () => {
           </HStack>
         </Box>
 
-        <Box {...statCard}>
+        <Box {...theme.cardStyle}>
           <HStack spacing={4} mb={4}>
             <Box
               boxSize="72px"
               borderRadius="full"
-              bg="green.700"
+              bg="green.600"
               backgroundImage={avatarSrc ? `url(${avatarSrc})` : undefined}
               backgroundSize="cover"
               backgroundPosition="center"
@@ -179,34 +142,26 @@ const ConsumerDashboard = () => {
               alignItems="center"
               justifyContent="center"
               border="2px solid"
-              borderColor="whiteAlpha.400"
+              borderColor={theme.panelBorder}
             >
-              {!avatarSrc ? (
-                <Icon as={LuUser} boxSize={8} color="whiteAlpha.900" />
-              ) : null}
+              {!avatarSrc ? <Icon as={LuUser} boxSize={8} color="white" /> : null}
             </Box>
             <Stack spacing={0}>
-              <Text color="whiteAlpha.600" fontSize="sm" textTransform="uppercase">
+              <Text color={theme.subtle} fontSize="sm" textTransform="uppercase">
                 {t("cabinet.profilePreview")}
               </Text>
-              <Text color="white" fontWeight="700" fontSize="lg">
+              <Text color={theme.heading} fontWeight="700" fontSize="lg">
                 {displayName}
               </Text>
-              <Text color="whiteAlpha.700" fontSize="sm">
+              <Text color={theme.muted} fontSize="sm">
                 {user?.email}
               </Text>
             </Stack>
           </HStack>
-          <Text color="whiteAlpha.700" fontSize="sm">
+          <Text color={theme.muted} fontSize="sm">
             {t("cabinet.profileHint")}
           </Text>
-          <Button
-            as={RouterLink}
-            to="/cabinet/profile"
-            mt={4}
-            colorScheme="green"
-            size="sm"
-          >
+          <Button as={RouterLink} to="/cabinet/profile" mt={4} colorScheme="green" size="sm">
             {t("cabinet.editProfile")}
           </Button>
         </Box>
@@ -220,17 +175,17 @@ const ConsumerDashboard = () => {
             key={item.to}
             as={RouterLink}
             to={item.to}
-            {...statCard}
+            {...theme.cardStyle}
             transition="transform 0.2s ease"
-            _hover={{ transform: "translateY(-2px)", borderColor: "whiteAlpha.400" }}
+            _hover={{ transform: "translateY(-2px)", borderColor: "green.300" }}
           >
             <HStack justify="space-between" mb={3}>
               <Icon as={item.icon} boxSize={5} color={item.color} />
-              <Text color="white" fontSize="2xl" fontWeight="800">
+              <Text color={theme.heading} fontSize="2xl" fontWeight="800">
                 {item.value}
               </Text>
             </HStack>
-            <Text color="whiteAlpha.800" fontSize="sm">
+            <Text color={theme.muted} fontSize="sm">
               {item.label}
             </Text>
           </Box>
@@ -240,12 +195,12 @@ const ConsumerDashboard = () => {
       <Box>
         <HStack justify="space-between" mb={4}>
           <HStack>
-            <Icon as={LuSparkles} color="green.300" />
-            <Heading size="md" color="white">
+            <Icon as={LuSparkles} color={theme.accentIcon} />
+            <Heading size="md" color={theme.heading}>
               {t("cabinet.recentPreview")}
             </Heading>
           </HStack>
-          <Button as={RouterLink} to="/cabinet/recent" variant="link" color="green.300">
+          <Button as={RouterLink} to="/cabinet/recent" variant="link" color={theme.accentLink}>
             {t("cabinet.viewAll")}
           </Button>
         </HStack>
