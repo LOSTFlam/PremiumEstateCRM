@@ -397,16 +397,7 @@ export function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <PageTransition key={location.pathname}>
         <Routes location={location}>
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <Navigate to={user?.role === "user" ? "/cabinet" : "/dashboard"} replace />
-              ) : (
-                <ModernLandingPage />
-              )
-            }
-          />
+          <Route path="/" element={<ModernLandingPage />} />
           <Route path="/offers" element={<PublicCatalog />} />
           <Route path="/offers/houses" element={<PublicCatalog forcedType="house" />} />
           <Route path="/offers/apartments" element={<PublicCatalog forcedType="apartment" />} />
