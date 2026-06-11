@@ -17,8 +17,8 @@ import { FiHeart, FiShare2, FiDownload, FiTrash2, FiGrid, FiList } from "react-i
 import { MdCompareArrows } from "react-icons/md";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import {
+  PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
-  PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
@@ -427,7 +427,7 @@ const FavoritesPage = () => {
             <SimpleGrid
               className="property-card-grid"
               columns={viewMode === "grid" ? undefined : 1}
-              minChildWidth={viewMode === "grid" ? PROPERTY_CARD_MIN_WIDTH : undefined}
+              columns={viewMode === "grid" ? PROPERTY_CARD_GRID_COLUMNS : { base: 1 }}
               spacing={PROPERTY_CARD_GRID_SPACING}
             >
               {favorites.map((property) => (

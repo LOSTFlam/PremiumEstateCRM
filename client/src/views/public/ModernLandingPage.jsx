@@ -25,8 +25,8 @@ import ModernHeader from "components/ModernHeader";
 import ModernHero from "components/ModernHero";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import {
+  PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
-  PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
 import ParticleCanvas from "components/ParticleCanvas";
 import PropertyBackground from "components/PropertyBackground";
@@ -1012,7 +1012,7 @@ export default function ModernLandingPage() {
               {loading ? (
                 <SimpleGrid
                   className="property-card-grid"
-                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  columns={PROPERTY_CARD_GRID_COLUMNS}
                   spacing={PROPERTY_CARD_GRID_SPACING}
                 >
                   {Array.from({ length: 6 }).map((_, index) => (
@@ -1022,7 +1022,7 @@ export default function ModernLandingPage() {
               ) : (
                 <SimpleGrid
                   className="property-card-grid"
-                  minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                  columns={PROPERTY_CARD_GRID_COLUMNS}
                   spacing={PROPERTY_CARD_GRID_SPACING}
                 >
                   {featuredProperties.map((property) => (

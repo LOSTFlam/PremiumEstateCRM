@@ -55,7 +55,7 @@ import {
 import { publicBrand } from "views/public/publicBrand";
 import { countCatalogProperties, extractPresetFilters } from "./catalogFilters";
 import { getSeoCollectionConfig } from "./seoCollections";
-import { PROPERTY_CARD_GRID_SPACING, PROPERTY_CARD_MIN_WIDTH } from "./propertyCardLayout";
+import { PROPERTY_CARD_GRID_COLUMNS, PROPERTY_CARD_GRID_SPACING } from "./propertyCardLayout";
 import { usePublicCatalog } from "./usePublicCatalog";
 
 const shellCopy = {
@@ -1198,7 +1198,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                   >
                     <SimpleGrid
                       className="property-card-grid"
-                      minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                      columns={PROPERTY_CARD_GRID_COLUMNS}
                       spacing={PROPERTY_CARD_GRID_SPACING}
                     >
                       {Array.from({ length: 6 }).map((_, index) => (
@@ -1232,7 +1232,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     ) : (
                       <SimpleGrid
                         className="property-card-grid"
-                        minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+                        columns={PROPERTY_CARD_GRID_COLUMNS}
                         spacing={PROPERTY_CARD_GRID_SPACING}
                       >
                         {paginatedProperties.map((property) => (

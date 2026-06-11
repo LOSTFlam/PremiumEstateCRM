@@ -12,8 +12,8 @@ import {
   toggleFavoriteId,
 } from "views/public/catalog/catalogStorage";
 import {
+  PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
-  PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
 import { useCabinetTheme } from "./useCabinetTheme";
 
@@ -111,8 +111,8 @@ export default function FavoritesDraggableGrid({ ids = [], onReorder }) {
               ref={provided.innerRef}
               {...provided.droppableProps}
               columns={{ base: 1, md: 2 }}
+              columns={PROPERTY_CARD_GRID_COLUMNS}
               spacing={PROPERTY_CARD_GRID_SPACING}
-              minChildWidth={PROPERTY_CARD_MIN_WIDTH}
             >
               {properties.map((property, index) => (
                 <Draggable key={property._id} draggableId={String(property._id)} index={index}>

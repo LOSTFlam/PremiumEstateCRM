@@ -4,8 +4,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import {
+  PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
-  PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
 import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
@@ -121,8 +121,8 @@ const CabinetPropertyGrid = ({
     <Box>
       <SimpleGrid
         columns={{ base: 1, md: 2 }}
+        columns={PROPERTY_CARD_GRID_COLUMNS}
         spacing={PROPERTY_CARD_GRID_SPACING}
-        minChildWidth={PROPERTY_CARD_MIN_WIDTH}
       >
         {properties.map((property) => (
           <ModernPropertyCard

@@ -3,8 +3,8 @@ import { Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import ModernPropertyCard from "components/ModernPropertyCard";
 import {
+  PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
-  PROPERTY_CARD_MIN_WIDTH,
 } from "views/public/catalog/propertyCardLayout";
 import { normalizePropertyTypeKey } from "views/public/catalog/catalogData";
 import { fetchPublicCatalog } from "views/public/catalog/catalogService";
@@ -68,7 +68,7 @@ const SimilarProperties = ({ currentProperty }) => {
       </Heading>
       <SimpleGrid
         className="property-card-grid"
-        minChildWidth={PROPERTY_CARD_MIN_WIDTH}
+        columns={PROPERTY_CARD_GRID_COLUMNS}
         spacing={PROPERTY_CARD_GRID_SPACING}
       >
         {similarProperties.map((property) => (
