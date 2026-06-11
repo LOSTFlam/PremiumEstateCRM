@@ -28,7 +28,11 @@ export default function PropertyListCard({
     <Flex
       as={RouterLink}
       to={href}
+      className="property-list-card"
       direction={{ base: "column", md: "row" }}
+      maxW="100%"
+      minW={0}
+      w="100%"
       borderRadius="24px"
       overflow="hidden"
       bg="white"
@@ -47,19 +51,32 @@ export default function PropertyListCard({
         flexShrink={0}
       />
       <Stack flex={1} p={5} spacing={3}>
-        <HStack justify="space-between" align="start">
-          <Stack spacing={1}>
+        <Flex
+          justify="space-between"
+          align={{ base: "stretch", md: "start" }}
+          direction={{ base: "column", sm: "row" }}
+          gap={2}
+          w="100%"
+          minW={0}
+        >
+          <Stack spacing={1} minW={0} flex={1}>
             <Text fontWeight="700" fontSize="lg" noOfLines={2}>
               {getListingTitle(property, t, i18n.language)}
             </Text>
-            <Text fontSize="sm" color={publicBrand.colors.textSoft} noOfLines={1}>
+            <Text fontSize="sm" color={publicBrand.colors.textSoft} noOfLines={2}>
               {getListingAddress(property, t, i18n.language)}
             </Text>
           </Stack>
-          <Text fontWeight="800" color={publicBrand.colors.ink} whiteSpace="nowrap">
+          <Text
+            fontWeight="800"
+            color={publicBrand.colors.ink}
+            fontSize={{ base: "md", md: "lg" }}
+            flexShrink={0}
+            wordBreak="break-word"
+          >
             {formatPrice(property?.listingPrice, t, i18n.language)}
           </Text>
-        </HStack>
+        </Flex>
         <HStack spacing={4} flexWrap="wrap" color={publicBrand.colors.textSoft} fontSize="sm">
           <HStack>
             <Icon as={MdMeetingRoom} />

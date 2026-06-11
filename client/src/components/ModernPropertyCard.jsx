@@ -16,7 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import CountUp from "react-countup";
 import {
   MdArrowForward,
@@ -145,35 +145,6 @@ const ModernPropertyCard = ({
     return Date.now() - new Date(createdAt).getTime() < 14 * 24 * 60 * 60 * 1000;
   }, [property?.createdAt, property?.createdDate, property?.listingDate]);
 
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el || window.innerWidth > 767) return;
-    const overflows = el.scrollWidth > el.clientWidth + 1;
-    if (!overflows) return;
-    // #region agent log
-    fetch("http://127.0.0.1:7635/ingest/37b9eb23-aad3-484d-8f4e-2ad56c907247", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "054d26" },
-      body: JSON.stringify({
-        sessionId: "054d26",
-        runId: "layout-post-fix",
-        hypothesisId: "card-overflow",
-        location: "ModernPropertyCard.jsx:overflow",
-        message: "Property card horizontal overflow",
-        data: {
-          viewportWidth: window.innerWidth,
-          cardWidth: el.clientWidth,
-          cardScrollWidth: el.scrollWidth,
-          docOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-  }, []);
-
   const handleShare = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -192,7 +163,6 @@ const ModernPropertyCard = ({
 
   return (
     <Box
-      ref={cardRef}
       as={RouterLink}
       to={propertyHref}
       className="property-card"

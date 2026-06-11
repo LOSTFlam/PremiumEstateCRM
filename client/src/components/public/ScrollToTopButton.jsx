@@ -12,41 +12,8 @@ export default function ScrollToTopButton() {
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 480);
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    const nav = document.querySelector(".mobile-bottom-nav");
-    const buttons = document.querySelectorAll(
-      '[aria-label="Scroll to top"], button[aria-label="Scroll to top"]'
-    );
-    const navRect = nav?.getBoundingClientRect();
-    const btnRect = buttons[0]?.getBoundingClientRect();
-    // #region agent log
-    fetch("http://127.0.0.1:7635/ingest/37b9eb23-aad3-484d-8f4e-2ad56c907247", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "054d26" },
-      body: JSON.stringify({
-        sessionId: "054d26",
-        runId: "layout-post-fix",
-        hypothesisId: "scroll-overlap",
-        location: "ScrollToTopButton.jsx:layout",
-        message: "Scroll button vs bottom nav geometry",
-        data: {
-          viewportWidth: window.innerWidth,
-          scrollButtonCount: buttons.length,
-          docOverflow: document.documentElement.scrollWidth > window.innerWidth + 1,
-          navTop: navRect?.top ?? null,
-          buttonBottom: btnRect?.bottom ?? null,
-          overlapsNav: navRect && btnRect ? btnRect.bottom > navRect.top + 2 : null,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-  }, [visible]);
 
   return (
     <AnimatePresence>

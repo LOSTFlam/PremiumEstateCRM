@@ -120,9 +120,14 @@ a.public-brand-button {
     min-height: 32px;
   }
 
-  .property-card-grid {
+  .property-card-grid,
+  .property-list-card {
     max-width: 100%;
     overflow-x: clip;
+  }
+
+  .property-list-card {
+    min-width: 0 !important;
   }
 
   .property-card {
