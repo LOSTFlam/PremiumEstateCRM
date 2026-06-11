@@ -660,26 +660,90 @@ export const formatDate = (value, language = runtimeLanguage()) => {
   }).format(parsed);
 };
 
-export const normalizeStatus = (status, t) => {
-  if (!status)
-    return t?.("modules.dashboardHome.statusAvailable") || (isRu() ? "Доступно" : "Available");
+export const normalizeStatus = (status, t, language = runtimeLanguage()) => {
+  const ru = isRu(language);
+  if (!status) {
+    return (
+      t?.("modules.dashboardHome.statusAvailable") ||
+      t?.("publicListing.available") ||
+      (ru ? "Доступно" : "Available")
+    );
+  }
   const key = String(status).toLowerCase().trim();
   const statusMap = {
-    available: t?.("publicListing.available") || (isRu() ? "Доступно" : "Available"),
-    active: t?.("publicListing.active") || (isRu() ? "Активно" : "Active"),
-    new: t?.("publicListing.new") || (isRu() ? "Новое" : "New"),
-    pending: t?.("publicListing.verificationPending") || (isRu() ? "Ожидает проверки" : "Pending"),
-    reserved: isRu() ? "В резерве" : "Reserved",
+    available: t?.("publicListing.available") || (ru ? "Доступно" : "Available"),
+    active: t?.("publicListing.active") || (ru ? "Активно" : "Active"),
+    new: t?.("publicListing.new") || (ru ? "Новое" : "New"),
+    pending:
+      t?.("publicListing.verificationPending") || (ru ? "Ожидает проверки" : "Pending"),
+    booked: t?.("publicListing.statusBooked") || (ru ? "Бронь" : "Booked"),
+    sold: t?.("publicListing.statusSold") || (ru ? "Продано" : "Sold"),
+    blocked: t?.("publicListing.statusBlocked") || (ru ? "Заблокировано" : "Blocked"),
+    reserved: t?.("publicListing.statusReserved") || (ru ? "В резерве" : "Reserved"),
   };
 
-  return (
-    statusMap[key] ||
-    String(status)
-      .replace(/[-_]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .replace(/\b\w/g, (char) => char.toUpperCase())
-  );
+  return statusMap[key] || statusMap[key.replace(/\s+/g, "")] || status;
+};
+
+const SEED_DESCRIPTION_EN =
+  "Verified listing with high quality media and legal-ready documentation.";
+
+const LISTING_TYPE_REPLACEMENTS = [
+  { pattern: /\bHouse\b/gi, key: "housesSingular", fallbackRu: "дом", fallbackEn: "house" },
+  {
+    pattern: /\bApartment\b/gi,
+    key: "apartmentsSingular",
+    fallbackRu: "квартира",
+    fallbackEn: "apartment",
+  },
+  { pattern: /\bLand\b/gi, key: "plotsSingular", fallbackRu: "участок", fallbackEn: "land plot" },
+  {
+    pattern: /\bCommercial\b/gi,
+    key: "commercialSingular",
+    fallbackRu: "коммерция",
+    fallbackEn: "commercial",
+  },
+];
+
+export const getListingDescription = (property, t, language = runtimeLanguage()) => {
+  const desc = property?.marketingDescription || property?.propertyDescription;
+  if (!desc) {
+    return (
+      t?.("publicListing.cardDescriptionFallback") ||
+      (isRu(language)
+        ? "Премиальное предложение с ключевыми параметрами и возможностью просмотра."
+        : "A structured premium listing with clear facts and direct inquiry.")
+    );
+  }
+  if (isRu(language) && desc.trim() === SEED_DESCRIPTION_EN) {
+    return (
+      t?.("publicListing.seedDescription") ||
+      "Проверенный объект с качественными материалами и готовой документацией."
+    );
+  }
+  return desc;
+};
+
+export const getListingTitle = (property, t, language = runtimeLanguage()) => {
+  const name = property?.name;
+  if (!name) return property?.propertyAddress || "";
+  if (!isRu(language)) return name;
+
+  return LISTING_TYPE_REPLACEMENTS.reduce((result, item) => {
+    const label =
+      t?.(`publicListing.${item.key}`) || (isRu(language) ? item.fallbackRu : item.fallbackEn);
+    return result.replace(item.pattern, label);
+  }, String(name));
+};
+
+export const getListingAddress = (property, t, language = runtimeLanguage()) => {
+  const address = property?.propertyAddress;
+  if (!address) return t?.("publicListing.notSpecified") || (isRu(language) ? "Не указано" : "Not specified");
+  if (!isRu(language)) return address;
+
+  return address
+    .replace(/\bDistrict\b/gi, t?.("publicListing.districtLabel") || "район")
+    .replace(/\bbuilding\b/gi, t?.("publicListing.buildingLabel") || "д.");
 };
 
 export const normalizePropertyMedia = (property) => {

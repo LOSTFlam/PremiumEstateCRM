@@ -31,6 +31,9 @@ import {
   formatPrice,
   getDocumentCount,
   getFloorPlanCount,
+  getListingAddress,
+  getListingDescription,
+  getListingTitle,
   getPhotoCount,
   getPrimaryImage,
   isRichListing,
@@ -119,7 +122,10 @@ const ModernPropertyCard = ({
 }) => {
   const { t, i18n } = useTranslation();
   const toast = useToast();
-  const status = normalizeStatus(property?.listingStatus, t);
+  const status = normalizeStatus(property?.listingStatus, t, i18n.language);
+  const listingTitle = getListingTitle(property, t, i18n.language);
+  const listingAddress = getListingAddress(property, t, i18n.language);
+  const listingDescription = getListingDescription(property, t, i18n.language);
   const typeLabel = propertyTypeLabel(property, t);
   const verificationScore = Number(property?.verification?.score || 0);
   const richListing = isRichListing(property);
@@ -220,8 +226,14 @@ const ModernPropertyCard = ({
           top={{ base: 3, md: 4 }}
           left={{ base: 3, md: 4 }}
           spacing={2}
-          flexWrap="wrap"
+          flexWrap="nowrap"
+          overflowX="auto"
+          overflowY="hidden"
           maxW={{ base: "calc(100% - 100px)", md: "calc(100% - 140px)" }}
+          sx={{
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          }}
         >
           <Badge
             px={3.5}
@@ -231,6 +243,8 @@ const ModernPropertyCard = ({
             color="white"
             border="1px solid rgba(255,255,255,0.18)"
             backdropFilter="blur(10px)"
+            textTransform="none"
+            flexShrink={0}
           >
             {status}
           </Badge>
@@ -241,6 +255,8 @@ const ModernPropertyCard = ({
             bg="rgba(7,12,20,0.56)"
             color="#f5d076"
             border="1px solid rgba(227, 211, 184, 0.14)"
+            textTransform="none"
+            flexShrink={0}
           >
             {typeLabel}
           </Badge>
@@ -251,17 +267,22 @@ const ModernPropertyCard = ({
             bg={property?.dealType === "rent" ? "rgba(104,211,225,0.18)" : "rgba(245,208,118,0.18)"}
             color={property?.dealType === "rent" ? "#9ae6f0" : "#f5d076"}
             border="1px solid rgba(227, 211, 184, 0.14)"
+            textTransform="none"
+            flexShrink={0}
           >
             {dealTypeLabel(property, t)}
           </Badge>
           {richListing ? (
             <Badge
+              className="property-badge-rich"
               px={3.5}
               py={1.5}
               borderRadius="full"
               bg="rgba(143,193,154,0.14)"
               color="#bbdbbf"
               border="1px solid rgba(143,193,154,0.18)"
+              textTransform="none"
+              flexShrink={0}
             >
               {t?.("publicListing.richLabel") || "Rich"}
             </Badge>
@@ -276,7 +297,11 @@ const ModernPropertyCard = ({
           spacing={2}
         >
           <IconButton
-            aria-label="Toggle favorite"
+            aria-label={
+              isFavorite
+                ? t?.("publicListing.removeFromFavorites") || "Remove from favorites"
+                : t?.("publicListing.addToFavorites") || "Add to favorites"
+            }
             icon={<FiHeart />}
             size="sm"
             borderRadius="full"
@@ -299,7 +324,11 @@ const ModernPropertyCard = ({
             }}
           />
           <IconButton
-            aria-label="Toggle compare"
+            aria-label={
+              isInCompare
+                ? t?.("publicListing.removeFromCompare") || "Remove from compare"
+                : t?.("publicListing.addToCompare") || "Add to compare"
+            }
             icon={<MdCompareArrows />}
             size="sm"
             borderRadius="full"
@@ -322,7 +351,7 @@ const ModernPropertyCard = ({
             }}
           />
           <IconButton
-            aria-label="Share"
+            aria-label={t?.("publicListing.shareOffer") || "Share"}
             icon={<FiShare2 />}
             size="sm"
             borderRadius="full"
@@ -341,92 +370,90 @@ const ModernPropertyCard = ({
         </HStack>
 
         <Stack
+          className="property-image-footer"
           position="absolute"
           left={{ base: 3, md: 4 }}
           right={{ base: 3, md: 4 }}
           bottom={{ base: 3, md: 4 }}
-          spacing={3}
+          spacing={2}
+          w="auto"
         >
-          <HStack
-            justify="space-between"
-            align="end"
-            spacing={4}
-            flexWrap="nowrap"
-            w="100%"
-          >
-            <Stack spacing={1} minW={0} flex={1} overflow="hidden">
-              <Text
-                className="property-price"
-                fontSize={{ base: "xl", md: "2xl", xl: "3xl" }}
-                fontWeight="700"
-                lineHeight="1.1"
-                letterSpacing="-0.04em"
-                color="white"
-                noOfLines={1}
-              >
-                {formatPrice(property?.listingPrice, t, i18n.language)}
-                {property?.dealType === "rent" ? (
-                  <Text as="span" fontSize="md" color="whiteAlpha.700" fontWeight="600">
-                    {t?.("publicListing.perMonth") || "/мес"}
-                  </Text>
-                ) : null}
-              </Text>
-              <Text color="whiteAlpha.700" fontSize="sm" noOfLines={1}>
-                {property?.dealType === "rent"
-                  ? t?.("publicListing.rentPriceLabel") || dealTypeLabel(property, t)
-                  : t?.("publicListing.priceLabel") || "Price"}
-              </Text>
-            </Stack>
-            <Box
-              px={{ base: 3, md: 4 }}
-              py={{ base: 2, md: 3 }}
-              borderRadius="22px"
-              bg="rgba(7,12,20,0.54)"
-              border="1px solid rgba(227, 211, 184, 0.14)"
-              backdropFilter="blur(10px)"
-              display={{ base: "none", sm: "block" }}
+          <Stack spacing={1} minW={0} w="100%">
+            <Text
+              className="property-price"
+              fontSize={{ base: "lg", md: "2xl", xl: "3xl" }}
+              fontWeight="700"
+              lineHeight="1.15"
+              letterSpacing="-0.02em"
+              color="white"
             >
-              <Text
-                color="whiteAlpha.600"
-                fontSize="xs"
-                textTransform="uppercase"
-                letterSpacing="0.12em"
-              >
-                {t?.("publicListing.verificationTitle") || "Verification"}
-              </Text>
-              <Text color="white" fontWeight="700" mt={1}>
-                {verificationScore
-                  ? `${verificationScore}%`
-                  : t?.("publicListing.notSpecified") || "On request"}
-              </Text>
-            </Box>
-          </HStack>
+              {formatPrice(property?.listingPrice, t, i18n.language)}
+              {property?.dealType === "rent" ? (
+                <Text as="span" fontSize={{ base: "sm", md: "md" }} color="whiteAlpha.700" fontWeight="600">
+                  {t?.("publicListing.perMonth") || "/мес"}
+                </Text>
+              ) : null}
+            </Text>
+            <Text className="property-price-label" color="whiteAlpha.700" fontSize="sm">
+              {property?.dealType === "rent"
+                ? t?.("publicListing.rentPriceLabel") || dealTypeLabel(property, t)
+                : t?.("publicListing.priceLabel") || "Price"}
+            </Text>
+          </Stack>
+          <Box
+            className="property-verification"
+            px={{ base: 2.5, md: 4 }}
+            py={{ base: 1.5, md: 3 }}
+            borderRadius="18px"
+            bg="rgba(7,12,20,0.54)"
+            border="1px solid rgba(227, 211, 184, 0.14)"
+            backdropFilter="blur(10px)"
+            w="fit-content"
+            maxW="100%"
+          >
+            <Text
+              color="whiteAlpha.600"
+              fontSize="xs"
+              textTransform="none"
+              letterSpacing="0.06em"
+              noOfLines={1}
+            >
+              {t?.("publicListing.verificationTitle") || "Verification"}
+            </Text>
+            <Text color="white" fontWeight="700" mt={0.5} fontSize={{ base: "sm", md: "md" }}>
+              {verificationScore
+                ? `${verificationScore}%`
+                : t?.("publicListing.notSpecified") || "On request"}
+            </Text>
+          </Box>
         </Stack>
       </Box>
 
       <Stack className="property-body" p={publicBrand.spacing.cardPad} spacing={{ base: 4, md: 5 }}>
         <Stack spacing={3}>
           <Text
+            className="property-title"
             fontSize="xl"
             fontWeight="700"
-            lineHeight="1.15"
+            lineHeight="1.2"
             color={publicBrand.colors.ink}
             noOfLines={2}
           >
-            {property?.name || property?.propertyAddress}
+            {listingTitle}
           </Text>
-          <HStack spacing={2} color={publicBrand.colors.textSoft}>
-            <Icon as={LuMapPin} />
-            <Text fontSize="sm" noOfLines={1}>
-              {property?.propertyAddress ||
-                t?.("publicListing.notSpecified") ||
-                "Location on request"}
+          <HStack spacing={2} color={publicBrand.colors.textSoft} align="start">
+            <Icon as={LuMapPin} mt={0.5} flexShrink={0} />
+            <Text className="property-address" fontSize="sm" noOfLines={2} lineHeight="1.45">
+              {listingAddress}
             </Text>
           </HStack>
-          <Text color={publicBrand.colors.textSoft} noOfLines={3} lineHeight="1.8">
-            {property?.marketingDescription ||
-              property?.propertyDescription ||
-              "A structured premium listing with clear facts, direct inquiry, and stronger buyer confidence."}
+          <Text
+            className="property-description"
+            color={publicBrand.colors.textSoft}
+            noOfLines={2}
+            lineHeight="1.65"
+          >
+            {listingDescription}
           </Text>
         </Stack>
 

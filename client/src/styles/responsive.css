@@ -49,6 +49,36 @@ a.public-brand-button {
   -webkit-tap-highlight-color: transparent;
 }
 
+.property-card .property-badges {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.property-card .property-badges::-webkit-scrollbar {
+  display: none;
+}
+
+.property-card .property-image-overlay .chakra-badge {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.property-card .property-image-footer {
+  width: calc(100% - 24px);
+}
+
+@media (min-width: 640px) {
+  .property-card .property-image-footer {
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: space-between !important;
+    width: 100%;
+  }
+}
+
 @media (max-width: 767px) {
   .property-card .property-image-wrapper img {
     height: 210px !important;
@@ -219,7 +249,6 @@ a.public-brand-button {
 
   .public-brand-shell .chakra-heading,
   .public-brand-shell .chakra-text,
-  .property-card .property-body .chakra-text,
   .cabinet-content .chakra-heading,
   .cabinet-content .chakra-text {
     overflow-wrap: anywhere;
@@ -227,19 +256,33 @@ a.public-brand-button {
     hyphens: auto;
   }
 
-  /* Photo overlay: keep price, badges and labels on one line */
+  .property-card .property-body .chakra-text {
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+  }
+
+  /* Photo overlay: keep labels horizontal */
   .property-card .property-image-overlay .chakra-text,
   .property-card .property-image-overlay .chakra-badge {
     overflow-wrap: normal;
     word-break: normal;
     hyphens: none;
-    white-space: nowrap;
+  }
+
+  .property-card .property-price,
+  .property-card .property-price-label,
+  .property-card .property-verification .chakra-text {
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 
   .property-card .property-badges .chakra-badge {
     flex-shrink: 0;
     max-width: none;
     text-align: left;
+    white-space: nowrap;
   }
 
   .public-brand-shell .chakra-button {
@@ -349,11 +392,8 @@ a.public-brand-button {
   }
 
   .property-card .property-price {
-    font-size: 1.35rem !important;
-    line-height: 1.15 !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 1.2rem !important;
+    line-height: 1.2 !important;
     max-width: 100%;
   }
 
