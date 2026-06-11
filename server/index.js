@@ -69,7 +69,8 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-eval'"],
+        scriptSrc: ["'self'", "'unsafe-eval'", "https://js.stripe.com"],
+        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com", "https://checkout.stripe.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         imgSrc: [
           "'self'",
@@ -84,6 +85,8 @@ app.use(
         fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
         connectSrc: [
           "'self'",
+          "https://api.stripe.com",
+          "https://m.stripe.com",
           "https://*.tile.openstreetmap.org",
           "https://a.tile.openstreetmap.org",
           "https://b.tile.openstreetmap.org",

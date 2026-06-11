@@ -26,8 +26,14 @@ const Edit = (props) => {
   const [bankEditData, setBankEditData] = useState([]);
 
   const fetchViewData = async () => {
-    const result = await getApi("api/bank-details/view/", props?.selectedId);
-    setBankEditData(result?.data);
+    const recordId = props?.selectedId || param?.id;
+    if (!recordId) return;
+    try {
+      const result = await getApi("api/bank-details/view/", recordId);
+      setBankEditData(result?.data);
+    } catch (_error) {
+      setBankEditData([]);
+    }
   };
 
   const [isLoding, setIsLoding] = useState(false);
@@ -83,8 +89,9 @@ const Edit = (props) => {
   };
 
   useEffect(() => {
+    if (!props?.isOpen) return;
     fetchViewData();
-  }, [props?.selectedId, props?.isOpen]);
+  }, [props?.selectedId, props?.isOpen, param?.id]);
 
   return (
     <div>

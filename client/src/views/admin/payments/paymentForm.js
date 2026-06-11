@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useTranslation } from "react-i18next";
 import { postApi } from "services/api";
+import masterCardImage from "assets/img/masterCard.png";
+import visaImage from "assets/img/visa.png";
 
 export default function PaymentForm() {
   const { t } = useTranslation();
@@ -85,8 +87,8 @@ export default function PaymentForm() {
   return (
     <>
       <GridItem display="flex" justifyContent="center" gap="20px" padding="10px 0 50px 0">
-        <img src={require("../../../assets/img/masterCard.png")} width="100px" alt="Mastercard" />
-        <img src={require("../../../assets/img/visa.png")} width="100px" alt="Visa" />
+        <img src={masterCardImage} width="100px" alt="Mastercard" />
+        <img src={visaImage} width="100px" alt="Visa" />
       </GridItem>
       <GridItem sx={{ m: 1, width: "100%" }}>
         <FormLabel display="flex" ms="4px" fontSize="sm" fontWeight="500" mb="8px">
