@@ -19,6 +19,7 @@ const ensureUploadRoot = () => {
     "Property/floor-plans",
     "Property/property-documents",
     "images",
+    "avatars",
     "document",
     "offer-letter",
   ].forEach((segment) => {

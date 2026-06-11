@@ -12,7 +12,8 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getStoredUser } from "utils/authStorage";
 import { useTranslation } from "react-i18next";
 import { postApi } from "services/api";
 import { publicBrand } from "../publicBrand";
@@ -31,6 +32,20 @@ export default function LeadCaptureCard({ property, agent, collectionSlug = "", 
 
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const resolvedAgent = useMemo(() => agent || property?.agent || null, [agent, property?.agent]);
+
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (!storedUser) return;
+
+    setValues((current) => ({
+      ...current,
+      fullName:
+        current.fullName ||
+        [storedUser.firstName, storedUser.lastName].filter(Boolean).join(" "),
+      email: current.email || storedUser.email || "",
+      phoneNumber: current.phoneNumber || storedUser.phoneNumber || "",
+    }));
+  }, []);
 
   if (!property) return null;
 

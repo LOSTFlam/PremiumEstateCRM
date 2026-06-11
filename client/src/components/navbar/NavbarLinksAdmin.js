@@ -22,6 +22,7 @@ import { FaEthereum } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getApi } from "services/api";
+import { constant } from "constant";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18n/i18n.config";
@@ -61,6 +62,15 @@ export default function HeaderLinks(props) {
   const user = data?.firstName + " " + data?.lastName;
   const _userId = JSON.parse(localStorage.getItem("user"))?._id;
   const loginUser = useSelector((state) => state?.user?.user);
+  const loginRole = loginUser?.role || data?.role;
+  const cabinetPath = loginRole === "user" ? "/cabinet" : "/admin/";
+  const profilePath =
+    loginRole === "user"
+      ? "/cabinet/profile"
+      : `/userView/${JSON.parse(localStorage.getItem("user"))?._id}`;
+  const avatarSrc = data?.avatarUrl
+    ? `${constant.baseUrl.replace(/\/$/, "")}${data.avatarUrl}`
+    : undefined;
 
   const [isLogoutScheduled, setIsLogoutScheduled] = useState(false);
 
@@ -266,6 +276,7 @@ export default function HeaderLinks(props) {
             _hover={{ cursor: "pointer" }}
             color="white"
             name={user || "PremiumEstate"}
+            src={avatarSrc}
             bg="#11047A"
             size="sm"
             w="40px"
@@ -304,8 +315,10 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
             >
-              <Text fontSize="sm" onClick={() => navigate(`/admin/`)} color={textColor}>
-                {t?.("navigation.dashboard")}
+              <Text fontSize="sm" onClick={() => navigate(cabinetPath)} color={textColor}>
+                {loginRole === "user"
+                  ? t?.("navigation.personalCabinet")
+                  : t?.("navigation.dashboard")}
               </Text>
             </MenuItem>
 
@@ -327,13 +340,7 @@ export default function HeaderLinks(props) {
               borderRadius="8px"
               px="14px"
             >
-              <Text
-                fontSize="sm"
-                onClick={() =>
-                  navigate(`/userView/${JSON.parse(localStorage.getItem("user"))?._id}`)
-                }
-                color={textColor}
-              >
+              <Text fontSize="sm" onClick={() => navigate(profilePath)} color={textColor}>
                 {t?.("navigation.profileSettings")}
               </Text>
             </MenuItem>

@@ -311,6 +311,18 @@ export const deleteApi = async (path: string, param: string): Promise<AxiosRespo
   });
 };
 
+export const deletePath = async (path: string): Promise<AxiosResponse> => {
+  const result = await apiClient.delete(path, {
+    headers: buildHeaders(false),
+  });
+
+  if (result?.data?.user) {
+    persistUser(result.data.user, Boolean(localStorage.getItem("user")));
+  }
+
+  return result;
+};
+
 export const deleteManyApi = async (path: string, data: unknown): Promise<AxiosResponse> => {
   return apiClient.post(path, data, {
     headers: buildHeaders(false),
@@ -357,6 +369,7 @@ export default {
   postApiBlob,
   putApi,
   deleteApi,
+  deletePath,
   deleteManyApi,
   getApi,
   clearApiCache,

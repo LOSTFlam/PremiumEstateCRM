@@ -30,7 +30,7 @@ import { LuCircleChevronRight } from "react-icons/lu";
 import { FaCalendarAlt } from "react-icons/fa";
 import { fetchModules } from "../../redux/slices/moduleSlice";
 
-const MainDashboard = React.lazy(() => import("views/admin/default"));
+const PersonalCabinet = React.lazy(() => import("views/cabinet/PersonalCabinet"));
 const MyListings = React.lazy(() => import("views/myListings"));
 const SignInCentered = React.lazy(() => import("views/auth/signIn"));
 const Calender = React.lazy(() => import("views/admin/calender"));
@@ -105,11 +105,12 @@ export default function User(props) {
 
   let routes = [
     {
-      name: "Dashboard",
+      name: "Personal Cabinet",
+      i18nKey: "navigation.personalCabinet",
       layout: [ROLE_PATH.user],
-      path: "/dashboard",
+      path: "/cabinet/*",
       icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-      component: MainDashboard,
+      component: PersonalCabinet,
     },
     {
       name: "My Listings",
@@ -383,7 +384,8 @@ export default function User(props) {
                   >
                     <Routes>
                       {getRoutes(routes)}
-                      <Route path="/*" element={<Navigate to="/default" />} />
+                      <Route path="/dashboard" element={<Navigate to="/cabinet" replace />} />
+                      <Route path="/*" element={<Navigate to="/cabinet" replace />} />
                     </Routes>
                   </Suspense>
                 </Box>

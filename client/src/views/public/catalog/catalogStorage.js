@@ -11,11 +11,17 @@ const readIds = (key) => {
   }
 };
 
+const notifyPreferencesChanged = () => {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("cabinet-preferences-changed"));
+};
+
 const writeIds = (key, ids) => {
   if (typeof window === "undefined") return [];
 
   const next = Array.from(new Set((ids || []).filter(Boolean)));
   window.localStorage.setItem(key, JSON.stringify(next));
+  notifyPreferencesChanged();
   return next;
 };
 
@@ -73,11 +79,13 @@ export const saveSearchSnapshot = (snapshot) => {
   ].slice(0, 12);
 
   window.localStorage.setItem(SAVED_SEARCHES_KEY, JSON.stringify(next));
+  notifyPreferencesChanged();
   return next;
 };
 
 export const removeSavedSearch = (id) => {
   const next = getSavedSearches().filter((item) => item?.id !== id);
   window.localStorage.setItem(SAVED_SEARCHES_KEY, JSON.stringify(next));
+  notifyPreferencesChanged();
   return next;
 };

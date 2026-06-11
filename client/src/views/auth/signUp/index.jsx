@@ -111,7 +111,7 @@ function SignUp() {
 
         // Force reload to ensure App component re-renders with new auth state
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          window.location.href = newUser?.role === "user" ? "/cabinet" : "/dashboard";
         }, 500);
       } else {
         toast.error(

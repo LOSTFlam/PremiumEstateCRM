@@ -265,6 +265,13 @@ const deleteMany = async (req, res, next) => {
 
 const edit = async (req, res, next) => {
   try {
+    const isSelf = String(req.params.id) === String(req.user?.userId);
+    const isSuperAdmin = req.user?.role === "superAdmin";
+
+    if (!isSelf && !isSuperAdmin) {
+      return res.status(403).json({ message: "You can only edit your own profile" });
+    }
+
     const { username, email, firstName, lastName, phoneNumber } = req.body;
     const update = {};
 

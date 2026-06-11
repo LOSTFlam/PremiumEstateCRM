@@ -385,7 +385,13 @@ export function AnimatedRoutes() {
         <Routes location={location}>
           <Route
             path="/"
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <ModernLandingPage />}
+            element={
+              isAuthenticated ? (
+                <Navigate to={user?.role === "user" ? "/cabinet" : "/dashboard"} replace />
+              ) : (
+                <ModernLandingPage />
+              )
+            }
           />
           <Route path="/offers" element={<PublicCatalog />} />
           <Route path="/offers/houses" element={<PublicCatalog forcedType="house" />} />
@@ -403,7 +409,13 @@ export function AnimatedRoutes() {
           <Route path="/auth/sign-in" element={<SignIn />} />
           <Route
             path="/auth/*"
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthLayout />}
+            element={
+              isAuthenticated ? (
+                <Navigate to={user?.role === "user" ? "/cabinet" : "/dashboard"} replace />
+              ) : (
+                <AuthLayout />
+              )
+            }
           />
 
           {isAuthenticated ? (

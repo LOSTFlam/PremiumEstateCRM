@@ -92,6 +92,34 @@ const user = new mongoose.Schema({
     phoneNumber: { type: String },
     firstName: { type: String, trim: true },
     lastName: { type: String, trim: true },
+    avatarUrl: { type: String, default: "" },
+    preferences: {
+        favoritePropertyIds: { type: [String], default: [] },
+        comparePropertyIds: { type: [String], default: [] },
+        recentlyViewed: {
+            type: [{
+                propertyId: String,
+                viewedAt: { type: Date, default: Date.now },
+            }],
+            default: [],
+        },
+        savedSearches: { type: [mongoose.Schema.Types.Mixed], default: [] },
+        propertyNotes: { type: mongoose.Schema.Types.Mixed, default: {} },
+        buyerProfile: {
+            budgetMin: { type: Number, default: null },
+            budgetMax: { type: Number, default: null },
+            preferredCity: { type: String, default: "" },
+            propertyTypes: { type: [String], default: [] },
+            bedroomsMin: { type: Number, default: null },
+            contactMethod: { type: String, default: "phone" },
+            about: { type: String, default: "" },
+        },
+        notifications: {
+            emailUpdates: { type: Boolean, default: true },
+            newListings: { type: Boolean, default: true },
+            priceChanges: { type: Boolean, default: false },
+        },
+    },
     roles: [{
         type: mongoose.Schema.ObjectId,
         ref: 'RoleAccess',

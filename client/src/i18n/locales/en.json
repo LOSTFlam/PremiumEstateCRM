@@ -91,7 +91,181 @@
     "offerLetters": "Offer Letters",
     "propertyPhotos": "Property Photos",
     "myListings": "My Listings",
+    "personalCabinet": "Personal Cabinet",
     "moderation": "Moderation"
+  },
+  "cabinet": {
+    "badge": "Personal cabinet",
+    "menu": "Sections",
+    "guest": "Guest",
+    "welcome": "Welcome, {{name}}",
+    "subtitle": "Your saved, recently viewed, and compared properties live here. Manage your shortlist, searches, and profile in one place.",
+    "profilePreview": "Your profile",
+    "profileHint": "Add a photo, update contacts, and manage account security.",
+    "editProfile": "Edit profile",
+    "viewAll": "View all",
+    "recentPreview": "Recently viewed",
+    "clearAll": "Clear all",
+    "clearHistory": "Clear history",
+    "clearCompare": "Clear compare list",
+    "openCompare": "Open comparison",
+    "applySearch": "Apply",
+    "savedSearchFallback": "Saved search",
+    "savedSearchNoSummary": "Catalog filters",
+    "partialLoad": "Showing {{shown}} of {{total}} properties",
+    "tabs": {
+      "overview": "Overview",
+      "saved": "Favorites",
+      "recent": "Recent",
+      "compare": "Compare",
+      "searches": "Searches",
+      "inquiries": "Inquiries",
+      "profile": "Profile"
+    },
+    "stats": {
+      "favorites": "Favorites",
+      "recent": "Recently viewed",
+      "compare": "In compare",
+      "searches": "Saved searches",
+      "inquiries": "My inquiries"
+    },
+    "quick": {
+      "catalog": "Open catalog",
+      "profile": "Profile settings",
+      "listings": "My listings"
+    },
+    "sections": {
+      "saved": "Favorite properties",
+      "savedDesc": "Homes and apartments you marked with a heart in the catalog.",
+      "recent": "Recently viewed",
+      "recentDesc": "Your viewing history helps you return to interesting options quickly.",
+      "compare": "Compare list",
+      "compareDesc": "Compare up to three properties by key parameters.",
+      "searches": "Saved searches",
+      "searchesDesc": "Your catalog filters — apply them with one click.",
+      "inquiries": "My inquiries",
+      "inquiriesDesc": "Viewing requests and messages sent from your email."
+    },
+    "account": {
+      "title": "Account",
+      "username": "Username",
+      "memberSince": "Member since",
+      "lastLogin": "Last login"
+    },
+    "onboarding": {
+      "title": "Getting started",
+      "subtitle": "A few steps to make your cabinet useful from day one.",
+      "tip1Title": "Save properties",
+      "tip1Text": "Tap the heart in the catalog — they appear in favorites.",
+      "tip2Title": "Compare options",
+      "tip2Text": "Add up to three properties to comparison and pick the best fit.",
+      "tip3Title": "Save searches",
+      "tip3Text": "Store catalog filters so you do not set them up again.",
+      "tip4Title": "Complete your profile",
+      "tip4Text": "Add wishes and contacts — inquiries submit faster."
+    },
+    "inquiries": {
+      "emptyTitle": "No inquiries yet",
+      "emptyText": "Send a viewing request from a property page — it will appear here.",
+      "propertyFallback": "Property",
+      "openProperty": "Open property"
+    },
+    "notes": {
+      "title": "Property notes",
+      "desc": "Private comments on favorites — visible only to you.",
+      "forProperty": "Property …{{id}}",
+      "placeholder": "e.g. liked the view, ask about mortgage…",
+      "save": "Save notes",
+      "moreHidden": "{{count}} more notes in the full favorites list"
+    },
+    "export": {
+      "pdf": "Download PDF",
+      "share": "Share",
+      "pdfTitle": "My property shortlist",
+      "generatedOn": "Generated on",
+      "propertyFallback": "Property",
+      "onRequest": "On request",
+      "colName": "Name",
+      "colPrice": "Price",
+      "colArea": "Area",
+      "colBedrooms": "Bedrooms",
+      "colBathrooms": "Bathrooms",
+      "pdfDone": "PDF saved",
+      "shareTitle": "My shortlist",
+      "shareText": "Check out {{count}} saved properties",
+      "linkCopied": "Link copied"
+    },
+    "wishes": {
+      "title": "What I'm looking for",
+      "desc": "Help agents match listings to your needs.",
+      "budgetMin": "Budget from",
+      "budgetMax": "Budget to",
+      "city": "Preferred city / area",
+      "bedrooms": "Min. bedrooms",
+      "contactMethod": "Preferred contact",
+      "contactPhone": "Phone",
+      "types": "Property types",
+      "about": "Additional wishes",
+      "aboutPlaceholder": "e.g. quiet area, parking, ready to move in July…",
+      "save": "Save wishes",
+      "type": {
+        "house": "House",
+        "apartment": "Apartment",
+        "land": "Land",
+        "commercial": "Commercial"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Choose what you want to hear about.",
+      "emailUpdates": "Email updates",
+      "newListings": "New listings matching my criteria",
+      "priceChanges": "Price changes in favorites",
+      "save": "Save settings",
+      "saved": "Notification settings saved"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "text": "Open the catalog and save properties you like.",
+      "browse": "Browse catalog"
+    },
+    "savedEmpty": {
+      "title": "No favorites yet",
+      "text": "Tap the heart on a property card to add it here."
+    },
+    "recentEmpty": {
+      "title": "No viewing history",
+      "text": "Open property pages in the catalog — they will appear here."
+    },
+    "compareEmpty": {
+      "title": "No properties to compare",
+      "text": "Add up to three properties using the compare button in the catalog."
+    },
+    "searchesEmpty": {
+      "title": "No saved searches",
+      "text": "Save filters in the catalog to quickly return to the right shortlist."
+    },
+    "profile": {
+      "title": "Profile details",
+      "passwordTitle": "Change password",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "avatarHint": "Upload a JPG, PNG, or WebP photo.",
+      "uploadAvatar": "Upload avatar",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "changePassword": "Change password",
+      "saved": "Profile saved",
+      "saveError": "Could not save profile",
+      "avatarSaved": "Avatar updated",
+      "removeAvatar": "Remove photo",
+      "avatarRemoved": "Avatar removed",
+      "avatarError": "Could not upload avatar",
+      "passwordSaved": "Password changed",
+      "passwordError": "Could not change password",
+      "passwordMismatch": "New password and confirmation do not match"
+    }
   },
   "myListings": {
     "title": "My Listings",

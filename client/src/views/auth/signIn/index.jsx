@@ -107,7 +107,7 @@ function SignIn() {
         setTimeout(() => {
           if (currentUser?.role === "user" || currentUser?.role === "superAdmin") {
             // Force reload to ensure App component re-renders with new auth state
-            window.location.href = "/dashboard";
+            window.location.href = currentUser?.role === "user" ? "/cabinet" : "/dashboard";
           } else {
             navigate("/auth/sign-in", { replace: true });
           }

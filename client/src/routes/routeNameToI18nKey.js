@@ -1,5 +1,6 @@
 export const routeNameToI18nKey = {
   Dashboard: "navigation.dashboard",
+  "Personal Cabinet": "navigation.personalCabinet",
   "My Listings": "navigation.myListings",
   Properties: "navigation.properties",
   Leads: "navigation.leads",

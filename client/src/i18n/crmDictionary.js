@@ -2,6 +2,7 @@ import i18next from "i18next";
 
 export const ROUTE_I18N_KEY_BY_NAME = {
   Dashboard: "navigation.dashboard",
+  "Personal Cabinet": "navigation.personalCabinet",
   Properties: "navigation.properties",
   "Property Photos": "navigation.propertyPhotos",
   Leads: "navigation.leads",

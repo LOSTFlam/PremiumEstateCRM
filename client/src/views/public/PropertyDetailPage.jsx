@@ -23,6 +23,11 @@ import {
 } from "@chakra-ui/react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import {
+  getFavoriteIds,
+  pushRecentlyViewedId,
+  toggleFavoriteId,
+} from "./catalog/catalogStorage";
+import {
   FiHeart,
   FiShare2,
   FiMapPin,
@@ -121,6 +126,11 @@ const PropertyDetailPage = () => {
       const response = await getApi(`api/property/public/${slug}`);
       if (response && response.data) {
         setProperty(response.data);
+        const propertyId = response.data._id;
+        if (propertyId) {
+          pushRecentlyViewedId(propertyId);
+          setIsFavorite(getFavoriteIds().includes(propertyId));
+        }
       }
     } catch (error) {
       // Error handled silently
@@ -135,19 +145,16 @@ const PropertyDetailPage = () => {
   };
 
   const handleFavoriteToggle = async () => {
-    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    let newFavorites;
+    if (!property?._id) return;
 
-    if (isFavorite) {
-      newFavorites = favorites.filter((id) => id !== property._id);
-      toast({ title: copy.removed, status: "info", duration: 2000 });
-    } else {
-      newFavorites = [...favorites, property._id];
-      toast({ title: copy.added, status: "success", duration: 2000 });
-    }
-
-    localStorage.setItem("favorites", JSON.stringify(newFavorites));
-    setIsFavorite(!isFavorite);
+    const next = toggleFavoriteId(property._id);
+    const nowFavorite = next.includes(property._id);
+    setIsFavorite(nowFavorite);
+    toast({
+      title: nowFavorite ? copy.added : copy.removed,
+      status: nowFavorite ? "success" : "info",
+      duration: 2000,
+    });
   };
 
   const handleShare = async () => {
