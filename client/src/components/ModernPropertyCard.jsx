@@ -511,28 +511,45 @@ const ModernPropertyCard = ({
               key={metric.label}
               className="property-metric"
               borderRadius="22px"
-              px={3}
-              py={3}
+              px={{ base: 2, sm: 3 }}
+              py={{ base: 2.5, sm: 3 }}
               bg="rgba(9,18,32,0.04)"
               border="1px solid rgba(9,18,32,0.06)"
-              textAlign={{ base: "left", sm: "center" }}
+              textAlign="center"
+              minW={0}
+              overflow="hidden"
             >
-              <HStack
-                spacing={2}
+              <Stack
+                className="property-metric-header"
+                spacing={1}
+                align="center"
                 color={publicBrand.colors.textSoft}
-                justify={{ base: "flex-start", sm: "center" }}
               >
-                <Icon as={metric.icon} boxSize="16px" flexShrink={0} />
-                <Text className="property-metric-label" fontSize="xs" lineHeight="1.3">
+                <Icon
+                  className="property-metric-icon"
+                  as={metric.icon}
+                  boxSize={{ base: "14px", sm: "16px" }}
+                  flexShrink={0}
+                />
+                <Text
+                  className="property-metric-label"
+                  fontSize={{ base: "10px", sm: "xs" }}
+                  lineHeight="1.2"
+                  noOfLines={1}
+                  maxW="100%"
+                  w="100%"
+                >
                   {metric.label}
                 </Text>
-              </HStack>
+              </Stack>
               <Text
                 className="property-metric-value"
-                mt={1.5}
+                mt={{ base: 1, sm: 1.5 }}
                 fontWeight="700"
                 color={publicBrand.colors.ink}
-                fontSize={{ base: "md", sm: "sm" }}
+                fontSize={{ base: "sm", sm: "sm" }}
+                noOfLines={2}
+                lineHeight="1.2"
               >
                 {metric.value}
               </Text>
