@@ -331,7 +331,7 @@ const PropertyDetailPage = () => {
       </Box>
 
       {/* Content */}
-      <Container maxW="8xl" py={{ base: 6, md: 10 }} px={{ base: 4, md: 6 }}>
+      <Container maxW="8xl" py={{ base: 6, md: 10 }} pb={{ base: 28, md: 10 }} px={{ base: 4, md: 6 }}>
         <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={{ base: 6, md: 10 }}>
           {/* Main Content */}
           <Stack spacing={8}>

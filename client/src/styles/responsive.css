@@ -318,6 +318,22 @@ a.public-brand-button {
     max-width: 100%;
   }
 
+  /* Mobile bottom nav — keep labels on one line */
+  .mobile-bottom-nav .mobile-bottom-nav__label {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: nowrap !important;
+    text-align: center;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    max-width: 100%;
+  }
+
+  .mobile-bottom-nav .mobile-bottom-nav__item {
+    min-width: 0;
+  }
+
   /* Cabinet buttons: keep labels on one line; avoid E-d-i-t vertical breaks */
   .cabinet-content .chakra-button,
   .cabinet-content .chakra-icon-button {

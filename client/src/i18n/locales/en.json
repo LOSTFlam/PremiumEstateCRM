@@ -656,6 +656,13 @@
     "footerDescription": "Your trusted partner in finding exceptional properties. We specialize in luxury real estate with unparalleled service and expertise in the premium market.",
     "quickLinksNav": "Quick Links",
     "homeNav": "Home",
+    "mobileBottomNav": {
+      "home": "Home",
+      "properties": "Listings",
+      "favorites": "Saved",
+      "profile": "Sign in",
+      "cabinet": "Account"
+    },
     "propertiesNav": "Properties",
     "agentsNav": "Agents",
     "aboutNav": "About Us",

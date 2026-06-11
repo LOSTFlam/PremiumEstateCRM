@@ -7,10 +7,17 @@ import { isAuthenticatedUser } from "utils/authStorage";
 import { publicBrand } from "views/public/publicBrand";
 
 const NAV_ITEMS = [
-  { key: "home", href: "/", icon: FiHome, labelKey: "homeNav" },
-  { key: "catalog", href: "/offers", icon: FiGrid, labelKey: "propertiesNav" },
-  { key: "favorites", href: "/favorites", icon: FiHeart, labelKey: "savedOffers", showCount: true },
-  { key: "profile", href: "/auth/sign-in", icon: FiUser, labelKey: "signIn", authHref: "/cabinet" },
+  { key: "home", href: "/", icon: FiHome, labelKey: "home" },
+  { key: "catalog", href: "/offers", icon: FiGrid, labelKey: "properties" },
+  { key: "favorites", href: "/favorites", icon: FiHeart, labelKey: "favorites", showCount: true },
+  {
+    key: "profile",
+    href: "/auth/sign-in",
+    icon: FiUser,
+    labelKey: "profile",
+    authLabelKey: "cabinet",
+    authHref: "/cabinet",
+  },
 ];
 
 export default function MobileBottomNav() {
@@ -37,14 +44,16 @@ export default function MobileBottomNav() {
       pointerEvents="none"
     >
       <HStack
+        className="mobile-bottom-nav"
         as="nav"
         aria-label="Mobile navigation"
-        justify="space-around"
+        justify="space-between"
+        spacing={0}
         bg="rgba(7, 12, 20, 0.92)"
         border="1px solid rgba(227, 211, 184, 0.14)"
         borderRadius="24px"
         py={2}
-        px={2}
+        px={1}
         backdropFilter="blur(14px)"
         boxShadow={publicBrand.shadows.deep}
         pointerEvents="auto"
@@ -53,24 +62,31 @@ export default function MobileBottomNav() {
           const href =
             item.key === "profile" && isAuthenticated ? item.authHref : item.href;
           const active = isActive(href);
+          const labelKey =
+            item.key === "profile" && isAuthenticated ? item.authLabelKey : item.labelKey;
+          const label = t(`publicListing.mobileBottomNav.${labelKey}`);
           return (
             <Box
               key={item.key}
               as={RouterLink}
               to={href}
-              flex={1}
-              minH="44px"
+              className="mobile-bottom-nav__item"
+              flex="1 1 0"
+              minW={0}
+              minH="52px"
               display="flex"
               alignItems="center"
               justifyContent="center"
               borderRadius="18px"
+              px={1}
               bg={active ? "rgba(212, 175, 55, 0.16)" : "transparent"}
               color={active ? "#f5d076" : "whiteAlpha.700"}
               transition="background 0.2s ease, color 0.2s ease"
               _hover={{ color: "white" }}
+              aria-label={label}
             >
-              <VStack spacing={0.5}>
-                <Box position="relative">
+              <VStack spacing={0.5} w="full" align="center" justify="center">
+                <Box position="relative" flexShrink={0}>
                   <Icon as={item.icon} boxSize={5} />
                   {item.showCount && favoriteCount > 0 ? (
                     <Box
@@ -92,8 +108,8 @@ export default function MobileBottomNav() {
                     </Box>
                   ) : null}
                 </Box>
-                <Text fontSize="10px" fontWeight="600">
-                  {t(`publicListing.${item.labelKey}`)}
+                <Text className="mobile-bottom-nav__label" fontSize="9px" fontWeight="600">
+                  {label}
                 </Text>
               </VStack>
             </Box>

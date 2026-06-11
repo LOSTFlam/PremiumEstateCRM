@@ -23,8 +23,8 @@ export default function ScrollToTopButton() {
           icon={<FiArrowUp />}
           position="fixed"
           right={{ base: 4, md: 6 }}
-          bottom={{ base: 88, md: 6 }}
-          zIndex={25}
+          bottom={{ base: 104, md: 6 }}
+          zIndex={24}
           borderRadius="full"
           size="lg"
           bg={publicBrand.gradients.brass}

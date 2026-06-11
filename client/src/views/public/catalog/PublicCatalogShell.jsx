@@ -878,7 +878,12 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
         </Container>
       </Box>
 
-      <Container maxW={PAGE_MAX_W} py={{ base: 8, md: 12, xl: 14 }} px={{ base: 4, md: 6, xl: 8 }}>
+      <Container
+        maxW={PAGE_MAX_W}
+        py={{ base: 8, md: 12, xl: 14 }}
+        pb={{ base: 28, md: 12, xl: 14 }}
+        px={{ base: 4, md: 6, xl: 8 }}
+      >
         <Grid
           templateColumns={{
             base: "1fr",

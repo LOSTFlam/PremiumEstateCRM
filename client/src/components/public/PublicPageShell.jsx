@@ -20,7 +20,7 @@ export default function PublicPageShell({
     <Box minH="100vh" bg={publicBrand.gradients.pageLight} color={publicBrand.colors.ink}>
       <PublicSeoMeta {...seo} />
       <ModernHeader />
-      <Box as="main" pt={{ base: "96px", md: "108px" }} pb={{ base: 20, md: 12 }}>
+      <Box as="main" pt={{ base: "96px", md: "108px" }} pb={{ base: 28, md: 12 }}>
         <Container maxW="8xl" px={{ base: 4, md: 6, xl: 8 }}>
           {breadcrumbs.length ? (
             <Box mb={6}>
