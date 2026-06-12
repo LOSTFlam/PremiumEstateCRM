@@ -119,11 +119,7 @@ const CabinetPropertyGrid = ({
 
   return (
     <Box>
-      <SimpleGrid
-        columns={{ base: 1, md: 2 }}
-        columns={PROPERTY_CARD_GRID_COLUMNS}
-        spacing={PROPERTY_CARD_GRID_SPACING}
-      >
+      <SimpleGrid columns={PROPERTY_CARD_GRID_COLUMNS} spacing={PROPERTY_CARD_GRID_SPACING}>
         {properties.map((property) => (
           <ModernPropertyCard
             key={property._id}

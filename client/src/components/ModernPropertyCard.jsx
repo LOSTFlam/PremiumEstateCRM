@@ -16,7 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiSearch, FiShare2 } from "react-icons/fi";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import CountUp from "react-countup";
 import {
   MdArrowForward,
@@ -171,9 +171,9 @@ const ModernPropertyCard = ({
       maxW="100%"
       minW={0}
       w="100%"
-      bg={publicBrand.gradients.panelLight}
-      border="1px solid rgba(9,18,32,0.06)"
-      boxShadow="0 10px 36px rgba(0, 0, 0, 0.14), 0 0 26px rgba(212, 175, 55, 0.09)"
+      bg={publicBrand.gradients.panel}
+      border={`1px solid ${publicBrand.colors.line}`}
+      boxShadow={`${publicBrand.shadows.deep}, 0 0 34px rgba(212, 175, 55, 0.1)`}
       position="relative"
       transition="all 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
       _before={{
@@ -185,7 +185,7 @@ const ModernPropertyCard = ({
         bottom: 0,
         borderRadius: "inherit",
         background:
-          "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.05) 100%)",
+          "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(212,175,55,0.12) 100%)",
         opacity: 0,
         transition: "opacity 0.5s ease",
         zIndex: 0,
@@ -197,7 +197,7 @@ const ModernPropertyCard = ({
               _before: { opacity: 1 },
               transform: { base: "translateY(-4px)", md: "translateY(-12px) scale(1.02)" },
               boxShadow:
-                "0 20px 60px rgba(0, 0, 0, 0.25), 0 0 40px rgba(212, 175, 55, 0.15), 0 0 80px rgba(255, 255, 255, 0.08)",
+                "0 30px 86px rgba(0, 0, 0, 0.4), 0 0 44px rgba(212, 175, 55, 0.18), 0 0 90px rgba(255, 255, 255, 0.08)",
             }
       }
     >
@@ -255,149 +255,175 @@ const ModernPropertyCard = ({
               "&::-webkit-scrollbar": { display: "none" },
             }}
           >
-          <Badge
-            px={3.5}
-            py={1.5}
-            borderRadius="full"
-            bg="rgba(255,255,255,0.16)"
-            color="white"
-            border="1px solid rgba(255,255,255,0.18)"
-            backdropFilter="blur(10px)"
-            textTransform="none"
-            flexShrink={0}
-          >
-            {status}
-          </Badge>
-          <Badge
-            px={3.5}
-            py={1.5}
-            borderRadius="full"
-            bg="rgba(7,12,20,0.56)"
-            color="#f5d076"
-            border="1px solid rgba(227, 211, 184, 0.14)"
-            textTransform="none"
-            flexShrink={0}
-          >
-            {typeLabel}
-          </Badge>
-          <Badge
-            px={3.5}
-            py={1.5}
-            borderRadius="full"
-            bg={property?.dealType === "rent" ? "rgba(104,211,225,0.18)" : "rgba(245,208,118,0.18)"}
-            color={property?.dealType === "rent" ? "#9ae6f0" : "#f5d076"}
-            border="1px solid rgba(227, 211, 184, 0.14)"
-            textTransform="none"
-            flexShrink={0}
-          >
-            {dealTypeLabel(property, t)}
-          </Badge>
-          {richListing ? (
             <Badge
-              className="property-badge-rich"
               px={3.5}
               py={1.5}
               borderRadius="full"
-              bg="rgba(143,193,154,0.14)"
-              color="#bbdbbf"
-              border="1px solid rgba(143,193,154,0.18)"
+              bg="rgba(255,255,255,0.16)"
+              color="white"
+              border="1px solid rgba(255,255,255,0.18)"
+              backdropFilter="blur(10px)"
               textTransform="none"
               flexShrink={0}
             >
-              {t?.("publicListing.richLabel") || "Rich"}
+              {status}
             </Badge>
-          ) : null}
-          {isNewListing ? (
-            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(56,161,105,0.2)" color="#9ae6b4" textTransform="none" flexShrink={0}>
-              {t?.("publicPages.catalog.badgeNew") || "New"}
+            <Badge
+              px={3.5}
+              py={1.5}
+              borderRadius="full"
+              bg="rgba(7,12,20,0.56)"
+              color="#f5d076"
+              border="1px solid rgba(227, 211, 184, 0.14)"
+              textTransform="none"
+              flexShrink={0}
+            >
+              {typeLabel}
             </Badge>
-          ) : null}
-          {property?.featured ? (
-            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(212,175,55,0.22)" color="#f5d076" textTransform="none" flexShrink={0}>
-              {t?.("publicPages.catalog.badgeExclusive") || "Exclusive"}
+            <Badge
+              px={3.5}
+              py={1.5}
+              borderRadius="full"
+              bg={
+                property?.dealType === "rent" ? "rgba(104,211,225,0.18)" : "rgba(245,208,118,0.18)"
+              }
+              color={property?.dealType === "rent" ? "#9ae6f0" : "#f5d076"}
+              border="1px solid rgba(227, 211, 184, 0.14)"
+              textTransform="none"
+              flexShrink={0}
+            >
+              {dealTypeLabel(property, t)}
             </Badge>
-          ) : null}
-          {property?.previousPrice ? (
-            <Badge px={3.5} py={1.5} borderRadius="full" bg="rgba(229,62,62,0.2)" color="#feb2b2" textTransform="none" flexShrink={0}>
-              {t?.("publicPages.catalog.badgeReduced") || "Reduced"}
-            </Badge>
-          ) : null}
+            {richListing ? (
+              <Badge
+                className="property-badge-rich"
+                px={3.5}
+                py={1.5}
+                borderRadius="full"
+                bg="rgba(143,193,154,0.14)"
+                color="#bbdbbf"
+                border="1px solid rgba(143,193,154,0.18)"
+                textTransform="none"
+                flexShrink={0}
+              >
+                {t?.("publicListing.richLabel") || "Rich"}
+              </Badge>
+            ) : null}
+            {isNewListing ? (
+              <Badge
+                px={3.5}
+                py={1.5}
+                borderRadius="full"
+                bg="rgba(56,161,105,0.2)"
+                color="#9ae6b4"
+                textTransform="none"
+                flexShrink={0}
+              >
+                {t?.("publicPages.catalog.badgeNew") || "New"}
+              </Badge>
+            ) : null}
+            {property?.featured ? (
+              <Badge
+                px={3.5}
+                py={1.5}
+                borderRadius="full"
+                bg="rgba(212,175,55,0.22)"
+                color="#f5d076"
+                textTransform="none"
+                flexShrink={0}
+              >
+                {t?.("publicPages.catalog.badgeExclusive") || "Exclusive"}
+              </Badge>
+            ) : null}
+            {property?.previousPrice ? (
+              <Badge
+                px={3.5}
+                py={1.5}
+                borderRadius="full"
+                bg="rgba(229,62,62,0.2)"
+                color="#feb2b2"
+                textTransform="none"
+                flexShrink={0}
+              >
+                {t?.("publicPages.catalog.badgeReduced") || "Reduced"}
+              </Badge>
+            ) : null}
           </HStack>
 
           <Flex className="property-actions" justify="flex-end" pointerEvents="auto">
-          <HStack spacing={{ base: 1.5, md: 2 }}>
-          <IconButton
-            aria-label={
-              isFavorite
-                ? t?.("publicListing.removeFromFavorites") || "Remove from favorites"
-                : t?.("publicListing.addToFavorites") || "Add to favorites"
-            }
-            icon={<FiHeart />}
-            size={{ base: "xs", md: "sm" }}
-            borderRadius="full"
-            bg={isFavorite ? publicBrand.gradients.brass : actionStyles.bg}
-            color={isFavorite ? publicBrand.colors.ink : actionStyles.color}
-            border={actionStyles.border}
-            transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
-              bg: isFavorite ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.05)",
-              boxShadow: isFavorite
-                ? "0 0 20px rgba(212, 175, 55, 0.5)"
-                : "0 0 15px rgba(255, 255, 255, 0.2)",
-            }}
-            _active={{ transform: "scale(0.95)" }}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onFavoriteToggle?.(property?._id);
-            }}
-          />
-          <IconButton
-            aria-label={
-              isInCompare
-                ? t?.("publicListing.removeFromCompare") || "Remove from compare"
-                : t?.("publicListing.addToCompare") || "Add to compare"
-            }
-            icon={<MdCompareArrows />}
-            size={{ base: "xs", md: "sm" }}
-            borderRadius="full"
-            bg={isInCompare ? publicBrand.gradients.brass : actionStyles.bg}
-            color={isInCompare ? publicBrand.colors.ink : actionStyles.color}
-            border={actionStyles.border}
-            transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
-              bg: isInCompare ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.05)",
-              boxShadow: isInCompare
-                ? "0 0 20px rgba(212, 175, 55, 0.5)"
-                : "0 0 15px rgba(255, 255, 255, 0.2)",
-            }}
-            _active={{ transform: "scale(0.95)" }}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onCompareToggle?.(property?._id);
-            }}
-          />
-          <IconButton
-            aria-label={t?.("publicListing.shareOffer") || "Share"}
-            icon={<FiShare2 />}
-            size={{ base: "xs", md: "sm" }}
-            borderRadius="full"
-            bg={actionStyles.bg}
-            color={actionStyles.color}
-            border={actionStyles.border}
-            transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
-            _hover={{
-              bg: "rgba(7, 12, 20, 0.76)",
-              transform: "scale(1.05)",
-              boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)",
-            }}
-            _active={{ transform: "scale(0.95)" }}
-            onClick={handleShare}
-          />
-          </HStack>
+            <HStack spacing={{ base: 1.5, md: 2 }}>
+              <IconButton
+                aria-label={
+                  isFavorite
+                    ? t?.("publicListing.removeFromFavorites") || "Remove from favorites"
+                    : t?.("publicListing.addToFavorites") || "Add to favorites"
+                }
+                icon={<FiHeart />}
+                size={{ base: "xs", md: "sm" }}
+                borderRadius="full"
+                bg={isFavorite ? publicBrand.gradients.brass : actionStyles.bg}
+                color={isFavorite ? publicBrand.colors.ink : actionStyles.color}
+                border={actionStyles.border}
+                transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                _hover={{
+                  bg: isFavorite ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
+                  transform: "scale(1.05)",
+                  boxShadow: isFavorite
+                    ? "0 0 20px rgba(212, 175, 55, 0.5)"
+                    : "0 0 15px rgba(255, 255, 255, 0.2)",
+                }}
+                _active={{ transform: "scale(0.95)" }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onFavoriteToggle?.(property?._id);
+                }}
+              />
+              <IconButton
+                aria-label={
+                  isInCompare
+                    ? t?.("publicListing.removeFromCompare") || "Remove from compare"
+                    : t?.("publicListing.addToCompare") || "Add to compare"
+                }
+                icon={<MdCompareArrows />}
+                size={{ base: "xs", md: "sm" }}
+                borderRadius="full"
+                bg={isInCompare ? publicBrand.gradients.brass : actionStyles.bg}
+                color={isInCompare ? publicBrand.colors.ink : actionStyles.color}
+                border={actionStyles.border}
+                transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                _hover={{
+                  bg: isInCompare ? publicBrand.gradients.brass : "rgba(7, 12, 20, 0.76)",
+                  transform: "scale(1.05)",
+                  boxShadow: isInCompare
+                    ? "0 0 20px rgba(212, 175, 55, 0.5)"
+                    : "0 0 15px rgba(255, 255, 255, 0.2)",
+                }}
+                _active={{ transform: "scale(0.95)" }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onCompareToggle?.(property?._id);
+                }}
+              />
+              <IconButton
+                aria-label={t?.("publicListing.shareOffer") || "Share"}
+                icon={<FiShare2 />}
+                size={{ base: "xs", md: "sm" }}
+                borderRadius="full"
+                bg={actionStyles.bg}
+                color={actionStyles.color}
+                border={actionStyles.border}
+                transition="all 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+                _hover={{
+                  bg: "rgba(7, 12, 20, 0.76)",
+                  transform: "scale(1.05)",
+                  boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)",
+                }}
+                _active={{ transform: "scale(0.95)" }}
+                onClick={handleShare}
+              />
+            </HStack>
           </Flex>
         </Stack>
 
@@ -423,15 +449,18 @@ const ModernPropertyCard = ({
                 <CountUp
                   end={priceAmount}
                   duration={1.2}
-                  formattingFn={(value) =>
-                    formatPrice(value, t, i18n.language) || priceDisplay
-                  }
+                  formattingFn={(value) => formatPrice(value, t, i18n.language) || priceDisplay}
                 />
               ) : (
                 priceDisplay
               )}
               {property?.dealType === "rent" ? (
-                <Text as="span" fontSize={{ base: "sm", md: "md" }} color="whiteAlpha.700" fontWeight="600">
+                <Text
+                  as="span"
+                  fontSize={{ base: "sm", md: "md" }}
+                  color="whiteAlpha.700"
+                  fontWeight="600"
+                >
                   {t?.("publicListing.perMonth") || "/мес"}
                 </Text>
               ) : null}
@@ -484,12 +513,12 @@ const ModernPropertyCard = ({
             fontSize="xl"
             fontWeight="700"
             lineHeight="1.2"
-            color={publicBrand.colors.ink}
+            color={publicBrand.colors.text}
             noOfLines={2}
           >
             {listingTitle}
           </Text>
-          <HStack spacing={2} color={publicBrand.colors.textSoft} align="start">
+          <HStack spacing={2} color={publicBrand.colors.textMuted} align="start">
             <Icon as={LuMapPin} mt={0.5} flexShrink={0} />
             <Text className="property-address" fontSize="sm" noOfLines={2} lineHeight="1.45">
               {listingAddress}
@@ -497,7 +526,7 @@ const ModernPropertyCard = ({
           </HStack>
           <Text
             className="property-description"
-            color={publicBrand.colors.textSoft}
+            color={publicBrand.colors.textMuted}
             noOfLines={2}
             lineHeight="1.65"
           >
@@ -513,8 +542,8 @@ const ModernPropertyCard = ({
               borderRadius="22px"
               px={{ base: 2, sm: 3 }}
               py={{ base: 2.5, sm: 3 }}
-              bg="rgba(9,18,32,0.04)"
-              border="1px solid rgba(9,18,32,0.06)"
+              bg="rgba(255,255,255,0.045)"
+              border={`1px solid ${publicBrand.colors.line}`}
               textAlign="center"
               minW={0}
               overflow="hidden"
@@ -523,7 +552,7 @@ const ModernPropertyCard = ({
                 className="property-metric-header"
                 spacing={1}
                 align="center"
-                color={publicBrand.colors.textSoft}
+                color={publicBrand.colors.textMuted}
               >
                 <Icon
                   className="property-metric-icon"
@@ -546,7 +575,7 @@ const ModernPropertyCard = ({
                 className="property-metric-value"
                 mt={{ base: 1, sm: 1.5 }}
                 fontWeight="700"
-                color={publicBrand.colors.ink}
+                color={publicBrand.colors.text}
                 fontSize={{ base: "sm", sm: "sm" }}
                 noOfLines={2}
                 lineHeight="1.2"
@@ -565,13 +594,13 @@ const ModernPropertyCard = ({
               borderRadius="24px"
               px={2.5}
               py={2.5}
-              bg="rgba(245,239,228,0.75)"
-              border="1px solid rgba(9,18,32,0.06)"
+              bg="rgba(255,255,255,0.045)"
+              border={`1px solid ${publicBrand.colors.line}`}
               transition="all 0.3s ease"
               _hover={{
-                bg: "rgba(245,239,228,0.95)",
+                bg: "rgba(255,255,255,0.075)",
                 transform: "translateY(-2px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.22)",
               }}
             >
               <Box
@@ -581,16 +610,16 @@ const ModernPropertyCard = ({
                 display="grid"
                 placeItems="center"
                 bg="rgba(245,208,118,0.12)"
-                color={publicBrand.colors.copper}
+                color="#f5d076"
                 flexShrink={0}
               >
                 <Icon as={asset.icon} boxSize="15px" />
               </Box>
               <Box minW="0" flex={1}>
-                <Text fontSize="xs" color={publicBrand.colors.textSoft} noOfLines={1}>
+                <Text fontSize="xs" color={publicBrand.colors.textMuted} noOfLines={1}>
                   {asset.label}
                 </Text>
-                <Text fontWeight="700" color={publicBrand.colors.ink} noOfLines={1}>
+                <Text fontWeight="700" color={publicBrand.colors.text} noOfLines={1}>
                   {asset.value}
                 </Text>
               </Box>
@@ -609,7 +638,7 @@ const ModernPropertyCard = ({
         >
           <Text
             className="property-footer-note"
-            color={publicBrand.colors.copper}
+            color="#f5d076"
             fontSize="xs"
             fontWeight="700"
             noOfLines={2}
@@ -625,8 +654,8 @@ const ModernPropertyCard = ({
             size="sm"
             rightIcon={<MdArrowForward />}
             borderRadius="full"
-            bg={publicBrand.colors.ink}
-            color="white"
+            bg={publicBrand.gradients.brass}
+            color={publicBrand.colors.ink}
             h="auto"
             minH="32px"
             py={2}
@@ -639,9 +668,9 @@ const ModernPropertyCard = ({
             textAlign="center"
             transition="all 0.3s ease"
             _hover={{
-              bg: publicBrand.colors.inkElevated,
+              bg: publicBrand.gradients.brass,
               transform: "translateX(4px)",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+              boxShadow: publicBrand.shadows.glow,
             }}
           >
             {t?.("publicListing.viewOffer") || "View offer"}

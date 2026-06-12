@@ -207,9 +207,10 @@ const SURFACE_PANEL_PROPS = {
   borderRadius: { base: "24px", md: "30px", xl: "34px" },
   px: { base: 4, md: 7, xl: 8 },
   py: { base: 5, md: 7, xl: 8 },
-  bg: "white",
-  border: "1px solid rgba(9,18,32,0.08)",
-  boxShadow: publicBrand.shadows.soft,
+  bg: publicBrand.gradients.panel,
+  border: `1px solid ${publicBrand.colors.line}`,
+  boxShadow: `${publicBrand.shadows.deep}, ${publicBrand.shadows.inset}`,
+  color: publicBrand.colors.text,
 };
 
 const buildActiveFilterChips = (filters, copy, collectionLabelMap = new Map()) => {
@@ -655,8 +656,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
     <Box
       className="public-brand-shell"
       minH="100vh"
-      bg={publicBrand.colors.paper}
-      color={publicBrand.colors.ink}
+      bg={publicBrand.gradients.page}
+      color={publicBrand.colors.text}
       overflowX="hidden"
       maxW="100vw"
     >
@@ -917,16 +918,16 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                   <Stack spacing={1.5}>
                     <Text
                       fontSize="xs"
-                      color={publicBrand.colors.copper}
+                      color="#f5d076"
                       letterSpacing="0.16em"
                       textTransform="uppercase"
                     >
                       {copy.summaryTitle}
                     </Text>
-                    <Heading size="lg" color={publicBrand.colors.ink}>
+                    <Heading size="lg" color={publicBrand.colors.text}>
                       {copy.featuredTitle}
                     </Heading>
-                    <Text color={publicBrand.colors.textSoft} lineHeight="1.8">
+                    <Text color={publicBrand.colors.textMuted} lineHeight="1.8">
                       {copy.summaryText}
                     </Text>
                   </Stack>
@@ -956,9 +957,15 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                           key={mode.key}
                           size="sm"
                           onClick={() => setViewMode(mode.key)}
-                          bg={viewMode === mode.key ? publicBrand.colors.ink : "white"}
-                          color={viewMode === mode.key ? "white" : publicBrand.colors.ink}
-                          border="1px solid rgba(9,18,32,0.08)"
+                          bg={
+                            viewMode === mode.key
+                              ? publicBrand.gradients.brass
+                              : "rgba(255,255,255,0.06)"
+                          }
+                          color={
+                            viewMode === mode.key ? publicBrand.colors.ink : publicBrand.colors.text
+                          }
+                          border={`1px solid ${publicBrand.colors.line}`}
                           minH="44px"
                         >
                           {mode.label}
@@ -968,8 +975,9 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     <Select
                       maxW={{ base: "100%", md: "260px" }}
                       flex={{ base: 1, md: "none" }}
-                      bg="white"
-                      borderColor="rgba(9,18,32,0.08)"
+                      bg="rgba(255,255,255,0.08)"
+                      color={publicBrand.colors.text}
+                      borderColor={publicBrand.colors.line}
                       borderRadius="18px"
                       value={filters.sortBy}
                       onChange={(event) => updateFilters({ sortBy: event.target.value })}
@@ -994,7 +1002,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                         bg="rgba(212,175,55,0.10)"
                         border="1px solid rgba(212,175,55,0.16)"
                       >
-                        <Text fontSize="sm" color={publicBrand.colors.ink}>
+                        <Text fontSize="sm" color={publicBrand.colors.text}>
                           {chip.label}
                         </Text>
                         <IconButton
@@ -1036,16 +1044,16 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                   <Box maxW="920px">
                     <Text
                       fontSize="xs"
-                      color={publicBrand.colors.copper}
+                      color="#f5d076"
                       letterSpacing="0.16em"
                       textTransform="uppercase"
                     >
                       {experienceCopy.routesTitle}
                     </Text>
-                    <Heading mt={2} size="lg" color={publicBrand.colors.ink}>
+                    <Heading mt={2} size="lg" color={publicBrand.colors.text}>
                       {experienceCopy.routesTitle}
                     </Heading>
-                    <Text mt={3} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                    <Text mt={3} color={publicBrand.colors.textMuted} lineHeight="1.8">
                       {experienceCopy.routesText}
                     </Text>
                   </Box>
@@ -1062,8 +1070,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                         px={5}
                         py={5}
                         minH={{ base: "auto", xl: "100%" }}
-                        bg="linear-gradient(180deg, rgba(244,238,229,0.92) 0%, rgba(244,238,229,0.72) 100%)"
-                        border="1px solid rgba(9,18,32,0.08)"
+                        bg="linear-gradient(160deg, rgba(18,29,43,0.98) 0%, rgba(22,35,52,0.92) 100%)"
+                        border={`1px solid ${publicBrand.colors.line}`}
                         transition="transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease"
                         _before={{
                           content: '""',
@@ -1073,8 +1081,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                         }}
                         _hover={{
                           transform: "translateY(-4px)",
-                          boxShadow: "0 18px 46px rgba(6,10,16,0.12)",
-                          borderColor: "rgba(185,119,55,0.16)",
+                          boxShadow: "0 24px 68px rgba(0,0,0,0.3)",
+                          borderColor: "rgba(245,208,118,0.22)",
                         }}
                       >
                         <Stack position="relative" zIndex={1} spacing={4} h="100%">
@@ -1085,8 +1093,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                               borderRadius="18px"
                               display="grid"
                               placeItems="center"
-                              bg="rgba(212,175,55,0.10)"
-                              color={publicBrand.colors.copper}
+                              bg="rgba(245,208,118,0.12)"
+                              color="#f5d076"
                             >
                               <Icon as={route.icon} boxSize={5} />
                             </Box>
@@ -1095,8 +1103,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                               px={3}
                               py={1.5}
                               borderRadius="full"
-                              bg="white"
-                              color={publicBrand.colors.ink}
+                              bg="rgba(255,255,255,0.08)"
+                              color={publicBrand.colors.text}
                               fontSize="sm"
                               fontWeight="700"
                               textAlign="center"
@@ -1104,18 +1112,18 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                               {route.count}
                             </Box>
                           </HStack>
-                          <Heading size="sm" color={publicBrand.colors.ink} lineHeight="1.35">
+                          <Heading size="sm" color={publicBrand.colors.text} lineHeight="1.35">
                             {route.title}
                           </Heading>
                           <Text
-                            color={publicBrand.colors.textSoft}
+                            color={publicBrand.colors.textMuted}
                             lineHeight="1.8"
                             fontSize="sm"
                             flex={1}
                           >
                             {route.text}
                           </Text>
-                          <HStack mt="auto" spacing={2} color={publicBrand.colors.copper}>
+                          <HStack mt="auto" spacing={2} color="#f5d076">
                             <Text fontWeight="700" fontSize="sm">
                               {experienceCopy.routeOpen}
                             </Text>
@@ -1130,7 +1138,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
 
               {savedSearches.length ? (
                 <Box {...SURFACE_PANEL_PROPS}>
-                  <Heading size="md" mb={4} color={publicBrand.colors.ink}>
+                  <Heading size="md" mb={4} color={publicBrand.colors.text}>
                     {copy.savedTitle}
                   </Heading>
                   <SimpleGrid columns={{ base: 1, md: 2, "2xl": 3 }} spacing={4}>
@@ -1140,15 +1148,15 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                         borderRadius="24px"
                         px={4}
                         py={4}
-                        bg="rgba(244,238,229,0.82)"
-                        border="1px solid rgba(9,18,32,0.08)"
+                        bg="rgba(255,255,255,0.045)"
+                        border={`1px solid ${publicBrand.colors.line}`}
                       >
-                        <Text fontWeight="700" color={publicBrand.colors.ink}>
+                        <Text fontWeight="700" color={publicBrand.colors.text}>
                           {search.label}
                         </Text>
                         <Text
                           fontSize="sm"
-                          color={publicBrand.colors.textSoft}
+                          color={publicBrand.colors.textMuted}
                           mt={1}
                           noOfLines={1}
                         >
@@ -1158,8 +1166,8 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                           <Button
                             size="sm"
                             borderRadius="full"
-                            bg={publicBrand.colors.ink}
-                            color="white"
+                            bg={publicBrand.gradients.brass}
+                            color={publicBrand.colors.ink}
                             onClick={() => applySavedSearch(search)}
                           >
                             {copy.applySaved}
@@ -1180,7 +1188,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
               ) : null}
 
               {!loading && paginatedProperties.length ? (
-                <Text fontSize="sm" color={publicBrand.colors.textSoft}>
+                <Text fontSize="sm" color={publicBrand.colors.textMuted}>
                   {t("publicPages.catalog.shownCount", {
                     shown: paginatedProperties.length,
                     total: stats.filtered,
@@ -1265,9 +1273,15 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                       key={`page-${page}`}
                       size="sm"
                       borderRadius="full"
-                      bg={currentPage === page ? publicBrand.colors.ink : "white"}
-                      color={currentPage === page ? "white" : publicBrand.colors.ink}
-                      border="1px solid rgba(9,18,32,0.08)"
+                      bg={
+                        currentPage === page
+                          ? publicBrand.gradients.brass
+                          : "rgba(255,255,255,0.06)"
+                      }
+                      color={
+                        currentPage === page ? publicBrand.colors.ink : publicBrand.colors.text
+                      }
+                      border={`1px solid ${publicBrand.colors.line}`}
                       onClick={() => updateFilters({ page })}
                     >
                       {page}
@@ -1278,7 +1292,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
 
               {quickRouteCards.length ? (
                 <Box>
-                  <Heading size="lg" mb={5} color={publicBrand.colors.ink}>
+                  <Heading size="lg" mb={5} color={publicBrand.colors.text}>
                     {copy.collectionTitle}
                   </Heading>
                   <SimpleGrid columns={{ base: 1, md: 2, "2xl": 3 }} spacing={4}>

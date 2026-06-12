@@ -426,7 +426,6 @@ const FavoritesPage = () => {
           ) : (
             <SimpleGrid
               className="property-card-grid"
-              columns={viewMode === "grid" ? undefined : 1}
               columns={viewMode === "grid" ? PROPERTY_CARD_GRID_COLUMNS : { base: 1 }}
               spacing={PROPERTY_CARD_GRID_SPACING}
             >

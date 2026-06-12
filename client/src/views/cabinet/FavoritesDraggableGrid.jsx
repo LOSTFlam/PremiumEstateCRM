@@ -110,7 +110,6 @@ export default function FavoritesDraggableGrid({ ids = [], onReorder }) {
             <SimpleGrid
               ref={provided.innerRef}
               {...provided.droppableProps}
-              columns={{ base: 1, md: 2 }}
               columns={PROPERTY_CARD_GRID_COLUMNS}
               spacing={PROPERTY_CARD_GRID_SPACING}
             >

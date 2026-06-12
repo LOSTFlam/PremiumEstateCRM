@@ -36,11 +36,15 @@ export default function PropertyListCard({
       w="100%"
       borderRadius="24px"
       overflow="hidden"
-      bg="white"
-      border="1px solid rgba(9,18,32,0.08)"
-      boxShadow={publicBrand.shadows.soft}
+      bg={publicBrand.gradients.panel}
+      border={`1px solid ${publicBrand.colors.line}`}
+      boxShadow={publicBrand.shadows.deep}
+      color={publicBrand.colors.text}
       transition="transform 0.3s ease, box-shadow 0.3s ease"
-      _hover={{ transform: "translateY(-4px)", boxShadow: "0 12px 32px rgba(0,0,0,0.12)" }}
+      _hover={{
+        transform: "translateY(-4px)",
+        boxShadow: "0 24px 68px rgba(0,0,0,0.32), 0 0 30px rgba(212,175,55,0.12)",
+      }}
     >
       <LazyImage
         src={getPrimaryImage(property) || placeholderImage}
@@ -61,16 +65,16 @@ export default function PropertyListCard({
           minW={0}
         >
           <Stack spacing={1} minW={0} flex={1}>
-            <Text fontWeight="700" fontSize="lg" noOfLines={2}>
+            <Text fontWeight="700" fontSize="lg" color={publicBrand.colors.text} noOfLines={2}>
               {getListingTitle(property, t, i18n.language)}
             </Text>
-            <Text fontSize="sm" color={publicBrand.colors.textSoft} noOfLines={2}>
+            <Text fontSize="sm" color={publicBrand.colors.textMuted} noOfLines={2}>
               {getListingAddress(property, t, i18n.language)}
             </Text>
           </Stack>
           <Text
             fontWeight="800"
-            color={publicBrand.colors.ink}
+            color="#f5d076"
             fontSize={{ base: "md", md: "lg" }}
             flexShrink={0}
             wordBreak="break-word"
@@ -78,7 +82,7 @@ export default function PropertyListCard({
             {formatPrice(property?.listingPrice, t, i18n.language)}
           </Text>
         </Flex>
-        <HStack spacing={4} flexWrap="wrap" color={publicBrand.colors.textSoft} fontSize="sm">
+        <HStack spacing={4} flexWrap="wrap" color={publicBrand.colors.textMuted} fontSize="sm">
           <HStack>
             <Icon as={MdMeetingRoom} />
             <Text>{property?.numberofBedrooms || "—"}</Text>
@@ -94,7 +98,9 @@ export default function PropertyListCard({
         </HStack>
         <HStack spacing={2}>
           {property?.featured ? (
-            <Badge colorScheme="yellow">{t("publicPages.catalog.badgeExclusive")}</Badge>
+            <Badge bg="rgba(245,208,118,0.16)" color="#f5d076">
+              {t("publicPages.catalog.badgeExclusive")}
+            </Badge>
           ) : null}
           <HStack ml="auto" spacing={2}>
             <Button
@@ -104,7 +110,7 @@ export default function PropertyListCard({
                 event.preventDefault();
                 onFavoriteToggle?.(property?._id);
               }}
-              color={isFavorite ? "red.400" : publicBrand.colors.textSoft}
+              color={isFavorite ? "#f5d076" : publicBrand.colors.textMuted}
             >
               <FiHeart fill={isFavorite ? "currentColor" : "none"} />
             </Button>
@@ -115,7 +121,7 @@ export default function PropertyListCard({
                 event.preventDefault();
                 onCompareToggle?.(property?._id);
               }}
-              color={isInCompare ? publicBrand.colors.gold : publicBrand.colors.textSoft}
+              color={isInCompare ? "#f5d076" : publicBrand.colors.textMuted}
             >
               <MdCompareArrows />
             </Button>
