@@ -86,7 +86,7 @@ const SavedFavoritesSection = () => {
             <Button
               leftIcon={<FiDownload />}
               variant="outline"
-              colorScheme="green"
+              colorScheme="gold"
               onClick={handleExport}
               isLoading={exporting}
             >

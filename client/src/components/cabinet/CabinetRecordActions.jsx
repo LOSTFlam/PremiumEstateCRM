@@ -37,7 +37,7 @@ export default function CabinetRecordActions({
             aria-label={editText}
             icon={editIcon}
             onClick={onEdit}
-            colorScheme="green"
+            colorScheme="gold"
             variant="outline"
             size="md"
             minW="48px"
@@ -71,7 +71,7 @@ export default function CabinetRecordActions({
           size="sm"
           leftIcon={editIcon}
           variant="outline"
-          colorScheme="green"
+          colorScheme="gold"
           whiteSpace="nowrap"
         >
           {editText}

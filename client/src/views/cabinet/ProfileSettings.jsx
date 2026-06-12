@@ -285,7 +285,7 @@ const ProfileSettings = () => {
               <Button
                 onClick={() => fileRef.current?.click()}
                 isLoading={uploadingAvatar}
-                colorScheme="green"
+                colorScheme="gold"
                 variant="outline"
               >
                 {t("cabinet.profile.uploadAvatar")}
@@ -318,7 +318,7 @@ const ProfileSettings = () => {
           ))}
         </Grid>
 
-        <Button mt={6} colorScheme="green" onClick={handleProfileSave} isLoading={savingProfile}>
+        <Button mt={6} colorScheme="gold" onClick={handleProfileSave} isLoading={savingProfile}>
           {t("common.save")}
         </Button>
       </Box>
@@ -341,7 +341,7 @@ const ProfileSettings = () => {
             <HStack key={item.key} justify="space-between">
               <Text color={theme.text}>{item.label}</Text>
               <Switch
-                colorScheme="green"
+                colorScheme="gold"
                 isChecked={notify[item.key]}
                 onChange={(event) => setNotify({ ...notify, [item.key]: event.target.checked })}
               />
@@ -350,7 +350,7 @@ const ProfileSettings = () => {
         </Stack>
         <Button
           mt={5}
-          colorScheme="green"
+          colorScheme="gold"
           variant="outline"
           onClick={handleNotificationsSave}
           isLoading={savingNotify}
@@ -384,7 +384,7 @@ const ProfileSettings = () => {
         </Stack>
         <Divider my={5} borderColor={theme.divider} />
         <Button
-          colorScheme="green"
+          colorScheme="gold"
           variant="outline"
           onClick={handlePasswordChange}
           isLoading={savingPassword}

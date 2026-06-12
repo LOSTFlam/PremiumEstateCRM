@@ -39,7 +39,7 @@ export default function CabinetEmptyState({
       ) : null}
       {children}
       {actionLabel && onAction ? (
-        <Button mt={6} colorScheme="green" borderRadius="18px" onClick={onAction}>
+        <Button mt={6} colorScheme="gold" borderRadius="18px" onClick={onAction}>
           {actionLabel}
         </Button>
       ) : null}

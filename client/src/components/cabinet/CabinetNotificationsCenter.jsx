@@ -162,7 +162,7 @@ export default function CabinetNotificationsCenter({
               key={item.key}
               size="xs"
               variant={filter === item.key ? "solid" : "outline"}
-              colorScheme="green"
+              colorScheme="gold"
               onClick={() => setFilter(item.key)}
             >
               {item.label}
@@ -179,7 +179,7 @@ export default function CabinetNotificationsCenter({
                 to={item.href}
                 onClick={() => markRead(item.id)}
                 borderRadius="12px"
-                bg={readSet.has(item.id) ? "transparent" : "green.50"}
+                bg={readSet.has(item.id) ? "transparent" : "gold.50"}
                 _dark={{ bg: readSet.has(item.id) ? "transparent" : "whiteAlpha.100" }}
               >
                 <Box>

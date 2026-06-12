@@ -137,7 +137,7 @@ const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
           >
             <Stack direction={{ base: "column", sm: "row" }} spacing={4} flexWrap="wrap">
               {PROPERTY_TYPES.map((type) => (
-                <Checkbox key={type} value={type} colorScheme="green">
+                <Checkbox key={type} value={type} colorScheme="gold">
                   <Text color={theme.text}>{t(`cabinet.wishes.type.${type}`)}</Text>
                 </Checkbox>
               ))}
@@ -157,7 +157,7 @@ const BuyerWishesPanel = ({ buyerProfile = {}, onSaved }) => {
         </FormControl>
       </Grid>
 
-      <Button mt={6} colorScheme="green" onClick={handleSave} isLoading={saving}>
+      <Button mt={6} colorScheme="gold" onClick={handleSave} isLoading={saving}>
         {t("cabinet.wishes.save")}
       </Button>
     </Box>

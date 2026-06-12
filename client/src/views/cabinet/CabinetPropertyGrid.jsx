@@ -110,7 +110,7 @@ const CabinetPropertyGrid = ({
         <Text color={theme.muted} maxW="420px">
           {emptyText || t("cabinet.empty.text")}
         </Text>
-        <Button as={RouterLink} to={browseTo} colorScheme="green" mt={2}>
+        <Button as={RouterLink} to={browseTo} colorScheme="gold" mt={2}>
           {browseLabel || t("cabinet.empty.browse")}
         </Button>
       </Stack>

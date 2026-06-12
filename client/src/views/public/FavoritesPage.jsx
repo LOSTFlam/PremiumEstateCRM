@@ -388,7 +388,7 @@ const FavoritesPage = () => {
                   <Button
                     as={RouterLink}
                     to={`/offers/compare?ids=${compareIds.join(",")}`}
-                    colorScheme="green"
+                    colorScheme="gold"
                     size="sm"
                     borderRadius="12px"
                   >
@@ -415,7 +415,7 @@ const FavoritesPage = () => {
               <Button
                 as={RouterLink}
                 to="/offers"
-                colorScheme="green"
+                colorScheme="gold"
                 size="lg"
                 borderRadius="12px"
                 leftIcon={<FiHeart />}

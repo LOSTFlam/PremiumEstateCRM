@@ -219,7 +219,7 @@ const PropertyDetailPage = () => {
       <Container maxW="8xl" py={20}>
         <Stack spacing={4} align="center">
           <Heading size="xl">{copy.notFound}</Heading>
-          <Button as={RouterLink} to="/offers" colorScheme="green">
+          <Button as={RouterLink} to="/offers" colorScheme="gold">
             {copy.back}
           </Button>
         </Stack>
@@ -617,7 +617,7 @@ const PropertyDetailPage = () => {
                 <Button
                   w="full"
                   maxW="100%"
-                  colorScheme="green"
+                  colorScheme="gold"
                   size="lg"
                   borderRadius="12px"
                   whiteSpace="normal"

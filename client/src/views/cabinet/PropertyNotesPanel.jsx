@@ -73,7 +73,7 @@ const PropertyNotesPanel = ({ favoriteIds = [], propertyNotes = {}, onSaved }) =
           </FormControl>
         ))}
       </Stack>
-      <Button mt={4} colorScheme="green" size="sm" onClick={handleSave} isLoading={saving}>
+      <Button mt={4} colorScheme="gold" size="sm" onClick={handleSave} isLoading={saving}>
         {t("cabinet.notes.save")}
       </Button>
       {noteIds.length > visibleIds.length ? (
