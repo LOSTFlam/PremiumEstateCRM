@@ -260,6 +260,8 @@ const PropertyDetailPage = () => {
         h={{ base: "280px", sm: "360px", md: "600px" }}
         overflow="hidden"
         mt={{ base: "88px", md: 0 }}
+        borderBottom={`1px solid ${publicBrand.colors.line}`}
+        boxShadow="0 34px 120px rgba(0,0,0,0.34)"
       >
         <Image
           src={galleryImages[0]}
@@ -271,28 +273,39 @@ const PropertyDetailPage = () => {
         <Box
           position="absolute"
           inset={0}
-          bg="linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%)"
+          bg="linear-gradient(180deg, rgba(4,8,14,0.2) 0%, rgba(4,8,14,0.36) 42%, rgba(8,17,26,0.9) 100%)"
+        />
+        <Box
+          position="absolute"
+          inset={0}
+          bg="radial-gradient(circle at 18% 18%, rgba(245,208,118,0.2), transparent 34%), radial-gradient(circle at 84% 22%, rgba(185,119,55,0.18), transparent 30%)"
         />
 
         {/* Action Buttons */}
         <HStack position="absolute" top={{ base: 4, md: 6 }} right={{ base: 4, md: 6 }} spacing={2}>
           <IconButton
+            aria-label={isFavorite ? copy.removed : copy.added}
             icon={<FiHeart />}
             onClick={handleFavoriteToggle}
-            bg={isFavorite ? "red.500" : "rgba(255,255,255,0.2)"}
+            bg={isFavorite ? "rgba(185, 56, 56, 0.88)" : "rgba(8,17,26,0.52)"}
             color="white"
-            backdropFilter="blur(10px)"
+            border={`1px solid ${publicBrand.colors.lineStrong}`}
+            backdropFilter="blur(18px)"
             borderRadius="full"
-            _hover={{ bg: isFavorite ? "red.600" : "rgba(255,255,255,0.3)" }}
+            boxShadow={publicBrand.shadows.inset}
+            _hover={{ bg: isFavorite ? "rgba(185, 56, 56, 0.96)" : "rgba(255,255,255,0.16)" }}
           />
           <IconButton
+            aria-label={copy.linkCopied}
             icon={<FiShare2 />}
             onClick={handleShare}
-            bg="rgba(255,255,255,0.2)"
+            bg="rgba(8,17,26,0.52)"
             color="white"
-            backdropFilter="blur(10px)"
+            border={`1px solid ${publicBrand.colors.lineStrong}`}
+            backdropFilter="blur(18px)"
             borderRadius="full"
-            _hover={{ bg: "rgba(255,255,255,0.3)" }}
+            boxShadow={publicBrand.shadows.inset}
+            _hover={{ bg: "rgba(255,255,255,0.16)" }}
           />
         </HStack>
 
@@ -304,9 +317,13 @@ const PropertyDetailPage = () => {
           px={4}
           py={2}
           borderRadius="full"
-          bg="rgba(212,175,55,0.9)"
-          color="white"
-          fontWeight="600"
+          bg="rgba(8,17,26,0.58)"
+          color="#F5D076"
+          border="1px solid rgba(245,208,118,0.28)"
+          backdropFilter="blur(18px)"
+          fontWeight="700"
+          letterSpacing="0.04em"
+          textTransform="uppercase"
         >
           {property.listingStatus || copy.available}
         </Badge>
@@ -321,10 +338,13 @@ const PropertyDetailPage = () => {
             w={{ base: "calc(100% - 32px)", md: "auto" }}
             size={{ base: "sm", md: "md" }}
             leftIcon={<FiImage />}
-            bg="rgba(255,255,255,0.9)"
-            color="gray.800"
+            bg="rgba(8,17,26,0.66)"
+            color="white"
+            border="1px solid rgba(245,208,118,0.28)"
+            backdropFilter="blur(18px)"
+            boxShadow={publicBrand.shadows.deep}
             onClick={() => setShowGallery(true)}
-            _hover={{ bg: "white" }}
+            _hover={{ bg: "rgba(245,208,118,0.16)", transform: "translateY(-1px)" }}
           >
             {copy.viewAllPhotos(galleryImages.length)}
           </Button>
@@ -332,7 +352,15 @@ const PropertyDetailPage = () => {
       </Box>
 
       {/* Content */}
-      <Container maxW="8xl" py={{ base: 6, md: 10 }} pb={{ base: 28, md: 10 }} px={{ base: 4, md: 6 }}>
+      <Container
+        maxW="8xl"
+        py={{ base: 6, md: 10 }}
+        pb={{ base: 28, md: 10 }}
+        px={{ base: 4, md: 6 }}
+        position="relative"
+        mt={{ md: "-52px" }}
+        zIndex={1}
+      >
         <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={{ base: 6, md: 10 }}>
           {/* Main Content */}
           <Stack spacing={8}>
@@ -377,9 +405,11 @@ const PropertyDetailPage = () => {
             {/* Price */}
             <Box
               p={6}
-              borderRadius="20px"
-              bg="rgba(255,255,255,0.05)"
-              border="1px solid rgba(255,255,255,0.1)"
+              borderRadius={publicBrand.radii.md}
+              bg="linear-gradient(145deg, rgba(18,29,43,0.88), rgba(22,35,52,0.72))"
+              border={`1px solid ${publicBrand.colors.line}`}
+              boxShadow={`${publicBrand.shadows.deep}, ${publicBrand.shadows.inset}`}
+              backdropFilter="blur(18px)"
             >
               <Flex
                 direction={{ base: "column", sm: "row" }}
@@ -419,9 +449,10 @@ const PropertyDetailPage = () => {
                 <Box
                   key={idx}
                   p={{ base: 3, md: 4 }}
-                  borderRadius="16px"
-                  bg="rgba(255,255,255,0.05)"
-                  border="1px solid rgba(255,255,255,0.1)"
+                  borderRadius={publicBrand.radii.sm}
+                  bg="rgba(255,255,255,0.055)"
+                  border={`1px solid ${publicBrand.colors.line}`}
+                  boxShadow={publicBrand.shadows.inset}
                   minW={0}
                 >
                   <HStack spacing={3} align="flex-start">
@@ -429,7 +460,8 @@ const PropertyDetailPage = () => {
                       w={{ base: 10, md: 12 }}
                       h={{ base: 10, md: 12 }}
                       borderRadius="12px"
-                      bg="rgba(212,175,55,0.2)"
+                      bg="rgba(245,208,118,0.13)"
+                      border="1px solid rgba(245,208,118,0.2)"
                       display="grid"
                       placeItems="center"
                       color="#F5D076"
@@ -456,10 +488,11 @@ const PropertyDetailPage = () => {
             </SimpleGrid>
 
             <Box
-              p={5}
-              borderRadius="20px"
-              bg="rgba(255,255,255,0.05)"
-              border="1px solid rgba(255,255,255,0.1)"
+              p={{ base: 4, md: 5 }}
+              borderRadius={publicBrand.radii.lg}
+              bg="linear-gradient(150deg, rgba(255,255,255,0.075), rgba(255,255,255,0.035))"
+              border={`1px solid ${publicBrand.colors.line}`}
+              boxShadow={`${publicBrand.shadows.deep}, ${publicBrand.shadows.inset}`}
             >
               {canEditListing && property?._id ? (
                 <PropertyPhotoManager
@@ -472,21 +505,40 @@ const PropertyDetailPage = () => {
               ) : galleryImages.length ? (
                 <>
                   <AdminSectionHeader title={t("publicListing.propertyImages")} />
-                  <SimpleGrid columns={{ base: 2, md: 3 }} gap={3} mt={4}>
-                  {galleryImages.map((image, index) => (
-                    <Image
-                      key={`${image}-${index}`}
-                      src={image}
-                      alt={`Photo ${index + 1}`}
-                      borderRadius="16px"
-                      h="160px"
-                      w="100%"
-                      objectFit="cover"
-                      cursor="pointer"
-                      onClick={() => setShowGallery(true)}
-                    />
-                  ))}
-                </SimpleGrid>
+                  <SimpleGrid columns={{ base: 2, md: 3 }} gap={{ base: 2, md: 3 }} mt={4}>
+                    {galleryImages.map((image, index) => (
+                      <Box
+                        key={`${image}-${index}`}
+                        position="relative"
+                        overflow="hidden"
+                        borderRadius="18px"
+                        border={`1px solid ${publicBrand.colors.line}`}
+                        cursor="pointer"
+                        role="group"
+                        onClick={() => setShowGallery(true)}
+                        _hover={{
+                          transform: "translateY(-2px)",
+                          borderColor: "rgba(245,208,118,0.44)",
+                        }}
+                        transition="all 0.2s ease"
+                      >
+                        <Image
+                          src={image}
+                          alt={`Photo ${index + 1}`}
+                          h={{ base: "132px", md: "168px" }}
+                          w="100%"
+                          objectFit="cover"
+                          transition="transform 0.3s ease"
+                          _groupHover={{ transform: "scale(1.04)" }}
+                        />
+                        <Box
+                          position="absolute"
+                          inset={0}
+                          bg="linear-gradient(180deg, transparent 42%, rgba(4,8,14,0.42) 100%)"
+                        />
+                      </Box>
+                    ))}
+                  </SimpleGrid>
                 </>
               ) : (
                 <>
@@ -498,14 +550,40 @@ const PropertyDetailPage = () => {
               )}
             </Box>
 
-            <Tabs variant="soft-rounded" colorScheme="yellow">
+            <Tabs
+              variant="unstyled"
+              bg="rgba(255,255,255,0.045)"
+              border={`1px solid ${publicBrand.colors.line}`}
+              borderRadius={publicBrand.radii.lg}
+              p={{ base: 3, md: 5 }}
+              boxShadow={publicBrand.shadows.inset}
+            >
               <TabList flexWrap="wrap" gap={2}>
-                <Tab>{copy.description}</Tab>
-                <Tab>{copy.features}</Tab>
-                <Tab>{locale === "ru" ? "Ипотека" : "Mortgage"}</Tab>
-                <Tab>{locale === "ru" ? "Расположение" : "Location"}</Tab>
+                {[
+                  copy.description,
+                  copy.features,
+                  locale === "ru" ? "Ипотека" : "Mortgage",
+                  locale === "ru" ? "Расположение" : "Location",
+                ].map((label) => (
+                  <Tab
+                    key={label}
+                    borderRadius="full"
+                    color="whiteAlpha.760"
+                    border={`1px solid ${publicBrand.colors.line}`}
+                    bg="rgba(255,255,255,0.04)"
+                    _selected={{
+                      color: publicBrand.colors.ink,
+                      bg: publicBrand.gradients.brass,
+                      borderColor: "rgba(245,208,118,0.5)",
+                      boxShadow: publicBrand.shadows.glow,
+                    }}
+                    _hover={{ color: "white", borderColor: "rgba(245,208,118,0.36)" }}
+                  >
+                    {label}
+                  </Tab>
+                ))}
               </TabList>
-              <TabPanels mt={6}>
+              <TabPanels mt={5}>
                 <TabPanel px={0}>
                   <AdminSectionHeader
                     title={copy.description}
@@ -606,9 +684,11 @@ const PropertyDetailPage = () => {
             <Box
               className="property-contact-panel"
               p={{ base: 4, md: 6 }}
-              borderRadius="20px"
-              bg="rgba(255,255,255,0.05)"
-              border="1px solid rgba(255,255,255,0.1)"
+              borderRadius={publicBrand.radii.lg}
+              bg="linear-gradient(160deg, rgba(18,29,43,0.94), rgba(22,35,52,0.88))"
+              border={`1px solid ${publicBrand.colors.lineStrong}`}
+              boxShadow={`${publicBrand.shadows.deep}, ${publicBrand.shadows.inset}`}
+              backdropFilter="blur(18px)"
               position={{ base: "static", lg: "sticky" }}
               top={100}
               maxW="100%"
@@ -617,11 +697,14 @@ const PropertyDetailPage = () => {
                 <Button
                   w="full"
                   maxW="100%"
-                  colorScheme="gold"
+                  bg={publicBrand.gradients.brass}
+                  color={publicBrand.colors.ink}
                   size="lg"
-                  borderRadius="12px"
+                  borderRadius="full"
+                  boxShadow={publicBrand.shadows.glow}
                   whiteSpace="normal"
                   onClick={() => openLeadForm("viewing")}
+                  _hover={{ transform: "translateY(-1px)", boxShadow: "0 28px 72px rgba(185,119,55,0.26)" }}
                 >
                   {copy.schedule}
                 </Button>
@@ -629,12 +712,13 @@ const PropertyDetailPage = () => {
                   w="full"
                   maxW="100%"
                   variant="outline"
-                  borderColor="rgba(212,175,55,0.3)"
+                  borderColor="rgba(245,208,118,0.32)"
                   color="#F5D076"
                   size="lg"
-                  borderRadius="12px"
+                  borderRadius="full"
                   whiteSpace="normal"
                   onClick={() => openLeadForm("info")}
+                  _hover={{ bg: "rgba(245,208,118,0.1)", borderColor: "rgba(245,208,118,0.52)" }}
                 >
                   {copy.requestInfo}
                 </Button>
@@ -643,7 +727,7 @@ const PropertyDetailPage = () => {
                   maxW="100%"
                   variant="ghost"
                   size="lg"
-                  borderRadius="12px"
+                  borderRadius="full"
                   color="gray.200"
                   whiteSpace="normal"
                   _hover={{ color: "#F5D076", bg: "rgba(255,255,255,0.06)" }}
@@ -665,7 +749,8 @@ const PropertyDetailPage = () => {
                       w={12}
                       h={12}
                       borderRadius="full"
-                      bg="rgba(212,175,55,0.2)"
+                      bg="rgba(245,208,118,0.13)"
+                      border="1px solid rgba(245,208,118,0.22)"
                       display="grid"
                       placeItems="center"
                       color="#F5D076"
