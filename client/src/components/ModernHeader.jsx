@@ -216,12 +216,12 @@ export default function ModernHeader({ largeLogo = [] }) {
             borderRadius={{ base: "20px", md: "24px" }}
             bg={
               isScrolled || location.pathname !== "/"
-                ? "rgba(7, 12, 20, 0.65)"
-                : "rgba(7, 12, 20, 0.35)"
+                ? "rgba(8, 17, 26, 0.72)"
+                : "rgba(8, 17, 26, 0.42)"
             }
-            border="1px solid rgba(227, 211, 184, 0.06)"
+            border="1px solid var(--cinematic-line)"
             boxShadow={
-              isScrolled || location.pathname !== "/" ? "0 4px 30px rgba(0, 0, 0, 0.15)" : "none"
+              isScrolled || location.pathname !== "/" ? "var(--cinematic-shadow-soft)" : "none"
             }
             backdropFilter={isScrolled || location.pathname !== "/" ? "blur(20px)" : "blur(10px)"}
             transition="all 0.3s ease"
@@ -233,11 +233,11 @@ export default function ModernHeader({ largeLogo = [] }) {
                   py={{ base: 1.5, md: 2 }}
                   borderRadius="20px"
                   bg="transparent"
-                  border="1px solid rgba(227, 211, 184, 0.06)"
+                  border="1px solid var(--cinematic-line)"
                   transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                   _hover={{
-                    borderColor: "rgba(212, 175, 55, 0.2)",
-                    boxShadow: "0 0 20px rgba(212, 175, 55, 0.1)",
+                    borderColor: "var(--cinematic-line-strong)",
+                    boxShadow: "var(--cinematic-shadow-glow)",
                   }}
                 >
                   <Image
@@ -266,8 +266,8 @@ export default function ModernHeader({ largeLogo = [] }) {
                       px={2}
                       py={0.5}
                       bg="rgba(245, 208, 118, 0.1)"
-                      color="#f5d076"
-                      border="1px solid rgba(245, 208, 118, 0.15)"
+                      color="var(--cinematic-champagne)"
+                      border="1px solid var(--cinematic-line)"
                       fontSize="xx-small"
                     >
                       {langLabel}
@@ -310,8 +310,8 @@ export default function ModernHeader({ largeLogo = [] }) {
                         </HStack>
                       </MenuButton>
                       <MenuList
-                        bg="rgba(7, 12, 20, 0.96)"
-                        border="1px solid rgba(227, 211, 184, 0.14)"
+                        bg="rgba(8, 17, 26, 0.96)"
+                        border="1px solid var(--cinematic-line)"
                         backdropFilter="blur(16px)"
                         p={4}
                         minW="320px"
@@ -369,7 +369,7 @@ export default function ModernHeader({ largeLogo = [] }) {
                 py={1.5}
                 borderRadius="full"
                 bg="transparent"
-                border="1px solid rgba(227, 211, 184, 0.06)"
+                border="1px solid var(--cinematic-line)"
               >
                 <Button
                   size="xs"

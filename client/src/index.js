@@ -23,6 +23,7 @@ import { initExchangeRate } from "services/exchangeRate";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "components/PageTransition";
+import { publicBrand } from "views/public/publicBrand";
 
 const AuthLayout = lazy(() => import("./layouts/auth"));
 const AdminLayout = lazy(() => import("layouts/admin"));
@@ -369,14 +370,14 @@ function LegacyRuTextGuard() {
 export function RouteFallback() {
   const locale = resolveLocale();
   return (
-    <Box minH="100vh" bg="#e7e5e4" color="#111827" display="flex" alignItems="center">
+    <Box minH="100vh" bg={publicBrand.gradients.page} color={publicBrand.colors.text} display="flex" alignItems="center">
       <Container maxW="md">
         <Stack spacing={4} align="center" textAlign="center">
-          <Spinner size="xl" color="orange.400" thickness="4px" />
+          <Spinner size="xl" color={publicBrand.colors.gold} thickness="4px" />
           <Text fontWeight="700">
             {locale === "ru" ? "Загружаем экран" : "Loading Premium Estate"}
           </Text>
-          <Text color="gray.500">
+          <Text color={publicBrand.colors.textMuted}>
             {locale === "ru"
               ? "Подготавливаем интерфейс и данные по объектам."
               : "Preparing the next screen and listing data."}

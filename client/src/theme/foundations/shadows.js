@@ -1,3 +1,5 @@
+import { cinematicTokens } from "../cinematicTokens";
+
 const shadows = {
   xs: "0 0 0 1px rgba(0, 0, 0, 0.05)",
   sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
@@ -14,6 +16,10 @@ const shadows = {
   glass: "0 8px 32px rgba(31, 38, 135, 0.2)",
   premium: "0 0 40px rgba(212, 175, 55, 0.15)",
   "premium-lg": "0 0 60px rgba(212, 175, 55, 0.25)",
+  "cinematic-soft": cinematicTokens.shadows.soft,
+  "cinematic-deep": cinematicTokens.shadows.deep,
+  "cinematic-glow": cinematicTokens.shadows.glow,
+  "cinematic-inset": cinematicTokens.shadows.inset,
   "brand-glow": "0 0 20px rgba(53, 32, 213, 0.4)",
   "card-hover": "0 20px 40px rgba(0, 0, 0, 0.15)",
   "subtle-elevation": "0 2px 8px rgba(0, 0, 0, 0.04)",

@@ -81,9 +81,9 @@ export default function ModernFooter() {
       id="contact"
       position="relative"
       overflow="hidden"
-      bg={publicBrand.gradients.page}
+      bg="var(--cinematic-page-gradient)"
       color="white"
-      borderTop={`1px solid ${publicBrand.colors.line}`}
+      borderTop="1px solid var(--cinematic-line)"
     >
       <Box
         position="absolute"
@@ -111,7 +111,7 @@ export default function ModernFooter() {
                       py={3}
                       borderRadius="24px"
                       bg="rgba(255,255,255,0.04)"
-                      border="1px solid rgba(227, 211, 184, 0.16)"
+                      border="1px solid var(--cinematic-line)"
                     >
                       <Image
                         src={footerLogo || compactLogo}
@@ -125,7 +125,7 @@ export default function ModernFooter() {
                         fontSize="xs"
                         letterSpacing="0.18em"
                         textTransform="uppercase"
-                        color="#f5d076"
+                        color="var(--cinematic-champagne)"
                       >
                         {getPublicTagline(locale)}
                       </Text>
@@ -136,7 +136,7 @@ export default function ModernFooter() {
                   </HStack>
 
                   <Text
-                    color="whiteAlpha.760"
+                    color="var(--cinematic-text-muted)"
                     maxW="700px"
                     fontSize={{ base: "md", md: "lg" }}
                     lineHeight="1.8"
@@ -157,7 +157,7 @@ export default function ModernFooter() {
                         px={4}
                         py={4}
                         bg="rgba(255,255,255,0.04)"
-                        border="1px solid rgba(227, 211, 184, 0.12)"
+                        border="1px solid var(--cinematic-line)"
                         minW={0}
                         w="100%"
                       >
@@ -169,7 +169,7 @@ export default function ModernFooter() {
                             display="grid"
                             placeItems="center"
                             bg="rgba(245,208,118,0.12)"
-                            color="#f5d076"
+                            color="var(--cinematic-champagne)"
                             flexShrink={0}
                           >
                             <Icon as={item.icon} />

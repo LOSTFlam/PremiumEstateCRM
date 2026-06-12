@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-const ThemeContext = createContext({ theme: "light", toggle: () => {} });
+const DEFAULT_THEME = "dark";
+
+const ThemeContext = createContext({ theme: DEFAULT_THEME, toggle: () => {} });
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "light";
+      return localStorage.getItem("theme") || DEFAULT_THEME;
     }
-    return "light";
+    return DEFAULT_THEME;
   });
 
   useEffect(() => {

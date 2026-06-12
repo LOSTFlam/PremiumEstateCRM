@@ -1,3 +1,5 @@
+import { cinematicTokens } from "../cinematicTokens";
+
 const colors = {
   transparent: "transparent",
   current: "currentColor",
@@ -230,6 +232,21 @@ const colors = {
     700: "#9C7D25",
     800: "#7A621D",
     900: "#584715",
+  },
+  cinematic: {
+    page: cinematicTokens.colors.page,
+    pageSoft: cinematicTokens.colors.pageSoft,
+    elevated: cinematicTokens.colors.elevated,
+    panel: cinematicTokens.colors.panel,
+    panelRaised: cinematicTokens.colors.panelRaised,
+    line: cinematicTokens.colors.line,
+    lineStrong: cinematicTokens.colors.lineStrong,
+    text: cinematicTokens.colors.text,
+    textMuted: cinematicTokens.colors.textMuted,
+    textSoft: cinematicTokens.colors.textSoft,
+    gold: cinematicTokens.colors.gold,
+    champagne: cinematicTokens.colors.champagne,
+    copper: cinematicTokens.colors.copper,
   },
   brandScheme: {
     50: "#7959f5",

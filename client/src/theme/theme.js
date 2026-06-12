@@ -10,6 +10,7 @@ import { switchStyles } from "./components/switch";
 import { linkStyles } from "./components/link";
 import { globalStyles } from "./styles";
 import foundations from "./foundations";
+import { cinematicTokens } from "./cinematicTokens";
 
 export default extendTheme(
   foundations,
@@ -25,7 +26,7 @@ export default extendTheme(
   CardComponent,
   {
     config: {
-      initialColorMode: "light",
+      initialColorMode: "dark",
       useSystemColorMode: false,
     },
     styles: {
@@ -35,10 +36,12 @@ export default extendTheme(
         },
         body: {
           fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          bg: cinematicTokens.gradients.page,
+          color: cinematicTokens.colors.text,
         },
         "*::selection": {
-          bg: "gold.300",
-          color: "white",
+          bg: "gold.500",
+          color: "cinematic.page",
         },
       },
     },
@@ -52,11 +55,11 @@ export default extendTheme(
         variants: {
           brand: {
             bg: "gold.500",
-            color: "white",
+            color: "cinematic.page",
             _hover: {
               bg: "gold.600",
               transform: "translateY(-3px)",
-              boxShadow: "0 8px 25px rgba(212, 175, 55, 0.2)",
+              boxShadow: cinematicTokens.shadows.glow,
             },
             _active: {
               transform: "translateY(-1px)",

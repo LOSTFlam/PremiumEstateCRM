@@ -26,17 +26,17 @@ export const useCabinetTheme = () => {
   const divider = useColorModeValue("gray.200", "whiteAlpha.200");
 
   const heroGradient = useColorModeValue(
-    "linear(135deg, #e8f5ef, #f4faf6)",
-    "linear(135deg, rgba(16, 52, 38, 0.95), rgba(8, 28, 22, 0.92))"
+    "linear(135deg, #fbf4dd, #f7e7ce)",
+    "linear(135deg, rgba(212, 175, 55, 0.18), rgba(8, 17, 26, 0.94))"
   );
   const heroHeading = useColorModeValue("gray.900", "white");
   const heroText = useColorModeValue("gray.600", "whiteAlpha.800");
-  const heroButtonColor = useColorModeValue("green.700", "white");
-  const heroButtonBorder = useColorModeValue("green.300", "whiteAlpha.300");
+  const heroButtonColor = useColorModeValue("gold.700", "white");
+  const heroButtonBorder = useColorModeValue("gold.300", "whiteAlpha.300");
 
-  const accentLink = useColorModeValue("green.600", "green.300");
-  const accentIcon = useColorModeValue("green.600", "green.300");
-  const onboardingBg = useColorModeValue("gray.50", "rgba(16, 52, 38, 0.45)");
+  const accentLink = useColorModeValue("gold.600", "gold.300");
+  const accentIcon = useColorModeValue("gold.600", "gold.300");
+  const onboardingBg = useColorModeValue("gold.50", "rgba(212, 175, 55, 0.12)");
   const onboardingCardBg = useColorModeValue("white", "rgba(255,255,255,0.05)");
 
   const panelStyle = {

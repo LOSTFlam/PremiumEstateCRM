@@ -49,13 +49,13 @@ export default function MobileBottomNav() {
         aria-label="Mobile navigation"
         justify="space-between"
         spacing={0}
-        bg="rgba(7, 12, 20, 0.92)"
-        border="1px solid rgba(227, 211, 184, 0.14)"
+        bg="rgba(8, 17, 26, 0.92)"
+        border="1px solid var(--cinematic-line)"
         borderRadius="24px"
         py={2}
         px={1}
         backdropFilter="blur(14px)"
-        boxShadow={publicBrand.shadows.deep}
+        boxShadow="var(--cinematic-shadow-deep)"
         pointerEvents="auto"
       >
         {NAV_ITEMS.map((item) => {
@@ -79,8 +79,8 @@ export default function MobileBottomNav() {
               justifyContent="center"
               borderRadius="18px"
               px={1}
-              bg={active ? "rgba(212, 175, 55, 0.16)" : "transparent"}
-              color={active ? "#f5d076" : "whiteAlpha.700"}
+              bg={active ? "var(--accent-muted)" : "transparent"}
+              color={active ? "var(--cinematic-champagne)" : "whiteAlpha.700"}
               transition="background 0.2s ease, color 0.2s ease"
               _hover={{ color: "white" }}
               aria-label={label}

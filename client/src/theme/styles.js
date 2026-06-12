@@ -1,4 +1,6 @@
 import { mode } from "@chakra-ui/theme-tools";
+import { cinematicTokens } from "./cinematicTokens";
+
 export const globalStyles = {
   colors: {
     brand: {
@@ -92,8 +94,8 @@ export const globalStyles = {
     global: (props) => ({
       body: {
         overflowX: "hidden",
-        bg: mode("secondaryGray.300", "navy.900")(props),
-        color: mode("gray.700", "white")(props),
+        bg: mode("secondaryGray.300", cinematicTokens.colors.page)(props),
+        color: mode("gray.700", cinematicTokens.colors.text)(props),
         fontFamily: '"DM Sans", sans-serif',
         letterSpacing: "-0.02em",
       },
