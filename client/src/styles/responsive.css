@@ -71,6 +71,29 @@ a.public-brand-button {
   min-width: 0;
 }
 
+.mobile-bottom-nav {
+  background:
+    linear-gradient(180deg, rgba(18, 30, 44, 0.96) 0%, rgba(5, 12, 20, 0.98) 100%) !important;
+  border-color: rgba(227, 211, 184, 0.16) !important;
+  color: #f7f0e6;
+  isolation: isolate;
+}
+
+.mobile-bottom-nav .mobile-bottom-nav__item {
+  color: rgba(247, 240, 230, 0.78) !important;
+}
+
+.mobile-bottom-nav .mobile-bottom-nav__item[aria-current="page"] {
+  background: linear-gradient(135deg, #f5d076 0%, #d49a2f 100%) !important;
+  color: #08111a !important;
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.28);
+}
+
+.mobile-bottom-nav .mobile-bottom-nav__item[aria-current="page"] .chakra-icon,
+.mobile-bottom-nav .mobile-bottom-nav__item[aria-current="page"] .mobile-bottom-nav__label {
+  color: #08111a !important;
+}
+
 .public-brand-shell .chakra-heading,
 .public-brand-shell .chakra-text,
 .property-card .chakra-text,
@@ -422,6 +445,10 @@ a.public-brand-button {
     min-width: 0;
   }
 
+  .public-brand-shell {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
   /* Cabinet buttons: keep labels on one line; avoid E-d-i-t vertical breaks */
   .cabinet-content .chakra-button,
   .cabinet-content .chakra-icon-button {
@@ -678,6 +705,14 @@ a.public-brand-button {
 
   .landing-hero-panel {
     overflow: hidden;
+  }
+
+  .landing-hero-card {
+    overflow: hidden;
+  }
+
+  .landing-hero-card .landing-hero-metrics {
+    gap: 10px !important;
   }
 
   .landing-hero-search,

@@ -44,6 +44,7 @@ import {
 } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 import { useScrollReveal } from "hooks/useScrollReveal";
+import { buildPropertyHref } from "utils/propertyHref";
 
 const heroCopy = {
   ru: {
@@ -216,6 +217,7 @@ export default function ModernHero({
     const withImages = (properties || []).filter((property) => getPhotoCount(property) > 0);
     return withImages[0] || properties?.[0] || null;
   }, [heroPropertyId, properties]);
+  const heroPropertyHref = buildPropertyHref(heroProperty);
 
   const typeCounts = useMemo(
     () =>
@@ -899,11 +901,12 @@ export default function ModernHero({
             <Stack spacing={5} w="100%" minW={0}>
               <Box
                 ref={heroCardRef}
+                className="landing-hero-card"
                 position="relative"
                 borderRadius={{ base: "34px", md: "40px" }}
                 overflow="hidden"
                 boxShadow={publicBrand.shadows.deep}
-                minH={{ base: "460px", md: "620px" }}
+                minH={{ base: "auto", md: "620px" }}
                 style={{
                   transition:
                     "opacity 900ms cubic-bezier(0.4, 0, 0.2, 1), transform 900ms cubic-bezier(0.4, 0, 0.2, 1)",
@@ -911,17 +914,35 @@ export default function ModernHero({
                   transform: heroCardRevealed ? "translateY(0)" : "translateY(44px)",
                 }}
               >
+                {heroPropertyHref !== "#" ? (
+                  <Box
+                    as={RouterLink}
+                    to={heroPropertyHref}
+                    aria-label={
+                      heroProperty?.name || heroProperty?.propertyAddress || copy.heroCardLabel
+                    }
+                    position="absolute"
+                    inset="0"
+                    zIndex={2}
+                    borderRadius="inherit"
+                  />
+                ) : null}
                 <Image
                   src={getPrimaryImage(heroProperty)}
                   alt={heroProperty?.name || heroProperty?.propertyAddress || publicBrand.name}
                   w="100%"
-                  h={{ base: "460px", md: "620px" }}
+                  h={{ base: "100%", md: "620px" }}
                   objectFit="cover"
+                  position={{ base: "absolute", md: "static" }}
+                  inset={{ base: 0, md: "auto" }}
+                  pointerEvents="none"
                 />
                 <Box
                   position="absolute"
                   inset="0"
                   bg="linear-gradient(180deg, rgba(7,12,20,0.02) 0%, rgba(7,12,20,0.24) 28%, rgba(7,12,20,0.90) 100%)"
+                  zIndex={1}
+                  pointerEvents="none"
                 />
 
                 {canEditHeroProperty && onHeroPropertySave ? (
@@ -934,12 +955,15 @@ export default function ModernHero({
                 ) : null}
 
                 <Stack
-                  position="absolute"
-                  inset="0"
+                  position={{ base: "relative", md: "absolute" }}
+                  inset={{ base: "auto", md: "0" }}
                   justify="space-between"
                   p={{ base: 4, sm: 5, md: 6 }}
                   minW={0}
                   w="100%"
+                  minH={{ base: "min(640px, calc(100svh - 128px))", md: "auto" }}
+                  zIndex={3}
+                  pointerEvents="none"
                 >
                   <HStack justify="space-between" align="start">
                     <Badge
@@ -971,22 +995,26 @@ export default function ModernHero({
                     </Box>
                   </HStack>
 
-                  <Stack spacing={5}>
+                  <Stack spacing={{ base: 4, md: 5 }}>
                     <Box
                       w="fit-content"
-                      px={5}
-                      py={3}
+                      px={{ base: 4, md: 5 }}
+                      py={{ base: 2.5, md: 3 }}
                       borderRadius="24px"
                       bg="rgba(7,12,20,0.50)"
                       border="1px solid rgba(227, 211, 184, 0.14)"
                       backdropFilter="blur(12px)"
                     >
-                      <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="700" lineHeight="1">
+                      <Text
+                        fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
+                        fontWeight="700"
+                        lineHeight="1"
+                      >
                         {formatPrice(heroProperty?.listingPrice, t)}
                       </Text>
                     </Box>
 
-                    <Stack spacing={3} maxW="100%" w="100%" minW={0}>
+                    <Stack spacing={{ base: 2.5, md: 3 }} maxW="100%" w="100%" minW={0}>
                       <Heading
                         fontSize={{ base: "xl", sm: "2xl", md: "4xl" }}
                         lineHeight="1.12"
@@ -1005,7 +1033,7 @@ export default function ModernHero({
                       <Text
                         color="whiteAlpha.780"
                         maxW="100%"
-                        lineHeight="1.65"
+                        lineHeight={{ base: "1.5", md: "1.65" }}
                         fontSize={{ base: "sm", md: "md" }}
                         wordBreak="break-word"
                       >
@@ -1018,7 +1046,7 @@ export default function ModernHero({
                     <SimpleGrid
                       className="landing-hero-metrics"
                       columns={{ base: 2, sm: 3 }}
-                      spacing={3}
+                      spacing={{ base: 2.5, md: 3 }}
                       w="100%"
                     >
                       {[
@@ -1038,8 +1066,8 @@ export default function ModernHero({
                         <Box
                           key={item.label}
                           px={{ base: 3, md: 4 }}
-                          py={{ base: 3, md: 4 }}
-                          borderRadius="22px"
+                          py={{ base: 2.5, md: 4 }}
+                          borderRadius={{ base: "18px", md: "22px" }}
                           bg="rgba(7,12,20,0.46)"
                           border="1px solid rgba(227, 211, 184, 0.14)"
                           backdropFilter="blur(12px)"

@@ -87,6 +87,7 @@ export default function MobileBottomNav() {
                 bg: active ? "rgba(245, 208, 118, 0.96)" : "rgba(255,255,255,0.06)",
               }}
               aria-label={label}
+              aria-current={active ? "page" : undefined}
             >
               <VStack spacing={0.5} w="full" align="center" justify="center">
                 <Box position="relative" flexShrink={0}>

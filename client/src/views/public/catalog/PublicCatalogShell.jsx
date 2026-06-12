@@ -965,6 +965,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                           key={mode.key}
                           size="sm"
                           onClick={() => setViewMode(mode.key)}
+                          aria-pressed={viewMode === mode.key}
                           bg={
                             viewMode === mode.key
                               ? publicBrand.gradients.brass

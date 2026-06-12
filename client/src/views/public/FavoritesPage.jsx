@@ -16,6 +16,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { FiHeart, FiShare2, FiDownload, FiTrash2, FiGrid, FiList } from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import ModernPropertyCard from "components/ModernPropertyCard";
+import PropertyListCard from "components/PropertyListCard";
 import {
   PROPERTY_CARD_GRID_COLUMNS,
   PROPERTY_CARD_GRID_SPACING,
@@ -322,6 +323,8 @@ const FavoritesPage = () => {
                   borderRadius="full"
                   onClick={() => setViewMode("grid")}
                   leftIcon={<FiGrid />}
+                  aria-pressed={viewMode === "grid"}
+                  minH="44px"
                 >
                   {copy.grid}
                 </Button>
@@ -333,6 +336,8 @@ const FavoritesPage = () => {
                   borderRadius="full"
                   onClick={() => setViewMode("list")}
                   leftIcon={<FiList />}
+                  aria-pressed={viewMode === "list"}
+                  minH="44px"
                 >
                   {copy.list}
                 </Button>
@@ -423,10 +428,23 @@ const FavoritesPage = () => {
                 {copy.browse}
               </Button>
             </Stack>
+          ) : viewMode === "list" ? (
+            <Stack spacing={4}>
+              {favorites.map((property) => (
+                <PropertyListCard
+                  key={property._id}
+                  property={property}
+                  isFavorite={true}
+                  isInCompare={compareIds.includes(property._id)}
+                  onFavoriteToggle={() => removeFromFavorites(property._id)}
+                  onCompareToggle={() => toggleCompare(property._id)}
+                />
+              ))}
+            </Stack>
           ) : (
             <SimpleGrid
               className="property-card-grid"
-              columns={viewMode === "grid" ? PROPERTY_CARD_GRID_COLUMNS : { base: 1 }}
+              columns={PROPERTY_CARD_GRID_COLUMNS}
               spacing={PROPERTY_CARD_GRID_SPACING}
             >
               {favorites.map((property) => (
