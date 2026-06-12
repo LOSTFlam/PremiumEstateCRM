@@ -22,6 +22,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { getLocalizedListingAmount } from "views/public/catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 
 const calcAnnuity = (principal, annualRate, years) => {
@@ -34,16 +35,36 @@ const calcAnnuity = (principal, annualRate, years) => {
   );
 };
 
-export default function MortgageCalculator({ propertyPrice = 25000000, onApply }) {
+const formatBalanceAxis = (value, locale) => {
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000) {
+    const millions = value / 1_000_000;
+    const label = millions >= 10 ? Math.round(millions) : millions.toFixed(1);
+    return locale === "ru" ? `${label} млн` : `${label}M`;
+  }
+  if (abs >= 1_000) {
+    return locale === "ru" ? `${Math.round(value / 1_000)} тыс` : `${Math.round(value / 1_000)}K`;
+  }
+  return String(Math.round(value));
+};
+
+const FALLBACK_PRICE = { ru: 25_000_000, en: 280_000 };
+
+export default function MortgageCalculator({ propertyPrice, onApply }) {
   const { i18n } = useTranslation();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const [downPaymentPct, setDownPaymentPct] = useState(30);
   const [termYears, setTermYears] = useState(20);
   const [rate, setRate] = useState(12.5);
 
+  const effectivePrice = useMemo(() => {
+    const localized = getLocalizedListingAmount(propertyPrice, i18n.language);
+    return localized || FALLBACK_PRICE[locale];
+  }, [i18n.language, locale, propertyPrice]);
+
   const principal = useMemo(
-    () => Math.max(propertyPrice * (1 - downPaymentPct / 100), 0),
-    [downPaymentPct, propertyPrice]
+    () => Math.max(effectivePrice * (1 - downPaymentPct / 100), 0),
+    [downPaymentPct, effectivePrice]
   );
   const monthlyPayment = useMemo(
     () => calcAnnuity(principal, rate, termYears),
@@ -139,7 +160,7 @@ export default function MortgageCalculator({ propertyPrice = 25000000, onApply }
             <AreaChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={(v) => `${Math.round(v / 1000000)}M`} width={40} />
+              <YAxis tickFormatter={(v) => formatBalanceAxis(v, locale)} width={48} />
               <Tooltip formatter={(value) => formatMoney(value)} />
               <Area
                 type="monotone"

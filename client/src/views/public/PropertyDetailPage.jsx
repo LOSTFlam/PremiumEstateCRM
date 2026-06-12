@@ -46,7 +46,7 @@ import MortgageCalculator from "components/property/MortgageCalculator";
 import MobileBottomNav from "components/public/MobileBottomNav";
 import ModernHeader from "components/ModernHeader";
 import ModernFooter from "components/ModernFooter";
-import { formatAreaValue, parsePrice, formatPrice } from "./catalog/catalogData";
+import { formatAreaValue, formatPrice } from "./catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
 
 const detailCopy = {
@@ -613,7 +613,7 @@ const PropertyDetailPage = () => {
                 </TabPanel>
                 <TabPanel px={0}>
                   <MortgageCalculator
-                    propertyPrice={parsePrice(property.listingPrice) || 25000000}
+                    propertyPrice={property.listingPrice}
                     onApply={() => openLeadForm("info")}
                   />
                 </TabPanel>

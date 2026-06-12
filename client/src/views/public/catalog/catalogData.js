@@ -623,6 +623,13 @@ const sampleStorefrontMeta = {
 
 export const parsePrice = (value) => Number(String(value ?? "").replace(/[^\d.]/g, "")) || 0;
 
+/** Listing amounts are stored in USD; convert to RUB when the UI locale is Russian. */
+export const getLocalizedListingAmount = (value, language = runtimeLanguage()) => {
+  const amount = parsePrice(value);
+  if (!amount) return 0;
+  return isRu(language) ? Math.round(amount * getRubRate()) : amount;
+};
+
 const AREA_UNIT_PATTERN = /\s*[mм][²2]\s*/gi;
 
 export const formatAreaValue = (value, fallback = "—") => {
