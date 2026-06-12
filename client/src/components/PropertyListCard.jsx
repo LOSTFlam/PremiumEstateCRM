@@ -77,7 +77,9 @@ export default function PropertyListCard({
             color="#f5d076"
             fontSize={{ base: "md", md: "lg" }}
             flexShrink={0}
-            wordBreak="break-word"
+            wordBreak="normal"
+            overflowWrap="normal"
+            whiteSpace={{ base: "normal", sm: "nowrap" }}
           >
             {formatPrice(property?.listingPrice, t, i18n.language)}
           </Text>

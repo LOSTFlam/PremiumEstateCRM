@@ -449,7 +449,12 @@ const ModernPropertyCard = ({
                 <CountUp
                   end={priceAmount}
                   duration={1.2}
-                  formattingFn={(value) => formatPrice(value, t, i18n.language) || priceDisplay}
+                  formattingFn={(value) => {
+                    const formatted = formatPrice(value, t, i18n.language) || priceDisplay;
+                    return formatted.length > 16
+                      ? formatCompactPrice(value, t, i18n.language)
+                      : formatted;
+                  }}
                 />
               ) : (
                 priceDisplay
@@ -515,6 +520,8 @@ const ModernPropertyCard = ({
             lineHeight="1.2"
             color={publicBrand.colors.text}
             noOfLines={2}
+            wordBreak="normal"
+            overflowWrap="normal"
           >
             {listingTitle}
           </Text>

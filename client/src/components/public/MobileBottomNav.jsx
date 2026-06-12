@@ -57,6 +57,7 @@ export default function MobileBottomNav() {
         backdropFilter="blur(14px)"
         boxShadow="var(--cinematic-shadow-deep)"
         pointerEvents="auto"
+        mb={1}
       >
         {NAV_ITEMS.map((item) => {
           const href = item.key === "profile" && isAuthenticated ? item.authHref : item.href;
@@ -78,10 +79,13 @@ export default function MobileBottomNav() {
               justifyContent="center"
               borderRadius="18px"
               px={1}
-              bg={active ? "var(--accent-muted)" : "transparent"}
-              color={active ? "var(--cinematic-champagne)" : "whiteAlpha.700"}
+              bg={active ? "rgba(245, 208, 118, 0.92)" : "transparent"}
+              color={active ? publicBrand.colors.ink : "whiteAlpha.760"}
               transition="background 0.2s ease, color 0.2s ease"
-              _hover={{ color: "white" }}
+              _hover={{
+                color: active ? publicBrand.colors.ink : "white",
+                bg: active ? "rgba(245, 208, 118, 0.96)" : "rgba(255,255,255,0.06)",
+              }}
               aria-label={label}
             >
               <VStack spacing={0.5} w="full" align="center" justify="center">

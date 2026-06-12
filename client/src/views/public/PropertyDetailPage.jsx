@@ -409,7 +409,12 @@ const PropertyDetailPage = () => {
                   <Text color="gray.400" fontSize="sm">
                     {copy.price}
                   </Text>
-                  <Heading size={{ base: "lg", md: "xl" }} color="#F5D076" wordBreak="break-word">
+                  <Heading
+                    size={{ base: "lg", md: "xl" }}
+                    color="#F5D076"
+                    wordBreak="normal"
+                    overflowWrap="normal"
+                  >
                     {formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest}
                   </Heading>
                 </Stack>
@@ -461,7 +466,8 @@ const PropertyDetailPage = () => {
                         fontWeight="600"
                         fontSize={{ base: "sm", md: "md" }}
                         noOfLines={2}
-                        wordBreak="break-word"
+                        wordBreak="normal"
+                        overflowWrap="normal"
                       >
                         {amenity.value}
                       </Text>

@@ -11,9 +11,9 @@ export default function AdminSectionHeader({
   headingSize = "md",
 }) {
   return (
-    <Flex justify="space-between" align="center" gap={3} flexWrap="wrap">
+    <Flex justify="space-between" align="center" gap={3} flexWrap="wrap" minW={0}>
       {children || (
-        <Heading size={headingSize} flex="1" minW={0}>
+        <Heading size={headingSize} flex={{ base: "1 1 100%", sm: "1" }} minW={0}>
           {title}
         </Heading>
       )}

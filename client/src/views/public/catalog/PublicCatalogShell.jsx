@@ -196,10 +196,23 @@ const shellCopy = {
 };
 
 const optionStyles = {
-  bg: "white",
-  borderColor: "rgba(9,18,32,0.08)",
+  bg: "rgba(8,17,26,0.72)",
+  color: publicBrand.colors.text,
+  borderColor: "rgba(227, 211, 184, 0.22)",
   borderRadius: "18px",
   h: "54px",
+  _placeholder: { color: "rgba(224, 231, 240, 0.62)" },
+  _hover: { borderColor: "rgba(245,208,118,0.34)" },
+  _focusVisible: {
+    borderColor: "#f5d076",
+    boxShadow: "0 0 0 1px rgba(245,208,118,0.62)",
+  },
+  sx: {
+    option: {
+      color: "#08111a",
+      background: "#ffffff",
+    },
+  },
 };
 
 const PAGE_MAX_W = "1920px";
@@ -314,12 +327,7 @@ const CatalogFiltersPanel = ({
         value={filters.search}
         onChange={(event) => updateFilters({ search: event.target.value })}
         placeholder={copy.searchPlaceholder}
-        bg="rgba(255,255,255,0.08)"
-        color="white"
-        borderColor="rgba(227, 211, 184, 0.14)"
-        borderRadius="18px"
-        h="54px"
-        _placeholder={{ color: "whiteAlpha.500" }}
+        {...optionStyles}
       />
     </FormControl>
 
@@ -975,10 +983,7 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
                     <Select
                       maxW={{ base: "100%", md: "260px" }}
                       flex={{ base: 1, md: "none" }}
-                      bg="rgba(255,255,255,0.08)"
-                      color={publicBrand.colors.text}
-                      borderColor={publicBrand.colors.line}
-                      borderRadius="18px"
+                      {...optionStyles}
                       value={filters.sortBy}
                       onChange={(event) => updateFilters({ sortBy: event.target.value })}
                     >

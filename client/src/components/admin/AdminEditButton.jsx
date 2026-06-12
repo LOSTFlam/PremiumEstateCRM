@@ -11,7 +11,7 @@ export default function AdminEditButton({ onClick, href, size = "sm", compact = 
 
   if (compact) {
     return (
-      <HStack spacing={1}>
+      <HStack spacing={1} className="admin-inline-actions" flexWrap="wrap" justify="flex-end">
         {onClick ? (
           <Tooltip label={editLabel}>
             <IconButton
@@ -54,13 +54,26 @@ export default function AdminEditButton({ onClick, href, size = "sm", compact = 
   }
 
   return (
-    <HStack spacing={2}>
+    <HStack spacing={2} className="admin-inline-actions" flexWrap="wrap" justify="flex-end">
       {onClick ? (
-        <Button size={size} colorScheme="green" leftIcon={<EditIcon />} onClick={onClick}>
+        <Button
+          size={size}
+          colorScheme="green"
+          leftIcon={<EditIcon />}
+          onClick={onClick}
+          whiteSpace="nowrap"
+        >
           {editLabel}
         </Button>
       ) : href ? (
-        <Button as={RouterLink} to={href} size={size} colorScheme="green" leftIcon={<EditIcon />}>
+        <Button
+          as={RouterLink}
+          to={href}
+          size={size}
+          colorScheme="green"
+          leftIcon={<EditIcon />}
+          whiteSpace="nowrap"
+        >
           {editLabel}
         </Button>
       ) : null}
@@ -72,6 +85,7 @@ export default function AdminEditButton({ onClick, href, size = "sm", compact = 
           variant="outline"
           colorScheme="green"
           leftIcon={<FiExternalLink />}
+          whiteSpace="nowrap"
         >
           {t("adminInline.openInCrm", { defaultValue: "Open in CRM" })}
         </Button>
