@@ -1,1 +1,0 @@
-import{o as i,bv as r,aS as c,j as l,p as k,aK as m}from"./index-DWGN-l9s.js";const x=i(function(s,n){const e=r("Link",s),{className:o,isExternal:a,...t}=c(s);return l.jsx(k.a,{target:a?"_blank":void 0,rel:a?"noopener":void 0,ref:n,className:m("chakra-link",o),...t,__css:e})});x.displayName="Link";export{x as L};

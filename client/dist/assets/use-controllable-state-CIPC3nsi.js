@@ -1,0 +1,1 @@
+import{a as v}from"./vendor-charts-8I5hyNb7.js";import{bu as a}from"./index-Bv8gJEWi.js";function b(c){const{value:s,defaultValue:p,onChange:d,shouldUpdate:f=(t,u)=>t!==u}=c,l=a(d),r=a(f),[i,h]=v.useState(p),e=s!==void 0,o=e?s:i,m=a(t=>{const n=typeof t=="function"?t(o):t;r(o,n)&&(e||h(n),l(n))},[e,l,o,r]);return[o,m]}export{b as u};

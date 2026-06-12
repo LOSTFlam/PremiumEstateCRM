@@ -68,6 +68,7 @@ a.public-brand-button {
 
 .property-card-grid {
   width: 100%;
+  min-width: 0;
 }
 
 .public-brand-shell .chakra-heading,
@@ -131,12 +132,21 @@ a.public-brand-button {
 
   .property-card-grid,
   .property-list-card {
+    width: 100% !important;
     max-width: 100%;
+    min-width: 0;
     overflow-x: clip;
   }
 
   .property-card-grid {
+    display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .property-card-grid > * {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .property-list-card {
