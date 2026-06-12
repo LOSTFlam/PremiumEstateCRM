@@ -513,9 +513,15 @@ export default function ModernHeader({ largeLogo = [] }) {
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="full">
         <DrawerOverlay backdropFilter="blur(6px)" />
-        <DrawerContent bg={publicBrand.colors.ink} color="white">
+        <DrawerContent
+          bg={publicBrand.colors.ink}
+          color="white"
+          h="100dvh"
+          maxH="100dvh"
+          overflow="hidden"
+        >
           <DrawerCloseButton />
-          <DrawerHeader pt={8}>
+          <DrawerHeader pt="calc(24px + env(safe-area-inset-top, 0px))" flexShrink={0}>
             <Stack spacing={4}>
               <HStack spacing={4}>
                 <Box
@@ -552,7 +558,16 @@ export default function ModernHeader({ largeLogo = [] }) {
               </HStack>
             </Stack>
           </DrawerHeader>
-          <DrawerBody pb={8}>
+          <DrawerBody
+            className="public-mobile-menu-body"
+            minH={0}
+            overflowY="auto"
+            pb="calc(32px + env(safe-area-inset-bottom, 0px))"
+            sx={{
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
             <Stack spacing={6}>
               <Stack spacing={3}>
                 {[
@@ -608,16 +623,27 @@ export default function ModernHeader({ largeLogo = [] }) {
                 </Button>
               </HStack>
 
-              <Stack spacing={3}>
+              <Stack spacing={4} className="public-mobile-menu-actions">
                 <Button
                   as={RouterLink}
                   to="/offers/compare"
                   onClick={onClose}
                   leftIcon={<MdCompareArrows />}
+                  w="full"
+                  borderRadius="full"
+                  color={publicBrand.colors.ink}
                 >
                   {t("publicListing.compareAction")}
                 </Button>
-                <Button as={RouterLink} to="/favorites" onClick={onClose} leftIcon={<FiHeart />}>
+                <Button
+                  as={RouterLink}
+                  to="/favorites"
+                  onClick={onClose}
+                  leftIcon={<FiHeart />}
+                  w="full"
+                  borderRadius="full"
+                  color={publicBrand.colors.ink}
+                >
                   {t("publicListing.favoritesTitle") || t("publicListing.savedOffers")}
                 </Button>
                 <Button

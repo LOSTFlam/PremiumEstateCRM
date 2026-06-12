@@ -1,1 +1,0 @@
-import{aB as r}from"./index-Bv8gJEWi.js";const a=t=>t==="user"?"/cabinet":"/dashboard",o=(t,e)=>t==="user"?"/cabinet/profile":`/userView/${e||""}`,n=t=>{const e=t??r();return e?typeof e=="string"?JSON.parse(e):e:null},i=()=>"/";export{o as a,a as b,i as g,n as r};

@@ -1361,10 +1361,27 @@ export default function PublicCatalogShell({ forcedType = null, collectionSlug =
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">
         <DrawerOverlay />
-        <DrawerContent bg={publicBrand.colors.ink} color="white">
+        <DrawerContent
+          bg={publicBrand.colors.ink}
+          color="white"
+          h="100dvh"
+          maxH="100dvh"
+          overflow="hidden"
+        >
           <DrawerCloseButton />
-          <DrawerHeader>{copy.filters}</DrawerHeader>
-          <DrawerBody>
+          <DrawerHeader pt="calc(20px + env(safe-area-inset-top, 0px))" flexShrink={0}>
+            {copy.filters}
+          </DrawerHeader>
+          <DrawerBody
+            className="catalog-filter-drawer-body"
+            minH={0}
+            overflowY="auto"
+            pb="calc(32px + env(safe-area-inset-bottom, 0px))"
+            sx={{
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
             <CatalogFiltersPanel
               copy={copy}
               filters={filters}

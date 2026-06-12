@@ -61,6 +61,25 @@ const copy = {
   },
 };
 
+const lightSelectStyles = {
+  bg: "rgba(255,255,255,0.92)",
+  color: publicBrand.colors.ink,
+  borderColor: "rgba(9,18,32,0.22)",
+  borderRadius: "18px",
+  h: "54px",
+  _hover: { borderColor: "rgba(185,119,55,0.42)" },
+  _focusVisible: {
+    borderColor: publicBrand.colors.gold,
+    boxShadow: "0 0 0 1px rgba(212,175,55,0.62)",
+  },
+  sx: {
+    option: {
+      color: "#08111a",
+      background: "#ffffff",
+    },
+  },
+};
+
 export default function GuidedFinder({ properties = [], onMatchFound, variant = "dark" }) {
   const { i18n } = useTranslation();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -186,18 +205,34 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
         <ModalOverlay bg="rgba(7,12,20,0.55)" backdropFilter="blur(10px)" />
-        <ModalContent borderRadius="32px" bg={publicBrand.gradients.panelLight} overflow="hidden">
-          <ModalHeader pt={6}>{text.title}</ModalHeader>
+        <ModalContent
+          borderRadius="32px"
+          bg={publicBrand.gradients.panelLight}
+          color={publicBrand.colors.ink}
+          overflow="hidden"
+          maxH="calc(100dvh - 24px)"
+        >
+          <ModalHeader pt={6} color={publicBrand.colors.ink}>
+            {text.title}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody pb={7}>
+          <ModalBody
+            pb="calc(28px + env(safe-area-inset-bottom, 0px))"
+            overflowY="auto"
+            sx={{
+              WebkitOverflowScrolling: "touch",
+              overscrollBehavior: "contain",
+            }}
+          >
             <Stack spacing={4}>
               <FormControl>
-                <FormLabel>{text.propertyType}</FormLabel>
+                <FormLabel color={publicBrand.colors.ink} fontWeight="700">
+                  {text.propertyType}
+                </FormLabel>
                 <Select
                   value={propertyType}
                   onChange={(event) => setPropertyType(event.target.value)}
-                  borderRadius="18px"
-                  h="54px"
+                  {...lightSelectStyles}
                 >
                   <option value="all">{text.all}</option>
                   <option value="house">{text.house}</option>
@@ -207,12 +242,13 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
                 </Select>
               </FormControl>
               <FormControl>
-                <FormLabel>{text.budget}</FormLabel>
+                <FormLabel color={publicBrand.colors.ink} fontWeight="700">
+                  {text.budget}
+                </FormLabel>
                 <Select
                   value={budget}
                   onChange={(event) => setBudget(event.target.value)}
-                  borderRadius="18px"
-                  h="54px"
+                  {...lightSelectStyles}
                 >
                   {budgetOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -222,12 +258,13 @@ export default function GuidedFinder({ properties = [], onMatchFound, variant = 
                 </Select>
               </FormControl>
               <FormControl>
-                <FormLabel>{text.bedrooms}</FormLabel>
+                <FormLabel color={publicBrand.colors.ink} fontWeight="700">
+                  {text.bedrooms}
+                </FormLabel>
                 <Select
                   value={bedrooms}
                   onChange={(event) => setBedrooms(event.target.value)}
-                  borderRadius="18px"
-                  h="54px"
+                  {...lightSelectStyles}
                 >
                   <option value="all">{text.all}</option>
                   <option value="1">1+</option>
