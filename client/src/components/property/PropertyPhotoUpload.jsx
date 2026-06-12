@@ -15,11 +15,7 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import {
-  FiUpload,
-  FiX,
-  FiImage,
-} from "react-icons/fi";
+import { FiUpload, FiX, FiImage } from "react-icons/fi";
 import { postApi as _postApi } from "services/api";
 
 export default function PropertyPhotoUpload({ propertyId: _propertyId, photos = [], onChange }) {

@@ -1,5 +1,4 @@
 import { Box, HStack, Text } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AdminEditButton from "components/admin/AdminEditButton";
 import PropTypes from "prop-types";
@@ -22,7 +21,12 @@ export default function HomepageBlockEditBar({ blockKey, blockLabel, belowHeader
       boxShadow="0 10px 30px rgba(0,0,0,0.28)"
     >
       <HStack spacing={2}>
-        <Text fontSize="xs" color="#f5d076" fontWeight="700" display={{ base: "none", md: "block" }}>
+        <Text
+          fontSize="xs"
+          color="#f5d076"
+          fontWeight="700"
+          display={{ base: "none", md: "block" }}
+        >
           {blockLabel || t(`homepageEditor.blocks.${blockKey}`)}
         </Text>
         <AdminEditButton

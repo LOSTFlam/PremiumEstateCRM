@@ -2,12 +2,7 @@ import PropertyInlineEditModal from "components/admin/PropertyInlineEditModal";
 import { PROPERTY_EDIT_SECTIONS } from "data/propertyEditSections";
 import PropTypes from "prop-types";
 
-export default function PropertyAdminEditLayer({
-  property,
-  editSection,
-  onClose,
-  onSaved,
-}) {
+export default function PropertyAdminEditLayer({ property, editSection, onClose, onSaved }) {
   return (
     <PropertyInlineEditModal
       isOpen={Boolean(editSection)}

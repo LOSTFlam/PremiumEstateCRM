@@ -30,13 +30,12 @@ const calcAnnuity = (principal, annualRate, years) => {
   if (!principal || !months) return 0;
   if (!monthlyRate) return principal / months;
   return (
-    (principal * monthlyRate * (1 + monthlyRate) ** months) /
-    ((1 + monthlyRate) ** months - 1)
+    (principal * monthlyRate * (1 + monthlyRate) ** months) / ((1 + monthlyRate) ** months - 1)
   );
 };
 
 export default function MortgageCalculator({ propertyPrice = 25000000, onApply }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const locale = i18n.language?.startsWith("ru") ? "ru" : "en";
   const [downPaymentPct, setDownPaymentPct] = useState(30);
   const [termYears, setTermYears] = useState(20);

@@ -197,9 +197,7 @@ export const createQuotesColumns = ({ navigate, user, accountAccess }) => [
     accessor: "grandTotal",
     cell: (cell) => (
       <div className="selectOpt">
-        <Text>
-          {cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}
-        </Text>
+        <Text>{cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}</Text>
       </div>
     ),
   },
@@ -279,15 +277,13 @@ export const createInvoicesColumns = ({ navigate, user, accountAccess }) => [
     accessor: "grandTotal",
     cell: (cell) => (
       <div className="selectOpt">
-        <Text>
-          {cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}
-        </Text>
+        <Text>{cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}</Text>
       </div>
     ),
   },
 ];
 
-export const createTaskColumns = ({ navigate, textColor, user, accountAccess }) => [
+export const createTaskColumns = () => [
   {
     Header: "Title",
     accessor: "title",

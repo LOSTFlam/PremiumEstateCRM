@@ -40,8 +40,7 @@ export default function LeadCaptureCard({ property, agent, collectionSlug = "", 
     setValues((current) => ({
       ...current,
       fullName:
-        current.fullName ||
-        [storedUser.firstName, storedUser.lastName].filter(Boolean).join(" "),
+        current.fullName || [storedUser.firstName, storedUser.lastName].filter(Boolean).join(" "),
       email: current.email || storedUser.email || "",
       phoneNumber: current.phoneNumber || storedUser.phoneNumber || "",
     }));

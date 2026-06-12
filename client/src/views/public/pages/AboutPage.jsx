@@ -29,25 +29,28 @@ export default function AboutPage() {
     {
       name: locale === "ru" ? "Анна Волкова" : "Anna Volkova",
       role: locale === "ru" ? "Управляющий партнёр" : "Managing Partner",
-      bio: locale === "ru"
-        ? "15 лет в премиальном сегменте Москвы и Подмосковья."
-        : "15 years in Moscow and region premium segment.",
+      bio:
+        locale === "ru"
+          ? "15 лет в премиальном сегменте Москвы и Подмосковья."
+          : "15 years in Moscow and region premium segment.",
       photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
     },
     {
       name: locale === "ru" ? "Дмитрий Орлов" : "Dmitry Orlov",
       role: locale === "ru" ? "Директор по инвестициям" : "Investment Director",
-      bio: locale === "ru"
-        ? "Специализируется на off-market сделках и портфельных покупках."
-        : "Specializes in off-market deals and portfolio acquisitions.",
+      bio:
+        locale === "ru"
+          ? "Специализируется на off-market сделках и портфельных покупках."
+          : "Specializes in off-market deals and portfolio acquisitions.",
       photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
     },
     {
       name: locale === "ru" ? "Елена Морозова" : "Elena Morozova",
       role: locale === "ru" ? "Руководитель клиентского сервиса" : "Client Experience Lead",
-      bio: locale === "ru"
-        ? "Курирует частные показы и сопровождение международных клиентов."
-        : "Leads private viewings and international client journeys.",
+      bio:
+        locale === "ru"
+          ? "Курирует частные показы и сопровождение международных клиентов."
+          : "Leads private viewings and international client journeys.",
       photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
     },
   ];
@@ -89,8 +92,18 @@ export default function AboutPage() {
           {stats.map((stat, index) => (
             <ScrollReveal key={stat.label} delay={index * 0.08}>
               <Box {...panelProps} textAlign="center">
-                <Text fontSize={{ base: "3xl", md: "4xl" }} fontWeight="700" color={publicBrand.colors.ink}>
-                  <CountUp end={stat.value} duration={2} suffix={stat.suffix} enableScrollSpy scrollSpyOnce />
+                <Text
+                  fontSize={{ base: "3xl", md: "4xl" }}
+                  fontWeight="700"
+                  color={publicBrand.colors.ink}
+                >
+                  <CountUp
+                    end={stat.value}
+                    duration={2}
+                    suffix={stat.suffix}
+                    enableScrollSpy
+                    scrollSpyOnce
+                  />
                 </Text>
                 <Text mt={2} fontSize="sm" color={publicBrand.colors.textSoft}>
                   {stat.label}

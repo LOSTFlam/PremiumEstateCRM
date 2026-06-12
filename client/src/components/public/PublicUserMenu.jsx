@@ -63,12 +63,16 @@ export default function PublicUserMenu({ onNavigate }) {
     setIsLogoutScheduled(true);
 
     try {
-      await postApi("api/user/logout", {}, {
-        rememberMe: false,
-        requestConfig: {
-          headers: { "X-Silent-Request": "true" },
-        },
-      });
+      await postApi(
+        "api/user/logout",
+        {},
+        {
+          rememberMe: false,
+          requestConfig: {
+            headers: { "X-Silent-Request": "true" },
+          },
+        }
+      );
     } catch {
       // Continue local cleanup even if the server logout fails.
     }
@@ -111,7 +115,10 @@ export default function PublicUserMenu({ onNavigate }) {
             fontWeight="700"
             color={textColor}
           >
-            {t("adminSettingsHub.welcome", { name: displayName, defaultValue: `Hi, ${displayName}` })}
+            {t("adminSettingsHub.welcome", {
+              name: displayName,
+              defaultValue: `Hi, ${displayName}`,
+            })}
           </Text>
         </Flex>
         <Flex flexDirection="column" p="10px">

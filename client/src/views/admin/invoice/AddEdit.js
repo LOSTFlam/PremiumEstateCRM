@@ -59,7 +59,6 @@ const AddEdit = (props) => {
   const [accountAccess, contactAccess] = HasAccess(["Account", "Contacts"]);
   const [isOpenPreview, setIsOpenPreview] = useState(false);
 
-  const opportunityList = useSelector((state) => state?.opportunityData?.data || []);
   const accountList = useSelector((state) => state?.accountData?.data || []);
   const opportunityFetched = useSelector((state) => state?.opportunityData?.hasFetched);
   const accountFetched = useSelector((state) => state?.accountData?.hasFetched);

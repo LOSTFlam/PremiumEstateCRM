@@ -236,28 +236,28 @@ const Index = () => {
       <Grid templateColumns="repeat(6, 1fr)" mb={3} gap={4}>
         <GridItem colSpan={6}>
           <CommonCheckTable
-              title="Contacts"
-              isLoding={isLoding}
-              columnData={columns ?? []}
-              // dataColumn={dataColumn ?? []}
-              allData={data ?? []}
-              tableData={data}
-              tableCustomFields={
-                contactData?.[0]?.fields?.filter((field) => field?.isTableField === true) || []
-              }
-              access={permission}
-              // action={action}
-              // setAction={setAction}
-              // selectedColumns={selectedColumns}
-              // setSelectedColumns={setSelectedColumns}
-              // isOpen={isOpen}
-              // onClose={onclose}
-              onOpen={onOpen}
-              selectedValues={selectedValues}
-              setSelectedValues={setSelectedValues}
-              setDelete={setDelete}
-              setIsImport={setIsImport}
-            />
+            title="Contacts"
+            isLoding={isLoding}
+            columnData={columns ?? []}
+            // dataColumn={dataColumn ?? []}
+            allData={data ?? []}
+            tableData={data}
+            tableCustomFields={
+              contactData?.[0]?.fields?.filter((field) => field?.isTableField === true) || []
+            }
+            access={permission}
+            // action={action}
+            // setAction={setAction}
+            // selectedColumns={selectedColumns}
+            // setSelectedColumns={setSelectedColumns}
+            // isOpen={isOpen}
+            // onClose={onclose}
+            onOpen={onOpen}
+            selectedValues={selectedValues}
+            setSelectedValues={setSelectedValues}
+            setDelete={setDelete}
+            setIsImport={setIsImport}
+          />
         </GridItem>
       </Grid>
 

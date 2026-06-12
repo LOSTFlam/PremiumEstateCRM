@@ -27,9 +27,7 @@ export default function PublicSeoMeta({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={pageTitle} />
       {description ? <meta name="twitter:description" content={description} /> : null}
-      {jsonLd ? (
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      ) : null}
+      {jsonLd ? <script type="application/ld+json">{JSON.stringify(jsonLd)}</script> : null}
     </Helmet>
   );
 }

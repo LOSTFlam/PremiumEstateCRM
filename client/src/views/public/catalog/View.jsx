@@ -906,7 +906,9 @@ export default function PublicOfferView() {
                       <PropertyPhotoManager
                         propertyId={property._id}
                         photos={property?.propertyPhotos || []}
-                        onChange={(photos) => handlePropertySaved({ ...property, propertyPhotos: photos })}
+                        onChange={(photos) =>
+                          handlePropertySaved({ ...property, propertyPhotos: photos })
+                        }
                         showEditButton
                         editHref={propertyAdminPath}
                       />
@@ -915,7 +917,12 @@ export default function PublicOfferView() {
                         <AdminSectionHeader title={t?.("publicListing.propertyImages")} />
                         <SimpleGrid columns={{ base: 2, md: 3 }} gap={3}>
                           {property?.propertyPhotos?.map((photo, index) => (
-                            <Box key={index} position="relative" borderRadius="16px" overflow="hidden">
+                            <Box
+                              key={index}
+                              position="relative"
+                              borderRadius="16px"
+                              overflow="hidden"
+                            >
                               <Image
                                 src={photo?.img}
                                 alt={photo?.title || `Photo ${index + 1}`}

@@ -37,14 +37,16 @@ export const exportFavoritesPdf = ({ properties, t, locale, toast }) => {
 
   doc.autoTable({
     startY: 35,
-    head: [[
-      "#",
-      t("cabinet.export.colName"),
-      t("cabinet.export.colPrice"),
-      t("cabinet.export.colArea"),
-      t("cabinet.export.colBedrooms"),
-      t("cabinet.export.colBathrooms"),
-    ]],
+    head: [
+      [
+        "#",
+        t("cabinet.export.colName"),
+        t("cabinet.export.colPrice"),
+        t("cabinet.export.colArea"),
+        t("cabinet.export.colBedrooms"),
+        t("cabinet.export.colBathrooms"),
+      ],
+    ],
     body: tableData,
     theme: "striped",
     headStyles: { fillColor: [34, 120, 80] },

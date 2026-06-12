@@ -23,7 +23,11 @@ export default function Breadcrumbs({ items = [] }) {
                 {item.label}
               </Text>
             ) : (
-              <BreadcrumbLink as={RouterLink} to={item.href} _hover={{ color: publicBrand.colors.gold }}>
+              <BreadcrumbLink
+                as={RouterLink}
+                to={item.href}
+                _hover={{ color: publicBrand.colors.gold }}
+              >
                 {item.label}
               </BreadcrumbLink>
             )}

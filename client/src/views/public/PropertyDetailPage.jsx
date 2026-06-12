@@ -28,19 +28,8 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import { useParams, Link as RouterLink } from "react-router-dom";
-import {
-  getFavoriteIds,
-  pushRecentlyViewedId,
-  toggleFavoriteId,
-} from "./catalog/catalogStorage";
-import {
-  FiHeart,
-  FiShare2,
-  FiMapPin,
-  FiHome,
-  FiVideo,
-  FiImage,
-} from "react-icons/fi";
+import { getFavoriteIds, pushRecentlyViewedId, toggleFavoriteId } from "./catalog/catalogStorage";
+import { FiHeart, FiShare2, FiMapPin, FiHome, FiVideo, FiImage } from "react-icons/fi";
 import { MdMeetingRoom, MdBathtub, MdOutlineSquareFoot } from "react-icons/md";
 import { LuMapPin, LuTrees, LuBuilding2 } from "react-icons/lu";
 import { useTranslation } from "react-i18next";
@@ -57,9 +46,8 @@ import MortgageCalculator from "components/property/MortgageCalculator";
 import MobileBottomNav from "components/public/MobileBottomNav";
 import ModernHeader from "components/ModernHeader";
 import ModernFooter from "components/ModernFooter";
-import { formatAreaValue, parsePrice } from "./catalog/catalogData";
+import { formatAreaValue, parsePrice, formatPrice } from "./catalog/catalogData";
 import { publicBrand } from "views/public/publicBrand";
-import { formatPrice } from "./catalog/catalogData";
 
 const detailCopy = {
   ru: {
@@ -421,11 +409,7 @@ const PropertyDetailPage = () => {
                   <Text color="gray.400" fontSize="sm">
                     {copy.price}
                   </Text>
-                  <Heading
-                    size={{ base: "lg", md: "xl" }}
-                    color="#F5D076"
-                    wordBreak="break-word"
-                  >
+                  <Heading size={{ base: "lg", md: "xl" }} color="#F5D076" wordBreak="break-word">
                     {formatPrice(property.listingPrice, t, i18n.language) || copy.onRequest}
                   </Heading>
                 </Stack>
@@ -498,7 +482,9 @@ const PropertyDetailPage = () => {
                 <PropertyPhotoManager
                   propertyId={property._id}
                   photos={property?.propertyPhotos || []}
-                  onChange={(photos) => handlePropertySaved({ ...property, propertyPhotos: photos })}
+                  onChange={(photos) =>
+                    handlePropertySaved({ ...property, propertyPhotos: photos })
+                  }
                   showEditButton
                   editHref={propertyAdminPath}
                 />
@@ -704,7 +690,10 @@ const PropertyDetailPage = () => {
                   boxShadow={publicBrand.shadows.glow}
                   whiteSpace="normal"
                   onClick={() => openLeadForm("viewing")}
-                  _hover={{ transform: "translateY(-1px)", boxShadow: "0 28px 72px rgba(185,119,55,0.26)" }}
+                  _hover={{
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 28px 72px rgba(185,119,55,0.26)",
+                  }}
                 >
                   {copy.schedule}
                 </Button>
@@ -783,10 +772,7 @@ const PropertyDetailPage = () => {
           <ModalContent bg="black">
             <ModalCloseButton color="white" zIndex={10} />
             <ModalBody p={0}>
-              <PropertyGallery
-                images={galleryImages}
-                onClose={() => setShowGallery(false)}
-              />
+              <PropertyGallery images={galleryImages} onClose={() => setShowGallery(false)} />
             </ModalBody>
           </ModalContent>
         </Modal>

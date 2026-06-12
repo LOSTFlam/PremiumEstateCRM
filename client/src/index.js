@@ -370,7 +370,13 @@ function LegacyRuTextGuard() {
 export function RouteFallback() {
   const locale = resolveLocale();
   return (
-    <Box minH="100vh" bg={publicBrand.gradients.page} color={publicBrand.colors.text} display="flex" alignItems="center">
+    <Box
+      minH="100vh"
+      bg={publicBrand.gradients.page}
+      color={publicBrand.colors.text}
+      display="flex"
+      alignItems="center"
+    >
       <Container maxW="md">
         <Stack spacing={4} align="center" textAlign="center">
           <Spinner size="xl" color={publicBrand.colors.gold} thickness="4px" />
@@ -436,9 +442,14 @@ export function AnimatedRoutes() {
           {isAuthenticated ? (
             user?.role === "user" ? (
               <Route path="/*" element={<UserLayout />} />
-            ) : ["superAdmin", "admin", "manager", "teamleader", "executive", "telecaller"].includes(
-                user?.role
-              ) ? (
+            ) : [
+                "superAdmin",
+                "admin",
+                "manager",
+                "teamleader",
+                "executive",
+                "telecaller",
+              ].includes(user?.role) ? (
               <>
                 {user?.role === "superAdmin" ? (
                   <>

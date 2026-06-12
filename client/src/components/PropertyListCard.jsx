@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Flex, HStack, Icon, Stack, Text } from "@chakra-ui/react";
+import { Badge, Button, Flex, HStack, Icon, Stack, Text } from "@chakra-ui/react";
 import LazyImage from "components/public/LazyImage";
 import { Link as RouterLink } from "react-router-dom";
 import { FiHeart } from "react-icons/fi";

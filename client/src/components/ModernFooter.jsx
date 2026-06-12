@@ -296,18 +296,27 @@ export default function ModernFooter() {
           >
             <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={8} alignItems="start">
               <Stack spacing={4}>
-                <Text fontSize="xs" letterSpacing="0.18em" textTransform="uppercase" color="#f5d076">
+                <Text
+                  fontSize="xs"
+                  letterSpacing="0.18em"
+                  textTransform="uppercase"
+                  color="#f5d076"
+                >
                   {t("publicPages.footer.newsletterTitle")}
                 </Text>
                 <Text color="whiteAlpha.760" lineHeight="1.8">
                   {t("publicPages.footer.newsletterText")}
                 </Text>
-                <HStack as="form" spacing={3} onSubmit={(event) => {
-                  event.preventDefault();
-                  if (!newsletterEmail.trim()) return;
-                  toast({ title: t("publicPages.footer.newsletterSuccess"), status: "success" });
-                  setNewsletterEmail("");
-                }}>
+                <HStack
+                  as="form"
+                  spacing={3}
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    if (!newsletterEmail.trim()) return;
+                    toast({ title: t("publicPages.footer.newsletterSuccess"), status: "success" });
+                    setNewsletterEmail("");
+                  }}
+                >
                   <Input
                     value={newsletterEmail}
                     onChange={(event) => setNewsletterEmail(event.target.value)}
@@ -318,7 +327,12 @@ export default function ModernFooter() {
                     borderRadius="full"
                     type="email"
                   />
-                  <Button type="submit" borderRadius="full" bg={publicBrand.gradients.brass} color={publicBrand.colors.ink}>
+                  <Button
+                    type="submit"
+                    borderRadius="full"
+                    bg={publicBrand.gradients.brass}
+                    color={publicBrand.colors.ink}
+                  >
                     OK
                   </Button>
                 </HStack>
@@ -388,13 +402,31 @@ export default function ModernFooter() {
               {t("publicListing.rightsReserved").replace("2024", String(currentYear))}
             </Text>
             <HStack spacing={6} flexWrap="wrap">
-              <Link as={RouterLink} to="/privacy" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
+              <Link
+                as={RouterLink}
+                to="/privacy"
+                color="whiteAlpha.620"
+                fontSize="sm"
+                _hover={{ color: "#f5d076" }}
+              >
                 {t("publicListing.privacyNav")}
               </Link>
-              <Link as={RouterLink} to="/faq" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
+              <Link
+                as={RouterLink}
+                to="/faq"
+                color="whiteAlpha.620"
+                fontSize="sm"
+                _hover={{ color: "#f5d076" }}
+              >
                 {t("publicPages.nav.faq")}
               </Link>
-              <Link as={RouterLink} to="/contacts" color="whiteAlpha.620" fontSize="sm" _hover={{ color: "#f5d076" }}>
+              <Link
+                as={RouterLink}
+                to="/contacts"
+                color="whiteAlpha.620"
+                fontSize="sm"
+                _hover={{ color: "#f5d076" }}
+              >
                 {t("publicPages.nav.contacts")}
               </Link>
             </HStack>

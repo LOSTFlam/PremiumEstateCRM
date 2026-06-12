@@ -100,7 +100,8 @@ const BlockFields = ({ blockKey, locale, content, onChange, t, catalogProperties
   const nestedHeadingColor = useColorModeValue("secondaryGray.900", "white");
   const block = content.locales?.[locale]?.[blockKey] || {};
 
-  const update = (path, value) => onChange(setNestedValue(content, `locales.${locale}.${path}`, value));
+  const update = (path, value) =>
+    onChange(setNestedValue(content, `locales.${locale}.${path}`, value));
 
   if (blockKey === "hero") {
     return (
@@ -130,20 +131,80 @@ const BlockFields = ({ blockKey, locale, content, onChange, t, catalogProperties
             </Select>
           </FormControl>
         ) : null}
-        <Field label={t("homepageEditor.fields.eyebrow")} value={block.eyebrow} onChange={(v) => update("hero.eyebrow", v)} />
-        <Field label={t("homepageEditor.fields.kicker")} value={block.kicker} onChange={(v) => update("hero.kicker", v)} />
-        <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("hero.title", v)} />
-        <Field label={t("homepageEditor.fields.accent")} value={block.accent} onChange={(v) => update("hero.accent", v)} />
-        <Field label={t("homepageEditor.fields.description")} value={block.description} onChange={(v) => update("hero.description", v)} multiline rows={4} />
-        <Field label={t("homepageEditor.fields.searchHint")} value={block.searchHint} onChange={(v) => update("hero.searchHint", v)} />
-        <Field label={t("homepageEditor.fields.primaryCta")} value={block.primary} onChange={(v) => update("hero.primary", v)} />
-        <Field label={t("homepageEditor.fields.secondaryCta")} value={block.secondary} onChange={(v) => update("hero.secondary", v)} />
-        <Field label={t("homepageEditor.fields.panelTitle")} value={block.panelTitle} onChange={(v) => update("hero.panelTitle", v)} />
-        <Field label={t("homepageEditor.fields.panelText")} value={block.panelText} onChange={(v) => update("hero.panelText", v)} multiline />
-        <Field label={t("homepageEditor.fields.routesTitle")} value={block.routesTitle} onChange={(v) => update("hero.routesTitle", v)} />
-        <Field label={t("homepageEditor.fields.routesText")} value={block.routesText} onChange={(v) => update("hero.routesText", v)} multiline />
-        <Field label={t("homepageEditor.fields.pulseTitle")} value={block.pulseTitle} onChange={(v) => update("hero.pulseTitle", v)} />
-        <Field label={t("homepageEditor.fields.pulseSubtitle")} value={block.pulseSubtitle} onChange={(v) => update("hero.pulseSubtitle", v)} />
+        <Field
+          label={t("homepageEditor.fields.eyebrow")}
+          value={block.eyebrow}
+          onChange={(v) => update("hero.eyebrow", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.kicker")}
+          value={block.kicker}
+          onChange={(v) => update("hero.kicker", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.title")}
+          value={block.title}
+          onChange={(v) => update("hero.title", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.accent")}
+          value={block.accent}
+          onChange={(v) => update("hero.accent", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.description")}
+          value={block.description}
+          onChange={(v) => update("hero.description", v)}
+          multiline
+          rows={4}
+        />
+        <Field
+          label={t("homepageEditor.fields.searchHint")}
+          value={block.searchHint}
+          onChange={(v) => update("hero.searchHint", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.primaryCta")}
+          value={block.primary}
+          onChange={(v) => update("hero.primary", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.secondaryCta")}
+          value={block.secondary}
+          onChange={(v) => update("hero.secondary", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.panelTitle")}
+          value={block.panelTitle}
+          onChange={(v) => update("hero.panelTitle", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.panelText")}
+          value={block.panelText}
+          onChange={(v) => update("hero.panelText", v)}
+          multiline
+        />
+        <Field
+          label={t("homepageEditor.fields.routesTitle")}
+          value={block.routesTitle}
+          onChange={(v) => update("hero.routesTitle", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.routesText")}
+          value={block.routesText}
+          onChange={(v) => update("hero.routesText", v)}
+          multiline
+        />
+        <Field
+          label={t("homepageEditor.fields.pulseTitle")}
+          value={block.pulseTitle}
+          onChange={(v) => update("hero.pulseTitle", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.pulseSubtitle")}
+          value={block.pulseSubtitle}
+          onChange={(v) => update("hero.pulseSubtitle", v)}
+        />
       </VStack>
     );
   }
@@ -151,24 +212,58 @@ const BlockFields = ({ blockKey, locale, content, onChange, t, catalogProperties
   if (blockKey === "features") {
     return (
       <VStack align="stretch" spacing={4}>
-        <Field label={t("homepageEditor.fields.badge")} value={block.badge} onChange={(v) => update("features.badge", v)} />
-        <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("features.title", v)} multiline rows={2} />
-        <Field label={t("homepageEditor.fields.description")} value={block.description} onChange={(v) => update("features.description", v)} multiline rows={4} />
+        <Field
+          label={t("homepageEditor.fields.badge")}
+          value={block.badge}
+          onChange={(v) => update("features.badge", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.title")}
+          value={block.title}
+          onChange={(v) => update("features.title", v)}
+          multiline
+          rows={2}
+        />
+        <Field
+          label={t("homepageEditor.fields.description")}
+          value={block.description}
+          onChange={(v) => update("features.description", v)}
+          multiline
+          rows={4}
+        />
         {(block.pillars || []).map((pillar, index) => (
-          <Box key={`pillar-${index}`} p={4} borderWidth="1px" borderColor={nestedBorderColor} borderRadius="16px">
+          <Box
+            key={`pillar-${index}`}
+            p={4}
+            borderWidth="1px"
+            borderColor={nestedBorderColor}
+            borderRadius="16px"
+          >
             <Text fontWeight="700" mb={3} color={nestedHeadingColor}>
               {t("homepageEditor.fields.pillar", { index: index + 1 })}
             </Text>
             <VStack align="stretch" spacing={3}>
-              <Field label={t("homepageEditor.fields.title")} value={pillar.title} onChange={(v) => update(`features.pillars.${index}.title`, v)} />
-              <Field label={t("homepageEditor.fields.description")} value={pillar.text} onChange={(v) => update(`features.pillars.${index}.text`, v)} multiline />
+              <Field
+                label={t("homepageEditor.fields.title")}
+                value={pillar.title}
+                onChange={(v) => update(`features.pillars.${index}.title`, v)}
+              />
+              <Field
+                label={t("homepageEditor.fields.description")}
+                value={pillar.text}
+                onChange={(v) => update(`features.pillars.${index}.text`, v)}
+                multiline
+              />
               <Field
                 label={t("homepageEditor.fields.points")}
                 value={(pillar.points || []).join("\n")}
                 onChange={(v) =>
                   update(
                     `features.pillars.${index}.points`,
-                    v.split("\n").map((line) => line.trim()).filter(Boolean)
+                    v
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean)
                   )
                 }
                 multiline
@@ -184,17 +279,46 @@ const BlockFields = ({ blockKey, locale, content, onChange, t, catalogProperties
   if (blockKey === "services") {
     return (
       <VStack align="stretch" spacing={4}>
-        <Field label={t("homepageEditor.fields.badge")} value={block.badge} onChange={(v) => update("services.badge", v)} />
-        <Field label={t("homepageEditor.fields.title")} value={block.title} onChange={(v) => update("services.title", v)} />
-        <Field label={t("homepageEditor.fields.description")} value={block.text} onChange={(v) => update("services.text", v)} multiline rows={3} />
+        <Field
+          label={t("homepageEditor.fields.badge")}
+          value={block.badge}
+          onChange={(v) => update("services.badge", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.title")}
+          value={block.title}
+          onChange={(v) => update("services.title", v)}
+        />
+        <Field
+          label={t("homepageEditor.fields.description")}
+          value={block.text}
+          onChange={(v) => update("services.text", v)}
+          multiline
+          rows={3}
+        />
         {(block.items || []).map((item, index) => (
-          <Box key={item.key || index} p={4} borderWidth="1px" borderColor={nestedBorderColor} borderRadius="16px">
+          <Box
+            key={item.key || index}
+            p={4}
+            borderWidth="1px"
+            borderColor={nestedBorderColor}
+            borderRadius="16px"
+          >
             <Text fontWeight="700" mb={3} color={nestedHeadingColor}>
               {t("homepageEditor.fields.service", { index: index + 1 })}
             </Text>
             <VStack align="stretch" spacing={3}>
-              <Field label={t("homepageEditor.fields.title")} value={item.title} onChange={(v) => update(`services.items.${index}.title`, v)} />
-              <Field label={t("homepageEditor.fields.description")} value={item.text} onChange={(v) => update(`services.items.${index}.text`, v)} multiline />
+              <Field
+                label={t("homepageEditor.fields.title")}
+                value={item.title}
+                onChange={(v) => update(`services.items.${index}.title`, v)}
+              />
+              <Field
+                label={t("homepageEditor.fields.description")}
+                value={item.text}
+                onChange={(v) => update(`services.items.${index}.text`, v)}
+                multiline
+              />
             </VStack>
           </Box>
         ))}
@@ -315,7 +439,13 @@ export default function HomepageEditor() {
 
   return (
     <Card>
-      <Flex justify="space-between" align={{ base: "stretch", md: "center" }} direction={{ base: "column", md: "row" }} gap={4} mb={6}>
+      <Flex
+        justify="space-between"
+        align={{ base: "stretch", md: "center" }}
+        direction={{ base: "column", md: "row" }}
+        gap={4}
+        mb={6}
+      >
         <Box>
           <Heading size="lg">{t("homepageEditor.title")}</Heading>
           <Text color={subtitleColor} mt={2} maxW="760px">
@@ -326,7 +456,11 @@ export default function HomepageEditor() {
           <Button variant="outline" onClick={() => navigate(getPublicSitePath())}>
             {t("navigation.goToSite")}
           </Button>
-          <Button variant="brand" leftIcon={<IoIosArrowBack />} onClick={() => navigate("/admin-setting")}>
+          <Button
+            variant="brand"
+            leftIcon={<IoIosArrowBack />}
+            onClick={() => navigate("/admin-setting")}
+          >
             {t("adminSettingsHub.back")}
           </Button>
         </HStack>

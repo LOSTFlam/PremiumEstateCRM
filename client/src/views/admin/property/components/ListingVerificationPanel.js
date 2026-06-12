@@ -432,7 +432,11 @@ export default function ListingVerificationPanel({ property, onUpdated, canManag
         </SimpleGrid>
 
         {canManage ? (
-          <Flex className="cabinet-panel-actions" justify={{ base: "stretch", md: "flex-end" }} w="100%">
+          <Flex
+            className="cabinet-panel-actions"
+            justify={{ base: "stretch", md: "flex-end" }}
+            w="100%"
+          >
             <Button
               className="cabinet-btn-fluid"
               variant="outline"

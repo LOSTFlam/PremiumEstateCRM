@@ -84,12 +84,16 @@ export default function HeaderLinks(props) {
 
     if (!skipServerLogout) {
       try {
-        await postApi("api/user/logout", {}, {
-          rememberMe: false,
-          requestConfig: {
-            headers: { "X-Silent-Request": "true" },
-          },
-        });
+        await postApi(
+          "api/user/logout",
+          {},
+          {
+            rememberMe: false,
+            requestConfig: {
+              headers: { "X-Silent-Request": "true" },
+            },
+          }
+        );
       } catch {
         // Continue local cleanup even if the server logout fails.
       }
@@ -121,12 +125,16 @@ export default function HeaderLinks(props) {
         }
 
         try {
-          await postApi("api/user/refresh-token", {}, {
-            rememberMe: true,
-            requestConfig: {
-              headers: { "X-Silent-Request": "true" },
-            },
-          });
+          await postApi(
+            "api/user/refresh-token",
+            {},
+            {
+              rememberMe: true,
+              requestConfig: {
+                headers: { "X-Silent-Request": "true" },
+              },
+            }
+          );
           await getApi("api/user/session", { silent: true });
         } catch {
           logOut("Session expired", true);

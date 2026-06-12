@@ -116,7 +116,8 @@ export const DEFAULT_HOMEPAGE_CONTENT = {
       },
       features: {
         badge: "Почему выбирают нас",
-        title: "Сайт больше не выглядит как шаблон. Он ведет покупателя через атмосферу, факты и действие.",
+        title:
+          "Сайт больше не выглядит как шаблон. Он ведет покупателя через атмосферу, факты и действие.",
         description:
           "Мы сместили акцент со случайных карточек и служебных блоков на более взрослую недвижимостную подачу: сильный визуал, кураторская структура, инструменты выбора и мягкий переход к личной консультации.",
         pillars: ruPillars,
@@ -164,7 +165,8 @@ export const DEFAULT_HOMEPAGE_CONTENT = {
         secondary: "Preview below",
         trustLine: ["Verified listings", "Compare and shortlist", "Direct viewing request"],
         panelTitle: "Start the search with structure",
-        panelText: "Choose a segment, enter a query, and move into the catalog with the right context.",
+        panelText:
+          "Choose a segment, enter a query, and move into the catalog with the right context.",
         routesTitle: "High-intent routes",
         routesText: "Fast entry points into the most common buying scenarios.",
         pulseTitle: "Market pulse",

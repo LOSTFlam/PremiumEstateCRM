@@ -163,7 +163,12 @@ export default function ModerationQueue() {
           </HStack>
           <Text color={subtleText}>{t("moderationQueue.subtitle")}</Text>
         </Box>
-        <Button leftIcon={<MdRefresh />} variant="outline" onClick={fetchQueue} {...compactButtonProps}>
+        <Button
+          leftIcon={<MdRefresh />}
+          variant="outline"
+          onClick={fetchQueue}
+          {...compactButtonProps}
+        >
           {t("moderationQueue.refresh")}
         </Button>
       </Flex>

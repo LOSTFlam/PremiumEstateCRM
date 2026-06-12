@@ -11,7 +11,10 @@ export default function NotFoundPage() {
   const { t } = useTranslation();
 
   return (
-    <PublicPageShell hero={false} seo={{ title: "404", description: t("publicPages.notFound.subtitle"), path: "/404" }}>
+    <PublicPageShell
+      hero={false}
+      seo={{ title: "404", description: t("publicPages.notFound.subtitle"), path: "/404" }}
+    >
       <Stack
         align="center"
         textAlign="center"
@@ -47,13 +50,7 @@ export default function NotFoundPage() {
         >
           {t("publicPages.notFound.cta")}
         </Button>
-        <Box
-          w="120px"
-          h="4px"
-          borderRadius="full"
-          bg={publicBrand.gradients.accentLine}
-          mt={4}
-        />
+        <Box w="120px" h="4px" borderRadius="full" bg={publicBrand.gradients.accentLine} mt={4} />
       </Stack>
     </PublicPageShell>
   );

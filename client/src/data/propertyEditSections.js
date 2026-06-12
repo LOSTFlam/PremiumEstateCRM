@@ -3,7 +3,12 @@ export const PROPERTY_EDIT_SECTIONS = {
     fields: [
       { key: "name", type: "text", labelKey: "publicListing.propertyName" },
       { key: "listingPrice", type: "text", labelKey: "publicListing.price" },
-      { key: "dealType", type: "select", labelKey: "publicListing.dealType", options: ["sale", "rent"] },
+      {
+        key: "dealType",
+        type: "select",
+        labelKey: "publicListing.dealType",
+        options: ["sale", "rent"],
+      },
       { key: "listingStatus", type: "text", labelKey: "publicListing.status" },
       { key: "propertyAddress", type: "text", labelKey: "publicListing.address" },
       {
@@ -63,10 +68,30 @@ export const PROPERTY_EDIT_SECTIONS = {
   },
   amenities: {
     fields: [
-      { key: "communityAmenities", type: "textarea", labelKey: "publicListing.amenitiesTitle", rows: 3 },
-      { key: "appliancesIncluded", type: "textarea", labelKey: "publicListing.appliancesIncluded", rows: 3 },
-      { key: "exteriorFeatures", type: "textarea", labelKey: "publicListing.exteriorFeatures", rows: 3 },
-      { key: "heatingAndCoolingSystems", type: "textarea", labelKey: "publicListing.engineeringTitle", rows: 3 },
+      {
+        key: "communityAmenities",
+        type: "textarea",
+        labelKey: "publicListing.amenitiesTitle",
+        rows: 3,
+      },
+      {
+        key: "appliancesIncluded",
+        type: "textarea",
+        labelKey: "publicListing.appliancesIncluded",
+        rows: 3,
+      },
+      {
+        key: "exteriorFeatures",
+        type: "textarea",
+        labelKey: "publicListing.exteriorFeatures",
+        rows: 3,
+      },
+      {
+        key: "heatingAndCoolingSystems",
+        type: "textarea",
+        labelKey: "publicListing.engineeringTitle",
+        rows: 3,
+      },
       { key: "flooringType", type: "textarea", labelKey: "publicListing.finishTitle", rows: 3 },
     ],
   },

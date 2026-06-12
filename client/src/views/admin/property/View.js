@@ -63,7 +63,8 @@ import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import PropertyPhotoManager from "components/property/PropertyPhotoManager";
 
 const View = () => {
-  const user = useSelector((state) => state.user?.user) || JSON.parse(localStorage.getItem("user") || "null");
+  const user =
+    useSelector((state) => state.user?.user) || JSON.parse(localStorage.getItem("user") || "null");
   const param = useParams();
   const propertyId = param?.id || param?.slug;
   const textColor = useColorModeValue("gray.500", "white");

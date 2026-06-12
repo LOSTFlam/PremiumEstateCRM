@@ -25,7 +25,16 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiBriefcase, FiChevronDown, FiHeart, FiHome, FiKey, FiMenu, FiSearch, FiX } from "react-icons/fi";
+import {
+  FiBriefcase,
+  FiChevronDown,
+  FiHeart,
+  FiHome,
+  FiKey,
+  FiMenu,
+  FiSearch,
+  FiX,
+} from "react-icons/fi";
 import { MdCompareArrows } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import useActiveBranding, { getActiveBrandRecord, getBrandLogoSrc } from "hooks/useActiveBranding";

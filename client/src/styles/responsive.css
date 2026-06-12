@@ -733,5 +733,32 @@ a.public-brand-button {
   .footer-contact-grid {
     grid-template-columns: 1fr !important;
   }
+}
 
+/* Mobile compositing budget: keep the cinematic feel without heavy filters on touch devices. */
+@media (hover: none) and (pointer: coarse) {
+  .property-card,
+  .property-list-card,
+  .mobile-bottom-nav {
+    box-shadow: var(--cinematic-shadow-soft) !important;
+  }
+
+  .property-card:hover,
+  .property-list-card:hover,
+  .logo-container:hover {
+    transform: none !important;
+  }
+
+  .public-header-wrap [style*="backdrop-filter"],
+  .mobile-bottom-nav,
+  .property-card [style*="backdrop-filter"],
+  .property-list-card [style*="backdrop-filter"] {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  .logo-image {
+    animation: none !important;
+    filter: none !important;
+  }
 }

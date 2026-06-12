@@ -1,6 +1,15 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Flex, Input, InputGroup, InputLeftElement, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  SimpleGrid,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { FaCreativeCommonsBy, FaWpforms } from "react-icons/fa";
 import { FiEdit3, FiExternalLink, FiSearch, FiSliders } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";

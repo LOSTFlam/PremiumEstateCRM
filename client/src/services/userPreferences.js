@@ -45,7 +45,10 @@ const isAuthenticated = () => {
 
 const writeIds = (key, ids) => {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(Array.from(new Set((ids || []).filter(Boolean)))));
+  window.localStorage.setItem(
+    key,
+    JSON.stringify(Array.from(new Set((ids || []).filter(Boolean))))
+  );
 };
 
 const mergeIdLists = (localIds, remoteIds, max) => {
@@ -148,10 +151,7 @@ export const applyPreferencesToLocal = (preferences = {}) => {
     .filter(Boolean);
   writeIds(RECENT_KEY, recentIds);
 
-  window.localStorage.setItem(
-    SAVED_SEARCHES_KEY,
-    JSON.stringify(preferences.savedSearches || [])
-  );
+  window.localStorage.setItem(SAVED_SEARCHES_KEY, JSON.stringify(preferences.savedSearches || []));
 
   setExtendedPreferences({
     propertyNotes: preferences.propertyNotes || {},

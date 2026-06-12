@@ -28,8 +28,7 @@ const SERVER_MESSAGE_RU = {
   "Username or email is required": "Укажите имя пользователя или эл. почту",
   "User already exists. Please try another email.":
     "Пользователь уже существует. Используйте другую эл. почту.",
-  "Invalid email or password. Please try again.":
-    "Неверный email или пароль. Попробуйте ещё раз.",
+  "Invalid email or password. Please try again.": "Неверный email или пароль. Попробуйте ещё раз.",
   "Login failed": "Не удалось войти",
   "Please fill in all fields": "Заполните все поля",
 };
@@ -153,7 +152,10 @@ export const extractApiErrorMessage = (error, locale = "en") => {
       .join(". ");
   }
   if (Array.isArray(data?.errors) && typeof data.errors[0] === "string") {
-    return data.errors.map((item) => translateApiMessage(item, locale)).filter(Boolean).join(". ");
+    return data.errors
+      .map((item) => translateApiMessage(item, locale))
+      .filter(Boolean)
+      .join(". ");
   }
 
   const message = data?.message || data?.error || error.message;
@@ -168,9 +170,13 @@ export const getLocalizedError = (error, locale = "en") => {
 
   if (status === 400) {
     if (message?.includes("Password") || message?.includes("password")) {
-      return translateApiMessage(message, locale) || getErrorMessage("auth", "passwordWeak", locale);
+      return (
+        translateApiMessage(message, locale) || getErrorMessage("auth", "passwordWeak", locale)
+      );
     }
-    return translateApiMessage(message, locale) || getErrorMessage("common", "validationFailed", locale);
+    return (
+      translateApiMessage(message, locale) || getErrorMessage("common", "validationFailed", locale)
+    );
   }
 
   if (status === 401) {

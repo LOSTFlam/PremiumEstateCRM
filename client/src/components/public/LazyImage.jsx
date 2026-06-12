@@ -19,7 +19,13 @@ export default function LazyImage({
   return (
     <Box position="relative" w={w} h={h} overflow="hidden" borderRadius={borderRadius}>
       {!loaded ? (
-        <Skeleton position="absolute" inset={0} borderRadius={borderRadius} startColor="gray.100" endColor="gray.300" />
+        <Skeleton
+          position="absolute"
+          inset={0}
+          borderRadius={borderRadius}
+          startColor="gray.100"
+          endColor="gray.300"
+        />
       ) : null}
       <Image
         src={resolvedSrc}

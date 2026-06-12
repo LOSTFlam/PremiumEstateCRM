@@ -40,17 +40,22 @@ export const getSignUpSchema = (t) => {
       )
       .test(
         "no-repeated",
-        t?.("auth.validation.passwordRepeated") ||
-          "Password must not contain repeated characters",
+        t?.("auth.validation.passwordRepeated") || "Password must not contain repeated characters",
         (value) => (value ? !REPEATED_PATTERN.test(value) : true)
       ),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref("password"), null], t?.("auth.validation.passwordsMustMatch") || "Passwords must match")
+      .oneOf(
+        [yup.ref("password"), null],
+        t?.("auth.validation.passwordsMustMatch") || "Passwords must match"
+      )
       .required(t?.("auth.validation.confirmPasswordRequired") || "Confirm Password is required"),
     agreeToTerms: yup
       .boolean()
-      .oneOf([true], t?.("auth.validation.agreeToTerms") || "You must agree to terms and conditions"),
+      .oneOf(
+        [true],
+        t?.("auth.validation.agreeToTerms") || "You must agree to terms and conditions"
+      ),
   });
 };
 

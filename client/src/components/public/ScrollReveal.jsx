@@ -4,13 +4,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const MotionBox = motion.create(Box);
 
-export default function ScrollReveal({
-  children,
-  delay = 0,
-  y = 24,
-  once = true,
-  ...props
-}) {
+export default function ScrollReveal({ children, delay = 0, y = 24, once = true, ...props }) {
   const prefersReducedMotion = useReducedMotion();
   const ref = useRef(null);
   const isInView = useInView(ref, { once, margin: "-60px" });

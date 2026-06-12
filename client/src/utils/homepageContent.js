@@ -12,7 +12,7 @@ const mergeDeep = (defaults, incoming = {}) => {
       const defaultArray = Array.isArray(defaults[key]) ? defaults[key] : [];
       result[key] = value.map((item, index) => {
         const fallback = defaultArray[index] || {};
-        return isPlainObject(item) ? mergeDeep(fallback, item) : item ?? fallback;
+        return isPlainObject(item) ? mergeDeep(fallback, item) : (item ?? fallback);
       });
       return;
     }
@@ -49,7 +49,6 @@ export const getHomepageLocaleContent = (content, locale = "ru") => {
   };
 };
 
-export const isHomepageBlockVisible = (visibility, blockKey) =>
-  visibility?.[blockKey] !== false;
+export const isHomepageBlockVisible = (visibility, blockKey) => visibility?.[blockKey] !== false;
 
 export { HOMEPAGE_BLOCK_KEYS, DEFAULT_HOMEPAGE_CONTENT };

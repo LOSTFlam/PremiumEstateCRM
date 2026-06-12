@@ -161,18 +161,10 @@ const ContactEngagementTab = ({
                   isLoding={isLoding}
                   columnData={taskColumns ?? []}
                   allData={
-                    showTasks
-                      ? allData?.task
-                      : allData?.task?.length > 0
-                        ? [allData?.task[0]]
-                        : []
+                    showTasks ? allData?.task : allData?.task?.length > 0 ? [allData?.task[0]] : []
                   }
                   tableData={
-                    showTasks
-                      ? allData?.task
-                      : allData?.task?.length > 0
-                        ? [allData?.task[0]]
-                        : []
+                    showTasks ? allData?.task : allData?.task?.length > 0 ? [allData?.task[0]] : []
                   }
                   AdvanceSearch={false}
                   dataLength={allData?.task?.length}

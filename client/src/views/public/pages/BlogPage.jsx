@@ -114,7 +114,14 @@ export default function BlogPage() {
                 _hover={{ transform: "translateY(-4px)" }}
                 display="block"
               >
-                <Image src={post.image} alt={post.title[locale]} h="200px" w="100%" objectFit="cover" loading="lazy" />
+                <Image
+                  src={post.image}
+                  alt={post.title[locale]}
+                  h="200px"
+                  w="100%"
+                  objectFit="cover"
+                  loading="lazy"
+                />
                 <Stack p={5} spacing={3}>
                   <Badge w="fit-content" colorScheme="yellow">
                     {post.category[locale]}

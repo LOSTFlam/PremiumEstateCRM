@@ -1,4 +1,4 @@
-import { Badge, Box, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import { Badge, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PublicPageShell from "components/public/PublicPageShell";
@@ -63,7 +63,12 @@ export default function BlogArticlePage() {
         </Stack>
         <Stack spacing={4}>
           {post.body[locale].map((paragraph) => (
-            <Text key={paragraph} color={publicBrand.colors.textSoft} lineHeight="1.9" fontSize="lg">
+            <Text
+              key={paragraph}
+              color={publicBrand.colors.textSoft}
+              lineHeight="1.9"
+              fontSize="lg"
+            >
               {paragraph}
             </Text>
           ))}

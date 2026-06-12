@@ -132,9 +132,7 @@ export default function HeroPropertyOfWeekPicker({
                   <Text fontSize="xs" fontWeight="700" color="gray.500" mb={1}>
                     {t("adminInline.heroPropertyCurrent", { defaultValue: "Currently featured" })}
                   </Text>
-                  <Text fontWeight="700">
-                    {propertyLabel(selectedProperty, t, i18n.language)}
-                  </Text>
+                  <Text fontWeight="700">{propertyLabel(selectedProperty, t, i18n.language)}</Text>
                   <Text fontSize="sm" color="gray.600">
                     {selectedProperty?.propertyAddress}
                   </Text>
@@ -202,7 +200,9 @@ export default function HeroPropertyOfWeekPicker({
                 })}
                 {!filtered.length ? (
                   <Text fontSize="sm" color="gray.500" py={4} textAlign="center">
-                    {t("adminInline.heroPropertyEmpty", { defaultValue: "No listings match your search." })}
+                    {t("adminInline.heroPropertyEmpty", {
+                      defaultValue: "No listings match your search.",
+                    })}
                   </Text>
                 ) : null}
               </VStack>

@@ -5,13 +5,7 @@ import { useTranslation } from "react-i18next";
 import { FiExternalLink } from "react-icons/fi";
 import PropTypes from "prop-types";
 
-export default function AdminEditButton({
-  onClick,
-  href,
-  size = "sm",
-  compact = false,
-  label,
-}) {
+export default function AdminEditButton({ onClick, href, size = "sm", compact = false, label }) {
   const { t } = useTranslation();
   const editLabel = label || t("common.edit", { defaultValue: "Edit" });
 

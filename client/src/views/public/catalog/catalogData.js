@@ -686,8 +686,7 @@ export const normalizeStatus = (status, t, language = runtimeLanguage()) => {
     available: t?.("publicListing.available") || (ru ? "Доступно" : "Available"),
     active: t?.("publicListing.active") || (ru ? "Активно" : "Active"),
     new: t?.("publicListing.new") || (ru ? "Новое" : "New"),
-    pending:
-      t?.("publicListing.verificationPending") || (ru ? "Ожидает проверки" : "Pending"),
+    pending: t?.("publicListing.verificationPending") || (ru ? "Ожидает проверки" : "Pending"),
     booked: t?.("publicListing.statusBooked") || (ru ? "Бронь" : "Booked"),
     sold: t?.("publicListing.statusSold") || (ru ? "Продано" : "Sold"),
     blocked: t?.("publicListing.statusBlocked") || (ru ? "Заблокировано" : "Blocked"),
@@ -750,7 +749,8 @@ export const getListingTitle = (property, t, language = runtimeLanguage()) => {
 
 export const getListingAddress = (property, t, language = runtimeLanguage()) => {
   const address = property?.propertyAddress;
-  if (!address) return t?.("publicListing.notSpecified") || (isRu(language) ? "Не указано" : "Not specified");
+  if (!address)
+    return t?.("publicListing.notSpecified") || (isRu(language) ? "Не указано" : "Not specified");
   if (!isRu(language)) return address;
 
   return address

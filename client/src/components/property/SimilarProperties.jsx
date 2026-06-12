@@ -22,8 +22,7 @@ const SimilarProperties = ({ currentProperty }) => {
         setLoading(true);
         const catalog = await fetchPublicCatalog();
         const typeKey =
-          currentProperty.propertyTypeKey ||
-          normalizePropertyTypeKey(currentProperty.propertyType);
+          currentProperty.propertyTypeKey || normalizePropertyTypeKey(currentProperty.propertyType);
         const locationHint = String(currentProperty.propertyAddress || "")
           .toLowerCase()
           .split(",")[0]

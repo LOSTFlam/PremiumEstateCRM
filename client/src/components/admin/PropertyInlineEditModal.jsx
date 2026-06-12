@@ -61,8 +61,10 @@ export default function PropertyInlineEditModal({
     setSaving(true);
     try {
       const payload = { ...values };
-      if ("numberofBedrooms" in payload) payload.numberofBedrooms = Number(payload.numberofBedrooms) || 0;
-      if ("numberofBathrooms" in payload) payload.numberofBathrooms = Number(payload.numberofBathrooms) || 0;
+      if ("numberofBedrooms" in payload)
+        payload.numberofBedrooms = Number(payload.numberofBedrooms) || 0;
+      if ("numberofBathrooms" in payload)
+        payload.numberofBathrooms = Number(payload.numberofBathrooms) || 0;
 
       const response = await putApi(`api/property/edit/${property._id}`, payload, false);
       const updated = response?.data || { ...property, ...payload };
@@ -120,7 +122,9 @@ export default function PropertyInlineEditModal({
                   </Select>
                 ) : (
                   <Input
-                    type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+                    type={
+                      field.type === "number" ? "number" : field.type === "date" ? "date" : "text"
+                    }
                     value={values[field.key] || ""}
                     onChange={(event) => handleChange(field.key, event.target.value)}
                   />

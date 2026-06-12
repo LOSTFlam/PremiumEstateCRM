@@ -904,10 +904,7 @@ const View = () => {
                                   <MenuButton>
                                     <CiMenuKebab />
                                   </MenuButton>
-                                  <MenuList
-                                    minW={"fit-content"}
-                                   
-                                  >
+                                  <MenuList minW={"fit-content"}>
                                     {item?.status !== "Available" && (
                                       <MenuItem
                                         py={2.5}

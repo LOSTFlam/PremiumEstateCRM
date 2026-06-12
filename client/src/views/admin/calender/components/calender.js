@@ -16,6 +16,7 @@ import ruLocale from "@fullcalendar/core/locales/ru";
 import EmailView from "views/admin/emailHistory/emailView";
 import { HasAccess } from "../../../../redux/accessUtils";
 import AddEdit from "views/admin/task/components/AddEdit";
+import { GoDotFill } from "react-icons/go";
 
 const Calender = (props) => {
   const { data, fetchData } = props;

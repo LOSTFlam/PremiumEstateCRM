@@ -1,8 +1,7 @@
-import { Box, HStack, Icon, Image, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Icon, Image, Stack, Text, IconButton } from "@chakra-ui/react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiStar } from "react-icons/fi";
-import { IconButton } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import PublicPageShell from "components/public/PublicPageShell";
 import ScrollReveal from "components/public/ScrollReveal";
@@ -108,8 +107,12 @@ export default function TestimonialsPage() {
                             <StarRating value={item.rating || 5} />
                           </Stack>
                         </HStack>
-                        <Text color={publicBrand.colors.textSoft} lineHeight="1.8" fontStyle="italic">
-                          "{item.text}"
+                        <Text
+                          color={publicBrand.colors.textSoft}
+                          lineHeight="1.8"
+                          fontStyle="italic"
+                        >
+                          &ldquo;{item.text}&rdquo;
                         </Text>
                       </Box>
                     </ScrollReveal>

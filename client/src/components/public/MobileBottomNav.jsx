@@ -40,7 +40,7 @@ export default function MobileBottomNav() {
       bottom={0}
       zIndex={28}
       px={3}
-      pb={3}
+      pb="calc(12px + env(safe-area-inset-bottom, 0px))"
       pointerEvents="none"
     >
       <HStack
@@ -59,8 +59,7 @@ export default function MobileBottomNav() {
         pointerEvents="auto"
       >
         {NAV_ITEMS.map((item) => {
-          const href =
-            item.key === "profile" && isAuthenticated ? item.authHref : item.href;
+          const href = item.key === "profile" && isAuthenticated ? item.authHref : item.href;
           const active = isActive(href);
           const labelKey =
             item.key === "profile" && isAuthenticated ? item.authLabelKey : item.labelKey;

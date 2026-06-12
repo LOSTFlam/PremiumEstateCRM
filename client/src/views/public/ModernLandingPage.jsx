@@ -43,10 +43,13 @@ import MobileBottomNav from "components/public/MobileBottomNav";
 import { useSelector } from "react-redux";
 import HomepageBlockEditBar from "components/admin/HomepageBlockEditBar";
 import { fetchPublicHomepageContent, updateHomepageContent } from "services/homepageContent";
-import { mergeHomepageContent } from "utils/homepageContent";
+import {
+  mergeHomepageContent,
+  getHomepageLocaleContent,
+  isHomepageBlockVisible,
+} from "utils/homepageContent";
 import { canManageSiteContent } from "utils/adminAccess";
 import { fetchPublicStorefrontSettings } from "services/storefrontSettings";
-import { getHomepageLocaleContent, isHomepageBlockVisible } from "utils/homepageContent";
 import {
   DEFAULT_STOREFRONT_PRESETS,
   COLLECTION_STOREFRONT_SLUGS,
@@ -55,13 +58,7 @@ import {
 } from "utils/storefrontPresets";
 import { fetchPublicCatalog } from "./catalog/catalogService";
 import { countCatalogProperties, extractPresetFilters } from "./catalog/catalogFilters";
-import {
-  formatCompactPrice,
-  formatPrice,
-  isRichListing,
-  parsePrice,
-  placeholderImage,
-} from "./catalog/catalogData";
+import { formatCompactPrice, isRichListing, parsePrice } from "./catalog/catalogData";
 import { getRate } from "services/exchangeRate";
 import { getSeoCollectionConfig } from "./catalog/seoCollections";
 import {
@@ -467,19 +464,19 @@ export default function ModernLandingPage() {
         {isHomepageBlockVisible(visibility, "hero") ? (
           <Box position="relative">
             {canEditHomepage ? <HomepageBlockEditBar blockKey="hero" belowHeader /> : null}
-          <MemoizedModernHero
-            properties={properties}
-            onSearch={scrollToCatalogPreview}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            segmentCards={heroSegmentCards}
-            marketRouteCards={marketRoutes}
-            content={blocks.hero}
-            heroPropertyId={homepageContent?.heroPropertyId || null}
-            canEditHeroProperty={canEditHomepage}
-            onHeroPropertySave={handleHeroPropertySave}
-            isHeroPropertySaving={heroPropertySaving}
-          />
+            <MemoizedModernHero
+              properties={properties}
+              onSearch={scrollToCatalogPreview}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              segmentCards={heroSegmentCards}
+              marketRouteCards={marketRoutes}
+              content={blocks.hero}
+              heroPropertyId={homepageContent?.heroPropertyId || null}
+              canEditHeroProperty={canEditHomepage}
+              onHeroPropertySave={handleHeroPropertySave}
+              isHeroPropertySaving={heroPropertySaving}
+            />
           </Box>
         ) : null}
 
@@ -491,24 +488,198 @@ export default function ModernLandingPage() {
         ) : null}
 
         {isHomepageBlockVisible(visibility, "market") ? (
-        <Box
-          id="market"
-          position="relative"
-          py={{ base: 14, md: 18, xl: 20 }}
-          bg="linear-gradient(180deg, rgba(244,238,229,0.98) 0%, rgba(236,227,215,1) 100%)"
-        >
-          {canEditHomepage ? <HomepageBlockEditBar blockKey="market" /> : null}
-          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
-            <Stack spacing={10}>
-              <Box
-                borderRadius="32px"
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
-                bg="white"
-                border="1px solid rgba(9,18,32,0.08)"
-                boxShadow={publicBrand.shadows.soft}
-                backdropFilter="blur(8px)"
-              >
+          <Box
+            id="market"
+            position="relative"
+            py={{ base: 14, md: 18, xl: 20 }}
+            bg="linear-gradient(180deg, rgba(244,238,229,0.98) 0%, rgba(236,227,215,1) 100%)"
+          >
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="market" /> : null}
+            <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
+              <Stack spacing={10}>
+                <Box
+                  borderRadius="32px"
+                  px={{ base: 5, md: 6 }}
+                  py={{ base: 5, md: 6 }}
+                  bg="white"
+                  border="1px solid rgba(9,18,32,0.08)"
+                  boxShadow={publicBrand.shadows.soft}
+                  backdropFilter="blur(8px)"
+                >
+                  <Stack spacing={8}>
+                    <Box>
+                      <Badge
+                        w="fit-content"
+                        px={4}
+                        py={1.5}
+                        borderRadius="full"
+                        bg="rgba(212,175,55,0.12)"
+                        border="1px solid rgba(212,175,55,0.18)"
+                        color={publicBrand.colors.copper}
+                        letterSpacing="0.12em"
+                        textTransform="uppercase"
+                      >
+                        {blocks.market?.badge}
+                      </Badge>
+                      <Heading
+                        color={publicBrand.colors.ink}
+                        fontSize={{ base: "2xl", sm: "3xl", md: "5xl" }}
+                        wordBreak="break-word"
+                        lineHeight="1.05"
+                        mt={4}
+                      >
+                        {blocks.market?.title}
+                      </Heading>
+                      <Text
+                        color={publicBrand.colors.textSoft}
+                        fontSize={{ base: "md", md: "lg" }}
+                        lineHeight="1.9"
+                        mt={4}
+                      >
+                        {blocks.market?.text}
+                      </Text>
+                      <Text
+                        color={publicBrand.colors.copper}
+                        fontSize="xs"
+                        letterSpacing="0.16em"
+                        textTransform="uppercase"
+                        mt={6}
+                      >
+                        {blocks.market?.statsLabel}
+                      </Text>
+                    </Box>
+
+                    <SimpleGrid
+                      className="landing-market-stats"
+                      columns={{ base: 1, md: 2, lg: 4 }}
+                      spacing={{ base: 3, md: 5 }}
+                      w="100%"
+                    >
+                      {marketStats.map((item) => (
+                        <Box
+                          key={item.key}
+                          borderRadius="26px"
+                          px={4}
+                          py={4}
+                          minW={0}
+                          bg="rgba(212,175,55,0.04)"
+                          border="1px solid rgba(212,175,55,0.12)"
+                        >
+                          <Text
+                            color={publicBrand.colors.textSoft}
+                            fontSize="xs"
+                            textTransform="uppercase"
+                            letterSpacing="0.14em"
+                          >
+                            {item.label}
+                          </Text>
+                          <Text
+                            mt={2}
+                            color={publicBrand.colors.ink}
+                            fontWeight="700"
+                            fontSize={{ base: "lg", md: "2xl" }}
+                            lineHeight="1.2"
+                            wordBreak="break-word"
+                          >
+                            {item.value}
+                          </Text>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </Stack>
+                </Box>
+
+                <Box
+                  display="grid"
+                  gridTemplateColumns={{
+                    base: "1fr",
+                    md: "repeat(2, 1fr)",
+                    lg: "repeat(3, 1fr)",
+                    xl: "repeat(4, 1fr)",
+                  }}
+                  gap={{ base: 4, md: 5 }}
+                  width="100%"
+                >
+                  {marketRoutes.map((route) => (
+                    <Box
+                      key={route.key}
+                      as={RouterLink}
+                      to={route.href}
+                      borderRadius="32px"
+                      px={{ base: 5, md: 6 }}
+                      py={{ base: 5, md: 6 }}
+                      bg="white"
+                      border="1px solid rgba(9,18,32,0.08)"
+                      boxShadow={publicBrand.shadows.soft}
+                      transition="transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
+                      _hover={{
+                        transform: "translateY(-6px)",
+                        boxShadow: "0 24px 70px rgba(6, 10, 16, 0.16)",
+                        borderColor: "rgba(185,119,55,0.20)",
+                      }}
+                    >
+                      <HStack justify="space-between" align="start">
+                        <Box
+                          w="48px"
+                          h="48px"
+                          borderRadius="18px"
+                          display="grid"
+                          placeItems="center"
+                          bg="rgba(212,175,55,0.10)"
+                          color={publicBrand.colors.copper}
+                        >
+                          <Icon as={route.icon} boxSize={5} />
+                        </Box>
+                        <Text color={publicBrand.colors.textSoft} fontSize="sm">
+                          {route.count}
+                        </Text>
+                      </HStack>
+                      <Heading
+                        mt={5}
+                        size="md"
+                        color={publicBrand.colors.ink}
+                        fontSize={{ base: "md", md: "lg" }}
+                        lineHeight="1.25"
+                        wordBreak="break-word"
+                      >
+                        {route.title}
+                      </Heading>
+                      <Text
+                        mt={3}
+                        color={publicBrand.colors.textSoft}
+                        lineHeight="1.65"
+                        fontSize={{ base: "sm", md: "md" }}
+                        noOfLines={4}
+                        wordBreak="break-word"
+                      >
+                        {route.text}
+                      </Text>
+                      <HStack mt={5} spacing={2} color={publicBrand.colors.copper} flexWrap="wrap">
+                        <Text fontWeight="700" fontSize="sm" wordBreak="break-word">
+                          {blocks.market?.openLabel}
+                        </Text>
+                        <FiArrowRight />
+                      </HStack>
+                    </Box>
+                  ))}
+                </Box>
+              </Stack>
+            </Container>
+          </Box>
+        ) : null}
+
+        {isHomepageBlockVisible(visibility, "collections") ||
+        isHomepageBlockVisible(visibility, "services") ||
+        isHomepageBlockVisible(visibility, "locations") ? (
+          <Box
+            id="collections"
+            py={{ base: 16, md: 20 }}
+            position="relative"
+            bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
+          >
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="collections" /> : null}
+            <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
+              {isHomepageBlockVisible(visibility, "collections") ? (
                 <Stack spacing={8}>
                   <Box>
                     <Badge
@@ -516,530 +687,362 @@ export default function ModernLandingPage() {
                       px={4}
                       py={1.5}
                       borderRadius="full"
-                      bg="rgba(212,175,55,0.12)"
-                      border="1px solid rgba(212,175,55,0.18)"
-                      color={publicBrand.colors.copper}
+                      bg="rgba(245,208,118,0.14)"
+                      border="1px solid rgba(245,208,118,0.24)"
+                      color="#f5d076"
                       letterSpacing="0.12em"
                       textTransform="uppercase"
                     >
-                      {blocks.market?.badge}
+                      {blocks.collections?.badge}
                     </Badge>
                     <Heading
-                      color={publicBrand.colors.ink}
+                      color="white"
                       fontSize={{ base: "2xl", sm: "3xl", md: "5xl" }}
+                      lineHeight="1.08"
                       wordBreak="break-word"
-                      lineHeight="1.05"
-                      mt={4}
                     >
-                      {blocks.market?.title}
+                      {blocks.collections?.title}
                     </Heading>
                     <Text
-                      color={publicBrand.colors.textSoft}
+                      color="whiteAlpha.760"
                       fontSize={{ base: "md", md: "lg" }}
                       lineHeight="1.9"
-                      mt={4}
+                      maxW="760px"
                     >
-                      {blocks.market?.text}
+                      {blocks.collections?.text}
                     </Text>
-                    <Text
-                      color={publicBrand.colors.copper}
-                      fontSize="xs"
-                      letterSpacing="0.16em"
-                      textTransform="uppercase"
-                      mt={6}
+                    <SimpleGrid
+                      columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 5 }}
+                      spacing={{ base: 4, md: 5 }}
                     >
-                      {blocks.market?.statsLabel}
-                    </Text>
+                      {collectionCards.map((collection) => (
+                        <Box
+                          key={collection.slug}
+                          as={RouterLink}
+                          to={collection.href}
+                          borderRadius="32px"
+                          px={{ base: 5, md: 6 }}
+                          py={{ base: 5, md: 6 }}
+                          bg="rgba(255,255,255,0.05)"
+                          border="1px solid rgba(227, 211, 184, 0.12)"
+                          transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
+                          _hover={{
+                            transform: "translateY(-6px)",
+                            borderColor: "rgba(245,208,118,0.24)",
+                            boxShadow: "0 28px 70px rgba(0,0,0,0.18)",
+                          }}
+                        >
+                          <HStack justify="space-between" align="start">
+                            <Badge
+                              px={3}
+                              py={1.5}
+                              borderRadius="full"
+                              bg="rgba(245,208,118,0.12)"
+                              color="#f5d076"
+                              border="1px solid rgba(245,208,118,0.20)"
+                            >
+                              {collection.badge}
+                            </Badge>
+                            <Text color="whiteAlpha.620" fontSize="sm">
+                              {collection.count}
+                            </Text>
+                          </HStack>
+                          <Heading mt={5} size="md" color="white">
+                            {collection.title}
+                          </Heading>
+                          <Text mt={3} color="whiteAlpha.760" lineHeight="1.8" noOfLines={3}>
+                            {collection.description}
+                          </Text>
+                          <Stack mt={5} spacing={2}>
+                            {collection.heroPoints?.slice(0, 2).map((point) => (
+                              <HStack key={point} spacing={2.5} color="whiteAlpha.820">
+                                <Icon as={LuSparkles} color="#f5d076" />
+                                <Text fontSize="sm">{point}</Text>
+                              </HStack>
+                            ))}
+                          </Stack>
+                          <HStack mt={5} spacing={2} color="#f5d076" justify="flex-start">
+                            <Text
+                              fontWeight="700"
+                              fontSize="sm"
+                              display={{ base: "none", sm: "block" }}
+                            >
+                              {blocks.collections?.openLabel}
+                            </Text>
+                            <Box
+                              as="span"
+                              display="grid"
+                              placeItems="center"
+                              w={{ base: "34px", sm: "auto" }}
+                              h={{ base: "34px", sm: "auto" }}
+                              borderRadius={{ base: "full", sm: "none" }}
+                              bg={{ base: "rgba(245,208,118,0.14)", sm: "transparent" }}
+                              border={{ base: "1px solid rgba(245,208,118,0.24)", sm: "none" }}
+                              aria-label={blocks.collections?.openLabel}
+                            >
+                              <FiArrowRight />
+                            </Box>
+                          </HStack>
+                        </Box>
+                      ))}
+                    </SimpleGrid>
                   </Box>
-
-                  <SimpleGrid
-                    className="landing-market-stats"
-                    columns={{ base: 1, md: 2, lg: 4 }}
-                    spacing={{ base: 3, md: 5 }}
-                    w="100%"
-                  >
-                    {marketStats.map((item) => (
-                      <Box
-                        key={item.key}
-                        borderRadius="26px"
-                        px={4}
-                        py={4}
-                        minW={0}
-                        bg="rgba(212,175,55,0.04)"
-                        border="1px solid rgba(212,175,55,0.12)"
-                      >
-                        <Text
-                          color={publicBrand.colors.textSoft}
-                          fontSize="xs"
-                          textTransform="uppercase"
-                          letterSpacing="0.14em"
-                        >
-                          {item.label}
-                        </Text>
-                        <Text
-                          mt={2}
-                          color={publicBrand.colors.ink}
-                          fontWeight="700"
-                          fontSize={{ base: "lg", md: "2xl" }}
-                          lineHeight="1.2"
-                          wordBreak="break-word"
-                        >
-                          {item.value}
-                        </Text>
-                      </Box>
-                    ))}
-                  </SimpleGrid>
                 </Stack>
-              </Box>
+              ) : null}
 
-              <Box
-                display="grid"
-                gridTemplateColumns={{
-                  base: "1fr",
-                  md: "repeat(2, 1fr)",
-                  lg: "repeat(3, 1fr)",
-                  xl: "repeat(4, 1fr)",
-                }}
-                gap={{ base: 4, md: 5 }}
-                width="100%"
-              >
-                {marketRoutes.map((route) => (
+              <Stack spacing={5}>
+                <GuidedFinder
+                  properties={properties}
+                  variant="dark"
+                  onMatchFound={handleGuidedMatch}
+                />
+
+                {isHomepageBlockVisible(visibility, "services") ? (
                   <Box
-                    key={route.key}
-                    as={RouterLink}
-                    to={route.href}
+                    id="services"
+                    position="relative"
+                    className="public-brand-panel"
                     borderRadius="32px"
                     px={{ base: 5, md: 6 }}
                     py={{ base: 5, md: 6 }}
-                    bg="white"
-                    border="1px solid rgba(9,18,32,0.08)"
-                    boxShadow={publicBrand.shadows.soft}
-                    transition="transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
-                    _hover={{
-                      transform: "translateY(-6px)",
-                      boxShadow: "0 24px 70px rgba(6, 10, 16, 0.16)",
-                      borderColor: "rgba(185,119,55,0.20)",
-                    }}
                   >
-                    <HStack justify="space-between" align="start">
-                      <Box
-                        w="48px"
-                        h="48px"
-                        borderRadius="18px"
-                        display="grid"
-                        placeItems="center"
-                        bg="rgba(212,175,55,0.10)"
-                        color={publicBrand.colors.copper}
-                      >
-                        <Icon as={route.icon} boxSize={5} />
-                      </Box>
-                      <Text color={publicBrand.colors.textSoft} fontSize="sm">
-                        {route.count}
-                      </Text>
-                    </HStack>
-                    <Heading
-                      mt={5}
-                      size="md"
-                      color={publicBrand.colors.ink}
-                      fontSize={{ base: "md", md: "lg" }}
-                      lineHeight="1.25"
-                      wordBreak="break-word"
-                    >
-                      {route.title}
-                    </Heading>
-                    <Text
-                      mt={3}
-                      color={publicBrand.colors.textSoft}
-                      lineHeight="1.65"
-                      fontSize={{ base: "sm", md: "md" }}
-                      noOfLines={4}
-                      wordBreak="break-word"
-                    >
-                      {route.text}
-                    </Text>
-                    <HStack mt={5} spacing={2} color={publicBrand.colors.copper} flexWrap="wrap">
-                      <Text fontWeight="700" fontSize="sm" wordBreak="break-word">
-                        {blocks.market?.openLabel}
-                      </Text>
-                      <FiArrowRight />
-                    </HStack>
-                  </Box>
-                ))}
-              </Box>
-            </Stack>
-          </Container>
-        </Box>
-        ) : null}
-
-        {isHomepageBlockVisible(visibility, "collections") ||
-        isHomepageBlockVisible(visibility, "services") ||
-        isHomepageBlockVisible(visibility, "locations") ? (
-        <Box
-          id="collections"
-          py={{ base: 16, md: 20 }}
-          position="relative"
-          bg="linear-gradient(180deg, rgba(9,18,32,0.24) 0%, rgba(8,17,26,0.72) 100%)"
-        >
-          {canEditHomepage ? <HomepageBlockEditBar blockKey="collections" /> : null}
-          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
-            {isHomepageBlockVisible(visibility, "collections") ? (
-            <Stack spacing={8}>
-              <Box>
-                <Badge
-                  w="fit-content"
-                  px={4}
-                  py={1.5}
-                  borderRadius="full"
-                  bg="rgba(245,208,118,0.14)"
-                  border="1px solid rgba(245,208,118,0.24)"
-                  color="#f5d076"
-                  letterSpacing="0.12em"
-                  textTransform="uppercase"
-                >
-                  {blocks.collections?.badge}
-                </Badge>
-                <Heading
-                  color="white"
-                  fontSize={{ base: "2xl", sm: "3xl", md: "5xl" }}
-                  lineHeight="1.08"
-                  wordBreak="break-word"
-                >
-                  {blocks.collections?.title}
-                </Heading>
-                <Text
-                  color="whiteAlpha.760"
-                  fontSize={{ base: "md", md: "lg" }}
-                  lineHeight="1.9"
-                  maxW="760px"
-                >
-                  {blocks.collections?.text}
-                </Text>
-                <SimpleGrid
-                  columns={{ base: 1, md: 2, lg: 3, xl: 4, "2xl": 5 }}
-                  spacing={{ base: 4, md: 5 }}
-                >
-                  {collectionCards.map((collection) => (
-                    <Box
-                      key={collection.slug}
-                      as={RouterLink}
-                      to={collection.href}
-                      borderRadius="32px"
-                      px={{ base: 5, md: 6 }}
-                      py={{ base: 5, md: 6 }}
-                      bg="rgba(255,255,255,0.05)"
-                      border="1px solid rgba(227, 211, 184, 0.12)"
-                      transition="transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease"
-                      _hover={{
-                        transform: "translateY(-6px)",
-                        borderColor: "rgba(245,208,118,0.24)",
-                        boxShadow: "0 28px 70px rgba(0,0,0,0.18)",
-                      }}
-                    >
-                      <HStack justify="space-between" align="start">
-                        <Badge
-                          px={3}
-                          py={1.5}
-                          borderRadius="full"
-                          bg="rgba(245,208,118,0.12)"
+                    {canEditHomepage ? <HomepageBlockEditBar blockKey="services" /> : null}
+                    <Stack spacing={5}>
+                      <Box>
+                        <Text
                           color="#f5d076"
-                          border="1px solid rgba(245,208,118,0.20)"
+                          fontSize="xs"
+                          letterSpacing="0.16em"
+                          textTransform="uppercase"
                         >
-                          {collection.badge}
-                        </Badge>
-                        <Text color="whiteAlpha.620" fontSize="sm">
-                          {collection.count}
+                          {blocks.services?.badge}
                         </Text>
-                      </HStack>
-                      <Heading mt={5} size="md" color="white">
-                        {collection.title}
-                      </Heading>
-                      <Text mt={3} color="whiteAlpha.760" lineHeight="1.8" noOfLines={3}>
-                        {collection.description}
-                      </Text>
-                      <Stack mt={5} spacing={2}>
-                        {collection.heroPoints?.slice(0, 2).map((point) => (
-                          <HStack key={point} spacing={2.5} color="whiteAlpha.820">
-                            <Icon as={LuSparkles} color="#f5d076" />
-                            <Text fontSize="sm">{point}</Text>
+                        <Heading mt={2} size="lg" color="white">
+                          {blocks.services?.title}
+                        </Heading>
+                        <Text mt={3} color="whiteAlpha.760" lineHeight="1.8">
+                          {blocks.services?.text}
+                        </Text>
+                      </Box>
+                      <Stack spacing={4}>
+                        {services.map((service) => (
+                          <Box
+                            key={service.key}
+                            borderRadius="24px"
+                            px={4}
+                            py={4}
+                            bg="rgba(255,255,255,0.05)"
+                            border="1px solid rgba(227, 211, 184, 0.10)"
+                          >
+                            <HStack spacing={4} align="start">
+                              <Box
+                                w="44px"
+                                h="44px"
+                                borderRadius="18px"
+                                display="grid"
+                                placeItems="center"
+                                bg="rgba(245,208,118,0.10)"
+                                color="#f5d076"
+                                flexShrink={0}
+                              >
+                                <Icon as={service.icon} />
+                              </Box>
+                              <Box>
+                                <Text color="white" fontWeight="700">
+                                  {service.title}
+                                </Text>
+                                <Text
+                                  mt={1.5}
+                                  color="whiteAlpha.720"
+                                  fontSize="sm"
+                                  lineHeight="1.8"
+                                >
+                                  {service.text}
+                                </Text>
+                              </Box>
+                            </HStack>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ) : null}
+
+                {isHomepageBlockVisible(visibility, "locations") ? (
+                  <Box
+                    className="public-brand-panel"
+                    borderRadius="32px"
+                    px={{ base: 5, md: 6 }}
+                    py={{ base: 5, md: 6 }}
+                    position="relative"
+                  >
+                    {canEditHomepage ? <HomepageBlockEditBar blockKey="locations" /> : null}
+                    <Stack spacing={4}>
+                      <Box>
+                        <Text
+                          color="#f5d076"
+                          fontSize="xs"
+                          letterSpacing="0.16em"
+                          textTransform="uppercase"
+                        >
+                          {blocks.locations?.title}
+                        </Text>
+                        <Text mt={2} color="whiteAlpha.760" lineHeight="1.8">
+                          {blocks.locations?.text}
+                        </Text>
+                      </Box>
+                      <Stack spacing={3}>
+                        {locationSignals.map((location) => (
+                          <HStack
+                            key={location.label}
+                            justify="space-between"
+                            align="center"
+                            px={4}
+                            py={4}
+                            borderRadius="22px"
+                            bg="rgba(255,255,255,0.05)"
+                            border="1px solid rgba(227, 211, 184, 0.10)"
+                          >
+                            <HStack spacing={3}>
+                              <Box
+                                w="40px"
+                                h="40px"
+                                borderRadius="16px"
+                                display="grid"
+                                placeItems="center"
+                                bg="rgba(245,208,118,0.10)"
+                                color="#f5d076"
+                              >
+                                <LuMapPin />
+                              </Box>
+                              <Box>
+                                <Text color="white" fontWeight="700">
+                                  {location.label}
+                                </Text>
+                                <Text color="whiteAlpha.620" fontSize="sm">
+                                  {location.count} {locale === "ru" ? "объекта" : "offers"}
+                                </Text>
+                              </Box>
+                            </HStack>
+                            <Text color="#f5d076" fontWeight="700" fontSize="sm">
+                              {blocks.locations?.fromLabel}{" "}
+                              {compactCurrency(location.price, i18n.language, t)}
+                            </Text>
                           </HStack>
                         ))}
                       </Stack>
-                      <HStack mt={5} spacing={2} color="#f5d076" justify="flex-start">
-                        <Text
-                          fontWeight="700"
-                          fontSize="sm"
-                          display={{ base: "none", sm: "block" }}
-                        >
-                          {blocks.collections?.openLabel}
-                        </Text>
-                        <Box
-                          as="span"
-                          display="grid"
-                          placeItems="center"
-                          w={{ base: "34px", sm: "auto" }}
-                          h={{ base: "34px", sm: "auto" }}
-                          borderRadius={{ base: "full", sm: "none" }}
-                          bg={{ base: "rgba(245,208,118,0.14)", sm: "transparent" }}
-                          border={{ base: "1px solid rgba(245,208,118,0.24)", sm: "none" }}
-                          aria-label={blocks.collections?.openLabel}
-                        >
-                          <FiArrowRight />
-                        </Box>
-                      </HStack>
-                    </Box>
-                  ))}
-                </SimpleGrid>
-              </Box>
-            </Stack>
-            ) : null}
-
-            <Stack spacing={5}>
-              <GuidedFinder
-                properties={properties}
-                variant="dark"
-                onMatchFound={handleGuidedMatch}
-              />
-
-              {isHomepageBlockVisible(visibility, "services") ? (
-              <Box
-                id="services"
-                position="relative"
-                className="public-brand-panel"
-                borderRadius="32px"
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
-              >
-                {canEditHomepage ? <HomepageBlockEditBar blockKey="services" /> : null}
-                <Stack spacing={5}>
-                  <Box>
-                    <Text
-                      color="#f5d076"
-                      fontSize="xs"
-                      letterSpacing="0.16em"
-                      textTransform="uppercase"
-                    >
-                      {blocks.services?.badge}
-                    </Text>
-                    <Heading mt={2} size="lg" color="white">
-                      {blocks.services?.title}
-                    </Heading>
-                    <Text mt={3} color="whiteAlpha.760" lineHeight="1.8">
-                      {blocks.services?.text}
-                    </Text>
+                    </Stack>
                   </Box>
-                  <Stack spacing={4}>
-                    {services.map((service) => (
-                      <Box
-                        key={service.key}
-                        borderRadius="24px"
-                        px={4}
-                        py={4}
-                        bg="rgba(255,255,255,0.05)"
-                        border="1px solid rgba(227, 211, 184, 0.10)"
-                      >
-                        <HStack spacing={4} align="start">
-                          <Box
-                            w="44px"
-                            h="44px"
-                            borderRadius="18px"
-                            display="grid"
-                            placeItems="center"
-                            bg="rgba(245,208,118,0.10)"
-                            color="#f5d076"
-                            flexShrink={0}
-                          >
-                            <Icon as={service.icon} />
-                          </Box>
-                          <Box>
-                            <Text color="white" fontWeight="700">
-                              {service.title}
-                            </Text>
-                            <Text mt={1.5} color="whiteAlpha.720" fontSize="sm" lineHeight="1.8">
-                              {service.text}
-                            </Text>
-                          </Box>
-                        </HStack>
-                      </Box>
-                    ))}
-                  </Stack>
-                </Stack>
-              </Box>
-              ) : null}
-
-              {isHomepageBlockVisible(visibility, "locations") ? (
-              <Box
-                className="public-brand-panel"
-                borderRadius="32px"
-                px={{ base: 5, md: 6 }}
-                py={{ base: 5, md: 6 }}
-                position="relative"
-              >
-                {canEditHomepage ? <HomepageBlockEditBar blockKey="locations" /> : null}
-                <Stack spacing={4}>
-                  <Box>
-                    <Text
-                      color="#f5d076"
-                      fontSize="xs"
-                      letterSpacing="0.16em"
-                      textTransform="uppercase"
-                    >
-                      {blocks.locations?.title}
-                    </Text>
-                    <Text mt={2} color="whiteAlpha.760" lineHeight="1.8">
-                      {blocks.locations?.text}
-                    </Text>
-                  </Box>
-                  <Stack spacing={3}>
-                    {locationSignals.map((location) => (
-                      <HStack
-                        key={location.label}
-                        justify="space-between"
-                        align="center"
-                        px={4}
-                        py={4}
-                        borderRadius="22px"
-                        bg="rgba(255,255,255,0.05)"
-                        border="1px solid rgba(227, 211, 184, 0.10)"
-                      >
-                        <HStack spacing={3}>
-                          <Box
-                            w="40px"
-                            h="40px"
-                            borderRadius="16px"
-                            display="grid"
-                            placeItems="center"
-                            bg="rgba(245,208,118,0.10)"
-                            color="#f5d076"
-                          >
-                            <LuMapPin />
-                          </Box>
-                          <Box>
-                            <Text color="white" fontWeight="700">
-                              {location.label}
-                            </Text>
-                            <Text color="whiteAlpha.620" fontSize="sm">
-                              {location.count} {locale === "ru" ? "объекта" : "offers"}
-                            </Text>
-                          </Box>
-                        </HStack>
-                        <Text color="#f5d076" fontWeight="700" fontSize="sm">
-                          {blocks.locations?.fromLabel} {compactCurrency(location.price, i18n.language, t)}
-                        </Text>
-                      </HStack>
-                    ))}
-                  </Stack>
-                </Stack>
-              </Box>
-              ) : null}
-            </Stack>
-          </Container>
-        </Box>
+                ) : null}
+              </Stack>
+            </Container>
+          </Box>
         ) : null}
 
         {isHomepageBlockVisible(visibility, "catalog") ? (
-        <Box
-          id="properties-section"
-          position="relative"
-          py={{ base: 14, md: 18, xl: 20 }}
-          bg="linear-gradient(180deg, rgba(244,238,229,1) 0%, rgba(244,238,229,1) 100%)"
-        >
-          {canEditHomepage ? <HomepageBlockEditBar blockKey="catalog" /> : null}
-          <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
-            <Stack spacing={10}>
-              <Stack spacing={6} align="center" textAlign="center">
-                <Badge
-                  w="fit-content"
-                  px={4}
-                  py={1.5}
-                  borderRadius="full"
-                  bg="rgba(212,175,55,0.12)"
-                  border="1px solid rgba(212,175,55,0.18)"
-                  color={publicBrand.colors.copper}
-                  letterSpacing="0.12em"
-                  textTransform="uppercase"
-                >
-                  {blocks.catalog?.badge}
-                </Badge>
-                <Heading size="2xl" color={publicBrand.colors.ink} maxW="900px">
-                  {searchQuery
-                    ? resultsTitle(i18n.language, filteredProperties.length)
-                    : t("publicListing.catalogTitle")}
-                </Heading>
-                <Text
-                  color={publicBrand.colors.textSoft}
-                  fontSize={{ base: "md", md: "lg" }}
-                  lineHeight="1.8"
-                  maxW="820px"
-                >
-                  {searchQuery ? resultsText(i18n.language) : blocks.catalog?.text}
-                </Text>
-                <HStack spacing={3} flexWrap="wrap" justify="center">
-                  <Button
-                    as={RouterLink}
-                    to="/offers"
-                    borderRadius="full"
-                    bg={publicBrand.gradients.brass}
-                    color={publicBrand.colors.ink}
-                    rightIcon={<FiArrowRight />}
-                    px={8}
-                    h="50px"
-                  >
-                    {t("publicListing.viewAllProperties")}
-                  </Button>
+          <Box
+            id="properties-section"
+            position="relative"
+            py={{ base: 14, md: 18, xl: 20 }}
+            bg="linear-gradient(180deg, rgba(244,238,229,1) 0%, rgba(244,238,229,1) 100%)"
+          >
+            {canEditHomepage ? <HomepageBlockEditBar blockKey="catalog" /> : null}
+            <Container maxW="min(1640px, 96vw)" px={publicBrand.spacing.pageX}>
+              <Stack spacing={10}>
+                <Stack spacing={6} align="center" textAlign="center">
                   <Badge
+                    w="fit-content"
                     px={4}
-                    py={2}
+                    py={1.5}
                     borderRadius="full"
-                    bg="rgba(8,17,26,0.04)"
-                    color={publicBrand.colors.ink}
-                    border="1px solid rgba(9,18,32,0.08)"
+                    bg="rgba(212,175,55,0.12)"
+                    border="1px solid rgba(212,175,55,0.18)"
+                    color={publicBrand.colors.copper}
+                    letterSpacing="0.12em"
+                    textTransform="uppercase"
                   >
-                    {favoriteIds.length} {locale === "ru" ? "в избранном" : "in favorites"}
+                    {blocks.catalog?.badge}
                   </Badge>
-                  <Badge
-                    px={4}
-                    py={2}
-                    borderRadius="full"
-                    bg="rgba(8,17,26,0.04)"
-                    color={publicBrand.colors.ink}
-                    border="1px solid rgba(9,18,32,0.08)"
+                  <Heading size="2xl" color={publicBrand.colors.ink} maxW="900px">
+                    {searchQuery
+                      ? resultsTitle(i18n.language, filteredProperties.length)
+                      : t("publicListing.catalogTitle")}
+                  </Heading>
+                  <Text
+                    color={publicBrand.colors.textSoft}
+                    fontSize={{ base: "md", md: "lg" }}
+                    lineHeight="1.8"
+                    maxW="820px"
                   >
-                    {compareIds.length} {locale === "ru" ? "в сравнении" : "in compare"}
-                  </Badge>
-                </HStack>
-              </Stack>
+                    {searchQuery ? resultsText(i18n.language) : blocks.catalog?.text}
+                  </Text>
+                  <HStack spacing={3} flexWrap="wrap" justify="center">
+                    <Button
+                      as={RouterLink}
+                      to="/offers"
+                      borderRadius="full"
+                      bg={publicBrand.gradients.brass}
+                      color={publicBrand.colors.ink}
+                      rightIcon={<FiArrowRight />}
+                      px={8}
+                      h="50px"
+                    >
+                      {t("publicListing.viewAllProperties")}
+                    </Button>
+                    <Badge
+                      px={4}
+                      py={2}
+                      borderRadius="full"
+                      bg="rgba(8,17,26,0.04)"
+                      color={publicBrand.colors.ink}
+                      border="1px solid rgba(9,18,32,0.08)"
+                    >
+                      {favoriteIds.length} {locale === "ru" ? "в избранном" : "in favorites"}
+                    </Badge>
+                    <Badge
+                      px={4}
+                      py={2}
+                      borderRadius="full"
+                      bg="rgba(8,17,26,0.04)"
+                      color={publicBrand.colors.ink}
+                      border="1px solid rgba(9,18,32,0.08)"
+                    >
+                      {compareIds.length} {locale === "ru" ? "в сравнении" : "in compare"}
+                    </Badge>
+                  </HStack>
+                </Stack>
 
-              {loading ? (
-                <SimpleGrid
-                  className="property-card-grid"
-                  columns={PROPERTY_CARD_GRID_COLUMNS}
-                  spacing={PROPERTY_CARD_GRID_SPACING}
-                >
-                  {Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={`landing-skeleton-${index}`} h="520px" borderRadius="40px" />
-                  ))}
-                </SimpleGrid>
-              ) : (
-                <SimpleGrid
-                  className="property-card-grid"
-                  columns={PROPERTY_CARD_GRID_COLUMNS}
-                  spacing={PROPERTY_CARD_GRID_SPACING}
-                >
-                  {featuredProperties.map((property) => (
-                    <MemoizedModernPropertyCard
-                      key={property?._id}
-                      property={property}
-                      isFavorite={favoriteIds.includes(property?._id)}
-                      isInCompare={compareIds.includes(property?._id)}
-                      onFavoriteToggle={handleFavoriteToggle}
-                      onCompareToggle={handleCompareToggle}
-                    />
-                  ))}
-                </SimpleGrid>
-              )}
-            </Stack>
-          </Container>
-        </Box>
+                {loading ? (
+                  <SimpleGrid
+                    className="property-card-grid"
+                    columns={PROPERTY_CARD_GRID_COLUMNS}
+                    spacing={PROPERTY_CARD_GRID_SPACING}
+                  >
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <Skeleton key={`landing-skeleton-${index}`} h="520px" borderRadius="40px" />
+                    ))}
+                  </SimpleGrid>
+                ) : (
+                  <SimpleGrid
+                    className="property-card-grid"
+                    columns={PROPERTY_CARD_GRID_COLUMNS}
+                    spacing={PROPERTY_CARD_GRID_SPACING}
+                  >
+                    {featuredProperties.map((property) => (
+                      <MemoizedModernPropertyCard
+                        key={property?._id}
+                        property={property}
+                        isFavorite={favoriteIds.includes(property?._id)}
+                        isInCompare={compareIds.includes(property?._id)}
+                        onFavoriteToggle={handleFavoriteToggle}
+                        onCompareToggle={handleCompareToggle}
+                      />
+                    ))}
+                  </SimpleGrid>
+                )}
+              </Stack>
+            </Container>
+          </Box>
         ) : null}
 
         <MobileBottomNav />

@@ -8,7 +8,6 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { HasAccess } from "../../../redux/accessUtils";
 import { getApi, deleteApi } from "services/api";
-import { DeleteIcon } from "@chakra-ui/icons";
 import CommonDeleteModel from "components/commonDeleteModel";
 import CabinetRecordActions from "components/cabinet/CabinetRecordActions";
 import { FaFilePdf } from "react-icons/fa";

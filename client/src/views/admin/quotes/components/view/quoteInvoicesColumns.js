@@ -97,9 +97,7 @@ export const getQuoteInvoicesColumns = ({ navigate, user, contactAccess, account
     accessor: "grandTotal",
     cell: (cell) => (
       <div className="selectOpt">
-        <Text>
-          {cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}
-        </Text>
+        <Text>{cell?.row?.original?.grandTotal ? `$${cell?.row?.original?.grandTotal}` : "-"}</Text>
       </div>
     ),
   },

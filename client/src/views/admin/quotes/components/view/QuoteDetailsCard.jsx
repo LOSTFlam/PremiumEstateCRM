@@ -217,9 +217,7 @@ const QuoteDetailsCard = ({
                 name="quoteStage"
                 onChange={formik?.handleChange}
                 onBlur={handleBlur}
-                mb={
-                  formik?.errors?.quoteStage && formik?.touched?.quoteStage ? undefined : "10px"
-                }
+                mb={formik?.errors?.quoteStage && formik?.touched?.quoteStage ? undefined : "10px"}
                 fontWeight="500"
                 placeholder={"Quote Stage"}
                 borderColor={
@@ -244,9 +242,7 @@ const QuoteDetailsCard = ({
             </>
           ) : (
             <Text
-              onDoubleClick={() =>
-                handleDoubleClick("quoteStage", data?.quoteStage, "Quote Stage")
-              }
+              onDoubleClick={() => handleDoubleClick("quoteStage", data?.quoteStage, "Quote Stage")}
             >
               {data?.quoteStage ? data?.quoteStage : " - "}
             </Text>
@@ -272,9 +268,7 @@ const QuoteDetailsCard = ({
                 fontWeight="500"
                 placeholder={"Invoice Status"}
                 borderColor={
-                  formik?.errors?.invoiceStatus && formik?.touched?.invoiceStatus
-                    ? "red.300"
-                    : null
+                  formik?.errors?.invoiceStatus && formik?.touched?.invoiceStatus ? "red.300" : null
                 }
               >
                 <option value="Not Invoiced">Not Invoiced</option>
@@ -325,9 +319,7 @@ const QuoteDetailsCard = ({
             </>
           ) : (
             <Text
-              onDoubleClick={() =>
-                handleDoubleClick("validUntil", data?.validUntil, "Valid Until")
-              }
+              onDoubleClick={() => handleDoubleClick("validUntil", data?.validUntil, "Valid Until")}
             >
               {data?.validUntil ? data?.validUntil : " - "}
             </Text>
@@ -345,16 +337,12 @@ const QuoteDetailsCard = ({
                 onChange={formik?.handleChange}
                 onBlur={handleBlur}
                 mb={
-                  formik?.errors?.paymentTerms && formik?.touched?.paymentTerms
-                    ? undefined
-                    : "10px"
+                  formik?.errors?.paymentTerms && formik?.touched?.paymentTerms ? undefined : "10px"
                 }
                 fontWeight="500"
                 placeholder={"Payment Terms"}
                 borderColor={
-                  formik?.errors?.paymentTerms && formik?.touched?.paymentTerms
-                    ? "red.300"
-                    : null
+                  formik?.errors?.paymentTerms && formik?.touched?.paymentTerms ? "red.300" : null
                 }
               >
                 <option value="Nett 15">Nett 15</option>
@@ -475,9 +463,7 @@ const QuoteDetailsCard = ({
                 onChange={formik?.handleChange}
                 placeholder="Terms"
                 fontWeight="500"
-                borderColor={
-                  formik?.errors?.terms && formik?.touched?.terms ? "red.300" : null
-                }
+                borderColor={formik?.errors?.terms && formik?.touched?.terms ? "red.300" : null}
               />
 
               <Text mb="10px" color={"red"}>
@@ -610,9 +596,7 @@ const QuoteDetailsCard = ({
                 onBlur={handleBlur}
                 value={formik?.values?.billingStreet}
                 borderColor={
-                  formik?.errors?.billingStreet && formik?.touched?.billingStreet
-                    ? "red.300"
-                    : null
+                  formik?.errors?.billingStreet && formik?.touched?.billingStreet ? "red.300" : null
                 }
                 autoFocus
               />
@@ -717,9 +701,7 @@ const QuoteDetailsCard = ({
                 onBlur={handleBlur}
                 value={formik?.values?.shippingCity}
                 borderColor={
-                  formik?.errors?.shippingCity && formik?.touched?.shippingCity
-                    ? "red.300"
-                    : null
+                  formik?.errors?.shippingCity && formik?.touched?.shippingCity ? "red.300" : null
                 }
                 autoFocus
               />
@@ -753,9 +735,7 @@ const QuoteDetailsCard = ({
                 onBlur={handleBlur}
                 value={formik?.values?.billingState}
                 borderColor={
-                  formik?.errors?.billingState && formik?.touched?.billingState
-                    ? "red.300"
-                    : null
+                  formik?.errors?.billingState && formik?.touched?.billingState ? "red.300" : null
                 }
                 autoFocus
               />
@@ -789,9 +769,7 @@ const QuoteDetailsCard = ({
                 onBlur={handleBlur}
                 value={formik?.values?.shippingState}
                 borderColor={
-                  formik?.errors?.shippingState && formik?.touched?.shippingState
-                    ? "red.300"
-                    : null
+                  formik?.errors?.shippingState && formik?.touched?.shippingState ? "red.300" : null
                 }
                 autoFocus
               />

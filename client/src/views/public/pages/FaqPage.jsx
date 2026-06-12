@@ -81,7 +81,12 @@ export default function FaqPage() {
                       </Box>
                       <AccordionIcon />
                     </AccordionButton>
-                    <AccordionPanel px={6} pb={5} color={publicBrand.colors.textSoft} lineHeight="1.8">
+                    <AccordionPanel
+                      px={6}
+                      pb={5}
+                      color={publicBrand.colors.textSoft}
+                      lineHeight="1.8"
+                    >
                       {item.a}
                     </AccordionPanel>
                   </AccordionItem>

@@ -11,6 +11,9 @@ import {
   Text,
   Textarea,
   useToast,
+  Icon,
+  HStack,
+  Link,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +22,6 @@ import InputMask from "react-input-mask";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { FiInstagram, FiLinkedin, FiMail, FiMapPin, FiPhone, FiYoutube } from "react-icons/fi";
-import { Icon, HStack, Link } from "@chakra-ui/react";
 import PublicPageShell from "components/public/PublicPageShell";
 import OfficeMap from "components/public/OfficeMap";
 import ScrollReveal from "components/public/ScrollReveal";
@@ -103,7 +105,9 @@ export default function ContactsPage() {
                   as={InputMask}
                   mask="+7 (999) 999-99-99"
                   value={watch("phone")}
-                  onChange={(event) => setValue("phone", event.target.value, { shouldValidate: true })}
+                  onChange={(event) =>
+                    setValue("phone", event.target.value, { shouldValidate: true })
+                  }
                   borderRadius="12px"
                 />
                 <FormErrorMessage>{t("publicPages.contacts.phoneError")}</FormErrorMessage>

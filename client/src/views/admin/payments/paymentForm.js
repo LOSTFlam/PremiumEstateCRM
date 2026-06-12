@@ -77,7 +77,8 @@ export default function PaymentForm() {
                 t("messages.paymentUnavailable", {
                   defaultValue: "Payment service is temporarily unavailable.",
                 })
-              : apiMessage || t("messages.tryAgainLater", { defaultValue: "Please try again later." }),
+              : apiMessage ||
+                t("messages.tryAgainLater", { defaultValue: "Please try again later." }),
         status: "error",
         duration: 4000,
       });
