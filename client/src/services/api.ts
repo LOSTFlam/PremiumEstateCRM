@@ -174,7 +174,11 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshResponse = await apiClient.post("/api/user/refresh-token");
+        const refreshResponse = await apiClient.post(
+          "/api/user/refresh-token",
+          {},
+          { headers: { "X-Silent-Request": "true" } }
+        );
         if (refreshResponse?.data?.user) {
           persistUser(refreshResponse.data.user, true);
         }

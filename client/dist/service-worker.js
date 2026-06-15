@@ -1,7 +1,7 @@
-const CACHE_NAME = 'premium-estate-v2';
-const RUNTIME_CACHE = 'premium-estate-runtime-v2';
+const CACHE_NAME = 'premium-estate-v3';
+const RUNTIME_CACHE = 'premium-estate-runtime-v3';
 
-const PRECACHE_URLS = ['/', '/index.html', '/manifest.json'];
+const PRECACHE_URLS = ['/', '/index.html'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -44,10 +44,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Web app manifest must bypass the SW to avoid install/fetch timeouts.
+  if (url.pathname === '/manifest.json') {
+    return;
+  }
+
   event.respondWith(handleStaticRequest(event.request));
 });
 
 async function handleStaticRequest(request) {
+  const url = new URL(request.url);
   const cachedResponse = await caches.match(request);
   if (cachedResponse) return cachedResponse;
 
@@ -59,6 +65,13 @@ async function handleStaticRequest(request) {
     }
     return networkResponse;
   } catch (error) {
+    const isHtmlRequest =
+      url.pathname === '/' || url.pathname.endsWith('.html');
+
+    if (!isHtmlRequest) {
+      return new Response('Offline', { status: 503 });
+    }
+
     const fallbackResponse = await caches.match('/index.html');
     if (fallbackResponse) return fallbackResponse;
     return new Response('Offline', { status: 503 });

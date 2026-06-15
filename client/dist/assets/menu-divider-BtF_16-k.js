@@ -1,0 +1,1 @@
+import{j as i,p as t,aK as o}from"./index-DAMl824K.js";import{u as n}from"./menu-list-BZOd2GgO.js";const c=s=>{const{className:a,...e}=s,r=n();return i.jsx(t.hr,{"aria-orientation":"horizontal",className:o("chakra-menu__divider",a),...e,__css:r.divider})};c.displayName="MenuDivider";export{c as M};
