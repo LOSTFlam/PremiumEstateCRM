@@ -7,7 +7,20 @@
   "background_color": "#ffffff",
   "theme_color": "#3520d5",
   "orientation": "portrait-primary",
-  "icons": [],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "any"
+    }
+  ],
   "categories": ["business", "productivity"],
   "shortcuts": [
     {

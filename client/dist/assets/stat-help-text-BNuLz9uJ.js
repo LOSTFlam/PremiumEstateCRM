@@ -1,0 +1,1 @@
+import{o as e,j as r,p as l,aK as o}from"./index-CVpuUtKZ.js";import{u as x}from"./stat-number-4wY0VNG5.js";const c=e(function(t,a){const s=x();return r.jsx(l.dd,{ref:a,...t,className:o("chakra-stat__help-text",t.className),__css:s.helpText})});c.displayName="StatHelpText";export{c as S};

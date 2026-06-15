@@ -5,6 +5,7 @@ const { resolveUploadPath } = require('../../utils/uploadPaths');
 
 const router = express.Router();
 
+router.get("/public", img.publicBranding);
 router.get("/", auth, img.index);
 router.get("/view/:id", auth, img.view);
 router.post("/change-authImg", auth, img.upload.single('authImg'), img.addAuthImg);

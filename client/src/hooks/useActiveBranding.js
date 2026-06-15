@@ -3,6 +3,23 @@ import { getApi } from "services/api";
 import { extractCollection } from "utils/normalizeResponse";
 
 const BRANDING_CACHE_KEY = "public:branding:active";
+const PUBLIC_BRANDING_PATH = "api/images/public";
+
+let brandingRequest = null;
+
+const fetchPublicBranding = () => {
+  if (!brandingRequest) {
+    brandingRequest = getApi(PUBLIC_BRANDING_PATH, {
+      useCache: true,
+      cacheKey: BRANDING_CACHE_KEY,
+      silent: true,
+    }).finally(() => {
+      brandingRequest = null;
+    });
+  }
+
+  return brandingRequest;
+};
 
 const normalizeBrandingItems = (items) => (Array.isArray(items) ? items.filter(Boolean) : []);
 
@@ -42,11 +59,7 @@ export default function useActiveBranding(initialItems = []) {
 
     const fetchBranding = async () => {
       try {
-        const response = await getApi("api/images/?isActive=true", {
-          useCache: true,
-          cacheKey: BRANDING_CACHE_KEY,
-          silent: true,
-        });
+        const response = await fetchPublicBranding();
         const collection = extractCollection(response);
         const activeItems = collection.filter((item) => item?.isActive);
 

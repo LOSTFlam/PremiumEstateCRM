@@ -12,6 +12,20 @@ const index = async (req, res) => {
     return res.send(result);
 };
 
+const PUBLIC_BRANDING_FIELDS = "_id logoSmImg logoLgImg isActive updatedDate";
+
+const publicBranding = async (req, res) => {
+    try {
+        const result = await Img.find({ deleted: false, isActive: true })
+            .select(PUBLIC_BRANDING_FIELDS)
+            .lean();
+
+        return res.status(200).json(result);
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Failed to fetch public branding" });
+    }
+};
+
 const view = async (req, res) => {
     try {
         let result = await Img.findOne({ _id: req.params.id, deleted: false });
@@ -285,4 +299,4 @@ const deleteData = async (req, res) => {
 const upload = createSecureStorage(getImagesDir(), 'images');
 
 
-module.exports = { index, view, upload, addAuthImg, addAuthAndLogoImg, UpdateAuthImg, updateAuthAndLogoImg, changeLogoImg, deleteData, setActiveImg };
+module.exports = { index, publicBranding, view, upload, addAuthImg, addAuthAndLogoImg, UpdateAuthImg, updateAuthAndLogoImg, changeLogoImg, deleteData, setActiveImg };

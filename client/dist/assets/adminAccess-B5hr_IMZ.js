@@ -1,1 +1,0 @@
-import{aB as a}from"./index-CLFws2-i.js";import{r as s}from"./authPaths-CF4TQHtq.js";const n=new Set(["superAdmin","admin","manager","teamleader","executive","telecaller"]),t=e=>s(e)||a(),c=e=>{var r;return n.has((r=t(e))==null?void 0:r.role)},m=e=>{var r;return((r=t(e))==null?void 0:r.role)==="superAdmin"},l=e=>e?`/propertyView/${e}`:"/properties";export{c as a,m as c,l as g};

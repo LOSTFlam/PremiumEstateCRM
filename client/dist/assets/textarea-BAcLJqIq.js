@@ -1,1 +1,0 @@
-import{o as c,bv as i,aS as x,bX as h,bw as l,j as p,p as T,aK as f}from"./index-CLFws2-i.js";const g=["h","minH","height","minHeight"],u=c((a,e)=>{const s=i("Textarea",a),{className:r,rows:t,...o}=x(a),m=h(o),n=t?l(s,g):s;return p.jsx(T.textarea,{ref:e,rows:t,...m,className:f("chakra-textarea",r),__css:n})});u.displayName="Textarea";export{u as T};

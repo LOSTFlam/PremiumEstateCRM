@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { constant } from "constant";
 import { toast } from "react-toastify";
-import { clearAuthStorage, persistUser } from "utils/authStorage";
+import { clearAuthStorage, getStoredUser, persistUser } from "utils/authStorage";
 
 interface PersistOptions {
   rememberMe?: boolean;
@@ -81,7 +81,8 @@ const shouldSkipAuthRedirect = (url = ""): boolean =>
   url.includes("/api/user/login") ||
   url.includes("/api/user/register") ||
   url.includes("/api/user/refresh-token") ||
-  url.includes("/api/user/session");
+  url.includes("/api/user/session") ||
+  url.includes("/api/images/public");
 
 const getCacheEntry = (cacheKey: string): unknown | null => {
   const entry = requestCache.get(cacheKey);
@@ -148,6 +149,10 @@ apiClient.interceptors.response.use(
       "An unexpected error occurred";
 
     if (error.response?.status === 401 && !shouldSkipAuthRedirect(originalRequest?.url || "")) {
+      if (!getStoredUser()) {
+        return Promise.reject(error);
+      }
+
       if (originalRequest._retry) {
         if (!silentRequest) {
           clearAuthStorage();
@@ -189,6 +194,10 @@ apiClient.interceptors.response.use(
     }
 
     if (silentRequest) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401) {
       return Promise.reject(error);
     }
 

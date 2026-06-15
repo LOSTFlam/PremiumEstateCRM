@@ -13,9 +13,15 @@ export const fetchImage = createAsyncThunk(
   async (active, { dispatch, getState: _getState }) => {
     dispatch(fetchImage.pending());
     try {
-      const response = await getApi(`api/images/${active ? active : ""}`, { silent: true });
-      dispatch(fetchImage.fulfilled(response.data));
-      return response.data;
+      const isPublicBrandingRequest =
+        active === "?isActive=true" || active === true || active === "true";
+      const path = isPublicBrandingRequest
+        ? "api/images/public"
+        : `api/images/${active ? active : ""}`;
+      const response = await getApi(path, { silent: true });
+      const payload = response?.data ?? response;
+      dispatch(fetchImage.fulfilled(payload));
+      return payload;
     } catch (error) {
       dispatch(fetchImage.rejected(error));
       throw error;
